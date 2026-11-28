@@ -16,6 +16,10 @@ from ..rules.event_subscriptions import (
     graveyard_creature_transition_condition, graveyard_creature_transition_damage_effect,
 )
 from ..rules.source_references import SourceReferenceSpec
+from ..rules.target_announcements import (
+    SOURCE_ATTACK_OR_SPELL_TARGET_CAPABILITIES, SOURCE_ATTACK_OR_SPELL_TARGET_TEMPLATE,
+    SOURCE_ATTACK_OR_SPELL_TARGET_VARIANT, source_attack_or_spell_target_condition,
+)
 from .fixed_public_event_trigger_bindings import (
     FixedPublicEventBindingSpec,
     _face_transition_spec,
@@ -548,6 +552,26 @@ def _combat_participant_damage_spec(material_line: str):
     )
 
 
+def _source_attack_or_spell_target_spec(material_line, *, card_name):
+    from .token_templates import _single_fixed_token_creation_effect_template
+
+    match = re.fullmatch(
+        r"(?:When|Whenever) (?P<source>.+?) attacks or becomes the target of a spell, (?P<body>.+)",
+        " ".join(material_line.split()), re.I,
+    )
+    if (match is None or (match['source'].casefold() != 'this creature'
+            and not (card_name and SourceReferenceSpec(card_name).matches(match['source'])))):
+        return None
+    token = _single_fixed_token_creation_effect_template(match['body'])
+    if token is None or token.effect.get('op') != 'create_token':
+        return None
+    return _spec(
+        'creature.attacks', SOURCE_ATTACK_OR_SPELL_TARGET_VARIANT, match['body'],
+        SOURCE_ATTACK_OR_SPELL_TARGET_TEMPLATE, 'trigger-event-normalized-public-action',
+        condition=source_attack_or_spell_target_condition(), capabilities=SOURCE_ATTACK_OR_SPELL_TARGET_CAPABILITIES,
+    )
+
+
 def _source_combat_or_spell_target_spec(material_line, *, card_name):
     from ..rules.source_power_opponent_damage import (
         SOURCE_POWER_OPPONENT_DAMAGE_BODY, SOURCE_POWER_OPPONENT_DAMAGE_DEPENDENCIES,
@@ -601,6 +625,7 @@ def fixed_public_multi_event_binding_spec(
               or _color_cast_or_land_entry_spec(material_line)
               or _entry_or_cast_origin_spec(material_line)
               or _combat_participant_damage_spec(material_line)
+              or _source_attack_or_spell_target_spec(material_line, card_name=card_name)
               or _source_combat_or_spell_target_spec(material_line, card_name=card_name))
     if paired is not None:return paired
 

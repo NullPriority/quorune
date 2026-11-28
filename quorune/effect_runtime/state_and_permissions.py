@@ -11,6 +11,8 @@ from ..rules.controller_private_top_exile_model import CONTROLLER_PRIVATE_TOP_EX
 from ..rules.private_opponent_top_exile import apply_controller_private_top_exile
 from ..opponent_library_exile import apply_each_opponent_top_exile, apply_opponent_library_exile_play
 from ..rules.target_graveyard_escape import apply_target_graveyard_escape
+from ..rules.target_graveyard_flashback import apply_target_graveyard_flashback
+from ..rules.owned_graveyard_turn_play import apply_owned_graveyard_turn_play
 from ..opponent_library_exile_model import EACH_OPPONENT_TOP_EXILE_OPERATION, OPPONENT_LIBRARY_EXILE_PLAY_OPERATION
 from ..permanent_designations import (
     AdvanceClassLevelRequest,
@@ -84,6 +86,14 @@ def _apply_goad(
 ) -> Any:
     op = operation
     host._require_seat(actor, in_game=True)
+    from ..goad_instruction import WATCHED_COMBAT_DRAW_FIELD
+    if WATCHED_COMBAT_DRAW_FIELD in effect:
+        from ..rules.temporary_attack_requirements import resolve_watched_goad_chapter
+        try:
+            return resolve_watched_goad_chapter(host, effect, actor=actor, reason=reason,
+                goad=lambda ref: _apply_goad(host, {"op": "goad", "card": ref}, actor=actor, operation=operation, reason=reason))
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
     if "schema_version" in effect:
         from ..goad_instruction import GOAD_BLOCK_PROHIBITION_VERSION, resolve_fixed_goad_refs
         try:
@@ -450,6 +460,15 @@ def _apply_mana(
     operation: str,
     reason: str,
 ) -> Any:
+    from ..rules.fight_excess_mana import RETAIN_ALL_RED_FIELD, is_retained_red
+
+    if RETAIN_ALL_RED_FIELD in effect:
+        from ..mana_provenance import RETAIN_RED_MANA_UNTIL_CLEANUP
+
+        if actor not in host.active_seats or not is_retained_red(effect, actor=actor):
+            raise GameRuleError("Red mana retention requires the original controller")
+        host.state.players[actor].stats[RETAIN_RED_MANA_UNTIL_CLEANUP] = 1
+        return 0
     op = operation
     from ..rules.turn_retained_resolution_mana import TURN_POOL_COLOR_FIELD, apply_turn_pool_red
     if TURN_POOL_COLOR_FIELD in effect:
@@ -619,6 +638,8 @@ HANDLERS = {
     OPPONENT_LIBRARY_EXILE_PLAY_OPERATION: apply_opponent_library_exile_play,
     'grant_next_spell_cost_reduction': apply_next_spell_cost_reduction,
     'grant_target_graveyard_escape': apply_target_graveyard_escape,
+    'grant_target_graveyard_flashback': apply_target_graveyard_flashback,
+    'grant_owned_graveyard_turn_play': apply_owned_graveyard_turn_play,
     'set_day_night': _apply_set_day_night,
     'increase_speed': apply_speed_increase,
     'add_counter_selected': _apply_add_counter_selected,

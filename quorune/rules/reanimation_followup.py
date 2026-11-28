@@ -21,12 +21,14 @@ REANIMATION_FOLLOWUP_MECHANIC = "fixed-target-reanimation-haste-and-departure"
 REANIMATION_FOLLOWUP_VERSION = 4
 REANIMATION_EXILE_REPLACEMENT_VERSION = 5
 REANIMATION_SACRIFICE_ONLY_VERSION = 8
+REANIMATION_FINALITY_HASTE_VERSION = 66
 REANIMATION_FOLLOWUP_VERSIONS = (
     REANIMATION_FOLLOWUP_VERSION, REANIMATION_EXILE_REPLACEMENT_VERSION, REANIMATION_SACRIFICE_ONLY_VERSION,
+    REANIMATION_FINALITY_HASTE_VERSION,
 )
 LINKED_DEPARTURE_VERSION = 3
 
-DEPARTURE_DESTINATIONS = {"exile": "exile", "sacrifice": "graveyard", "bounce": "hand"}
+DEPARTURE_DESTINATIONS = {"exile": "exile", "sacrifice": "graveyard", "bounce": "hand", "command": "command"}
 _REANIMATION_FIELDS = {"op", "schema_version", "card", "controller", "tapped", "followup"}
 _RUNTIME_FIELDS = {"_runtime_source", "_replacement_selections", "_aura_target_ref", "reason"}
 
@@ -56,6 +58,8 @@ class BattlefieldEntryFollowup:
             self.haste_duration, self.departure, self.end_step, self.power_boost,
         ) != ("zone_object", "exile", "next", 0):
             raise ValueError("A leave replacement requires the complete next-end-step exile instruction")
+        if self.departure == "command" and (self.haste_duration, self.end_step, self.power_boost) != ("zone_object", "next", 0):
+            raise ValueError("A linked command-zone return requires zone-object haste and the next end step")
 
     def to_dict(self):
         result = asdict(self)
@@ -101,6 +105,40 @@ class DelayedReanimationSacrifice:
         }
 
 
+@dataclass(frozen=True, slots=True)
+class ReanimationFinalityHaste:
+    """A finality counter on the new object and haste through cleanup."""
+
+    haste_duration = "until_end_of_turn"
+    power_boost = 0
+    exile_on_leave = False
+
+    @staticmethod
+    def to_dict():
+        return {"entry_counter": {"counter_name": "finality", "amount": 1}, "haste_duration": "until_end_of_turn"}
+
+    @classmethod
+    def from_dict(cls, value):
+        from ..replacement.immutable import FrozenMap
+
+        if (not isinstance(value, Mapping) or FrozenMap(value) != FrozenMap(cls.to_dict())
+                or type(value["entry_counter"]["amount"]) is not int):
+            raise ValueError("Finality and haste need their exact entry counter and lifetime")
+        return cls()
+
+    @staticmethod
+    def entry_counters(controller, stack_ref):
+        from ..entry_counter_model import EffectEntryCounter
+        return (EffectEntryCounter("finality", 1, controller, stack_ref, "122.6a"),)
+
+
+def saga_reanimation_target_schema(mana_value):
+    return {
+        "zones": ["graveyard"], "categories": ["card"], "owner_relation": "you", "count": 1,
+        "types_any": ["enchantment"], "subtypes_any": ["saga"], "mana_value": mana_value,
+    }
+
+
 def validate_reanimation_followup(effect, *, materialized=False):
     fields = _REANIMATION_FIELDS | ({"target_snapshot"} if materialized else set())
     allowed = fields | (_RUNTIME_FIELDS if materialized else set())
@@ -115,12 +153,19 @@ def validate_reanimation_followup(effect, *, materialized=False):
             raise ValueError("Linked reanimation requires a bound target and controller")
     elif effect["card"] != "$target.0" or effect["controller"] not in ("$controller", "$target.owner.0"):
         raise ValueError("Linked reanimation requires its declared target and controller")
+    if effect["schema_version"] == REANIMATION_FINALITY_HASTE_VERSION:
+        if effect["tapped"] or not materialized and effect["controller"] != "$controller":
+            raise ValueError("Finality and haste require the original untapped return under the controller")
+        return ReanimationFinalityHaste.from_dict(effect["followup"])
     if effect["schema_version"] == REANIMATION_SACRIFICE_ONLY_VERSION:
         if effect["tapped"] or not materialized and effect["controller"] != "$controller":
             raise ValueError("Delayed sacrifice requires the exact untapped return under the spell controller")
         return DelayedReanimationSacrifice.from_dict(effect["followup"])
-    return BattlefieldEntryFollowup.from_dict(effect["followup"],
+    followup = BattlefieldEntryFollowup.from_dict(effect["followup"],
         exile_on_leave=effect["schema_version"] == REANIMATION_EXILE_REPLACEMENT_VERSION)
+    if followup.departure == "command":
+        raise ValueError("A command-zone return requires its dedicated commander entry")
+    return followup
 
 
 def _validate_subject(value):
@@ -167,13 +212,17 @@ def linked_departure_intent(effect, *, actor, reason):
 
 
 def battlefield_entry_followup_capabilities(followup):
+    if isinstance(followup, ReanimationFinalityHaste):
+        return ("counter.producer.effect_entry", "counter.rule.finality", "zone.reanimate.entry_counters",
+                "combat.attack.haste", "activation.tap_untap_cost.haste",
+                "continuous.resolution.fixed_characteristics_until_end_of_turn")
     common = ("trigger.delayed.fixed_object_action", "trigger.placement.apnap", "zone.change.destination_replacement")
     if isinstance(followup, DelayedReanimationSacrifice):
         return (*common, "choice.affected_player.fixed_sacrifice")
     duration = ("continuous.resolution.fixed_keyword_zone_object" if followup.haste_duration == "zone_object"
         else "continuous.resolution.fixed_characteristics_until_end_of_turn")
     departure = {"exile": "permanent.exile.effect", "sacrifice": "choice.affected_player.fixed_sacrifice",
-        "bounce": "permanent.return.owner_hand"}[followup.departure]
+        "bounce": "permanent.return.owner_hand", "command": "zone.move.owned_commander_entry_and_return"}[followup.departure]
     return (*common, "combat.attack.haste", "activation.tap_untap_cost.haste", duration, departure)
 
 
@@ -276,6 +325,32 @@ def reanimation_entry_handler(effect):
     return reanimation_death_occurrence_owner(effect)
 
 
+def apply_saga_finality_haste(host, effect, *, actor, source, followup, reason):
+    from ..errors import GameRuleError
+    from ..semantic_runtime.zone_move_intent import ZoneMoveIntent
+
+    subject = effect["target_snapshot"]
+    if effect["controller"] != actor:
+        raise GameRuleError("Saga finality entry requires its resolving controller")
+    card = current_linked_subject(host, subject, zone="graveyard")
+    if card is None:
+        return None
+    result = host.move_object_intent(ZoneMoveIntent(
+        actor=actor, object_ref=card.ref, expected_zones=("graveyard",), destination="battlefield",
+        reason=reason, required_types=("enchantment",), owned_only=True, new_controller=actor,
+        tapped_policy="untapped", optional_if_missing=True,
+        expected_zone_change_counter=subject["zone_change_counter"],
+        effect_entry_counters=followup.entry_counters(actor, source.stack_ref),
+        replacement_selections=tuple(effect.get("_replacement_selections", ())),
+    ))
+    if not result:
+        return None
+    entered = host.state.cards.get(subject["object_id"])
+    commit_battlefield_entry_followup(host, entered, previous_zone_counter=subject["zone_change_counter"],
+                                    actor=actor, source=source, followup=followup)
+    return entered
+
+
 def _commit_reanimation_entry_modifiers(host, card, source, followup):
     from ..continuous_effect_state import (
         ContinuousEffectDuration, ContinuousOperation, Layer, ResolutionContinuousComponent,
@@ -299,6 +374,10 @@ def commit_battlefield_entry_followup(
 ):
     entered = (card is not None and card.zone == "battlefield"
                and not card.phased_out and card.zone_change_counter == previous_zone_counter + 1)
+    if isinstance(followup, ReanimationFinalityHaste):
+        if entered:
+            _commit_reanimation_entry_modifiers(host, card, source, followup)
+        return
     if not entered and not schedule_without_arrival:
         return
     from ..trigger_processing import schedule_delayed_trigger
@@ -308,7 +387,8 @@ def commit_battlefield_entry_followup(
     condition = {"phase": "ending", "step": "end_step"}
     if followup.end_step == "controllers_next":
         condition["player"] = "controller"
-    label = {"exile": "Delayed exile", "sacrifice": "Delayed sacrifice", "bounce": "Delayed return to hand"}[followup.departure]
+    label = {"exile": "Delayed exile", "sacrifice": "Delayed sacrifice", "bounce": "Delayed return to hand",
+             "command": "Delayed return to the command zone"}[followup.departure]
     effects = []
     if entered:
         subject = {"ref": card.ref, "object_id": card.object_id, "zone_change_counter": card.zone_change_counter}

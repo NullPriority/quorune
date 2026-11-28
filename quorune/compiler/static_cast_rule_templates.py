@@ -16,6 +16,10 @@ from ..semantic_runtime.static_cast_rules import (
     STATIC_CAST_RULE_EVENT,
     STATIC_CAST_TIMING_HANDLER_ID,
     STATIC_UNCOUNTERABLE_HANDLER_ID,
+    SPLIT_SECOND_CAPABILITY,
+    SPLIT_SECOND_GRANT_CAPABILITY,
+    SPLIT_SECOND_GRANT_HANDLER_ID,
+    SPLIT_SECOND_GRANT_QUERY,
     StaticCastCondition,
     StaticCastPlayerScope,
     StaticCastRuleKind,
@@ -515,6 +519,24 @@ def _uncounterable_rule(
     return None
 
 
+def _split_second_grant(normalized: str) -> StaticCastRuleTemplate | None:
+    reminder = (" (as long as a spell with split second is on the stack, players can't cast spells "
+                "or activate abilities that aren't mana abilities.)")
+    material = " ".join(normalized.casefold().split()).replace("’", "'").removesuffix(reminder)
+    if material.removesuffix(".") != "instant and sorcery spells you control have split second":
+        return None
+    return (
+        "controller-instant-sorcery-split-second-v1",
+        _descriptor(
+            handler_id=SPLIT_SECOND_GRANT_HANDLER_ID,
+            kind=StaticCastRuleKind.SPLIT_SECOND,
+            scope=StaticCastPlayerScope.SOURCE_CONTROLLER,
+            queries=(SPLIT_SECOND_GRANT_QUERY.to_dict(),),
+        ),
+        (SPLIT_SECOND_CAPABILITY, SPLIT_SECOND_GRANT_CAPABILITY),
+    )
+
+
 def static_cast_rule_handler(
     text: str,
     *,
@@ -528,6 +550,7 @@ def static_cast_rule_handler(
         or _opponent_sorcery_timing_rule(normalized)
         or _cast_prohibition_or_limit_rule(normalized)
         or _uncounterable_rule(normalized)
+        or _split_second_grant(normalized)
     )
 
 

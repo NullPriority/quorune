@@ -19,7 +19,9 @@ from ...card_overrides.game_record_v3 import (
 from ...fixed_mana_abilities import FixedManaMode
 from ...card_programs.admission import program_has_complete_card_program_admission
 from ...continuous_effect_model import Layer
-from ...granted_activation_model import GRANTED_NINJUTSU_VERSION, GRANTED_UNEARTH_VERSION
+from ...granted_activation_model import (
+    GRANTED_NINJUTSU_VERSION, GRANTED_UNEARTH_VERSION, GRANTOR_REDIRECTION_CAPABILITY, GRANTOR_REDIRECTION_VERSION,
+)
 from ...intrinsic_land_abilities import intrinsic_land_mana_abilities
 from ...util import normalize_mana_bundle
 
@@ -136,6 +138,11 @@ def activation_actor_allowed(host, seat: str, source: Any, ability: ActivatedAbi
         return source.owner == seat
     if source.phased_out:
         return False
+    if ability.activation_grantor is not None:
+        program = host.semantics.get(host._semantic_key_for_ability(source, ability))
+        return (seat == ability.activation_grantor and program is not None
+                and GRANTOR_REDIRECTION_CAPABILITY in program.capability_dependencies
+                and host.semantic_program_is_current_trusted(program))
     if source.controller == seat:
         return True
     if ability.mana_ability:
@@ -164,7 +171,7 @@ def activation_offer_candidates(host, seat: str):
                 if activation_actor_allowed(host, seat, source, ability):
                     yield source, ability
 
-    if not any(PUBLIC_ACTIVATION_CAPABILITY in program.capability_dependencies
+    if not any({PUBLIC_ACTIVATION_CAPABILITY, GRANTOR_REDIRECTION_CAPABILITY}.intersection(program.capability_dependencies)
                for program in host.semantics.programs_for_event("activate")):
         return
     for controller in host.active_seats:
@@ -219,6 +226,11 @@ def _typed_granted_abilities(
                 result.append(activation)
             continue
         ability_id = spec.ability_id
+        if spec.schema_version == GRANTOR_REDIRECTION_VERSION:
+            if spec.activation_grantor is None or spec.activation_grantor.startswith("$"):
+                continue
+            suffix = sha256(spec.activation_grantor.encode("utf-8")).hexdigest()[:20]
+            ability_id = f"{ability_id}#grantor-{suffix}"
         if spec.schema_version == GRANTED_UNEARTH_VERSION:
             if spec.grant_incarnation is None or not _is_current_granted_unearth_program(host, spec):
                 continue
@@ -264,6 +276,7 @@ def _typed_granted_abilities(
                     for output in spec.fixed_mana_outputs
                 ),
                 builtin_semantic_key=spec.semantic_key,
+                activation_grantor=spec.activation_grantor,
                 mana_spend_restriction=spec.mana_spend_restriction,
                 granting_attachment_payment=payment,
                 announced_x_symbols=spec.announced_x_symbols,

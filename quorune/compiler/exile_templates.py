@@ -19,10 +19,14 @@ _EXILE_MECHANIC = "exile"
 
 
 def stack_spell_exile_template(text, *, source_is_permanent):
-    if source_is_permanent is not False:
-        return None
     from ..public_zone_moves import StackSpellExileScope, StackSpellExileSpec
 
+    normalized = text.strip().casefold().removesuffix(".")
+    if source_is_permanent and normalized == "exile target spell. it becomes plotted":
+        spec = StackSpellExileSpec(StackSpellExileScope.TARGET_PLOT, schema_version=2)
+        return "stack-spell-exile-target-plot-v2", (spec.effect(),), spec.target_schema, ("cr-115-targets",)
+    if source_is_permanent is not False:
+        return None
     scope = {
         "exile any number of target spells": StackSpellExileScope.SELECTED,
         "exile all other spells and counter all abilities": StackSpellExileScope.OTHER_SPELLS_AND_ABILITIES,

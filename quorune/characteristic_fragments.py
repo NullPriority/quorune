@@ -408,19 +408,25 @@ class CharacteristicQuantitySpec:
     def _validate_object_query(self) -> None:
         if self.reduction is CharacteristicQuantityReduction.NAMED_COUNTER_TOTAL:
             query = self.query
+            controlled_creature_or_land = (
+                self.counter_name == "+1/+1" and isinstance(query, ObjectQuerySpec)
+                and query.types_all in {("creature",), ("land",)}
+                and query == ObjectQuerySpec(zones=("battlefield",), types_all=query.types_all)
+            )
+            controlled_saga = (
+                self.counter_name == "lore" and not self.exclude_source
+                and query == ObjectQuerySpec(zones=("battlefield",), subtypes_any=("saga",))
+            )
             if (
                 self.schema_version != 2
                 or self.scope is not CharacteristicQuantityScope.CONTROLLER_ZONE
-                or self.counter_name != "+1/+1"
                 or self.exclude_attached_object
                 or self.multiplier != 1
                 or self.offset != 0
-                or not isinstance(query, ObjectQuerySpec)
-                or query.types_all not in {("creature",), ("land",)}
-                or query != ObjectQuerySpec(zones=("battlefield",), types_all=query.types_all)
+                or not (controlled_creature_or_land or controlled_saga)
             ):
                 raise CharacteristicFragmentError(
-                    "Named counter totals require a closed controlled creature or land query"
+                    "Named counter totals require a closed controlled permanent query"
                 )
             return
         if self.reduction is CharacteristicQuantityReduction.TOTAL_COUNTERS and (

@@ -497,6 +497,10 @@ def entry_copy_replacement_effects(host, subject, *, prospective_objects=None, s
                             bound=copied_tribute_replacement(effect,prefix=next_key+':',form_key=next_key)
                             bound=bound or replace(effect,effect_id=effect.effect_id+':'+next_key)
                             effects[bound.effect_id]=bound
+                        from .riot_grants import granted_riot_entry_effects
+
+                        for riot in granted_riot_entry_effects(host, subject, source, copy_values=values, form_key=next_key):
+                            effects[riot.effect_id] = riot
                         queue.append((_copy_form_view(source,values,history),next_key))
                     effect_id=f'{descriptor["handler_id"]}:{subject.object_ref}:{program.key}:{index}:{key}:{target.ref}'
                     from ..replacement.face_status_copy import COPY_HISTORY_FIELD, ENTRY_COPY_HISTORY_FIELD

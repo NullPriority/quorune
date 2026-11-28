@@ -1,5 +1,6 @@
 """Damage, locked incarnations, and ordinary graveyard replacement authority."""
 
+from dataclasses import replace
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -21,6 +22,7 @@ from quorune.oracle_ir import compile_oracle_card
 from quorune.record import authoritative_state_hash
 from quorune.rules import damage_death_exile as owner
 from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
+from quorune.rules.excess_damage_treasure import EXCESS_TREASURE_CAPABILITY, EXCESS_TREASURE_FIELD
 from scripts.build_test_database import build_fixture_database
 from test_bound_effect_programs import record
 
@@ -101,6 +103,111 @@ class DamageDeathExileNativeTests(InheritedNativeFixture, unittest.TestCase):
                                             'targets': [creature.ref], 'pay': 'auto'})
         self.assertTrue(result.ok, result.summary)
         self.resolve_top(session)
+
+    def _cast_hell_to_pay(self, game, spell, target, amount):
+        action = self.action(game, "A", spell)
+        command = {"action_id": action["id"], "x": amount, "targets": [target.ref], "pay": "auto"}
+        result = game.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+
+    def _hell_to_pay_tokens(self, game, count):
+        treasures = [card for card in game.state.cards.values()
+                     if card.zone == "battlefield" and card.is_token and card.printed_name == "Treasure Token"]
+        self.assertEqual(count, len(treasures))
+        self.assertTrue(all(card.tapped and card.controller == "A" for card in treasures))
+
+    def test_hell_to_pay_marked_damage_counts_only_committed_damage_across_replacement_replay(self):
+        game = self.session(12010601)
+        spell = self.add(game.engine, "Hell to Pay", zone="hand")
+        target = self.add(game.engine, "Grizzly Bears", seat="B")
+        target.marked_damage = 1
+        first = self.add(game.engine, "Healing Salve", seat="B", zone="hand", ref="first-salve")
+        second = self.add(game.engine, "Healing Salve", seat="B", zone="hand", ref="second-salve")
+        for index in range(2):
+            self.add(game.engine, "Plains", seat="B", ref=f"white-for-salve-{index}")
+        self.assert_closed(game, spell)
+        self.prepare(game, mana={"C": 8, "R": 1})
+        self.checkpoint(game)
+        self._cast_hell_to_pay(game, spell, target, 8)
+        self.prevent(game, "B", first, target)
+        self.prevent(game, "B", second, target)
+        pending = self.resolve(game)
+        self.assertEqual("replacement.order", pending.kind)
+        self.assertEqual(["B"], pending.actors)
+        options = game.packet("pilot:B", full=True)["decision"]["ctx"]["options"]
+        self.assertGreaterEqual(len(options), 2)
+        response = {"action_id": "choose", "replacement": options[0]["id"]}
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:A", response).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        game = self.replay(game, load=True)
+        result = game.act("pilot:B", response)
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(game))
+        event = next(event for event in reversed(game.state.events) if event.code == "effect.damage")
+        self.assertEqual(2, event.details["amount"])
+        self._hell_to_pay_tokens(game, 1)
+        self.assertEqual("graveyard", game.state.cards[target.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_hell_to_pay_deathtouch_exact_lethal_and_zero_x(self):
+        for index, (cast_x, grant_deathtouch, expected) in enumerate(((0, False, 0), (2, False, 0), (2, True, 1))):
+            with self.subTest(x=cast_x, deathtouch=grant_deathtouch):
+                game = self.session(12010607 + index)
+                spell = self.add(game.engine, "Hell to Pay", zone="hand")
+                target = self.add(game.engine, "Grizzly Bears", seat="B")
+                self.prepare(game, mana={"C": cast_x, "R": 1})
+                self.checkpoint(game)
+                self._cast_hell_to_pay(game, spell, target, cast_x)
+                if grant_deathtouch:
+                    game.state.cards[spell.object_id].temporary_keywords.append("Deathtouch")
+                    self.checkpoint(game)
+                self.assertIsNone(self.resolve(game))
+                self._hell_to_pay_tokens(game, expected)
+                self.replay(game, load=True)
+
+    def test_hell_to_pay_does_not_create_treasure_for_a_new_target_incarnation(self):
+        game = self.session(12010611)
+        spell = self.add(game.engine, "Hell to Pay", zone="hand")
+        target = self.add(game.engine, "Grizzly Bears", seat="B")
+        blink = self.add(game.engine, "Flicker of Fate", zone="hand", seat="B")
+        self.add(game.engine, "Plains", seat="B")
+        self.add(game.engine, "Wastes", seat="B")
+        self.prepare(game, mana={"C": 5, "R": 1})
+        self.checkpoint(game)
+        identity = target.logical_object_id
+        self._cast_hell_to_pay(game, spell, target, 5)
+        self.cast_for(game, "B", blink, [target.ref])
+        self.resolve_top(game)
+        renewed = game.state.cards[target.object_id]
+        self.assertNotEqual(identity, renewed.logical_object_id)
+        self.assertIsNone(self.resolve(game))
+        self._hell_to_pay_tokens(game, 0)
+        self.assertEqual(0, game.state.cards[target.object_id].marked_damage)
+        self.replay(game, load=True)
+
+    def test_hell_to_pay_exact_compiler_requires_original_target_and_tapped_treasures(self):
+        card = self.db.lookup("Hell to Pay", fuzzy=False)
+        kwargs = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+
+        def exact():
+            compiled = compile_oracle_card(card, **kwargs)
+            self.assertEqual("exact", compiled.status, compiled.material_residuals)
+            node, = compiled.faces[0].nodes
+            self.assertIn(EXCESS_TREASURE_CAPABILITY, node.capability_dependencies)
+            self.assertIs(node.effects[0][EXCESS_TREASURE_FIELD]["token"]["tapped"], True)
+            self.assertEqual(["creature"], node.target_schema["types_any"])
+
+        exact()
+        for original, changed in (
+            ("target creature", "any target"), ("tapped Treasure", "Treasure"),
+            ("tapped Treasure", "tapped Gold"), ("excess damage", "damage"),
+        ):
+            ir = compile_oracle_card(replace(card, oracle_text=card.oracle_text.replace(original, changed)), **kwargs)
+            self.assertNotEqual("exact", ir.status)
+        with patch("quorune.compiler.damage_templates.excess_damage_tapped_treasure_template", return_value=None):
+            with self.assertRaises(AssertionError):
+                exact()
 
     def test_original_target_and_dealt_scopes_differ_after_prevention_and_expire(self):
         cases = (('Magma Spray', 'same', 'exile'), ('Pillar of Flame', 'same', 'graveyard'),

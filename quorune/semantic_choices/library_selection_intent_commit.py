@@ -6,8 +6,11 @@ from ..carddb_characteristics import library_reveal_printed_identity
 from ..errors import GameRuleError
 from ..private_opponent_library_cast_model import PRIVATE_OPPONENT_LIBRARY_CAST_DESTINATION
 from ..rules.library_selection import (
-    LibrarySelectionError, PRIVATE_PARTITION_BOTTOM_DESTINATION, commit_library_selection,
+    LibrarySelectionError,
+    PRIVATE_PARTITION_BOTTOM_DESTINATION,
+    commit_library_selection,
 )
+from ..rules.committed_quantity_followups import CommittedQuantityFollowup
 from ..semantic_runtime.intents import RevealLibraryCardsIntent
 from ..semantic_runtime.library_selection_intent import LibrarySelectionIntent
 
@@ -29,7 +32,7 @@ def announce_public_library_prefix(host, intent: RevealLibraryCardsIntent, objec
 def commit_library_selection_intent(
     self,
     intent: LibrarySelectionIntent,
-) -> tuple[str, ...]:
+) -> tuple[str, ...] | CommittedQuantityFollowup:
     try:
         looked = commit_library_selection(
             self,
@@ -42,6 +45,7 @@ def commit_library_selection_intent(
             selected_are_public=intent.selected_are_public,
             replacement_selections=intent.replacement_selections,
             entry_aura_target_ref=intent.entry_aura_target_ref,
+            committed_graveyard_treasure=intent.committed_graveyard_treasure,
             **({"require_graveyard_order": True, "graveyard_orders": intent.graveyard_orders}
                if intent.require_graveyard_order else {}),
         )
@@ -88,8 +92,14 @@ def commit_apnap_library_reveals(host, rounds, *, source_stack_ref, reason, repl
     from ..rules.library_selection import _validated_objects, place_library_remainder_on_bottom
     from ..zone_transitions import ZoneTransitionOwner
 
-    prepared = tuple((seat, arrangement, _validated_objects(host, actor=seat, player=seat, arrangement=arrangement))
-                     for seat, arrangement in rounds)
+    prepared = tuple(
+        (seat, arrangement, _validated_objects(
+            host, actor=seat, player=seat, arrangement=arrangement,
+            source_stack_ref=source_stack_ref, allow_searched_split=False,
+            looked_are_public=False, selected_are_public=True,
+        ))
+        for seat, arrangement in rounds
+    )
     moves = [(cards[ref].object_id, "hand") for _, arrangement, cards in prepared for ref in arrangement.selected_refs]
     if moves:
         ZoneTransitionOwner(host).move_cards_simultaneously(

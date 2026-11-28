@@ -137,7 +137,7 @@
         },
         "saga_intrinsic_ability_version": {
           "type": "integer",
-          "const": 1
+          "enum": [1, 2]
         },
         "commander_damage_identity_version": {
           "enum": [

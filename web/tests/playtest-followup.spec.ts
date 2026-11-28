@@ -12,6 +12,17 @@ for (const payLife of [true, false]) {
     try {
       const play = host.getByTestId("own-hand").getByRole("button", { name: "Play Arid Mesa", exact: true });
       await driveTo(pages, play, info, "Offer Arid Mesa from the opening hand");
+      if (payLife) {
+        await play.hover();
+        await host.keyboard.press("Alt");
+        const pinned = host.getByRole("complementary", { name: /Pinned card viewer.*Arid Mesa/ });
+        await expect(pinned).toBeVisible();
+        await host.mouse.move(3, 3);
+        await expect(pinned.locator(".inspector-text")).toHaveCSS("user-select", "text");
+        await expect(pinned).toContainText("Arid Mesa");
+        await host.keyboard.press("Alt");
+        await expect(pinned).toHaveCount(0);
+      }
       await clickMove(host, play);
       const mesa = boardCard(host, "Arid Mesa").first();
       await mesa.click();
@@ -22,6 +33,21 @@ for (const payLife of [true, false]) {
       const plains = selection.getByRole("button", { name: "Plains", exact: true });
       const steamVents = selection.getByRole("button", { name: "Steam Vents", exact: true });
       await expect(selection.getByRole("button", { name: "Forest", exact: true })).toHaveCount(0);
+      if (payLife) {
+        const filter = selection.getByRole("searchbox", { name: "Filter cards by name" });
+        await filter.fill("No eligible card with this name");
+        await filter.press("Enter");
+        await expect(selection).toContainText("No eligible cards match this search.");
+        await filter.fill("steam");
+        await expect(plains).toHaveCount(0);
+        await steamVents.click();
+        await selection.getByRole("button", { name: "Expand choice", exact: true }).click();
+        const expanded = host.getByRole("dialog");
+        await expect(expanded).toBeVisible();
+        await expect(expanded.getByRole("button", { name: "Steam Vents", exact: true })).toHaveAttribute("aria-pressed", "true");
+        await expanded.getByRole("button", { name: "Return to table", exact: true }).click();
+        await expect(steamVents).toHaveAttribute("aria-pressed", "true");
+      }
       await plains.click();
       await expect(selection.getByRole("button", { name: /pay 2 life/i })).toHaveCount(0);
       await steamVents.click();
@@ -75,7 +101,8 @@ test("@browser-rules a recorded stack loop waits for an opponent and stops on th
     await clickMove(host, shuko);
 
     const equip = host.getByTestId("decision-panel").locator('[data-testid^="action-activate:"]').filter({ hasText: /equip/i }).first();
-    const visibleAttachment = host.locator('.permanent-attachments[aria-label="Attached to Llanowar Elves"] .card-tile');
+    const attachmentGroup = host.getByRole("group", { name: "Attached to Llanowar Elves", exact: true });
+    const visibleAttachment = attachmentGroup.locator(".card-tile");
     async function useEquip() {
       await equip.click();
       await host.getByRole("button", { name: /Select Llanowar Elves/ }).first().click();
@@ -90,8 +117,13 @@ test("@browser-rules a recorded stack loop waits for an opponent and stops on th
     await expect(host.getByRole("region", { name: "Card viewer", exact: true })).toContainText("Shuko");
     const parentRect = (await boardCard(host, "Llanowar Elves").first().boundingBox())!;
     const attachedRect = (await visibleAttachment.boundingBox())!;
-    expect(attachedRect.y).toBeGreaterThan(parentRect.y);
-    await evidence(host, info, "equipment-under-creature");
+    expect(attachedRect.x).toBeGreaterThanOrEqual(parentRect.x + parentRect.width);
+    expect(attachedRect.y).toBeLessThan(parentRect.y + parentRect.height);
+    await expect(host.locator(".has-attached-cards .attachment-connector")).toBeVisible();
+    await visibleAttachment.focus();
+    await expect(visibleAttachment).toBeFocused();
+    await expect(host.getByRole("region", { name: "Card viewer", exact: true })).toContainText("Shuko");
+    await evidence(host, info, "equipment-beside-creature");
 
     const loop = host.locator(".loop-controls");
     await loop.locator("summary").click();
@@ -175,4 +207,21 @@ test("@browser-rules trigger cards reorder by resolution and graveyard cards fil
   await advance.click();
   await expect(skip).not.toBeChecked();
   await expect(passes).toHaveText("2");
+});
+
+
+test("@browser-rules entry designation starts with deck types and searches the full catalog", async ({ page }) => {
+  await page.goto("/");
+  await page.evaluate(async () => {
+    const path = "/tests/support/playtest-surface.tsx";
+    (await import(path)).mountPlaytestSurface("entry-type");
+  });
+  const choice = page.getByTestId("contextual-decision");
+  await expect(choice.getByRole("radio", { name: "Elf", exact: true })).toBeVisible();
+  await expect(choice.getByRole("radio", { name: "Brushwagg", exact: true })).toHaveCount(0);
+  await expect(choice).not.toContainText("A87");
+  await choice.getByRole("searchbox", { name: "Search all creature types" }).fill("brush");
+  await choice.getByRole("radio", { name: "Brushwagg", exact: true }).check();
+  await choice.getByTestId("submit-choice").click();
+  await expect(page.locator("body")).toHaveAttribute("data-chosen-type", "A87:brushwagg");
 });

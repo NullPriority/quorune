@@ -96,8 +96,12 @@ def mark_multikicker_paid(card: CardInstance, context) -> None:
 
 
 def stack_entry_cast_facts(card: CardInstance, *, include_multikicker_result=False):
+    from .beheld_exile_state import PAID_BEHELD_EXILE_FIELD, PaidBeheldExile
+
     value = card.annotations.get(PAID_ENTRY_COPY_FIELD)
     return {'cast_option': 'kicked' if card.annotations.get(KICKER_ANNOTATION) is True else None,
+        **({'paid_beheld_exile': PaidBeheldExile.from_dict(card.annotations[PAID_BEHELD_EXILE_FIELD])}
+           if card.zone == 'stack' and PAID_BEHELD_EXILE_FIELD in card.annotations else {}),
         **({MULTIKICKER_FIELD: validate_multikicker_fact(card.annotations[MULTIKICKER_FIELD])}
            if include_multikicker_result and card.zone == 'stack' and MULTIKICKER_FIELD in card.annotations else {}),
         **({'declared_cast_costs': DeclaredCastCostFacts.from_dict(card.annotations[DECLARED_CAST_COSTS_FIELD]).to_dict()}
@@ -521,6 +525,11 @@ def reset_card_after_zone_change(
         "object_characteristics",
         "token_characteristics",
     }
+    from .rules.name_stickers import PLACEMENTS
+    from .zone_transition_model import PUBLIC_ZONES
+
+    if card.zone in PUBLIC_ZONES and destination in PUBLIC_ZONES and PLACEMENTS in card.annotations:
+        retained_annotation_keys.add(PLACEMENTS)
     if card.is_token or card.object_kind in {
         "spell_copy",
         "card_copy",

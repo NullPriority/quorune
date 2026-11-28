@@ -63,7 +63,25 @@ def static_block_capacity_handler(text, *, source_name):
 
 def temporary_block_capacity_template(text, *, source_name, source_is_permanent, source_card_types):
     from .fixed_resolution_characteristics import _subject
-    from ..block_capacity_rule_model import TEMPORARY_BLOCK_CAPACITY_MECHANIC
+    from ..block_capacity_rule_model import REQUIRED_BLOCK_CAPACITY_MECHANIC, TEMPORARY_BLOCK_CAPACITY_MECHANIC
+    if not source_is_permanent and re.fullmatch(
+        r'Target creature defending player controls can block any number of creatures this turn\.\s+'
+        r'It blocks each attacking creature this turn if able\.?', text.strip(), re.I,
+    ):
+        from ..rules.block_capacity_effect import defending_creature_target_schema
+
+        effect = {
+            'op': 'apply_source_characteristics_until_end_of_turn',
+            'schema_version': 10,
+            'card': '$target.0',
+            'capacity': BlockCapacitySpec(unlimited=True).to_dict(),
+            'power': 0,
+            'toughness': 0,
+            'require_each_attacker': True,
+        }
+        return ('temporary-block-capacity-and-requirement-v1', (effect,), defending_creature_target_schema(),
+                (TEMPORARY_BLOCK_CAPACITY_MECHANIC, REQUIRED_BLOCK_CAPACITY_MECHANIC,
+                 'cr-611-continuous-effects', 'cr-115-targets'))
     match = re.fullmatch(
         r'(?P<subject>.+?) (?:(?:gets (?P<p>[+-]\d+)/(?P<t>[+-]\d+) until end of turn and )?)'
         r'can block (?:(?:an additional (?P<count>creature|one creature|two creatures|three creatures|seven creatures|ninety-nine creatures))|'

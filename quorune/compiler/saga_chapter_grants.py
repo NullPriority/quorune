@@ -17,6 +17,26 @@ _SELF_GRANT = re.compile(r'This Saga gains "(?P<activation>[^"\n]+)"\.?', re.IGN
 _TOKEN_QUOTE = re.compile(r"(?P<activation>.+\btoken with) '(?P<ability>[^'\n]+)'", re.IGNORECASE)
 
 
+def _saga_token_chapter_plan(chapter, values):
+    if len(chapter.chapters) != 1 or not chapter.body.casefold().startswith("create ") or '"' not in chapter.body:
+        return None
+    nodes = typed_token_ability_nodes(
+        record=values["record"], face_id=values["face_id"], node_id=values["node_id"],
+        line=values["line"], material_line=chapter.body, span=values["span"],
+        source_name=values["source_name"], effect_template=values["effect_template"],
+        keywords=values["keywords"], printed_card_types=values["printed_card_types"],
+        source_attachment_relation=values["source_attachment_relation"], trusted_mechanics=values["trusted_mechanics"],
+        capability_registry=values["capability_registry"], capability_profile=values["capability_profile"],
+        compile_inner=values["compile_inner"], trigger_node=values["trigger_node"],
+        grant_effect_templates=values["grant_effect_templates"], saga_chapter_body=True,
+    )
+    if nodes is None:
+        return None
+    outer, *children = nodes
+    return ((outer.template_id, outer.effects, outer.target_schema, outer.mechanics),
+            tuple(children), outer.capability_dependencies)
+
+
 def saga_chapter_grant(
     body, *, record, face_id, node_id, line, span, type_line, printed_card_types,
     compile_inner, trigger_node, grant_effect_templates, trusted_mechanics,
@@ -89,6 +109,30 @@ def saga_chapter_grant(
     )
 
 
+_LIBRARY_EXILE_CHAPTERS = (
+    r"Search your library for a card, exile it face down, then shuffle[.]",
+    r"Turn the exiled card face up[.] If it['’]s a creature card, you lose life equal to its mana value[.]",
+    r"You may put the exiled card onto the battlefield if it['’]s a creature card[.] "
+    r"If you don['’]t put it onto the battlefield, put it into its owner['’]s hand[.]",
+)
+
+
+def _linked_library_exile_chapter_plan(record, chapter):
+    from ..linked_library_imprint_model import LINKED_SAGA_LIBRARY_MECHANIC, linked_saga_library_chapter_effects
+
+    if record.layout not in {"normal", "saga"} or record.faces or len(chapter.chapters) != 1:
+        return None
+    rows = tuple(parsed for line in record.oracle_text.splitlines() if (parsed := saga_chapter_line(line)) is not None)
+    if len(rows) != 3 or any(
+        row.chapters != (number,) or re.fullmatch(pattern, row.body, re.I) is None
+        for number, (pattern, row) in enumerate(zip(_LIBRARY_EXILE_CHAPTERS, rows), 1)
+    ):
+        return None
+    number, = chapter.chapters
+    return (("linked-saga-library-chapter-v1", linked_saga_library_chapter_effects(number), None,
+             (LINKED_SAGA_LIBRARY_MECHANIC,)), (), ())
+
+
 def compile_early_material_nodes_with_saga_grants(*, type_line: str, **values):
     """Route printed Saga self-grants through their bounded source compiler."""
     chapter = saga_chapter_line(values["material_line"]) if values["saga_chapters"] else None
@@ -98,7 +142,7 @@ def compile_early_material_nodes_with_saga_grants(*, type_line: str, **values):
         or not set(chapter.chapters).issubset(values["saga_chapters"])
     ):
         return compile_early_material_nodes(**values)
-    grant = saga_chapter_grant(
+    grant = _linked_library_exile_chapter_plan(values["record"], chapter) or saga_chapter_grant(
         chapter.body, record=values["record"], face_id=values["face_id"],
         node_id=values["node_id"], line=values["line"], span=values["span"], type_line=type_line,
         printed_card_types=values["printed_card_types"], compile_inner=values["compile_inner"],
@@ -106,6 +150,8 @@ def compile_early_material_nodes_with_saga_grants(*, type_line: str, **values):
         trusted_mechanics=values["trusted_mechanics"], capability_registry=values["capability_registry"],
         capability_profile=values["capability_profile"],
     )
+    if grant is None:
+        grant = _saga_token_chapter_plan(chapter, values)
     if grant is None:
         return compile_early_material_nodes(**values)
     return ordinary_saga_chapter_nodes(

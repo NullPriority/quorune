@@ -589,6 +589,34 @@ def _unresolved_source_materials(record, oracle_ir, trusted_programs, capability
     return tuple(unresolved), frozenset(legacy_coverage), source_lines, activation_lines
 
 
+def _oracle_ir_report(oracle_ir, status: str, trusted_programs) -> dict[str, Any]:
+    return {
+        "schema_version": oracle_ir.schema_version,
+        "compiler_version": oracle_ir.compiler_version,
+        "semantic_hash": oracle_ir.semantic_hash,
+        "status": oracle_ir.status,
+        "material_residual_count": len(
+            oracle_ir.material_residuals
+        ),
+        "material_residuals": [
+            {
+                "kind": residual.kind,
+                "reason": residual.reason,
+                "source_line": residual.span.line,
+                "blockers": list(residual.blockers),
+            }
+            for residual in oracle_ir.material_residuals
+        ],
+        "covered_by_trusted_card_semantics": (
+            status == "fully_playable"
+            and bool(trusted_programs)
+        ),
+        "covered_by_existing_trusted_runtime": (
+            status == "fully_playable"
+        ),
+    }
+
+
 def card_semantic_status(
     record: CardRecord,
     registry: SemanticRegistry,
@@ -702,6 +730,7 @@ def card_semantic_status(
                 re.IGNORECASE,
             )
         )
+        # Generated abilities on split faces use face-local line indices.
         if (
             not builtin_fetch
             and not _trusted_activated_ability_is_covered(ability, trusted_programs, trusted_ids, bound_activation_lines)
@@ -827,31 +856,7 @@ def card_semantic_status(
         "intentionally_ignored_reasons": ignored_reasons,
         "unresolved": unresolved,
         "programs": program_rows,
-        "oracle_ir": {
-            "schema_version": oracle_ir.schema_version,
-            "compiler_version": oracle_ir.compiler_version,
-            "semantic_hash": oracle_ir.semantic_hash,
-            "status": oracle_ir.status,
-            "material_residual_count": len(
-                oracle_ir.material_residuals
-            ),
-            "material_residuals": [
-                {
-                    "kind": residual.kind,
-                    "reason": residual.reason,
-                    "source_line": residual.span.line,
-                    "blockers": list(residual.blockers),
-                }
-                for residual in oracle_ir.material_residuals
-            ],
-            "covered_by_trusted_card_semantics": (
-                status == "fully_playable"
-                and bool(trusted_programs)
-            ),
-            "covered_by_existing_trusted_runtime": (
-                status == "fully_playable"
-            ),
-        },
+        "oracle_ir": _oracle_ir_report(oracle_ir, status, trusted_programs),
     }
 
 

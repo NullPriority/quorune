@@ -7,6 +7,8 @@ from typing import Any, Mapping
 from ..cycling_abilities import (
     CYCLING_HANDLER_ID,
     TYPECYCLING_HANDLER_ID,
+    VARIABLE_CYCLING_CAPABILITY,
+    VARIABLE_CYCLING_HANDLER_ID,
     CyclingAbilityError,
     OrdinaryCyclingAbilitySpec,
     TypecyclingAbilitySpec,
@@ -55,7 +57,10 @@ class OrdinaryCyclingAbilityHandler:
         if not isinstance(ability, Mapping):
             raise SemanticNodeError("Cycling ability must be an object")
         try:
-            return OrdinaryCyclingAbilitySpec.from_dict(ability)
+            spec = OrdinaryCyclingAbilitySpec.from_dict(ability)
+            if (spec.announced_x_symbols is not None) != (self.schema_version == 2):
+                raise CyclingAbilityError("Cycling descriptor and retained X versions do not match")
+            return spec
         except CyclingAbilityError as exc:
             raise SemanticNodeError(str(exc)) from exc
 
@@ -66,6 +71,13 @@ class OrdinaryCyclingAbilityHandler:
     ) -> tuple[OrdinaryCyclingAbilitySpec, ...]:
         del context
         return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
+class VariableCyclingAbilityHandler(OrdinaryCyclingAbilityHandler):
+    handler_id: str = VARIABLE_CYCLING_HANDLER_ID
+    schema_version: int = 2
+    capability_dependencies: tuple[str, ...] = (VARIABLE_CYCLING_CAPABILITY,)
 
 
 @dataclass(frozen=True, slots=True)
@@ -132,7 +144,7 @@ class CyclingAbilityRegistry(
 @lru_cache(maxsize=1)
 def default_cycling_ability_registry() -> CyclingAbilityRegistry:
     registry = CyclingAbilityRegistry(
-        (OrdinaryCyclingAbilityHandler(), TypecyclingAbilityHandler())
+        (OrdinaryCyclingAbilityHandler(), VariableCyclingAbilityHandler(), TypecyclingAbilityHandler())
     )
     registry.require_registered_capabilities(
         load_default_capability_registry()

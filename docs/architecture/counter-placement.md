@@ -121,9 +121,29 @@ ends before the corresponding trigger dispatch or placement commit.
 Ordinary canonical lore placements publish each crossed Saga chapter once,
 after all placements in the instruction commit. Counter movements use that
 same placement boundary. Chapter and ordinary counter occurrences enter one
-pending trigger batch before the final-chapter state-based action runs. Saga
+pending trigger batch before the final-chapter state-based action runs. The
+untargeted flying-counter batch snapshots current creatures controlled by its
+resolving controller and excludes those that already have flying, including
+flying granted by another effect or an existing counter. Saga
 entry and intrinsic turn progression retain their separately owned chapter
 batches, so these paths do not dispatch a chapter twice.
+
+A chapter that distributes three +1/+1 counters requires one to three distinct
+creatures controlled by the trigger controller. The controller divides the
+counters as the ability goes on the stack. The public stack projects the
+original slot shares. Resolution discards shares for targets that became illegal
+and uses a single replacement-aware counter transaction for the surviving slots.
+
+A fixed creature-token instruction followed by a vigilance counter uses two
+ordered results. The token creation completes before the resolving controller
+chooses one current creature they control, so the new token can receive the
+counter. The public object choice pins the selected incarnation and sends
+placement through the canonical counter transaction.
+
+A sorcery-speed Saga return activation binds its paid X to the target's exact
+mana value. The returned object receives its finality counter in the canonical
+entry proposal. A successful entry grants haste to the new incarnation until
+end of turn through the existing continuous-effect owner.
 
 The compiler admits source-self and closed public permanent predicates, with
 separate placing-player and recipient-controller relations. Threshold, first-
@@ -465,6 +485,12 @@ instructions. This family adds no counter write path and excludes optional,
 modal, conditional, variable, linked, repeated, movement, and affected-set
 variants.
 
+A controlled nontoken creature entry can also place one mandatory +1/+1
+counter on the recorded entrant and then draw one card for the trigger
+controller. The counter instruction uses the entrant's recorded incarnation.
+If the entrant leaves before resolution, the draw still resolves and a later
+incarnation cannot receive the original counter.
+
 ## Current producer inventory
 
 The shared transaction currently owns the typed `place_counters` operation,
@@ -635,7 +661,20 @@ without intrinsic lore. When no current chapter abilities remain, it gains no
 lore from the turn action and skips the final-chapter sacrifice check. Existing
 lore counters stay on the permanent. The Game Record pins the applicable Saga
 behavior for replay. Untrusted chapter programs, arbitrary lore-counter
-movement, and unrepresented Read Ahead and chapter grants remain fail-closed.
+movement and other unrepresented chapter grants remain fail-closed. A controlled Saga
+can receive Read Ahead from a current battlefield static component. The prospective
+layer-six view determines whether that choice applies, then the same replacement
+owner used by printed Read Ahead handles the choice. Later lore placements during
+the entry turn check the Saga's current Read Ahead ability.
+
+The stack resolution owner observes successful final chapter completions
+after the chapter leaves the stack and before state-based actions. The
+occurrence matches the Saga's current battlefield incarnation, highest
+chapter, and controller. An observer that enters during the chapter can
+see its completion. Earlier chapters, countered abilities, and departed
+incarnations do not emit this event. The shared public counter aggregate
+also supports counting only lore counters among current controlled Sagas
+for static characteristics.
 
 Effect-generated entry counters use the same nested replacement tree through
 an immutable `EffectEntryCounter`. The instruction pins the physical card's
@@ -1087,15 +1126,17 @@ pins physical and logical permanent identity plus every positive counter kind;
 one additional counter of each kind then enters one simultaneous
 replacement-aware batch. The transaction permits an empty selection and
 rejects a changed subject or counter-kind snapshot before any counter changes.
-A complete activated result of `Proliferate twice.` composes two ordinary
-instructions in printed order. Each instruction opens its own selection and
+A complete activated result or a single source entry-or-attack trigger with
+`Proliferate twice.` composes two ordinary instructions in printed order. The
+trigger has separate source-bound subscriptions for entry and attack
+declaration. Each instruction opens its own selection from the current counters and
 finishes any counter replacement choices before the next instruction. The
 same resolution continues without priority or state-based actions between
 the two instructions. Variable repetition, Proliferate replacement effects,
 Two-Headed Giant shared poison totals, and broader granted/copy propagation
 remain outside this scope.
 
-New Proliferate instructions carry a choice-order version. The native offer
+A versioned counter-quantity provider can bind one order across the positive\nkinds of a single placement on one permanent. The affected controller chooses\nfrom the applicable replacements. Each selection applies to all eligible kinds,\nand a kind-specific replacement changes only its own kinds. Prospective entry\nuses its containing entry event to scope the same choice. Other permanents retain\ntheir independent APNAP choices. Existing records keep their saved event ordering.\nIn the supported singleton-team profiles, the printed team relation selects\npermanents controlled by the current ability source controller.\n\nNew Proliferate instructions carry a choice-order version. The native offer
 lists eligible permanents by reference, followed by eligible players in seat
 order. Game Record v3 can also resume the sealed choice order from an
 unversioned instruction.
@@ -1268,9 +1309,21 @@ validates the full counter map, snapshots and revalidates the selected kind,
 and commits only that kind. No matching counters is a no-op. The original
 all-kinds descriptor omits the selector and retains its interpretation.
 
+A controller life-gain trigger can place the actual committed gain as named
+counters on its original source. The follow-up reads that incarnation's
+live count after placement and replacements. Meeting its threshold removes
+all counters of the specified kind and attempts an ordinary untap. Other
+counter kinds remain, and stun can replace the untap independently.
+
 Evolve checks the entrant's live power and toughness while the original
 incarnation remains on the battlefield. The zone transition owner seals its
 public characteristics immediately before departure and attaches them to the
 original pending or stacked trigger. A returned object has a new incarnation.
 Game Records written before the Evolve entrant observation version replay with
 their original condition behavior.
+
+An attacking source can offer a private optional discard before awarding
+experience. The later instruction reads distinct players in the committed
+current-turn discard journal and includes an accepted discard. The activated
+source modifier reads the ability controller's current experience at resolution
+and grants Menace even when that count is zero.

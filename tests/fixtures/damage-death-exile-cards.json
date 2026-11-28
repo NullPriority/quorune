@@ -887,6 +887,55 @@
       "released_at": "2010-10-01",
       "toughness": "1",
       "type_line": "Artifact Creature — Myr"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Treasure"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{X}{R}",
+      "name": "Hell to Pay",
+      "oracle_id": "7dc7d90d-5979-4c4a-9183-392e0e0b878a",
+      "oracle_text": "Hell to Pay deals X damage to target creature. Create a number of tapped Treasure tokens equal to the amount of excess damage dealt to that creature this way.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-04-19",
+      "toughness": null,
+      "type_line": "Sorcery"
     }
   ],
   "rulings": [
@@ -990,6 +1039,18 @@
       "comment": "If Betrayer's Bargain resolves, its effect causes the creature to be exiled any time it would die that turn, not just if it would die as a result of damage dealt by Betrayer's Bargain.",
       "oracle_id": "bfb3d862-d92d-4a4f-9a22-671b55d954fd",
       "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "Excess damage has been dealt to a creature if the damage dealt to it is greater than lethal damage. Usually, this means damage greater than its toughness, although damage already marked on the creature is taken into account.",
+      "oracle_id": "7dc7d90d-5979-4c4a-9183-392e0e0b878a",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "In some unusual cases, Hell to Pay may have deathtouch. Even 1 damage dealt to a creature from a source with deathtouch is considered lethal damage, so any amount greater than that will cause excess damage to be dealt, even if the total amount of damage isn’t greater than the creature’s toughness.",
+      "oracle_id": "7dc7d90d-5979-4c4a-9183-392e0e0b878a",
+      "published_at": "2024-04-12",
       "source": "wotc"
     }
   ],

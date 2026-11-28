@@ -288,6 +288,8 @@ def pin_targeting_source_departures(host,cards,*,error_type=GameRuleError,phase_
     from .trigger_processing import replace_pending_trigger_batch
     try:
         departures={(c.object_id,c.logical_object_id):c for c in cards}
+        from .trigger_processing import pin_same_turn_cast_keyword_source_departures
+        pin_same_turn_cast_keyword_source_departures(host, departures)
         updates={};pending=[]
         frames=[item.to_dict() for item in host.state.stack]
         for batch in host.state.pending_trigger_batches:

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "fixture_kind": "opening_hand_battlefield_candidates",
-  "source": "Pinned opening-hand battlefield originals and rulings; generic shared controls use the canonical compact fixture.",
+  "source": "Pinned hand-action originals and rulings; generic shared controls use the canonical compact fixture.",
   "cards": [
     {
       "oracle_id": "492e0e6c-8c27-4376-938b-f8a8b6205810",
@@ -1331,6 +1331,51 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "4e734493-9cb8-4409-8a30-cc15d519a27e",
+      "name": "Serum Powder",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Artifact",
+      "oracle_text": "{T}: Add {C}.\nAny time you could mulligan and this card is in your hand, you may exile all the cards from your hand, then draw that many cards. (You can do this in addition to taking mulligans.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2017-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
   ],
   "rulings": [
@@ -1525,6 +1570,18 @@
       "published_at": "2021-03-19",
       "source": "wotc",
       "comment": "Vampire Hexmage's ability can't target a permanent card in a zone other than the battlefield, such as a suspended card."
+    },
+    {
+      "oracle_id": "4e734493-9cb8-4409-8a30-cc15d519a27e",
+      "published_at": "2017-11-17",
+      "source": "wotc",
+      "comment": "The cards in your hand are exiled for the rest of the game; they aren't shuffled back into your library if you take another mulligan. Cards exiled are always face up unless the effect that exiled them says they aren't. Be sure to return those cards to your deck for your next game."
+    },
+    {
+      "oracle_id": "4e734493-9cb8-4409-8a30-cc15d519a27e",
+      "published_at": "2017-11-17",
+      "source": "wotc",
+      "comment": "You can use Serum Powder's second ability only while it's in your hand. If this card is in your hand, you can choose either to mulligan or to use Serum Powder's ability. Using the ability doesn't prevent you from taking further mulligans, and taking a mulligan doesn't prevent you from using a Serum Powder's ability if you happen to draw one in your new hand."
     }
   ]
 }

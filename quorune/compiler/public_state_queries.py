@@ -1391,6 +1391,23 @@ def _fixed_public_state_condition(
                 scope=CharacteristicQuantityScope.CONTROLLER_ZONE, schema_version=2,
                 query=ObjectQuerySpec(zones=('battlefield',), types_all=('creature',)),
                 reduction=CharacteristicQuantityReduction.TOTAL_COUNTERS))
+    lore_total = re.fullmatch(
+        r"there are (?P<amount>one|two|three|four|five|six|seven|eight|nine|ten|[0-9]+)"
+        r" or more lore counters among Sagas you control", normalized, re.I,
+    )
+    if lore_total is not None:
+        from ..characteristic_fragments import CharacteristicQuantityReduction
+        amount = _fixed_condition_amount(lore_total["amount"])
+        if amount is None or amount <= 0:
+            return None
+        return FixedPublicStateConditionSpec(
+            FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST, amount=amount, schema_version=2,
+            quantity=CharacteristicQuantitySpec(
+                scope=CharacteristicQuantityScope.CONTROLLER_ZONE, schema_version=2,
+                query=ObjectQuerySpec(zones=("battlefield",), subtypes_any=("saga",)),
+                counter_name="lore", reduction=CharacteristicQuantityReduction.NAMED_COUNTER_TOTAL,
+            ),
+        )
     if re.fullmatch(rf"{_condition_source_subject_pattern(source_name)} has (?:a|one or more) counters? on it", normalized, re.I):
         return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,
             schema_version=2, predicate=ObjectQuerySpec(zones=('battlefield',),

@@ -1138,9 +1138,9 @@ def temporary_declaration_restriction_node_capabilities(
         return ()
     effect = effects[0]
     from .temporary_attack_requirements import (
-        LIVE_OPPONENT_ATTACK_RULE, live_opponent_attack_node_capabilities,
+        LIVE_OPPONENT_ATTACK_RULES, live_opponent_attack_node_capabilities,
     )
-    if effect.get("restriction") == LIVE_OPPONENT_ATTACK_RULE:
+    if effect.get("restriction") in LIVE_OPPONENT_ATTACK_RULES:
         return live_opponent_attack_node_capabilities(effect, target_schema, mechanic_ids)
     if NEXT_TURN_EFFECT_FIELD in effect:
         try:

@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import replace
+import gzip
 import hashlib
+from io import BytesIO
 import json
 from pathlib import Path
 import tempfile
 from typing import Mapping
+import zlib
 
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckLoader
@@ -39,7 +42,8 @@ from scripts.test_shards import load_manifest as load_test_shards
 
 REPORT_SCHEMA_VERSION = 1
 PACKED_REPORT_SCHEMA_VERSION = 2
-COMPACT_CI_REPORT_PATH = Path("coverage/compact-ci-card-dependencies.json")
+COMPACT_CI_REPORT_PATH = Path("coverage/compact-ci-card-dependencies.json.gz")
+COMPACT_CI_REPORT_MARKDOWN_PATH = Path("coverage/compact-ci-card-dependencies.md")
 
 
 def _policy_text_fingerprint(path: Path) -> str:
@@ -102,6 +106,7 @@ def build_dependency_report(
         (str(row["source"]), str(row["symbol"])): row
         for row in manifest["dynamic_requirements"]
     }
+    declared_sites = frozenset(declarations)
     used_declarations: set[tuple[str, str]] = set()
     requirements_by_module: dict[str, set[Requirement]] = {}
     unresolved: list[DynamicSite] = []
@@ -109,7 +114,7 @@ def build_dependency_report(
     sources = DependencySourceScope()
     for module in compact_modules:
         discovered, dynamic_sites, errors = discover_module_requirements(
-            module, root=root, sources=sources
+            module, root=root, sources=sources, declared_sites=declared_sites
         )
         discovery_errors.extend(errors)
         module_requirements = set(discovered)
@@ -347,9 +352,23 @@ def dependency_report_json(report: Mapping[str, object]) -> str:
     return stable_json(packed) + "\n"
 
 
+def dependency_report_bytes(report: Mapping[str, object]) -> bytes:
+    """Store the complete packed report as a gzip stream with a fixed header."""
+    buffer = BytesIO()
+    with gzip.GzipFile(filename="", mode="wb", fileobj=buffer, mtime=0) as stream:
+        stream.write(dependency_report_json(report).encode("utf-8"))
+    return buffer.getvalue()
+
+
 def load_dependency_report(path: Path) -> dict[str, object]:
-    """Read the earlier inline report or expand the canonical packed report."""
-    report = json.loads(path.read_bytes())
+    """Expand a current compressed report or a historical JSON report."""
+    payload = path.read_bytes()
+    if path.suffix == ".gz":
+        try:
+            payload = gzip.decompress(payload)
+        except (OSError, EOFError, zlib.error) as exc:
+            raise ValueError("Invalid gzip compact dependency report") from exc
+    report = json.loads(payload)
     version = report.get("schema_version") if isinstance(report, dict) else None
     if type(version) is not int or version not in {REPORT_SCHEMA_VERSION, PACKED_REPORT_SCHEMA_VERSION}:
         raise ValueError("Unsupported compact dependency report schema")
@@ -402,8 +421,8 @@ def _require_canonical_dependency_report(
     _require_current_dependency_report(report, root=root)
     json_output = root / COMPACT_CI_REPORT_PATH
     if (
-        json_output.read_text(encoding="utf-8") != dependency_report_json(report)
-        or json_output.with_suffix(".md").read_text(encoding="utf-8") != report_markdown(report)
+        json_output.read_bytes() != dependency_report_bytes(report)
+        or (root / COMPACT_CI_REPORT_MARKDOWN_PATH).read_text(encoding="utf-8") != report_markdown(report)
     ):
         raise GeneratedOwnerCacheError("Compact dependency report is open or stale")
 

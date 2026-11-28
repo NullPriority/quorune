@@ -7,6 +7,60 @@ from public_state_action_support import PublicStateActionFixture
 
 
 class AdditionalConditionalModifierRuntimeTests(PublicStateActionFixture, unittest.TestCase):
+    def test_colossal_grave_reaver_chooses_one_creature_from_the_real_mill_group(self):
+        from quorune.record import authoritative_state_hash
+
+        for has_choice in (False, True):
+            with self.subTest(has_choice=has_choice):
+                s = self.session(3640307 + int(has_choice))
+                e = s.engine
+                source = self.add(e,"Colossal Grave-Reaver",zone="hand")
+                first = self.add(e,"Generic Bound Body",zone="library",ref="mill-creature-first")
+                second = self.add(e,"Generic Bound Body" if has_choice else "Generic Bound Plains",
+                                  zone="library",ref="mill-second-card")
+                land = self.add(e,"Generic Bound Plains",zone="library",ref="mill-third-land")
+                self.assert_whole_admission(source.printed_name)
+                action = self.ready(s,source,{"C":6,"B":1,"G":1})
+                self.checkpoint(s)
+                cast = s.act("pilot:A", {"action_id":action["id"],"pay":"auto"})
+                self.assertTrue(cast.ok, cast.summary)
+                pending = self.resolve(s)
+                if has_choice:
+                    self.assertEqual(("semantic.choice",["A"]), (pending.kind,pending.actors))
+                    options = s.packet("pilot:A",full=True)["decision"]["ctx"]["objects"]
+                    self.assertEqual([first.ref,second.ref],sorted(row["id"] for row in options))
+                    before = authoritative_state_hash(s.state)
+                    self.assertFalse(s.act("pilot:B",{"action_id":"choose","card":first.ref}).ok)
+                    self.assertFalse(s.act("pilot:A",{"action_id":"choose","card":land.ref}).ok)
+                    self.assertEqual(before, authoritative_state_hash(s.state))
+                    s = self.replay(s,load=True)
+                    chosen = s.act("pilot:A",{"action_id":"choose","card":first.ref})
+                    self.assertTrue(chosen.ok,chosen.summary)
+                    self.assertIsNone(self.resolve(s))
+                else:
+                    self.assertIsNone(pending)
+                self.assertEqual(["battlefield","graveyard","graveyard"],[
+                    s.state.cards[card.object_id].zone for card in (first,second,land)
+                ])
+                self.replay(s,load=True)
+
+    def test_colossal_grave_reaver_requires_the_complete_original_group_and_result(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.library_creature_arrival import CAPABILITY
+
+        card = self.db.lookup("Colossal Grave-Reaver",fuzzy=False)
+        arguments={"capability_registry":self.registry,"capability_profile":"commander_review"}
+        ir=compile_oracle_card(card,**arguments)
+        self.assertEqual("exact",ir.status,ir.material_residuals)
+        self.assertTrue(any(CAPABILITY in node.capability_dependencies for face in ir.faces for node in face.nodes))
+        for oracle in (card.oracle_text.replace("creature cards","cards"),
+                       card.oracle_text.replace("put one of them","put them")):
+            self.assertTrue(compile_oracle_card(replace(card,oracle_text=oracle),**arguments).material_residuals)
+        with patch("quorune.rules.library_creature_arrival.arrival_node_capabilities",return_value=()):
+            self.assertTrue(compile_oracle_card(card,**arguments).material_residuals)
+
     def test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays(self):
         session = self.session(3640301)
         engine = session.engine

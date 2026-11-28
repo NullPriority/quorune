@@ -222,6 +222,13 @@ def _commit_phasing(host, transitions, *, tapped_returns=frozenset()):
     end_pairs_containing(host, tuple(card.object_id for card, transition in affected if transition.out),
                          reason="paired object phased out")
     synchronize_control_effects(host, reason="phasing status changed")
+    from .hideaway_model import has_current_hideaway_source
+
+    for card, transition in affected:
+        if not transition.out and has_current_hideaway_source(card):
+            from .rules.hideaway_library import grant_hideaway_control_view
+
+            grant_hideaway_control_view(host, card, card.controller)
     return tuple(affected)
 
 

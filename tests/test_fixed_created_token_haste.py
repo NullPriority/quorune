@@ -61,6 +61,86 @@ class FixedCreatedTokenHasteTests(InheritedNativeFixture, unittest.TestCase):
         return {card.object_id: card for card in game.state.cards.values()
                 if card.zone == "battlefield" and card.is_token}
 
+    def test_loyal_apprentice_checks_commander_on_both_boundaries_and_hastes_only_its_thopter(self):
+        for seed, mode in enumerate(("absent", "commander_taken", "source_taken"), 61258201):
+            with self.subTest(mode=mode):
+                game = self.session(seed)
+                source = self.add(game.engine, "Loyal Apprentice")
+                other = self.add(game.engine, "Grizzly Bears")
+                commander, = (card for card in game.state.cards.values()
+                              if card.is_commander and card.owner == "A")
+                theft = None
+                if mode != "absent":
+                    theft = self.add(game.engine, "Turn Against", seat="B", zone="hand")
+                    for index in range(5):
+                        self.add(game.engine, "Mountain", seat="B", ref=f"loyal-response-mana-{index}")
+                    self.start(game, source, theft, mana={"W": 1})
+                    self.cast(game, "A", commander)
+                    self.assertIsNone(self.resolve(game))
+                    commander = game.state.cards[commander.object_id]
+                    self.assertEqual("battlefield", commander.zone)
+                else:
+                    self.start(game, source)
+
+                self.assertTrue(has_effective_haste(game.engine, source))
+                self.until(game, lambda session: session.state.step == "beginning_combat")
+                self.assertEqual(int(mode != "absent"), self.trigger_count(game, source))
+                if mode == "absent":
+                    self.assertFalse(self.tokens(game))
+                    continue
+
+                target = commander if mode == "commander_taken" else source
+                self.cast(game, "B", theft, [target.ref])
+                self.resolve_top(game)
+                self.assertEqual("B", game.state.cards[target.object_id].controller)
+                self.assertEqual(1, self.trigger_count(game, source))
+                self.assertIsNone(self.resolve(game))
+                if mode == "commander_taken":
+                    self.assertFalse(self.tokens(game))
+                    continue
+
+                token, = self.tokens(game).values()
+                self.assertEqual(("Thopter Token", "A", "A"),
+                                 (token.printed_name, token.owner, token.controller))
+                data = game.engine._effective_card_data(token.object_id)
+                self.assertIn("Artifact Creature", data["type_line"])
+                self.assertIn("Thopter", data["type_line"])
+                self.assertIn("Flying", data["keywords"])
+                self.assertEqual((1, 1), (game.engine._numeric_stat(token.object_id, "power"),
+                                          game.engine._numeric_stat(token.object_id, "toughness")))
+                self.assertTrue(has_effective_haste(game.engine, token))
+                self.assertFalse(has_effective_haste(game.engine, other))
+                self.attack(game, [(token, "B")])
+                turn = game.state.turn_sequence
+                self.until(game, lambda session: session.state.turn_sequence > turn)
+                self.assertFalse(has_effective_haste(game.engine, game.state.cards[token.object_id]))
+                self.assertTrue(has_effective_haste(game.engine, game.state.cards[source.object_id]))
+                self.replay(game, load=True)
+
+    def test_loyal_apprentice_requires_commander_and_singular_created_token_authority(self):
+        card = self.db.lookup("Loyal Apprentice", fuzzy=False)
+        ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile=PROFILE)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        trigger, = (node for node in ir.faces[0].nodes if node.event == "step.begin")
+        self.assertIn("state_query.commander.designation", trigger.capability_dependencies)
+        self.assertEqual(1, trigger.effects[0][CREATED_TOKEN_HASTE_FIELD])
+        self.assertEqual(card.oracle_text.splitlines()[1], card.oracle_text[trigger.span.start:trigger.span.end])
+        _, registry = register_card(self.db, self.registry, card.name)
+        program, = (program for program in registry.programs_for_oracle(card.oracle_id)
+                    if program.event == "step.begin")
+        dependencies = tuple(item for item in program.capability_dependencies
+                             if item != "state_query.commander.designation")
+        altered = replace(program, capability_dependencies=dependencies,
+                          capability_closure=self.registry.closure(dependencies, profile=PROFILE).to_dict())
+        binding = bind_semantic_program_runtime(altered, capability_registry=self.registry, profile=PROFILE)
+        self.assertFalse(binding["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:state_query.commander.designation",
+                      binding["blockers"])
+        malformed = replace(card, oracle_text=card.oracle_text.replace(
+            "create a 1/1", "create two 1/1").replace("creature token with", "creature tokens with"))
+        mismatch = compile_oracle_card(malformed, capability_registry=self.registry, capability_profile=PROFILE)
+        self.assertTrue(mismatch.material_residuals)
+
     def test_actual_channel_grants_haste_after_entry_including_replacement_created_food(self):
         game = self.session(61258101)
         source = self.add(game.engine, SOKENZAN, zone="hand")

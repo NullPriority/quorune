@@ -231,6 +231,7 @@ def static_runtime_node(
         source_damageable=bool(card_types.intersection(_DAMAGEABLE_CARD_TYPES)),
         source_permanent=bool(card_types.intersection(permanent_card_types)),
         source_is_class=source_is_class,
+        capability_profile=capability_profile,
     )
     if template is None:
         return None

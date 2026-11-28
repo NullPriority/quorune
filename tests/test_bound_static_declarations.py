@@ -22,9 +22,43 @@ from scripts.build_test_database import build_fixture_database
 HERALD="Creatures you control with +1/+1 counters on them can't be blocked."
 MIXED='All creatures have double strike and attack each combat if able.'
 CONDITIONAL="As long as you have the city's blessing, Detectives you control can't be blocked."
+CLOAK_ORACLE_ID = "9ad4f730-a18e-4a7c-a468-a926c718c741"
 
 
 class BoundStaticDeclarationCompilerTests(unittest.TestCase):
+    def test_equipped_no_block_and_shroud_lower_to_independent_current_attachment_owners(self):
+        registry = load_default_capability_registry()
+        text = "Equipped creature can't be blocked and has shroud."
+        source = replace(query_record(text), type_line="Artifact — Equipment")
+        ir = compile_oracle_card(source, capability_registry=registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual(text, source.oracle_text[node.span.start:node.span.end])
+        self.assertLessEqual(
+            {
+                "combat.declaration.typed_components",
+                "continuous.attached.fixed_characteristics",
+                "target.protection.shroud_permanent",
+            },
+            set(node.capability_dependencies),
+        )
+        declaration, = (ability_fragment_from_dict(handler["fragment"]) for handler in node.handlers if "fragment" in handler)
+        self.assertEqual("attached_option", declaration.scope)
+        characteristic, = (handler for handler in node.handlers if "modifier" in handler)
+        self.assertIn("shroud", [keyword.casefold() for keyword in characteristic["modifier"]["add_abilities"]])
+        for unsupported in (
+            text.replace("and has shroud", "and has an undefined ability"),
+            text.replace("and has shroud", "and has shroud while attacking"),
+            text.replace("Equipped creature", "Fortified land"),
+        ):
+            with self.subTest(text=unsupported):
+                result = compile_oracle_card(
+                    replace(source, oracle_text=unsupported),
+                    capability_registry=registry, capability_profile="commander_review",
+                )
+                self.assertNotEqual("exact", result.status)
+                self.assertTrue(result.material_residuals)
+
     def test_direct_mixed_conditional_and_attached_rules_have_giver_owned_fragments(self):
         from quorune.bound_declaration_model import BOUND_DECLARATION_HANDLER
         registry=load_default_capability_registry()
@@ -88,7 +122,14 @@ class BoundStaticDeclarationNativeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'bound-rules.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/bound-static-declaration-cards.json'],path)
+        build_fixture_database(
+            [
+                ROOT / "tests/fixtures/bound-effect-program-cards.json",
+                ROOT / "tests/fixtures/bound-static-declaration-cards.json",
+                ROOT / "tests/fixtures/whispersilk-cloak-cards.json",
+            ],
+            path,
+        )
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Bound rules',[DeckEntry('Isamaru, Hound of Konda',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Isamaru, Hound of Konda'])
 
@@ -105,12 +146,111 @@ class BoundStaticDeclarationNativeTests(unittest.TestCase):
         self.assert_closed(session,giver);self.assert_closed(session,aura)
         return session,giver,body,blocker,aura,private
 
-    def attack(self,session,attacks):
+    def attack(self,session,attacks,*,seat='B'):
         self.until(session,lambda s:s.state.pending_decision is not None and s.state.pending_decision.kind=='combat.attackers')
-        result=session.act('pilot:B',{'action_id':'attack','attackers':attacks});self.assertTrue(result.ok,result.summary)
+        result=session.act('pilot:'+seat,{'action_id':'attack','attackers':attacks});self.assertTrue(result.ok,result.summary)
 
     def blockers(self,session):
         self.until(session,lambda s:s.state.pending_decision is not None and s.state.pending_decision.kind=='combat.blockers')
+
+    def cloak_scene(self, seed):
+        session = self.session(seed)
+        source = self.add(session.engine, "Whispersilk Cloak", zone="hand")
+        self.assertEqual(CLOAK_ORACLE_ID, source.oracle_id)
+        self.assert_closed(session, source)
+        first = self.add(session.engine, "Grizzly Bears", ref="cloak-first")
+        second = self.add(session.engine, "Grizzly Bears", ref="cloak-second")
+        blocker = self.add(session.engine, "Grizzly Bears", seat="B", ref="cloak-blocker")
+        for creature in (first, second):
+            creature.acquired_control_turn_count = -1
+        return session, source, first, second, blocker
+
+    def equip_cloak(self, session, source, target, excluded):
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer, = (row for row in actions if row["id"].startswith(f"activate:{source.ref}:"))
+        self.assertEqual({"GENERIC": 2}, offer["cost_summary"]["m"])
+        refs = offer["target_schema"]["legal_refs"]
+        self.assertIn(target.ref, refs)
+        self.assertNotIn(excluded.ref, refs)
+        command = {"action_id": offer["id"], "pay": "manual", "payment": {"C": 2}}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", {**command, "targets": [excluded.ref]}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", {**command, "targets": [target.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(target.object_id, session.state.cards[source.object_id].attached_to)
+
+    def assert_cloak_targeting(self, session, seat, spell, *, protected, exposed):
+        self.priority(session, seat)
+        offer = self.action(session, seat, spell)
+        refs = offer["target_schema"]["legal_refs"]
+        self.assertIn(exposed.ref, refs)
+        if protected is not None:
+            self.assertNotIn(protected.ref, refs)
+            before = authoritative_state_hash(session.state)
+            result = session.act(f"pilot:{seat}", {"action_id": offer["id"], "targets": [protected.ref], "pay": "auto"})
+            self.assertFalse(result.ok, result.summary)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+
+    def test_actual_whispersilk_cloak_reequip_moves_shroud_and_the_blocking_restriction(self):
+        session, source, first, second, blocker = self.cloak_scene(336_611_249)
+        friendly = self.add(session.engine, "Unsummon", zone="hand", ref="cloak-friendly-probe")
+        self.prepare(session, mana={"C": 7, "U": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", source, reserve={"C": 4, "U": 1})
+        self.assertIsNone(self.resolve(session))
+        self.assert_cloak_targeting(session, "A", friendly, protected=None, exposed=first)
+        self.equip_cloak(session, source, first, blocker)
+        self.assert_cloak_targeting(session, "A", friendly, protected=first, exposed=second)
+        self.equip_cloak(session, source, second, first)
+        self.assert_cloak_targeting(session, "A", friendly, protected=second, exposed=first)
+        self.attack(session, {first.ref: "B", second.ref: "B"}, seat="A")
+        self.blockers(session)
+        session = self.replay(session, load=True)
+        legal = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal_blocks"][blocker.ref]
+        self.assertIn(first.ref, legal)
+        self.assertNotIn(second.ref, legal)
+        before = authoritative_state_hash(session.state)
+        denied = session.act("pilot:B", {"action_id": "block", "blocks": {blocker.ref: second.ref}})
+        self.assertFalse(denied.ok, denied.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:B", {"action_id": "block", "blocks": {blocker.ref: first.ref}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual([blocker.object_id], session.state.combat.blockers[first.object_id])
+        self.assertNotIn(second.object_id, session.state.combat.blockers)
+        self.replay(session, load=True)
+
+    def test_actual_whispersilk_cloak_removal_restores_blocking_and_targeting_during_combat(self):
+        session, source, first, second, blocker = self.cloak_scene(336_611_250)
+        destroy = self.add(session.engine, "Disenchant", seat="B", zone="hand")
+        hostile = self.add(session.engine, "Unsummon", seat="B", zone="hand")
+        self.add(session.engine, "Plains", seat="B", ref="cloak-removal-plains")
+        self.add(session.engine, "Plains", seat="B", ref="cloak-removal-generic")
+        self.add(session.engine, "Island", seat="B", ref="cloak-removal-island")
+        self.add(session.engine, "Island", seat="B", ref="cloak-targeting-island")
+        self.prepare(session, mana={"C": 5})
+        self.checkpoint(session)
+        self.cast_for(session, "A", source)
+        self.assertIsNone(self.resolve(session))
+        self.equip_cloak(session, source, first, blocker)
+        self.attack(session, {first.ref: "B", second.ref: "B"}, seat="A")
+        self.assert_cloak_targeting(session, "B", hostile, protected=first, exposed=second)
+        self.cast_for(session, "B", destroy, [source.ref])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertNotIn(source.object_id, session.state.cards[first.object_id].attachments)
+        self.assert_cloak_targeting(session, "B", hostile, protected=None, exposed=first)
+        self.blockers(session)
+        accepted = session.act("pilot:B", {"action_id": "block", "blocks": {blocker.ref: first.ref}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual([blocker.object_id], session.state.combat.blockers[first.object_id])
+        self.cast_for(session, "B", hostile, [first.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("hand", session.state.cards[first.object_id].zone)
+        self.replay(session, load=True)
 
     def test_actual_herald_rejects_block_after_receiver_blanking_while_true_flying_grant_is_removed(self):
         session,giver,body,blocker,aura,private=self.scene(611624010)

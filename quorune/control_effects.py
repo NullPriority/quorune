@@ -74,11 +74,18 @@ def _commit_control_change(host: ControlEffectHost, object_id: str, controller: 
     if card.zone != "battlefield":
         raise GameRuleError("Only battlefield permanents have controllers")
     previous = card.controller
+    changed_objects = [object_id]
     if previous != controller:
         host._remove_object_from_combat(card, reason="control changed")
         host.state.players[previous].zones["battlefield"].remove(object_id)
         host.state.players[controller].zones["battlefield"].append(object_id)
         card.controller = controller
+        from .hideaway_model import has_current_hideaway_source
+
+        if has_current_hideaway_source(card):
+            from .rules.hideaway_library import grant_hideaway_control_view
+
+            changed_objects.extend(grant_hideaway_control_view(host, card, controller))
     control_history.record_control_change(
         host.state, card, host._next_zone_timestamp, previous_controller=previous,
     )
@@ -86,7 +93,7 @@ def _commit_control_change(host: ControlEffectHost, object_id: str, controller: 
     host._log(
         None, "control.change", f"Control of {card.ref} changed {previous} → {controller}.",
         {"object": card.ref, "from": previous, "to": controller, "reason": reason},
-        importance=2, changed_objects=[object_id], changed_players=[previous, controller],
+        importance=2, changed_objects=changed_objects, changed_players=[previous, controller],
     )
 
 
@@ -378,6 +385,12 @@ def controlled_source_duration_is_current(state, source, snapshot, controller):
     )
 
 
+def controlled_declaration_source_is_current(state, binding):
+    return binding is None or controlled_source_duration_is_current(
+        state, binding.identity, binding.history, binding.controller,
+    )
+
+
 def source_untap_restraint_is_current(state: Any, effect: ResolvedSourceUntapRestraint) -> bool:
     if effect.duration_controller is None:
         return tapped_source_duration_is_current(state, effect.duration_source, effect.duration_history)
@@ -613,6 +626,10 @@ def _next_source_expiration(host: ControlEffectHost, ending: Sequence[Continuous
 
 
 def _expired_characteristic_source_duration(state, effect) -> bool:
+    from .declaration_rule_effects import ResolutionDeclarationRuleEffect
+
+    if isinstance(effect, ResolutionDeclarationRuleEffect):
+        return not controlled_declaration_source_is_current(state, effect.controlled_source)
     if isinstance(effect, ResolvedSourceUntapRestraint):
         return not source_untap_restraint_is_current(state, effect)
     return (isinstance(effect, ContinuousEffect) and effect.layer is not Layer.CONTROL
@@ -806,8 +823,14 @@ def execute_source_upkeep_handoff(host, intent) -> tuple[str, ...]:
 
 def execute_single_control_intent(host: Any, intent: Any):
     """Apply one retained control intent through its rules owner."""
-    from .semantic_runtime.control_intents import GainSpellControlIntent, UpkeepSourceHandoffIntent
+    from .semantic_runtime.control_intents import (
+        GainSpellControlIntent, ReflexiveSourceControlIntent, UpkeepSourceHandoffIntent,
+    )
 
+    if isinstance(intent, ReflexiveSourceControlIntent):
+        from .rules.source_control_reflexive import commit_source_control_reflexive
+
+        return commit_source_control_reflexive(host, intent)
     if isinstance(intent, UpkeepSourceHandoffIntent):
         return execute_source_upkeep_handoff(host, intent)
     if isinstance(intent, GainSpellControlIntent):

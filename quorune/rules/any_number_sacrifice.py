@@ -17,6 +17,16 @@ from .effect_shape_walkers import nested_effects
 from .committed_land_sacrifice_search import (
     COMMITTED_LAND_SEARCH_CAPABILITY, commit_land_sacrifice_search, validate_land_sacrifice_search_recipe,
 )
+from .named_searches import (
+    SACRIFICE_BOUND_CREATURE_RECIPE_FIELD, SACRIFICE_BOUND_CREATURE_SEARCH_CAPABILITY,
+    committed_sacrifice_creature_search_choice, sacrifice_bound_creature_search_recipe,
+    validate_sacrifice_bound_creature_search_recipe,
+)
+from .graveyard_return_choices import (
+    CAPABILITY as GRAVEYARD_RETURN_CHOICE_CAPABILITY,
+    COMMITTED_GRAVEYARD_RETURN_CAPABILITY, COMMITTED_GRAVEYARD_RETURN_RECIPE,
+    OPERATION as GRAVEYARD_RETURN_CHOICE, committed_graveyard_return_effect,
+)
 from .committed_sacrifice_damage import (
     COMMITTED_SACRIFICE_DAMAGE_CAPABILITY, capture_committed_sacrifice_damage_target,
     committed_sacrifice_damage_dependencies, committed_sacrifice_damage_domain_matches,
@@ -48,8 +58,8 @@ _COLORLESS_RECIPE = FrozenMap({"op": "mana", "player": "$controller", "color": "
 _PRIVATE_DRAW = FrozenMap({"op": "draw", "player": "$controller", "count": 1, "private": True})
 
 
-def any_number_self_entry(domain):
-    return domain in _SELF_ENTRY_DOMAINS
+def any_number_self_entry(domain, followup):
+    return domain in _SELF_ENTRY_DOMAINS and followup["op"] != GRAVEYARD_RETURN_CHOICE
 
 
 def any_number_sacrifice_count(count):
@@ -58,7 +68,9 @@ def any_number_sacrifice_count(count):
 
 
 def _result_version(followup):
-    return {"mana": 2, "damage": 3, PRIVATE_HAND_COLLECTION_OPERATION: 4, "search": 5}.get(followup["op"], 1)
+    return {
+        "mana": 2, "damage": 3, PRIVATE_HAND_COLLECTION_OPERATION: 4, "search": 5, GRAVEYARD_RETURN_CHOICE: 5,
+    }.get(followup["op"], 1)
 
 
 def any_number_sacrifice_effect(domain, followup, *, actor="$controller", excluded="$source.zone_object"):
@@ -68,6 +80,7 @@ def any_number_sacrifice_effect(domain, followup, *, actor="$controller", exclud
         "zone": "battlefield", "predicate": _PREDICATES[domain].to_dict(),
         "count": 1 if fixed_creature else dict(ANY_NUMBER_SACRIFICE_COUNT), "then": "sacrifice",
         "prompt": ("Choose a creature you control to sacrifice." if fixed_creature
+                   else "Choose any number of creatures you control to sacrifice." if SACRIFICE_BOUND_CREATURE_RECIPE_FIELD in followup
                    else "Choose any number of permanents you control to sacrifice."),
         ANY_NUMBER_SACRIFICE_FIELD: {
             "schema_version": _result_version(followup), "domain": domain, "followup": followup,
@@ -81,6 +94,9 @@ def any_number_sacrifice_followup(value, *, actor="$controller"):
         raise ValueError("Any-number sacrifice needs its resolving controller's fixed result")
     if value.get("op") == "damage":
         return committed_sacrifice_damage_recipe_parts(value, actor=actor)
+    if SACRIFICE_BOUND_CREATURE_RECIPE_FIELD in value:
+        validate_sacrifice_bound_creature_search_recipe(value, actor=actor)
+        return FrozenMap(sacrifice_bound_creature_search_recipe())
     if value.get("op") == "search":
         validate_land_sacrifice_search_recipe(value, actor=actor)
         return FrozenMap({**value, "player": "$controller"})
@@ -90,6 +106,8 @@ def any_number_sacrifice_followup(value, *, actor="$controller"):
             raise ValueError("Sacrifice and draw require the complete creature and land slots")
         return FrozenMap({**value, "player": "$controller", "selection": spec.to_dict()})
     normalized = {**value, "player": "$controller"}
+    if FrozenMap(normalized) == COMMITTED_GRAVEYARD_RETURN_RECIPE:
+        return COMMITTED_GRAVEYARD_RETURN_RECIPE
     if FrozenMap(normalized) == _COLORLESS_RECIPE and type(value.get("amount")) is int:
         return _COLORLESS_RECIPE
     canonical = fixed_quantity_effect(normalized)
@@ -116,11 +134,19 @@ def any_number_sacrifice_parts(effect, *, actor="$controller", excluded="$source
         return domain, followup
     if not any_number_sacrifice_count(effect.get("count")):
         raise ValueError("Any-number sacrifice must preserve its zero-inclusive selection")
+    if SACRIFICE_BOUND_CREATURE_RECIPE_FIELD in followup:
+        if domain != "creatures" or FrozenMap(effect) != FrozenMap(any_number_sacrifice_effect(
+            domain, marker["followup"], actor=actor, excluded=excluded,
+        )):
+            raise ValueError("The committed search requires the complete any-number creature sacrifice")
+        return domain, followup
     damage_domain = domain in {"mountains", "creatures"}
     if ((followup["op"] in {"mana", "search"}) != (domain == "lands")
             or (followup["op"] == "damage") != damage_domain
             or damage_domain and not committed_sacrifice_damage_domain_matches(domain, followup)
             or followup["op"] == "life" and domain != "permanents"
+            or followup["op"] == GRAVEYARD_RETURN_CHOICE and domain != "artifact_enchantment_token"
+
             or FrozenMap(effect) != FrozenMap(any_number_sacrifice_effect(
                 domain, marker["followup"], actor=actor, excluded=excluded,
             ))):
@@ -182,7 +208,10 @@ def _source_mana_instruction(recipe):
     return FrozenMap({**recipe, "source": "$source"})
 
 
-def resolve_any_number_sacrifice_followup(host, followup, count, *, target=None, committed_members=()):
+def resolve_any_number_sacrifice_followup(host, followup, count, *, target=None, committed_members=(), actor=None):
+    if SACRIFICE_BOUND_CREATURE_RECIPE_FIELD in followup:
+        choice = committed_sacrifice_creature_search_choice(host, actor, count)
+        return CommittedQuantityFollowup((FrozenMap(choice),))
     if followup["op"] == "search":
         item = next((entry for entry in host.state.stack if entry.context.get("currently_resolving") is True), None)
         return CommittedQuantityFollowup((commit_land_sacrifice_search(host, item, committed_members),))
@@ -190,6 +219,10 @@ def resolve_any_number_sacrifice_followup(host, followup, count, *, target=None,
         if type(count) is not int or count not in (0, 1):
             raise ValueError("A mandatory creature sacrifice produces at most one committed result")
         return CommittedQuantityFollowup((_PRIVATE_DRAW, followup) if count == 1 else ())
+    if followup["op"] == GRAVEYARD_RETURN_CHOICE:
+        if type(count) is not int or count < 0:
+            raise ValueError("Committed graveyard return requires an actual sacrifice count")
+        return CommittedQuantityFollowup((FrozenMap(committed_graveyard_return_effect(count)),) if count else ())
     if followup["op"] == "damage":
         return committed_sacrifice_damage_followup(host, followup, target, count)
     if followup["op"] == "mana":
@@ -202,9 +235,25 @@ def zero_land_sacrifice_search(host, item, effect, selected_refs):
     if selected_refs or not isinstance(marker, Mapping) or marker.get("schema_version") != 5:
         return ()
     _, followup = any_number_sacrifice_parts(effect, actor=item.controller)
-    if followup["op"] != "search":
+    if followup["op"] != "search" or SACRIFICE_BOUND_CREATURE_RECIPE_FIELD in followup:
         return ()
     return (commit_land_sacrifice_search(host, item, ()),)
+
+
+def zero_sacrifice_search_effects(host, effect, actor, selected):
+    if selected:
+        return ()
+    marker = effect.get(ANY_NUMBER_SACRIFICE_FIELD)
+    if not isinstance(marker, Mapping) or marker.get("schema_version") != 5:
+        return ()
+    _domain, followup = any_number_sacrifice_parts(effect, actor=actor)
+    if SACRIFICE_BOUND_CREATURE_RECIPE_FIELD not in followup:
+        return ()
+    return (committed_sacrifice_creature_search_choice(host, actor, 0),)
+
+
+def is_sacrifice_search_chapter(event):
+    return isinstance(event, str) and event.startswith("saga.chapter.") and event.removeprefix("saga.chapter.").isdigit()
 
 
 def _land_sacrifice_mana_dependencies(recipe):
@@ -236,12 +285,19 @@ def any_number_sacrifice_capabilities(effect, target_schema):
         if target_schema is not None:
             raise ValueError("Any-number sacrifice has no target outside its exact damage result")
         if result["op"] == "search":
-            followup = (COMMITTED_LAND_SEARCH_CAPABILITY, "library.search.fixed_counted")
+            capability = (SACRIFICE_BOUND_CREATURE_SEARCH_CAPABILITY if SACRIFICE_BOUND_CREATURE_RECIPE_FIELD in result
+                          else COMMITTED_LAND_SEARCH_CAPABILITY)
+            followup = (capability, "library.search.fixed_counted")
+        elif result["op"] == GRAVEYARD_RETURN_CHOICE:
+            followup = (
+                COMMITTED_GRAVEYARD_RETURN_CAPABILITY, GRAVEYARD_RETURN_CHOICE_CAPABILITY,
+                "attachment.aura.typed_restriction",
+            )
         else:
             followup = _land_sacrifice_mana_dependencies(result) if domain == "lands" else fixed_followup_capabilities(result)
     return (ANY_NUMBER_SACRIFICE_CAPABILITY, "choice.affected_player.fixed_sacrifice",
             "zone.change.destination_replacement", *followup,
-            *(("trigger.event.normalized_zone_change", "trigger.placement.apnap") if domain in _SELF_ENTRY_DOMAINS else ()))
+            *(("trigger.event.normalized_zone_change", "trigger.placement.apnap") if any_number_self_entry(domain, result) else ()))
 
 
 def any_number_sacrifice_runtime_dependencies(program):
@@ -250,6 +306,8 @@ def any_number_sacrifice_runtime_dependencies(program):
     authorities = {
         ANY_NUMBER_SACRIFICE_CAPABILITY, COMMITTED_LAND_SACRIFICE_MANA_CAPABILITY, COMMITTED_SACRIFICE_DAMAGE_CAPABILITY,
         COMMITTED_LAND_SEARCH_CAPABILITY,
+        SACRIFICE_BOUND_CREATURE_SEARCH_CAPABILITY,
+        COMMITTED_GRAVEYARD_RETURN_CAPABILITY,
     }
     if COMMITTED_SACRIFICE_HAND_ENTRY_CAPABILITY in program.capability_dependencies:
         if ((program.event, program.active_zone) != ("resolve", "stack")
@@ -264,11 +322,21 @@ def any_number_sacrifice_runtime_dependencies(program):
     domain, result = any_number_sacrifice_parts(marked[0])
     if COMMITTED_SACRIFICE_DAMAGE_CAPABILITY in program.capability_dependencies and result["op"] != "damage":
         raise ValueError("Committed sacrifice damage must retain the original stock target result")
-    if COMMITTED_LAND_SEARCH_CAPABILITY in program.capability_dependencies and result["op"] != "search":
+    creature_search = SACRIFICE_BOUND_CREATURE_RECIPE_FIELD in result
+    if COMMITTED_LAND_SEARCH_CAPABILITY in program.capability_dependencies and (result["op"] != "search" or creature_search):
         raise ValueError("Committed land search must retain the original search follow-up")
     if COMMITTED_LAND_SACRIFICE_MANA_CAPABILITY in program.capability_dependencies and result["op"] != "mana":
         raise ValueError("Committed colorless mana must retain its land sacrifice domain")
-    source = ("permanent.enter.self", "battlefield") if domain in _SELF_ENTRY_DOMAINS else ("resolve", "stack")
+    if creature_search:
+        if not is_sacrifice_search_chapter(program.event) or program.active_zone != "battlefield" or program.event_condition is not None:
+            raise ValueError("The committed sacrifice search requires its original battlefield chapter")
+        return any_number_sacrifice_capabilities(marked[0], program.target_schema)
+    if SACRIFICE_BOUND_CREATURE_SEARCH_CAPABILITY in program.capability_dependencies:
+        raise ValueError("Committed sacrifice search authority requires its original creature search")
+    graveyard_return = result["op"] == GRAVEYARD_RETURN_CHOICE
+    if COMMITTED_GRAVEYARD_RETURN_CAPABILITY in program.capability_dependencies and not graveyard_return:
+        raise ValueError("Committed sacrifice return must keep its original graveyard result")
+    source = ("permanent.enter.self", "battlefield") if any_number_self_entry(domain, result) else ("resolve", "stack")
     if (program.event, program.active_zone) != source or program.event_condition is not None:
         raise ValueError("Any-number sacrifice requires its original spell or self entry")
     return any_number_sacrifice_capabilities(marked[0], program.target_schema)

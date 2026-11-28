@@ -13,7 +13,8 @@ from ..library_search_model import (
     FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID,
     DISJUNCTIVE_LIBRARY_SEARCH_CAPABILITY_ID,
     DISJUNCTIVE_LIBRARY_SEARCH_MECHANIC_ID,
-    ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION, FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_VERSION,
+    ANY_NUMBER_CREATURE_BATTLEFIELD_VERSIONS, ANY_NUMBER_SUBTYPE_BATTLEFIELD_VERSION,
+    FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_VERSION,
     PRINTED_MANA_COST_ARTIFACT_SEARCH_CAPABILITY_ID,
     PRINTED_MANA_COST_ARTIFACT_SEARCH_MECHANIC_ID,
     PRINTED_MANA_COST_ARTIFACT_SEARCH_PREDICATE,
@@ -26,7 +27,8 @@ from ..library_search_model import (
     TARGET_PLAYER_BASIC_LAND_SEARCH_CAPABILITY,
     TARGET_PLAYER_BASIC_LAND_SEARCH_MECHANIC,
     TARGET_PLAYER_BASIC_LAND_SEARCH_VERSION,
-    counted_search_bound_dependencies, counted_search_selector_is_closed,
+    CONDITIONAL_UNTAP_SEARCH_CAPABILITY, CONDITIONAL_UNTAP_SEARCH_MECHANIC,
+    CONDITIONAL_UNTAP_SEARCH_VERSION, counted_search_bound_dependencies, counted_search_selector_is_closed,
 )
 from ..commander_pairing import (
     PARTNER_WITH_SEARCH_CAPABILITY_ID,
@@ -70,7 +72,11 @@ def fixed_library_search_covered_mechanics(
         TARGET_NAME_MULTIZONE_EXILE_CAPABILITY,
     )
     from .dragon_graveyard_search_copy import DRAGON_GRAVEYARD_COPY_SEARCH_CAPABILITY, DRAGON_GRAVEYARD_COPY_SEARCH_MECHANIC
+    from .targeted_search_round import CAPABILITY as TARGET_PAIR_SEARCH_CAPABILITY, MECHANIC as TARGET_PAIR_SEARCH_MECHANIC
+
     covered: set[str] = set()
+    if TARGET_PAIR_SEARCH_CAPABILITY in capabilities:
+        covered.add(TARGET_PAIR_SEARCH_MECHANIC)
     if DRAGON_GRAVEYARD_COPY_SEARCH_CAPABILITY in capabilities:
         covered.add(DRAGON_GRAVEYARD_COPY_SEARCH_MECHANIC)
     if EXILED_TARGET_SEARCH_CAPABILITY in capabilities:
@@ -87,6 +93,8 @@ def fixed_library_search_covered_mechanics(
         covered.add(FIXED_LIBRARY_SEARCH_TO_HAND_MECHANIC_ID)
     if FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID in capabilities:
         covered.add(FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID)
+    if CONDITIONAL_UNTAP_SEARCH_CAPABILITY in capabilities:
+        covered.add(CONDITIONAL_UNTAP_SEARCH_MECHANIC)
     if TARGET_PLAYER_BASIC_LAND_SEARCH_CAPABILITY in capabilities:
         covered.add(TARGET_PLAYER_BASIC_LAND_SEARCH_MECHANIC)
     if BARGAIN_SEARCH_CAPABILITY in capabilities:
@@ -117,11 +125,21 @@ def fixed_counted_library_search_node_capabilities(
         return spec.capabilities() if target_schema == spec.target_schema() else ()
     if target_schema is not None:
         return ()
+    if effects[0].get("schema_version") == CONDITIONAL_UNTAP_SEARCH_VERSION:
+        if CONDITIONAL_UNTAP_SEARCH_MECHANIC not in mechanic_ids:
+            return ()
+        try:
+            return counted_search_bound_dependencies(effects[0])
+        except (TypeError, ValueError):
+            return ()
     if effects[0].get("schema_version") in (
         SEARCHED_LAND_UNTAP_VERSION,
         LITERAL_NAME_ANY_NUMBER_SEARCH_VERSION, LITERAL_NAME_BATTLEFIELD_SEARCH_VERSION, RECRUITING_LIBRARY_SEARCH_VERSION,
-        ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION, FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_VERSION,
-        CREATURE_SUBSET_MANA_VALUE_SEARCH_VERSION, SUBTYPE_GRAVEYARD_SEARCH_VERSION,
+        *ANY_NUMBER_CREATURE_BATTLEFIELD_VERSIONS,
+        ANY_NUMBER_SUBTYPE_BATTLEFIELD_VERSION,
+        FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_VERSION,
+        CREATURE_SUBSET_MANA_VALUE_SEARCH_VERSION,
+        SUBTYPE_GRAVEYARD_SEARCH_VERSION,
     ):
         try:
             return counted_search_bound_dependencies(effects[0])
@@ -142,8 +160,10 @@ def fixed_counted_library_search_node_capabilities(
         if SEARCH_ALLOCATION_MECHANIC not in mechanic_ids:return ()
         try:return SearchAllocationSpec.from_effect(effects[0]).capabilities()
         except (ValueError, TypeError, KeyError):return ()
-    if effects[0].get('schema_version')==4:
-        from ..conditional_search_model import ConditionalSearchSpec,CONDITIONAL_SEARCH_MECHANIC
+    from ..conditional_search_model import (
+        ConditionalSearchSpec, CONDITIONAL_SEARCH_MECHANIC, OPTIONAL_CONDITIONAL_SEARCH_VERSION,
+    )
+    if effects[0].get("schema_version") in (4, OPTIONAL_CONDITIONAL_SEARCH_VERSION):
         if CONDITIONAL_SEARCH_MECHANIC not in mechanic_ids:return ()
         try:return ConditionalSearchSpec.from_effect(effects[0]).capabilities()
         except (ValueError,TypeError,KeyError):return ()
@@ -427,6 +447,12 @@ def fixed_library_search_node_capabilities(
     from .search_random_discard import private_search_random_discard_node_capabilities
     from .dragon_graveyard_search_copy import dragon_graveyard_copy_search_node_capabilities
 
+    from .targeted_search_round import target_pair_search_node_capabilities
+
+    if target_pair := target_pair_search_node_capabilities(
+        effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+    ):
+        return target_pair
     if dragon_search := dragon_graveyard_copy_search_node_capabilities(
         effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
     ):

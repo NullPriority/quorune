@@ -66,6 +66,11 @@ def compound_entry_keyword_nodes(*,record,node_id,line,material_line,span,printe
         capability_registry,capability_profile,residuals):
     values=dict(node_id=node_id,line=line,material_line=material_line,span=span,
         capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if "land" in printed_card_types and "Hideaway" in record.keywords:
+        from .hideaway_nodes import hideaway_keyword_node
+
+        if hideaway := hideaway_keyword_node(**values):
+            return (hideaway,)
     if impending := fixed_mana_impending_nodes(card_types=printed_card_types, **values):
         return impending
     ravenous=ravenous_keyword_nodes(record=record,printed_card_types=printed_card_types,**values)

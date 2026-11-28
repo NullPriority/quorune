@@ -182,6 +182,14 @@ def scheduled_player_result(binding, body, *, effect_template, card_name):
             True,
         )
     if binding.event.value == "step.begin" and binding.variant == "your upkeep" and body == binding.body:
+        if re.fullmatch(
+            r"Each player may put two \+1/\+1 counters on a creature they control\. "
+            r"If a player does, creatures that player controls can['’]t attack you or "
+            r"planeswalkers you control until your next turn\.", body, re.I,
+        ):
+            from ..rules.apnap_counter_attack_truce import MECHANIC, optional_counter_attack_truce_effect
+
+            return ("apnap-counter-attack-truce-v1", (optional_counter_attack_truce_effect(),), None, (MECHANIC,)), True
         from .upkeep_power_counter_results import upkeep_power_counter_result
         if power_balance := upkeep_power_counter_result(body, card_name=card_name):
             return power_balance, True

@@ -899,3 +899,106 @@ class PeregrineDynamoNativeTests(InheritedNativeFixture, unittest.TestCase):
                     SimpleNamespace(), group, row, types=set(), supertypes=set(), colors=set(),
                     derived={}, source_incarnation="acting",
                 ))
+
+
+class PowerAdjustedStackTargetTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name)
+        fixture = path / "stack-target-cards.json"
+        needed = {"Sliver Hivelord", "Generic Bound Plains", "Counterspell", "Grizzly Bears",
+                  "Lightning Bolt", "Wyll's Reversal"}
+        cards, rulings = {}, []
+        for name in ("fixed-qualified-stack-copy-cards.json", "event-spell-copy-cards.json"):
+            data = json.loads((ROOT / "tests/fixtures" / name).read_text(encoding="utf-8"))
+            for row in data["cards"]:
+                if row["name"] in needed:
+                    cards[row["oracle_id"]] = row
+            rulings.extend(data["rulings"])
+        fixture.write_text(json.dumps({**data, "cards": list(cards.values()), "rulings": [
+            row for row in rulings if row["oracle_id"] in cards
+        ]}), encoding="utf-8")
+        database = path / "stack-targets.sqlite3"
+        build_fixture_database([fixture], database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Power-adjusted stack targets", [
+            DeckEntry("Sliver Hivelord", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Sliver Hivelord"])
+
+    def test_power_adjusted_table_requires_the_complete_target_and_two_result_rows(self):
+        from quorune.stack_target_change_model import matches_announced_stack_target
+
+        card = self.db.lookup("Wyll's Reversal", fuzzy=False)
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        admitted = compile_oracle_card(card, **options)
+        self.assertEqual("exact", admitted.status, admitted.material_residuals)
+        node, = admitted.faces[0].nodes
+        self.assertEqual(card.oracle_text, card.oracle_text[node.span.start:node.span.end])
+        self.assertIn("random.die.power_adjusted_stack_targets", node.capability_dependencies)
+        for old, new in (("one or more targets", "a single target"), ("15+", "16+"), ("d20", "d12")):
+            with self.subTest(variant=new):
+                changed = replace(card, oracle_text=card.oracle_text.replace(old, new))
+                self.assertTrue(compile_oracle_card(changed, **options).material_residuals)
+
+        self.assertFalse(matches_announced_stack_target(SimpleNamespace(kind="spell", targets=[])))
+        self.assertTrue(matches_announced_stack_target(SimpleNamespace(kind="activated_ability", targets=["A"])))
+        with patch("quorune.compiler.die_table_spell_faces.compile_die_table_spell_face", return_value=None):
+            self.assertTrue(compile_oracle_card(card, **options).material_residuals)
+
+    def test_power_adjusted_reselection_and_copy_use_the_ordered_native_choices_and_replay(self):
+        from random import Random
+
+        for expected in (14, 15):
+            with self.subTest(result=expected):
+                seed = next(n for n in range(894200, 894450)
+                            if Random(f"{n}|S2|0|die-roll|A").randint(1, 20) == expected - 2)
+                game = self.session(seed)
+                self.add(game.engine, "Grizzly Bears")
+                reversal = self.add(game.engine, "Wyll's Reversal", zone="hand")
+                bolt = self.add(game.engine, "Lightning Bolt", seat="B", zone="hand")
+                private = self.add(game.engine, "Counterspell", seat="C", zone="hand", ref="private-witness")
+                self.assert_closed(game, reversal)
+                self.prepare(game, mana={"C": 2, "R": 1})
+                game.state.players["B"].mana_pool["R"] = 1
+                self.checkpoint(game)
+                self.cast_for(game, "B", bolt, ["C"])
+                original = game.state.stack[-1]
+                self.cast_for(game, "A", reversal, [original.ref])
+                self.assertEqual("S2", game.state.stack[-1].ref)
+                self.assertEqual("semantic.choice", self.resolve(game).kind)
+                self.assertEqual(["pilot:A"], game.pending_principals())
+                roll, = [event for event in game.state.events if event.code == "die.roll"]
+                self.assertEqual((expected - 2, 2, expected), (
+                    roll.details["natural_result"], roll.details["modifier"], roll.details["result"],
+                ))
+                for viewer in ("B", "C", "D"):
+                    self.assertIsNone(game.packet(f"pilot:{viewer}", full=True)["decision"])
+                before = authoritative_state_hash(game.state)
+                count = len(game.commands)
+                for principal, targets in (("pilot:B", ["D"]), ("pilot:A", ["unoffered-target"])):
+                    self.assertFalse(game.act(principal, {"action_id": "choose", "targets": targets}).ok)
+                    self.assertEqual(before, authoritative_state_hash(game.state))
+                    self.assertEqual(count, len(game.commands))
+
+                game = self.replay(game, load=True)
+                command = {"action_id": "choose", "targets": ["D"]} if expected == 15 else {"action_id": "choose"}
+                outcome = game.act("pilot:A", command)
+                self.assertTrue(outcome.ok, outcome.summary)
+                if expected == 15:
+                    self.assertEqual("semantic.choice", game.state.pending_decision.kind)
+                    game = self.replay(game, load=True)
+                    outcome = game.act("pilot:A", {"action_id": "choose"})
+                    self.assertTrue(outcome.ok, outcome.summary)
+                    retained, copied = game.state.stack
+                    self.assertEqual((original.ref, "B", ["D"]), (retained.ref, retained.controller, retained.targets))
+                    self.assertEqual(("spell_copy", "A", ["D"]), (copied.kind, copied.controller, copied.targets))
+                else:
+                    retained, = game.state.stack
+                    self.assertEqual((original.ref, ["C"]), (retained.ref, retained.targets))
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual((40, 34) if expected == 15 else (37, 40),
+                                 (game.state.players["C"].life, game.state.players["D"].life))
+                self.assertEqual(1, sum(event.code == "die.roll" for event in game.state.events))
+                recipients.TargetRecipientNativeTests.finish(self, game, private)

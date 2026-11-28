@@ -58,6 +58,7 @@ export function CardChoiceGrid({
   const max = singleChoice ? 1 : Number(field.maximum ?? options.length);
   const min = singleChoice ? Number(Boolean(field.required)) : Number(field.minimum ?? 0);
   const [previewed, setPreviewed] = useState("");
+  const [query, setQuery] = useState("");
   const preview = cards.get(previewed || selected[0] || String(options[0]?.value ?? ""));
   const countLabel = min === max ? `${selected.length} / ${max} selected` : `${selected.length} selected · choose ${min}–${max}`;
   const search = field.name === "search_cards" || field.name === "search_card";
@@ -72,19 +73,30 @@ export function CardChoiceGrid({
     counts.set(label, copy);
     return { label, copy };
   });
+  const filter = query.trim().toLowerCase();
+  const results = options.flatMap((option, index) => {
+    const label = labels[index];
+    return !search || label.label.toLowerCase().includes(filter) ? [{ option, label }] : [];
+  });
 
   return (
     <fieldset className="choice-field card-choice">
       <legend>{search ? "Available cards" : String(field.label)}</legend>
       <p className="card-choice-count" aria-live="polite">{countLabel}</p>
+      {search && options.length > 0 && <label className="choice-filter">
+        <span>Filter cards by name</span>
+        <input type="search" value={query} onChange={(event) => setQuery(event.target.value)}
+          onKeyDown={(event) => { if (event.key === "Enter") event.preventDefault(); }} />
+        {filter && <span role="status">{results.length} of {options.length} cards</span>}
+      </label>}
       <div className="card-choice-layout">
-        {options.length > 0 ? <CardPages items={options} label={search ? "Search results" : "Card choices"}
+        {results.length > 0 ? <CardPages key={filter} items={results} label={search ? "Search results" : "Card choices"}
           className={`card-choice-pages from-${source}`} trackClassName="card-choice-options" layout="grid"
-          render={(option, index) => {
+          render={({ option, label }) => {
             const ref = String(option.value);
             const card = cards.get(ref);
             const active = selected.includes(ref);
-            const { label: name, copy: number } = labels[index];
+            const { label: name, copy: number } = label;
             const copies = counts.get(name) ?? 1;
             const copy = copies > 1 ? `Copy ${number} of ${copies}` : "";
             const printing = card ? printingLabel(card) : "";
@@ -111,7 +123,7 @@ export function CardChoiceGrid({
                 {printing && <small>{printing}</small>}
               </button>
             );
-          }} /> : <p>No eligible cards.</p>}
+          }} /> : <p>{filter ? "No eligible cards match this search." : "No eligible cards."}</p>}
         {preview && <div className="card-choice-preview">
           <CardInspector value={preview} view={view} />
         </div>}

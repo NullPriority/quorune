@@ -69,14 +69,15 @@ class ProjectionCollectionTests(unittest.TestCase):
         departing.annotations["hidden_after_owner_left"] = True
         move = event(5, "zone.move", {"object": departing.ref, "from": "battlefield", "to": "graveyard"},
                      f"{departing.ref} {departing.printed_name}: battlefield \u2192 graveyard.")
+        attack = event(6, "combat.attack", {"attackers": {source.ref: "B", other_source.ref: "B"}})
         state = SimpleNamespace(
-            players={"A": None, "B": None}, events=[hits, death, zone, private, move], event_sequence=5,
+            players={"A": None, "B": None}, events=[hits, death, zone, private, move, attack], event_sequence=6,
             pending_decision=None, capabilities={}, stack=[],
             cards={card.ref: card for card in (source, other_source, victim, departing)},
         )
         projector = StateProjector(None, state)
         public = projector.event_page("spectator")["events"]
-        self.assertEqual([1, 2, 3, 5], [entry["id"] for entry in public])
+        self.assertEqual([1, 2, 3, 5, 6], [entry["id"] for entry in public])
         self.assertIn("Defending creature was destroyed after taking combat damage", public[1]["summary"])
         self.assertIn("3 from Public attacker", public[1]["summary"])
         self.assertIn("the graveyard", public[1]["summary"])
@@ -84,6 +85,27 @@ class ProjectionCollectionTests(unittest.TestCase):
         self.assertNotIn("Hidden blocker", json.dumps(public))
         self.assertEqual("Defending creature moved from the graveyard to the command zone.", public[2]["summary"])
         self.assertEqual("Previously named card", public[3]["cards"][0]["n"])
+        self.assertIn("Public attacker toward Seat B", public[4]["summary"])
+        self.assertEqual(["Public attacker"], [row["n"] for row in public[4]["cards"]])
+
+    def test_elimination_activity_explains_public_loss_facts(self):
+        reasons = [
+            (SimpleNamespace(life=0, poison=0, attempted_empty_draw=False, commander_damage_received={}), "reaching 0 life"),
+            (SimpleNamespace(life=9, poison=10, attempted_empty_draw=False, commander_damage_received={}), "10 poison counters"),
+            (SimpleNamespace(life=9, poison=0, attempted_empty_draw=True, commander_damage_received={}), "empty library"),
+        ]
+        for player, expected in reasons:
+            with self.subTest(expected=expected):
+                player.in_game = False
+                loss = Event(1, 5, 2, "A", "combat", "combat_damage", "B",
+                             "player.eliminated", "B left the game: state-based loss.",
+                             {"reason": "state-based loss"}, importance=3)
+                state = SimpleNamespace(
+                    players={"A": None, "B": player}, cards={}, stack=[], events=[loss], event_sequence=1,
+                    config=SimpleNamespace(poison_to_lose=10, commander_damage_to_lose=21),
+                )
+                (public,) = StateProjector(None, state).event_page("spectator")["events"]
+                self.assertIn(expected, public["summary"])
 
 
 class PermissionProjectionTests(unittest.TestCase):

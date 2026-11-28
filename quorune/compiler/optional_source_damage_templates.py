@@ -6,7 +6,9 @@ from .damage_templates import fixed_damage_effect_template
 from .destruction_templates import targeted_destruction_effect_template
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from ..random_discard import random_discard_effect_template
-from ..rules.optional_source_damage import OPTIONAL_SOURCE_DAMAGE_MECHANIC, source_damage_choice
+from ..rules.optional_source_damage import (
+    OPTIONAL_SOURCE_DAMAGE_MECHANIC, milled_mana_damage_choice, milled_mana_damage_target_schema, source_damage_choice,
+)
 from ..rules.source_references import SourceReferenceSpec
 from ..target_controller_reference import TARGET_CONTROLLER_INFORMATION_MECHANIC, target_controller_reference
 
@@ -15,6 +17,12 @@ _DRAW = re.compile(
     rf"Target opponent may have (?P<source>.+?) deal (?P<damage>[1-9][0-9]*) damage to them\. "
     rf"If that player doesn['’]t, you draw (?P<count>{FIXED_COUNT_PATTERN}) cards?\.", re.I,
 )
+_MILLED_MANA_ENTRY = re.compile(
+    rf"Target opponent may have you draw (?P<draw>{FIXED_COUNT_PATTERN}) cards?\. "
+    rf"If the player doesn['\u2019]t, you mill (?P<mill>{FIXED_COUNT_PATTERN}) cards?, then "
+    r"(?P<source>.+?) deals damage to that player equal to the total mana value of those cards\.", re.I,
+)
+
 _DISCARD = re.compile(
     r"(?P<alternate>Target player discards? .+? at random) unless that player has "
     r"(?P<source>.+?) deal (?P<damage>[1-9][0-9]*) damage to them\.", re.I,
@@ -69,6 +77,26 @@ def _optional_target_controller_damage(body, card_name):
         (source_damage_choice(damage, alternate, chooser=chooser),),
         schema,
         tuple(dict.fromkeys((OPTIONAL_SOURCE_DAMAGE_MECHANIC, *binding, "cr-120-damage", *mechanics))),
+    )
+
+
+def optional_milled_mana_damage_entry_template(text, *, card_name):
+    from .mill_templates import MILL_MECHANIC_ID
+
+    match = _MILLED_MANA_ENTRY.fullmatch(" ".join(text.split()))
+    if match is None:
+        return None
+    source = match["source"]
+    if source.casefold() != "this creature" and not SourceReferenceSpec(card_name).matches(source):
+        return None
+    draw, mill = fixed_number(match["draw"]), fixed_number(match["mill"])
+    if not draw or not mill:
+        return None
+    return (
+        "fixed-entry-opponent-draw-or-milled-mana-damage-v1",
+        (milled_mana_damage_choice(draw, mill),),
+        milled_mana_damage_target_schema(),
+        (OPTIONAL_SOURCE_DAMAGE_MECHANIC, "cr-115-targets", "cr-120-damage", "cr-121-drawing-a-card", MILL_MECHANIC_ID),
     )
 
 

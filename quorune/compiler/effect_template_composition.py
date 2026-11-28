@@ -79,17 +79,19 @@ def _next_turn_effect_template(
 
 
 def _damage_life_result(body, card_name, source_context, compile_fixed):
-    from .damage_templates import fixed_damage_dealt_life_template, targeted_dealt_life_gain_template
+    from .damage_templates import fixed_damage_dealt_life_template, targeted_dealt_life_gain_template, targeted_excess_trample_template
 
     permanent = source_context.get("source_is_permanent") is True
     fixed = fixed_damage_dealt_life_template(body, source_name=card_name, source_is_permanent=permanent)
     if fixed is not None or permanent:
         return fixed
+    fixed_damage = partial(compile_fixed, card_name=card_name, **source_context)
     query_damage = partial(
         public_query_effect_amount_template, source_name=card_name,
-        compile_fixed=partial(compile_fixed, card_name=card_name, **source_context),
+        compile_fixed=fixed_damage,
     )
-    return targeted_dealt_life_gain_template(body, compile_damage=query_damage)
+    return (targeted_dealt_life_gain_template(body, compile_damage=query_damage)
+            or targeted_excess_trample_template(body, compile_damage=fixed_damage))
 
 
 def _spell_only_result(text: str, compile_atomic: EffectCompiler, compile_payment: EffectCompiler):
@@ -114,10 +116,12 @@ def _spell_only_result(text: str, compile_atomic: EffectCompiler, compile_paymen
     from .targeted_discard_spell_copy import targeted_discard_spell_copy_template, targeted_return_spell_copy_template
     from .token_creation_reflexive_templates import token_creation_reflexive_template
     from .targeted_turn_target_prohibition import targeted_turn_prohibition_template
+    from .loyalty_damage_templates import turn_creature_combat_multiplier_template
 
     return (
         controller_graveyard_mana_target_template(text)
         or private_look_land_or_hand_template(text)
+        or turn_creature_combat_multiplier_template(text)
         or exile_until_same_name_template(text)
         or distinct_opponent_draw_template(text)
         or selected_opponent_discard_draw_template(text)
@@ -134,15 +138,86 @@ def _spell_only_result(text: str, compile_atomic: EffectCompiler, compile_paymen
     )
 
 
-def _whole_contextual_effect_template(text):
+def _whole_contextual_effect_template(text, *, card_name, cast_x_available):
     from ..temporary_graveyard_escape import targeted_escape_template
+    from .targeted_graveyard_cast_templates import targeted_graveyard_flashback_template
+    from .opponents_graveyards_exile_cast import opponents_graveyards_exile_cast_template
+    from .owned_graveyard_turn_play import owned_graveyard_turn_play_template
+    from .damage_templates import excess_damage_tapped_treasure_template
 
     from .reveal_until_library_selection_templates import chosen_name_reveal_template
-
     from .scheduled_turn_skip_templates import target_player_untap_skip_tap_template
 
-    return (fixed_end_turn_effect_template(text) or targeted_escape_template(text)
-            or chosen_name_reveal_template(text) or target_player_untap_skip_tap_template(text))
+    result = (fixed_end_turn_effect_template(text) or targeted_escape_template(text)
+            or chosen_name_reveal_template(text) or target_player_untap_skip_tap_template(text)
+            or targeted_graveyard_flashback_template(text)
+            or opponents_graveyards_exile_cast_template(text)
+            or owned_graveyard_turn_play_template(text))
+    if result is None and cast_x_available:
+        return excess_damage_tapped_treasure_template(text, source_name=card_name)
+    return result
+
+
+def _contextual_library_result(
+    body: str,
+    *,
+    card_name: str,
+    source_context: Mapping[str, Any],
+    cast_x_available: bool,
+    forbid_public_x: bool,
+) -> CompiledEffectTemplate | None:
+    from .reveal_until_library_selection_templates import (
+        reveal_until_library_selection_effect_template,
+    )
+
+    reveal_until = reveal_until_library_selection_effect_template(
+        body, allow_reflexive=source_context.get("source_is_permanent") is False,
+    )
+    if reveal_until is not None:
+        return reveal_until
+    from .discover_templates import discover_effect_template
+
+    discover = discover_effect_template(
+        body, source_name=card_name, cast_x_available=cast_x_available,
+        forbid_public_x=forbid_public_x, **source_context,
+    )
+    if discover is not None:
+        return discover
+    from .library_battlefield_templates import library_battlefield_selection_effect_template
+
+    battlefield = library_battlefield_selection_effect_template(body)
+    if battlefield is not None:
+        return battlefield
+    from .variable_library_selection_templates import variable_library_selection_effect_template
+
+    return variable_library_selection_effect_template(
+        body, source_name=card_name, cast_x_available=cast_x_available,
+        forbid_public_x=forbid_public_x, **source_context,
+    )
+
+
+def _contextual_payment_result(text, *, compile_atomic, compile_payment, source_is_permanent):
+    # Keep the certified version-one payment before the typed alternatives.
+    legacy_payment = fixed_optional_mana_payment_template(text, compile_effect=compile_atomic)
+    if legacy_payment is not None:
+        from ..rules.fixed_effect_clause_shapes import fixed_optional_mana_payment_node_capabilities
+
+        if fixed_optional_mana_payment_node_capabilities(
+            effects=legacy_payment.effects, target_schema=legacy_payment.target_schema,
+            mechanic_ids=legacy_payment.mechanics,
+        ):
+            return legacy_payment.compiled()
+    reflexive = reflexive_payment_template(text, compile_effect=compile_payment)
+    if reflexive is not None:
+        return reflexive
+    from .targeted_life_decline import targeted_life_decline_template
+
+    context = {"compile_effect": compile_payment, "source_is_permanent": source_is_permanent}
+    return (
+        targeted_life_decline_template(text)
+        or fixed_effect_payment_template(text, **context)
+        or fixed_effect_payment_with_mandatory_prefix(text, **context)
+    )
 
 
 def reviewed_contextual_effect_template(
@@ -158,11 +233,24 @@ def reviewed_contextual_effect_template(
     # These instructions own the complete resolving operation.
     from .reanimation_templates import returned_creature_counters_template
 
-    whole = returned_creature_counters_template(text) or _whole_contextual_effect_template(text)
+    whole = returned_creature_counters_template(text) or _whole_contextual_effect_template(text, card_name=card_name, cast_x_available=cast_x_available and not source_context.get("source_is_permanent"))
     if whole is not None:
         return whole
+    if source_context.get("source_is_permanent") is False:
+        from .event_optional_draw_results import tempting_draw_token_template
+
+        if offer := tempting_draw_token_template(text):
+            return offer
 
     def atomic_with_characteristics(body: str) -> CompiledEffectTemplate:
+        from .fight_excess_mana_templates import fight_excess_mana_template
+
+        if fight := fight_excess_mana_template(body):
+            return fight
+        from .experience_results import experience_pump_template
+
+        if source_context.get("source_is_permanent") and (experience := experience_pump_template(body, card_name)):
+            return experience
         if dealt_life := _damage_life_result(body, card_name, source_context, compile_fixed):
             return dealt_life
         from .mana_value_destruction import mana_value_destruction_template
@@ -183,21 +271,12 @@ def reviewed_contextual_effect_template(
         )
         if timed is not None:
             return timed
-        from .reveal_until_library_selection_templates import reveal_until_library_selection_effect_template
-        reveal_until=reveal_until_library_selection_effect_template(body,
-            allow_reflexive=source_context.get('source_is_permanent') is False)
-        if reveal_until is not None:return reveal_until
-        from .discover_templates import discover_effect_template
-        discover=discover_effect_template(body,source_name=card_name,cast_x_available=cast_x_available,
-            forbid_public_x=forbid_public_x,**source_context)
-        if discover is not None:return discover
-        from .library_battlefield_templates import library_battlefield_selection_effect_template
-        battlefield=library_battlefield_selection_effect_template(body)
-        if battlefield is not None:return battlefield
-        from .variable_library_selection_templates import variable_library_selection_effect_template
-        inspection=variable_library_selection_effect_template(body,source_name=card_name,
-            cast_x_available=cast_x_available,forbid_public_x=forbid_public_x,**source_context)
-        if inspection is not None:return inspection
+        library = _contextual_library_result(
+            body, card_name=card_name, source_context=source_context,
+            cast_x_available=cast_x_available, forbid_public_x=forbid_public_x,
+        )
+        if library is not None:
+            return library
         from .incubate_templates import incubate_effect_template
         incubate=incubate_effect_template(body,source_name=card_name,cast_x_available=cast_x_available,
             forbid_public_x=forbid_public_x,**source_context)
@@ -258,29 +337,17 @@ def reviewed_contextual_effect_template(
         if replacement is not None:
             return replacement
 
-    # Preserve the certified v1 one-mana/one-leaf payload before using v2.
     from .source_animation_prevention import source_animation_prevention_template
     animation = source_animation_prevention_template(text, card_name=card_name,
         source_context=source_context, compile_clause=atomic_with_characteristics)
     if animation is not None:return animation
-    legacy_payment=fixed_optional_mana_payment_template(text,compile_effect=atomic_with_characteristics)
-    if legacy_payment is not None:
-        from ..rules.fixed_effect_clause_shapes import fixed_optional_mana_payment_node_capabilities
-        if fixed_optional_mana_payment_node_capabilities(effects=legacy_payment.effects,target_schema=legacy_payment.target_schema,mechanic_ids=legacy_payment.mechanics):
-            return legacy_payment.compiled()
     def payment_body(body: str) -> CompiledEffectTemplate:
         return reviewed_effect_template_composition(body,source_name=card_name,
             compile_atomic=atomic_with_characteristics,
             compile_fixed=partial(compile_fixed,card_name=card_name,**source_context))
-    reflexive = reflexive_payment_template(text, compile_effect=payment_body)
-    if reflexive is not None:
-        return reflexive
-    payment_context = {"compile_effect": payment_body, "source_is_permanent": source_context.get("source_is_permanent")}
-    from .targeted_life_decline import targeted_life_decline_template
-    fixed_payment = (
-        targeted_life_decline_template(text)
-        or fixed_effect_payment_template(text, **payment_context)
-        or fixed_effect_payment_with_mandatory_prefix(text, **payment_context)
+    fixed_payment = _contextual_payment_result(
+        text, compile_atomic=atomic_with_characteristics, compile_payment=payment_body,
+        source_is_permanent=source_context.get("source_is_permanent"),
     )
     if fixed_payment is not None:
         return fixed_payment
@@ -322,6 +389,10 @@ def reviewed_effect_template_composition(
 
     if snapshot := counter_snapshot_proliferate_template(text):
         return snapshot
+    from .tempt_draw_token_templates import tempt_draw_token_template
+
+    if tempting := tempt_draw_token_template(text):
+        return tempting
     if chosen_permanent := permanent_resolution_choice_template(text):
         return chosen_permanent
     if committed_mill := committed_mill_card_template(text):

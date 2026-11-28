@@ -41,6 +41,16 @@ def public_replacement_material_rows(rows, *, oracle_text, source_name, compile_
                 span = SourceSpan(previous[2].start, row[2].end, previous[2].line)
                 result[-1] = (oracle_text[span.start:span.end], combined, span)
                 continue
+        if result and material.casefold().startswith("exile ") and result[-1][1].casefold().startswith("exile all opponents"):
+            from ..rules.opponents_graveyards_exile_cast import TEMPLATE
+            from ..rules.spell_self_exile import SELF_EXILE
+
+            previous = result[-1]
+            combined = previous[1] + " " + material
+            if compile_effect(combined, card_name=source_name)[0] == f"{SELF_EXILE.template}+{TEMPLATE}":
+                span = SourceSpan(previous[2].start, row[2].end, previous[2].line)
+                result[-1] = (oracle_text[span.start:span.end], combined, span)
+                continue
 
         if result and material.casefold().startswith("ferocious — that creature also gains "):
             from ..rules.ferocious_keyword_append import FEROCIOUS_KEYWORD_TEMPLATE
@@ -122,6 +132,7 @@ def public_replacement_material_rows(rows, *, oracle_text, source_name, compile_
                 "fixed-public-self-replacement-v1", "public-same-target-self-replacement-v1",
                 "public-source-self-replacement-v1",
                 "current-target-self-replacement-v1",
+                "owned-graveyard-play-exile-turn-v1",
             }
         compiled = compile_effect(combined, card_name=source_name)
         if compiled[0] not in templates:

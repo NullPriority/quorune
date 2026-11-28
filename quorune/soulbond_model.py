@@ -12,6 +12,7 @@ SOULBOND_CHOICE_OPERATION = 'offer_soulbond_pair'
 SOULBOND_COVERAGE = 'identity_pinned_soulbond_pairing'
 SOULBOND_SELF_CONDITION = 'soulbond_self_entry_available'
 SOULBOND_OTHER_CONDITION = 'soulbond_other_entry_available'
+SOULBOND_PARTNER_LOGICAL_ID = "$source.soulbond_partner_logical_object_id"
 SOULBOND_GRANT_CAPABILITY = 'continuous.soulbond.paired_grant'
 SOULBOND_GRANT_HANDLER = 'continuous.soulbond.paired-grant.v1'
 

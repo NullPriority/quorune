@@ -1,5 +1,9 @@
 from __future__ import annotations
+
+from ..announced_counter_allocation import BOUND_COUNTER_SHARES, validate_bound_counter_shares
+from ..rules.opponent_blight import OPPONENT_BLIGHT_BATCH_KIND, OpponentBlightBatchIntent
 from ..bounded_hand_cast_model import ResolveBoundedHandCastIntent, validate_bounded_hand_cast_identity
+from ..resolving_cast_budget_model import ResolveBudgetedCastIntent, validate_intent_identity as validate_budgeted_cast_identity
 from ..rules.ripple_resolution_model import (ResolveRippleCastIntent,RippleBottomIntent,
     validate_ripple_cast_identity,validate_ripple_bottom_identity)
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
@@ -13,6 +17,7 @@ from ..rules.shared_type_library_play_model import (
 from ..rules.qualified_library_cast import ResolveQualifiedLibraryCastIntent, validate_qualified_library_cast_identity
 from ..drawing.captured_hand import ResolveCapturedDrawCastIntent, validate_captured_draw_cast_identity
 from ..targeted_graveyard_cast_model import GraveyardCastIntent, decode_graveyard_cast_identity
+from ..rules.discarded_card_cast import DiscardedCardCastIntent, validate_discarded_card_cast_intent_identity
 from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent, decode_exile_graveyard_copies_identity
 from ..cipher_model import EncodeCipherIntent, cipher_intent_identity, validate_cipher_intent_identity
 from ..discard_result_model import DiscardWholeHandsResultIntent, decode_discard_result_identity
@@ -65,10 +70,8 @@ from ..semantic_runtime import (
     SurveilLibraryIntent,
     ZoneMoveIntent,
 )
-from ..rules.library_surveillance import (
-    SurveilArrangement,
-    SurveilError,
-    SurveilObjectIdentity,
+from .surveil_intent_identity import (
+    surveil_intent_identity as _surveil_intent_identity, validate_surveil_intent_identity,
 )
 from ..rules.library_selection import (
     LibrarySelectionArrangement,
@@ -195,18 +198,6 @@ _LIFE_CHANGE_FIELDS = {
     _REASON_FIELD,
     "source_ref",
 }
-_SURVEIL_FIELDS = {
-    "actor",
-    "player",
-    "arrangement",
-    "requested_count",
-    _REASON_FIELD,
-}
-_SURVEIL_ARRANGEMENT_FIELDS = {
-    "looked",
-    "top_top_first",
-    "graveyard_refs",
-}
 _LIBRARY_SELECTION_FIELDS = {
     "actor",
     "player",
@@ -292,28 +283,6 @@ def validate_counter_intent_identity(value: Mapping[str, Any]) -> dict[str, Any]
     }
 
 
-def _surveil_intent_identity(
-    intent: SurveilLibraryIntent,
-) -> tuple[str, dict[str, Any]]:
-    return (
-        "surveil_library",
-        {
-            "actor": intent.actor,
-            "player": intent.player,
-            "arrangement": {
-                "looked": [
-                    identity.to_dict()
-                    for identity in intent.arrangement.looked
-                ],
-                "top_top_first": list(intent.arrangement.top_top_first),
-                "graveyard_refs": list(intent.arrangement.graveyard_refs),
-            },
-            "requested_count": intent.requested_count,
-            _REASON_FIELD: intent.reason,
-        },
-    )
-
-
 def _library_selection_intent_identity(
     intent: LibrarySelectionIntent,
 ) -> tuple[str, dict[str, Any]]:
@@ -336,6 +305,8 @@ def _library_selection_intent_identity(
                 **({'selected_destination':intent.arrangement.selected_destination} if intent.arrangement.selected_destination!='hand' else {}),
                 **({'entry_tapped':intent.arrangement.entry_tapped} if intent.arrangement.selected_destination=='battlefield' else {}),
                 **({"entry_followup": intent.arrangement.entry_followup.to_dict()} if intent.arrangement.entry_followup is not None else {}),
+                **({"silver_exile": True} if intent.arrangement.silver_exile else {}),
+                **({"searched_pair": True} if intent.arrangement.searched_pair else {}),
             },
             _REASON_FIELD: intent.reason,
             "source_stack_ref": intent.source_stack_ref,
@@ -343,6 +314,7 @@ def _library_selection_intent_identity(
             "selected_are_public": intent.selected_are_public,
             **({"require_graveyard_order": True} if intent.require_graveyard_order else {}),
             **({"graveyard_orders": intent.graveyard_orders.to_dict()} if intent.graveyard_orders is not None else {}),
+            **({"committed_graveyard_treasure": True} if intent.committed_graveyard_treasure else {}),
         },
     )
 
@@ -416,6 +388,7 @@ def _resolving_cast_intent_identity(intent: Any) -> tuple[str, dict[str, Any]] |
     if isinstance(intent,ResolveRippleCastIntent):return 'ripple_cast',intent.identity()
     if isinstance(intent,RippleBottomIntent):return 'ripple_bottom',intent.identity()
     if isinstance(intent, ResolveBoundedHandCastIntent):return "resolving_bounded_hand_cast", intent.identity()
+    if isinstance(intent, ResolveBudgetedCastIntent):return "resolving_budgeted_cast", intent.identity()
     if isinstance(intent,DiscoverCastIntent):return 'discover_cast',intent.identity()
     if isinstance(intent, ResolvingExileLandPlayIntent):return 'resolving_exile_land_play', intent.identity()
     if isinstance(intent, ResolvingSharedTypeLibraryPlayIntent):
@@ -424,6 +397,8 @@ def _resolving_cast_intent_identity(intent: Any) -> tuple[str, dict[str, Any]] |
         return 'resolving_qualified_library_cast', intent.identity()
     if isinstance(intent, ResolveCapturedDrawCastIntent):return 'resolving_captured_draw_cast', intent.identity()
     if isinstance(intent,GraveyardCastIntent):return 'targeted_graveyard_cast',intent.identity()
+    if isinstance(intent, DiscardedCardCastIntent):
+        return "discarded_card_cast", intent.identity()
     return None
 
 
@@ -495,6 +470,8 @@ def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
         return "distribute_source_counters", intent.identity()
     if isinstance(intent, COUNTER_MOVEMENT_INTENT_TYPES):
         return "move_counters", intent.identity()
+    if isinstance(intent, OpponentBlightBatchIntent):
+        return OPPONENT_BLIGHT_BATCH_KIND, intent.identity()
     if isinstance(intent, PlaceCounterBatchIntent):
         return "place_counter_batch", _counter_batch_intent_identity(intent)
     if isinstance(intent, PlaceCountersOnSetIntent):
@@ -520,6 +497,7 @@ def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
                 "amount": intent.amount,
                 _REASON_FIELD: intent.reason,
                 "source_ref": intent.source_ref,
+                **({BOUND_COUNTER_SHARES: dict(intent.target_shares)} if intent.target_shares is not None else {}),
             },
         )
     if isinstance(intent, PlacePlayerCountersIntent):
@@ -727,7 +705,7 @@ def _validate_counter_target_set_intent_identity(
         raise SemanticChoiceError(
             "Counter-target intent identity must be an object"
         )
-    actual = set(value)
+    actual = set(value) - {BOUND_COUNTER_SHARES}
     if actual != _COUNTER_TARGET_SET_INTENT_FIELDS:
         missing = sorted(_COUNTER_TARGET_SET_INTENT_FIELDS - actual)
         unknown = sorted(actual - _COUNTER_TARGET_SET_INTENT_FIELDS)
@@ -764,7 +742,18 @@ def _validate_counter_target_set_intent_identity(
         raise SemanticChoiceError(
             "Counter-target intent identity is malformed"
         )
+    result = {}
+    if BOUND_COUNTER_SHARES in value:
+        try:
+            shares = validate_bound_counter_shares(
+                value[BOUND_COUNTER_SHARES], refs=refs, counter_name=counter_name,
+                amount=amount, maximum_targets=maximum,
+            )
+        except (TypeError, ValueError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+        result[BOUND_COUNTER_SHARES] = dict(shares)
     return {
+        **result,
         "actor": actor,
         "object_refs": list(refs),
         "maximum_targets": maximum,
@@ -775,49 +764,15 @@ def _validate_counter_target_set_intent_identity(
     }
 
 
-def _validate_surveil_intent_identity(
-    value: Mapping[str, Any],
-) -> dict[str, Any]:
-    if not isinstance(value, Mapping) or set(value) != _SURVEIL_FIELDS:
-        raise SemanticChoiceError(
-            "Surveil intent identity fields are malformed"
-        )
-    raw_arrangement = value["arrangement"]
-    if (
-        not isinstance(raw_arrangement, Mapping)
-        or set(raw_arrangement) != _SURVEIL_ARRANGEMENT_FIELDS
-        or not isinstance(raw_arrangement["looked"], (list, tuple))
-    ):
-        raise SemanticChoiceError(
-            "Surveil intent arrangement is malformed"
-        )
-    try:
-        arrangement = SurveilArrangement(
-            looked=tuple(
-                SurveilObjectIdentity.from_dict(identity)
-                for identity in raw_arrangement["looked"]
-            ),
-            top_top_first=tuple(raw_arrangement["top_top_first"]),
-            graveyard_refs=tuple(raw_arrangement["graveyard_refs"]),
-        )
-        intent = SurveilLibraryIntent(
-            actor=value["actor"],
-            player=value["player"],
-            arrangement=arrangement,
-            requested_count=value["requested_count"],
-            reason=value[_REASON_FIELD],
-        )
-    except (SurveilError, TypeError, ValueError) as exc:
-        raise SemanticChoiceError(
-            "Surveil intent identity is malformed"
-        ) from exc
-    return semantic_intent_identity(intent)[1]
+def _validate_surveil_intent_identity(value: Mapping[str, Any]) -> dict[str, Any]:
+    return validate_surveil_intent_identity(value, semantic_intent_identity)
 
 
 def _validate_library_selection_intent_identity(
     value: Mapping[str, Any],
 ) -> dict[str, Any]:
     from ..graveyard_arrival_order_model import GraveyardArrivalOrders
+    from ..hideaway_model import HIDEAWAY_DESTINATION
     from ..linked_library_imprint_model import LIBRARY_IMPRINT_DESTINATION
     from ..private_opponent_library_cast_model import PRIVATE_OPPONENT_LIBRARY_CAST_DESTINATION
     from ..rules.library_selection import PRIVATE_PARTITION_ROLE_DESTINATIONS
@@ -825,9 +780,10 @@ def _validate_library_selection_intent_identity(
     if (
         not isinstance(value, Mapping)
         or not _LIBRARY_SELECTION_FIELDS <= set(value) <= (
-            _LIBRARY_SELECTION_FIELDS | {"require_graveyard_order", "graveyard_orders"}
+            _LIBRARY_SELECTION_FIELDS | {"require_graveyard_order", "graveyard_orders", "committed_graveyard_treasure"}
         )
         or "require_graveyard_order" in value and value["require_graveyard_order"] is not True
+        or "committed_graveyard_treasure" in value and value["committed_graveyard_treasure"] is not True
     ):
         raise SemanticChoiceError(
             "Library selection intent identity fields are malformed"
@@ -839,11 +795,16 @@ def _validate_library_selection_intent_identity(
         _LIBRARY_SELECTION_ARRANGEMENT_FIELDS)
     if new_entry and raw.get("remainder_destination") == LIBRARY_SHUFFLE_REMAINDER:
         expected_fields = expected_fields | {"entry_followup"}
+    if isinstance(raw, Mapping) and raw.get("silver_exile") is True:
+        expected_fields = expected_fields | {"silver_exile"}
+    if raw.get("searched_pair") is True:
+        expected_fields = expected_fields | {"searched_pair"}
     if (
         not isinstance(raw, Mapping)
         or set(raw) != expected_fields
         or 'selected_destination' in raw and raw['selected_destination'] not in {
-            'library_top', 'battlefield', LIBRARY_IMPRINT_DESTINATION, PRIVATE_OPPONENT_LIBRARY_CAST_DESTINATION,
+            'library_top', 'battlefield', LIBRARY_IMPRINT_DESTINATION,
+            HIDEAWAY_DESTINATION, PRIVATE_OPPONENT_LIBRARY_CAST_DESTINATION,
             *PRIVATE_PARTITION_ROLE_DESTINATIONS,
         }
         or not isinstance(raw["looked"], (list, tuple))
@@ -864,6 +825,8 @@ def _validate_library_selection_intent_identity(
             selected_destination=raw.get('selected_destination','hand'),
             entry_tapped=raw.get('entry_tapped',False),
             entry_followup=RevealedCreatureEntryFollowup.from_dict(raw["entry_followup"]) if "entry_followup" in raw else None,
+            silver_exile=raw.get("silver_exile", False),
+            searched_pair=raw.get("searched_pair", False),
         )
         intent = LibrarySelectionIntent(
             actor=value["actor"],
@@ -874,6 +837,7 @@ def _validate_library_selection_intent_identity(
             looked_are_public=value["looked_are_public"],
             selected_are_public=value["selected_are_public"],
             require_graveyard_order=value.get("require_graveyard_order", False),
+            committed_graveyard_treasure=value.get("committed_graveyard_treasure", False),
             graveyard_orders=GraveyardArrivalOrders.from_dict(value["graveyard_orders"])
             if "graveyard_orders" in value else None,
         )
@@ -895,6 +859,11 @@ def validate_semantic_intent_identity(
             return decoder(value)
         except (TypeError, ValueError) as exc:
             raise SemanticChoiceError(str(exc)) from exc
+    if kind == OPPONENT_BLIGHT_BATCH_KIND:
+        try:
+            return OpponentBlightBatchIntent.from_identity(value).identity()
+        except (TypeError, ValueError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
     if kind == "targeted_power_sacrifice_life":
         try:
             return validate_targeted_power_sacrifice_life_identity(value)
@@ -903,6 +872,11 @@ def validate_semantic_intent_identity(
     if kind == 'graveyard_exile_life_result':
         try:return validate_graveyard_exile_life_result_identity(value)
         except (TypeError, ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
+    if kind == "discarded_card_cast":
+        try:
+            return validate_discarded_card_cast_intent_identity(value)
+        except (TypeError, ValueError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
     if kind == 'targeted_graveyard_cast':
         try:return decode_graveyard_cast_identity(value)
         except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
@@ -926,6 +900,9 @@ def validate_semantic_intent_identity(
     if kind=='ripple_bottom':
         try:return validate_ripple_bottom_identity(value)
         except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
+    if kind == 'resolving_budgeted_cast':
+        try:return validate_budgeted_cast_identity(value)
+        except (TypeError, ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
     if kind == 'resolving_bounded_hand_cast':
         try:return validate_bounded_hand_cast_identity(value)
         except (TypeError, ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
@@ -1151,19 +1128,6 @@ def _validate_zone_move_intent_identity(value):
     return result
 
 
-def _linked_landfall_intent_fields(value):
-    if "linked_landfall_settlement" not in value:
-        return MoveObjectsSimultaneouslyIntent, {}
-    from ..semantic_runtime.linked_landfall_settlement_intent import LinkedLandfallSettlementIntent
-    from ..graveyard_arrival_order_model import GraveyardArrivalOrders
-
-    data=value["linked_landfall_settlement"]
-    if not isinstance(data,Mapping) or set(data) not in ({"damage_source","orders"}, {"spawn_receipt","orders"}):
-        raise ValueError("Malformed linked settlement identity")
-    return LinkedLandfallSettlementIntent, {**{key: value for key, value in data.items() if key != "orders"},
-        "orders":GraveyardArrivalOrders.from_dict(data["orders"]) if data["orders"] is not None else None}
-
-
 def _validate_simultaneous_move_intent_identity(
     value: Mapping[str, Any],
     *, kind: str = "move_objects_simultaneously",
@@ -1192,7 +1156,8 @@ def _validate_simultaneous_move_intent_identity(
             raise ValueError("Malformed multiowner creature return")
         if multiowner and 'linked_landfall_settlement' in value:
             raise ValueError('A move cannot carry both settlement and multiowner authorities')
-        owner, extra = (MultiownerFrontFaceGraveyardReturnIntent, {}) if multiowner else _linked_landfall_intent_fields(value)
+        from ..semantic_runtime.linked_landfall_settlement_intent import linked_landfall_intent_fields
+        owner, extra = (MultiownerFrontFaceGraveyardReturnIntent, {}) if multiowner else linked_landfall_intent_fields(value)
         intent = owner(
             **extra,
             actor=value["actor"],
@@ -1489,14 +1454,17 @@ def with_replacement_selections(
     | ResolveQualifiedLibraryCastIntent
     | ResolveCapturedDrawCastIntent
     | ResolveBoundedHandCastIntent
+    | ResolveBudgetedCastIntent
     | ResolveRippleCastIntent
     | GraveyardCastIntent
+    | DiscardedCardCastIntent
     | ExileGraveyardCopiesIntent
     | DiscoverCleanupIntent
     | IncubateIntent
     | PlaceCountersIntent
     | CounterMovementIntent
     | LifeChangeIntent
+    | OpponentBlightBatchIntent
     | PlaceCounterBatchIntent
     | PlaceCountersOnSetIntent
     | PlaceCountersOnTargetsIntent
@@ -1521,8 +1489,10 @@ def with_replacement_selections(
             ResolveQualifiedLibraryCastIntent,
             ResolveCapturedDrawCastIntent,
             ResolveBoundedHandCastIntent,
+            ResolveBudgetedCastIntent,
             ResolveRippleCastIntent,
             GraveyardCastIntent,
+            DiscardedCardCastIntent,
             ExileGraveyardCopiesIntent,
             DiscoverCleanupIntent,
             IncubateIntent,
@@ -1534,6 +1504,7 @@ def with_replacement_selections(
             LifeLossBatchIntent,
             LifeGainCostBatchIntent,
             *COUNTER_MOVEMENT_INTENT_TYPES,
+            OpponentBlightBatchIntent,
             PlaceCounterBatchIntent,
             PlaceCountersOnSetIntent,
             PlaceCountersOnTargetsIntent,

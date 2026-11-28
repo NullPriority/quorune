@@ -27,7 +27,8 @@ class MutateCastNativeTests(InheritedNativeFixture,unittest.TestCase):
             ROOT/'tests/fixtures/mutate-casting-cards.json',
             ROOT/'tests/fixtures/counter-placement-event-cards.json',
             ROOT/'tests/fixtures/self-public-cost-cards.json',
-            ROOT/'tests/fixtures/fixed-public-zone-move-cards.json'],path)
+            ROOT/'tests/fixtures/fixed-public-zone-move-cards.json',
+            ROOT/'tests/fixtures/event-card-return.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Mutate native',[DeckEntry('Isamaru, Hound of Konda',1,'commander'),
             DeckEntry('Generic Bound Plains',14)],['Isamaru, Hound of Konda'])
@@ -208,6 +209,46 @@ class MutateCastNativeTests(InheritedNativeFixture,unittest.TestCase):
         self.assertEqual({card.ref for card in cards}, {row["id"] for row in context["objects"]})
         accepted = session.act("pilot:" + chooser, {"action_id": "choose", "cards": [card.ref for card in cards]})
         self.assertTrue(accepted.ok, accepted.summary)
+
+    def test_nim_paid_merged_return_selects_one_actual_returned_creature_and_replays(self):
+        session = self.session(730_303_710)
+        body = self.add(session.engine, "Grizzly Bears")
+        part = self.add(session.engine, "Dreamtail Heron", zone="hand")
+        equipment = self.add(session.engine, "Nim Deathmantle")
+        removal = self.add(session.engine, "Murder", seat="B", zone="hand")
+        for card in (body, part, equipment, removal):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 7, "U": 1})
+        session.state.players["B"].mana_pool.update({"C": 1, "B": 2})
+        self.checkpoint(session)
+        self.mutate(session, part, body)
+        session = self.choose_merge(session, "bottom")
+        self.assertIsNone(self.resolve(session))
+        self.cast(session, "B", removal, [body.ref])
+        self._complete_public_departure_order(session, "A", (body, part))
+
+        payment = self.resolve(session)
+        self.assertEqual(("semantic.choice", ["A"]), (payment.kind, payment.actors))
+        accepted = session.act("pilot:A", {"action_id": "choose", "pay": True})
+        self.assertTrue(accepted.ok, accepted.summary)
+        decision = session.state.pending_decision
+        self.assertEqual(("semantic.choice", ["A"]), (decision.kind, decision.actors))
+        self.assertEqual("choice.attachment.death-return-results.v1", decision.continuation["handler_id"])
+        view = session.packet("pilot:A", full=True)["decision"]
+        action = next(row for row in view["legal_actions"] if row["id"] == "choose")
+        self.assertEqual("objects", action["choice_schema"]["field"])
+        self.assertEqual({body.ref, part.ref}, set(action["choice_schema"]["legal_refs"]))
+        self.assertEqual("battlefield", session.state.cards[body.object_id].zone)
+        self.assertEqual("battlefield", session.state.cards[part.object_id].zone)
+        choice = {"action_id": "choose", "objects": [part.ref]}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:B", choice).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        session = self.replay(session, load=True)
+        accepted = session.act("pilot:A", choice)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(part.object_id, session.state.cards[equipment.object_id].attached_to)
+        self.replay(session, load=True)
 
     def test_merged_library_shuffle_moves_every_surviving_original_component(self):
         for remove_root in (False, True):

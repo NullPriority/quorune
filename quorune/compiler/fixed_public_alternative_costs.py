@@ -34,6 +34,7 @@ from ..rules.casting_additional_cost_groups import (
     FixedLifePaymentAdditionalCost,
 )
 from ..rules.casting_additional_costs import FixedZoneChangeAdditionalCost
+from ..rules.island_pair_discard_cost import ISLAND_PAIR_DISCARD_FIELD, ISLAND_PAIR_PRICE_TEXT, island_pair_discard_cost
 from ..util import mana_cost_to_vector
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 
@@ -274,6 +275,8 @@ def _payment(
             ),
         )
         return parsed[0], parsed[1], (FrozenMap(cost.to_descriptor()),)
+    if normalized.casefold() == ISLAND_PAIR_PRICE_TEXT:
+        return None, _zero_mana(), (FrozenMap(island_pair_discard_cost().to_descriptor()),)
     if match := _HAND_MOVE.fullmatch(normalized):
         count = _count(match.group("count"))
         verb = match.group("verb").casefold()
@@ -491,6 +494,9 @@ def compile_fixed_public_alternative_cost(
             return None
         cost_text, mana, additional = parsed
         condition = _condition(kind, plain)
+        if (any(cost.get(ISLAND_PAIR_DISCARD_FIELD) is True for cost in additional)
+                and condition.kind is not FixedPublicAlternativeConditionKind.ALWAYS):
+            return None
     return FixedPublicAlternativeCostSpec(
         ability_id=f"ab{line_index + 1}",
         line_index=line_index,

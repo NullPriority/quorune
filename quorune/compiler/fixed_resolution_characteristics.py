@@ -11,6 +11,7 @@ from ..continuous_effect_model import ContinuousEffectDuration
 from ..creature_subtypes import canonical_creature_subtype
 from ..object_predicate import ObjectQuerySpec
 from ..resolution_characteristic_model import (
+    CountedTargetLandAnimationSpec,
     ChosenCreatureTypeModifier, ChosenCreatureTypeResult,
     CHARACTERISTIC_OPERATION, CHOSEN_SUBTYPE_CHOICE_VERSION, PERMANENT_CHARACTERISTIC_MECHANIC,
     DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION, RECIPIENT_MANA_VALUE,
@@ -330,6 +331,14 @@ def fixed_resolution_characteristics_effect_template(
     cast_x_available: bool = False,
 ) -> tuple[str, tuple[Mapping[str, Any], ...], Mapping[str, Any] | None, tuple[str, ...]] | None:
     """Consume one complete fixed end-of-turn instruction, never an open tail."""
+    if source_is_permanent is True and " ".join(text.split()).casefold() == (
+        "target land you control becomes an x/x elemental creature with trample and haste until end of turn, "
+        "where x is the number of enchantments you control. it's still a land."
+    ):
+        target = direct_permanent_target_spec("target land you control")
+        return ("counted-controlled-land-animation-v1", (CountedTargetLandAnimationSpec().effect(),),
+                target.to_target_schema(), ("cr-611-continuous-effects", PERMANENT_CHARACTERISTIC_MECHANIC,
+                                            "cr-115-targets", "trample", "haste"))
     if fixed_form := (_target_player_creature_overwrite_template(text) or _targeted_tap_then_ability_loss_template(text)
                       or _untap_then_animate_land_template(text)):
         return fixed_form

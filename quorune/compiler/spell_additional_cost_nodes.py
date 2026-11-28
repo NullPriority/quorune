@@ -33,6 +33,7 @@ from .paid_revealed_creature_templates import (
 )
 from .paid_sacrifice_condition_templates import paid_sacrifice_condition_template
 from .colored_hand_credit_template import colored_hand_credit_template
+from .creature_sacrifice_credit import creature_sacrifice_credit_template
 from .mandatory_selected_zone_costs import fixed_discard_sacrifice_template
 from .waterbend_costs import fixed_waterbend_additional_cost_template
 from .random_discard_spell_costs import fixed_random_discard_spell_cost_template
@@ -331,7 +332,8 @@ def typed_additional_cost_spell_node(
     paid_copy = paid_sacrifice_copy_cost_template(first_clause)
     cost = (
         paid_copy or _damage_qualified_sacrifice_spell_cost(first_clause)
-        or colored_hand_credit_template(first_clause) or fixed_discard_sacrifice_template(first_clause)
+        or colored_hand_credit_template(first_clause) or creature_sacrifice_credit_template(first_clause)
+        or fixed_discard_sacrifice_template(first_clause)
         or fixed_random_discard_spell_cost_template(first_clause) or announced_x_additional_cost_template(first_clause)
         or fixed_waterbend_additional_cost_template(first_clause) or fixed_tap_additional_cost_template(first_clause)
     )

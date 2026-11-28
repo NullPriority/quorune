@@ -16,7 +16,8 @@ from ..whole_hand_mana import DISCARD_HAND_COST_FIELD
 
 def validate_activation_frame(frame, response):
     summary = response.get("cost_summary")
-    if (not isinstance(summary, Mapping) or type(summary.get(DISCARD_HAND_COST_FIELD)) is not int
+    if (frame.schema_version != 1 or not isinstance(summary, Mapping)
+            or type(summary.get(DISCARD_HAND_COST_FIELD)) is not int
             or summary[DISCARD_HAND_COST_FIELD] != 1 or type(summary.get("sac_self")) is not int
             or summary["sac_self"] != 1 or response.get("source") != frame.spell_ref
             or response.get("ability") != frame.option_id or response.get("from") != "battlefield"

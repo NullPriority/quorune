@@ -16,6 +16,7 @@ from .rules.mana_pool_payment import ManaPoolAllocation, PoolManaUnit, unit_for_
 
 
 MANA_PROVENANCE_KEY = "mana_provenance_v1"
+RETAIN_RED_MANA_UNTIL_CLEANUP = "retain_red_mana_until_cleanup"
 _RESTRICTED_MANA_KEY = "restricted_mana"
 _COLORS = "WUBRGC"
 

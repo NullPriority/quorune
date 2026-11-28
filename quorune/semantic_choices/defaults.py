@@ -5,6 +5,7 @@ from functools import lru_cache
 from ..discover_model import (NONLAND_SCAN_CAPABILITY, NONLAND_SCAN_OPERATION,
                               NONLAND_SCAN_STEP_OPERATION, NONLAND_SCAN_CAST_OPERATION)
 from .artifact_search_exchange import ArtifactSearchExchangeChoiceHandler
+from .library_creature_arrival import LibraryCreatureArrivalChoiceHandler
 from .registry import SemanticChoiceRegistry
 from ..rules.bargain_search import BARGAIN_SEARCH_CAPABILITIES, BARGAIN_SEARCH_CAST_OPERATION
 from .composition_order import CompositionOrderHandler
@@ -20,11 +21,14 @@ from .incubate import INCUBATE_HANDLERS
 from .investigate import SequentialInvestigateHandler
 from .endure import SourceEndureChoiceHandler
 from .departure_x_payment import DepartingXPaymentHandler
+from .name_sticker import NameStickerChoiceHandler
+from .budgeted_resolving_cast import BudgetedHandGraveyardCastHandler
 from .blight import FixedBlightChoiceHandler
 from .discover import DiscoverScanHandler, QUALIFIED_SCAN_HANDLERS
 from .stack_counter_name_scan import STACK_COUNTER_NAME_SCAN_HANDLERS
 from .discover_cast import DiscoverCastChoiceHandler
 from .fixed_top_exile import FIXED_TOP_EXILE_HANDLERS
+from .hideaway_play import HideawayPlayChoiceHandler
 from .exile_until_same_name import REPEATED_LIBRARY_EXILE_HANDLERS
 from .variable_library_selection import VariableLibrarySelectionHandler
 from .public_library_piles import PublicLibraryPilesHandler
@@ -54,8 +58,10 @@ from .ordering import ORDERING_CHOICE_HANDLERS
 from .fixed_top_order import FIXED_TOP_ORDER_HANDLERS
 from .owner_library_position_choice import OwnerLibraryPositionChoiceHandler
 from .targeted_graveyard_cast import TargetedGraveyardCastChoiceHandler
+from .discarded_card_cast import DiscardedCardCastChoiceHandler
 from .graveyard_copy_cast import GRAVEYARD_COPY_HANDLERS
 from .untargeted_untap import FixedLandUntapChoiceHandler
+from .tap_attack_result import TapAttackResultChoiceHandler
 from .scry import SCRY_CHOICE_HANDLERS
 from .surveil import SURVEIL_CHOICE_HANDLERS
 from .fixed_library_selection import (
@@ -76,6 +82,7 @@ from .conditional_draw import CONDITIONAL_DRAW_CHOICE_HANDLERS
 from .resolution_condition import PUBLIC_RESOLUTION_CONDITION_HANDLERS
 from .ordered_type_sacrifice import OrderedTypeSacrificeHandler
 from .event_counter_threshold import EventCounterThresholdHandler
+from .life_gain_counter_reset import LifeGainCounterResetHandler
 from .stack_counter_followup import STACK_COUNTER_FOLLOWUP_HANDLERS
 from .optional_draw import OPTIONAL_DRAW_CHOICE_HANDLERS
 from .optional_counter_placement import (
@@ -95,6 +102,7 @@ from .source_counter_distribution import SourceCounterDistributionHandler
 from .graft import GraftCounterMovementHandler
 from .amass import AMASS_CHOICE_HANDLERS
 from .apnap_commit import APNAP_COMMIT_CHOICE_HANDLERS
+from .chosen_attack_turn import ChosenAttackTurnHandler
 from .madness import MADNESS_CHOICE_HANDLERS
 from .miracle import MiracleCastChoiceHandler
 from .attacking_tokens import ATTACKING_TOKEN_CHOICE_HANDLERS
@@ -116,6 +124,30 @@ from .graveyard_return import GraveyardReturnChoiceHandler
 from .targeted_graveyard_exile import TargetedGraveyardExileChoiceHandler
 from .qualified_library_cast import QualifiedLibraryCastChoice
 from .keep_permanents_by_type import KeepPermanentsByTypeHandler
+
+
+def _nonland_exile_handlers():
+    return (
+        DiscoverScanHandler(
+            NONLAND_SCAN_OPERATION, 'choice.library.exile-until-nonland.v1',
+            rule_references=('400.7j', '608.2c', '701.13a'),
+            capability_dependencies=(NONLAND_SCAN_CAPABILITY,),
+            replay_fixture='first-nonland-exile-and-optional-cast',
+        ),
+        DiscoverScanHandler(
+            NONLAND_SCAN_STEP_OPERATION, 'choice.library.exile-until-nonland-step.v1',
+            rule_references=('400.7j', '608.2c', '701.13a'),
+            capability_dependencies=(NONLAND_SCAN_CAPABILITY,),
+            replay_fixture='first-nonland-exile-and-optional-cast',
+        ),
+        DiscoverCastChoiceHandler(
+            NONLAND_SCAN_CAST_OPERATION, 'choice.library.exile-until-nonland-cast.v1',
+            rule_references=('400.7j', '608.2d', '608.2g'),
+            capability_dependencies=(NONLAND_SCAN_CAPABILITY,),
+            mutation_path=('DiscoverCastIntent',),
+            replay_fixture='first-nonland-exile-and-optional-cast',
+        ),
+    )
 
 
 @lru_cache(maxsize=1)
@@ -152,6 +184,8 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             SequentialInvestigateHandler(),
             SourceEndureChoiceHandler(),
             DepartingXPaymentHandler(),
+            NameStickerChoiceHandler(),
+            BudgetedHandGraveyardCastHandler(),
             FixedBlightChoiceHandler(),
             DiscoverScanHandler(),
             DiscoverScanHandler('discover_step','choice.library.discover-step.v1'),
@@ -166,28 +200,11 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
                 replay_fixture='bargained-private-search-resolving-cast',
                 test_modules=('tests.test_bargain_private_search',),
             ),
-            DiscoverScanHandler(
-                NONLAND_SCAN_OPERATION, 'choice.library.exile-until-nonland.v1',
-                rule_references=('400.7j', '608.2c', '701.13a'),
-                capability_dependencies=(NONLAND_SCAN_CAPABILITY,),
-                replay_fixture='first-nonland-exile-and-optional-cast',
-            ),
-            DiscoverScanHandler(
-                NONLAND_SCAN_STEP_OPERATION, 'choice.library.exile-until-nonland-step.v1',
-                rule_references=('400.7j', '608.2c', '701.13a'),
-                capability_dependencies=(NONLAND_SCAN_CAPABILITY,),
-                replay_fixture='first-nonland-exile-and-optional-cast',
-            ),
-            DiscoverCastChoiceHandler(
-                NONLAND_SCAN_CAST_OPERATION, 'choice.library.exile-until-nonland-cast.v1',
-                rule_references=('400.7j', '608.2d', '608.2g'),
-                capability_dependencies=(NONLAND_SCAN_CAPABILITY,),
-                mutation_path=('DiscoverCastIntent',),
-                replay_fixture='first-nonland-exile-and-optional-cast',
-            ),
+            *_nonland_exile_handlers(),
             *QUALIFIED_SCAN_HANDLERS,
             *STACK_COUNTER_NAME_SCAN_HANDLERS,
             *FIXED_TOP_EXILE_HANDLERS,
+            HideawayPlayChoiceHandler(),
             *REPEATED_LIBRARY_EXILE_HANDLERS,
             VariableLibrarySelectionHandler(),
             RevealUntilLibrarySelectionHandler(),
@@ -195,6 +212,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             RevealedCreatureStatisticsHandler(),
             *ARTIFACT_EXCHANGE_CHOICE_HANDLERS,
             ArtifactSearchExchangeChoiceHandler(),
+            LibraryCreatureArrivalChoiceHandler(),
             *SCALAR_CHOICE_HANDLERS,
             *OBJECT_SELECTION_HANDLERS,
             PrivateHandCollectionHandler(),
@@ -207,8 +225,10 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             *FIXED_TOP_ORDER_HANDLERS,
             OwnerLibraryPositionChoiceHandler(),
             TargetedGraveyardCastChoiceHandler(),
+            DiscardedCardCastChoiceHandler(),
             *GRAVEYARD_COPY_HANDLERS,
             FixedLandUntapChoiceHandler(),
+            TapAttackResultChoiceHandler(),
             ControlRecipientChoiceHandler(),
             TargetLandTypeChoiceHandler(),
             ChosenCounterRemovalHandler(),
@@ -233,6 +253,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             *PUBLIC_RESOLUTION_CONDITION_HANDLERS,
             OrderedTypeSacrificeHandler(),
             EventCounterThresholdHandler(),
+            LifeGainCounterResetHandler(),
             *STACK_COUNTER_FOLLOWUP_HANDLERS,
             *OPTIONAL_DRAW_CHOICE_HANDLERS,
             *OPTIONAL_COUNTER_PLACEMENT_CHOICE_HANDLERS,
@@ -249,6 +270,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             *AMASS_CHOICE_HANDLERS,
             KeepPermanentsByTypeHandler(),
             *APNAP_COMMIT_CHOICE_HANDLERS,
+            ChosenAttackTurnHandler(),
             *MADNESS_CHOICE_HANDLERS,
             MiracleCastChoiceHandler(),
             *ATTACKING_TOKEN_CHOICE_HANDLERS,

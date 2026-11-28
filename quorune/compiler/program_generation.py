@@ -1,6 +1,12 @@
 from __future__ import annotations
 from .reconfigure_nodes import is_closed_reconfigure_program
-from .fixed_instruction_program_closure import is_closed_fixed_instruction_program
+from .ability_keyword_fragments import (
+    independently_exact_protection_handler as _independently_exact_protection_handler,
+)
+from .fixed_instruction_program_closure import (
+    is_closed_fixed_instruction_program,
+    is_closed_fixed_next_turn_draw_program,
+)
 from ..rules.control_capability_shapes import resolution_control_node_capabilities
 from ..rules.scheduled_player_shapes import is_closed_scheduled_player_program
 from ..rules.additional_beginning import is_closed_additional_beginning_program
@@ -12,6 +18,7 @@ from ..rules.target_characteristic_sets import is_closed_target_characteristic_s
 from ..rules.source_keyword_choice_shapes import is_closed_source_keyword_choice_program
 from ..rules.source_protection_choice_shapes import is_closed_source_protection_program
 from ..rules.event_spell_copy import is_closed_next_cast_copy_program
+from ..rules.delayed_draw_capability_shapes import is_closed_turn_creature_cast_draw_program
 from ..rules.temporary_cast_timing import is_closed_temporary_cast_timing_program
 
 from collections import Counter
@@ -54,9 +61,6 @@ from ..rules.counter_capability_shapes import (
 )
 from ..rules.creature_power_damage_capability_shapes import (
     fixed_creature_power_damage_node_capabilities,
-)
-from ..rules.delayed_draw_capability_shapes import (
-    fixed_next_turn_draw_node_capabilities,
 )
 from ..rules.public_zone_move_capability_shapes import (
     fixed_public_zone_move_set_node_capabilities,
@@ -274,29 +278,6 @@ def _validate_generated_program_trust(
     )
 
 
-def _independently_exact_protection_handler(node: Any) -> bool:
-    """Allow closed protection fragments on a partially known keyword line.
-
-    Printed comma-separated keyword lists are independent abilities.  A typed
-    protection fragment therefore remains exact even when a sibling keyword
-    on the same Oracle line lacks a capability contract.  No effect program or
-    arbitrary runtime-handler family receives this exception.
-    """
-
-    return bool(
-        node.kind == "keyword_ability"
-        and node.template_id == "printed-keyword-list-v1"
-        and not node.effects
-        and node.handlers
-        and all(
-            handler.get("handler_id") == "ability.static.protection.v1"
-            for handler in node.handlers
-        )
-        and tuple(node.capability_dependencies)
-        == ("protection.typed.debt",)
-    )
-
-
 def _generated_static_declaration(node: Any) -> bool:
     from ..commander_pairing import PRINTED_COMMANDER_ELIGIBILITY_TEMPLATE
     from ..triggered_mana_model import (
@@ -329,6 +310,7 @@ def _generated_static_declaration(node: Any) -> bool:
 def _is_closed_fixed_damage_program(program: SemanticProgram) -> bool:
     """Recognize only the reviewed fixed-damage effect-program family."""
     from ..damage_death_exile_model import DAMAGE_DEATH_EXILE_MECHANIC
+    from ..excess_damage import EXCESS_TRAMPLE_MECHANIC
 
     template_id = str(program.provenance.get("template_id") or "")
     if not template_id.startswith("damage-"):
@@ -340,7 +322,9 @@ def _is_closed_fixed_damage_program(program: SemanticProgram) -> bool:
             mechanic_ids=(
                 value
                 for value in program.coverage
-                if value.startswith("cr-") or value in {DAMAGE_DEATH_EXILE_MECHANIC,'fixed-target-controller-damage'}
+                if value.startswith("cr-") or value in {
+                    DAMAGE_DEATH_EXILE_MECHANIC, EXCESS_TRAMPLE_MECHANIC, "fixed-target-controller-damage",
+                }
             ),
         )
     )
@@ -361,23 +345,6 @@ def _is_closed_fixed_draw_program(program: SemanticProgram) -> bool:
                 for value in program.coverage
                 if value.startswith("cr-")
             ),
-        )
-    )
-    return bool(required) and required.issubset(
-        program.capability_dependencies
-    )
-
-
-def _is_closed_fixed_next_turn_draw_program(
-    program: SemanticProgram,
-) -> bool:
-    """Recognize only the canonical single-use delayed controller draw."""
-
-    required = set(
-        fixed_next_turn_draw_node_capabilities(
-            effects=program.effects,
-            target_schema=program.target_schema,
-            mechanic_ids=program.coverage,
         )
     )
     return bool(required) and required.issubset(
@@ -1190,73 +1157,29 @@ def _is_closed_graveyard_copy_cast_program(program: SemanticProgram) -> bool:
 
 
 def _closed_effect_recognizers():
-    from ..preparation import is_closed_activated_preparation_program
-    from ..rules.loyalty_spell_results import is_closed_loyalty_spell_result_program
-    from ..rules.noted_mana import is_closed_noted_mana_charge_program
-    from ..rules.extra_turn_shapes import is_closed_fixed_end_turn_program, is_closed_fixed_next_turn_control_program
-    from ..rules.chosen_color_target_shapes import is_closed_chosen_color_target_program
-    from ..rules.post_exchange_token import is_closed_post_exchange_token_program
-    from ..rules.chosen_type_target_shapes import is_closed_chosen_creature_type_target_program
-    from ..rules.temporary_self_copy import is_closed_temporary_creature_copy_set_program, is_closed_versioned_copy_program
-    from ..rules.temporary_copy_subject import is_closed_temporary_copy_subject_program
+    from ..rules.apnap_counter_attack_truce import is_closed_counter_attack_truce_program
     from ..rules.stack_counter_followup import is_closed_stack_counter_followup_program
-    from ..rules.target_player_sequences import is_closed_target_player_sequence_program
-    from ..rules.target_set_result_sequences import is_closed_target_set_result_sequence_program
-    from ..rules.reanimation_entry_counters import is_closed_reanimation_entry_counter_program
-    from ..rules.revealed_library_top import is_closed_public_library_top_result
-    from ..rules.library_result_capability_shapes import is_closed_target_permanent_shuffle_reveal_program
-    from ..rules.token_mill_repeat import is_closed_token_mill_repeat_program
-    from ..rules.library_bottom_results import is_closed_library_bottom_result_program
-    from ..rules.per_player_target_sets import is_closed_per_player_target_program
-    from ..emblem_program_model import is_closed_compiled_emblem_program
-    from ..rules.untargeted_untap_shapes import is_closed_fixed_land_untap_choice_program
     from ..rules.library_order_shapes import is_closed_fixed_library_order_program
     from ..rules.library_result_capability_shapes import is_closed_public_library_piles_program
-    from ..rules.graveyard_card_targets import is_closed_opposing_graveyard_return_program
-    from ..rules.all_kind_counter_shapes import is_closed_all_kind_counter_program
-    from ..rules.counter_target_set_shapes import is_closed_quantified_counter_target_program
-    from ..rules.any_number_target_shapes import is_closed_any_number_target_program
-    from ..public_zone_moves import is_closed_stack_spell_exile_program
     from ..rules.fuse_shapes import closed_fused_program
     from ..rules.library_search_rule_shapes import is_closed_library_search_prohibition_program
     from ..rules.next_cast_counter_protection import is_closed_next_cast_protection_program
     from ..rules.land_play_permissions import is_closed_turn_land_plays_program
+    from ..rules.chosen_attack_turn import is_closed_chosen_attack_turn_program
     from .nonleaf_effect_closure import (
         _is_closed_fixed_library_selection_program,
         _is_closed_variable_library_selection_program,
+        source_and_selection_recognizers,
     )
     return (
-        is_closed_activated_preparation_program, is_closed_loyalty_spell_result_program,
-        is_closed_noted_mana_charge_program,
-        is_closed_fixed_end_turn_program,
-        is_closed_fixed_next_turn_control_program,
-        is_closed_chosen_creature_type_target_program,
-        is_closed_post_exchange_token_program,
-        is_closed_chosen_color_target_program,
-        is_closed_versioned_copy_program,
-        is_closed_temporary_creature_copy_set_program,
-        is_closed_temporary_copy_subject_program,
-        is_closed_target_player_sequence_program,
-        is_closed_target_set_result_sequence_program,
-        is_closed_reanimation_entry_counter_program,
-        is_closed_public_library_top_result,
-        is_closed_target_permanent_shuffle_reveal_program,
-        is_closed_token_mill_repeat_program,
-        is_closed_library_bottom_result_program,
-        is_closed_per_player_target_program,
-        is_closed_compiled_emblem_program,
-        is_closed_fixed_land_untap_choice_program,
-        is_closed_all_kind_counter_program,
-        is_closed_quantified_counter_target_program,
-        is_closed_any_number_target_program,
-        is_closed_stack_spell_exile_program,
-        is_closed_opposing_graveyard_return_program,
+        *source_and_selection_recognizers(),
         _is_closed_targeted_graveyard_cast_program,
         _is_closed_graveyard_copy_cast_program,
         closed_fused_program,
         is_closed_library_search_prohibition_program,
         is_closed_next_cast_protection_program,
         is_closed_next_cast_copy_program,
+        is_closed_turn_creature_cast_draw_program,
         is_closed_temporary_cast_timing_program,
         is_closed_turn_land_plays_program,
         is_closed_announced_target_set_program,
@@ -1276,9 +1199,10 @@ def _closed_effect_recognizers():
         _is_closed_declared_amount_program,
         _is_closed_public_query_amount_program,
         _is_closed_fixed_creature_power_damage_program,
-        _is_closed_fixed_damage_program, _is_closed_fixed_next_turn_draw_program,is_closed_source_transform_program,is_closed_enlist_reflexive_program,is_closed_fixed_resolution_mana_program,
+        _is_closed_fixed_damage_program, is_closed_fixed_next_turn_draw_program, is_closed_source_transform_program, is_closed_enlist_reflexive_program, is_closed_fixed_resolution_mana_program,
         _is_closed_fixed_draw_program,
         _is_closed_fixed_mill_program,is_closed_fixed_event_player_result_program,
+        is_closed_counter_attack_truce_program,
         is_closed_event_player_sacrifice_program,
         is_closed_champion_program,
         is_closed_fixed_impulse_access_program,
@@ -1330,6 +1254,7 @@ def _closed_effect_recognizers():
         _is_closed_mass_destruction_program,
         _is_closed_targeted_exile_program,
         _is_closed_targeted_return_to_hand_program,
+        is_closed_chosen_attack_turn_program,
         is_closed_upkeep_game_win_program,
         _is_closed_targeted_graveyard_return_program,
         _is_closed_public_graveyard_card_exile_program,

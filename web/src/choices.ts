@@ -3,6 +3,7 @@ import type { ChoiceForm, JsonValue } from "./generated/protocol";
 export type ChoiceValues = Record<string, JsonValue>;
 export type ChoiceField = Record<string, JsonValue>;
 export const DAMAGE_ALLOCATION_FIELD = "damage_allocation";
+const COUNTER_ALLOCATION_FIELD = "target_counter_allocation";
 export const MANA_POOL_PAYMENT_FIELD = "mana_pool_payment";
 
 export function record(value: JsonValue | undefined): Record<string, JsonValue> {
@@ -221,6 +222,7 @@ export function choicesWithDefaults(
 ): ChoiceValues {
   const values: ChoiceValues = structuredClone(current);
   delete values[DAMAGE_ALLOCATION_FIELD];
+  delete values[COUNTER_ALLOCATION_FIELD];
   const variants = record(form.variants);
   if (list(variants.options).length && values[stringValue(variants.field || "cost_option")] === undefined) {
     const selector = stringValue(variants.field || "cost_option");
@@ -297,17 +299,20 @@ function damageAllocationTotal(spec: ChoiceField, values: ChoiceValues): number 
   return Number.isSafeInteger(computed) ? computed : undefined;
 }
 
-export function selectedDamageAllocation(field: ChoiceField, values: ChoiceValues) {
-  const total = damageAllocationTotal(record(record(field.schema)[DAMAGE_ALLOCATION_FIELD]), values);
+export function selectedTargetAllocation(field: ChoiceField, values: ChoiceValues) {
+  const schema = record(field.schema);
+  const counters = schema[COUNTER_ALLOCATION_FIELD] !== undefined;
+  const name = counters ? COUNTER_ALLOCATION_FIELD : DAMAGE_ALLOCATION_FIELD;
+  const total = damageAllocationTotal(record(schema[name]), values);
   if (total === undefined) return null;
   const targets = record(values[stringValue(field.name || "targets")]);
   const refs = selectedTargetGroups(field, values).flatMap((group) =>
     list(targets[stringValue(group.id || "target")]).map(String),
   );
-  const shares = values[DAMAGE_ALLOCATION_FIELD] === undefined
+  const shares = values[name] === undefined
     ? Object.fromEntries(refs.map((ref, index) => [ref, index === 0 ? total - refs.length + 1 : 1]))
-    : record(values[DAMAGE_ALLOCATION_FIELD]);
-  return { total, refs, shares };
+    : record(values[name]);
+  return { name, counters, total, refs, shares };
 }
 
 export function updateModalTargetSelection(
@@ -667,14 +672,15 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues, compatibility: st
       );
     });
     if (missingFlagbearer) errors.push("Choose at least one Flagbearer as a target.");
-    const allocation = selectedDamageAllocation(field, values);
+    const allocation = selectedTargetAllocation(field, values);
     if (allocation) {
-      const { refs, shares, total } = allocation;
+      const { counters, refs, shares, total } = allocation;
       const amounts = refs.map((ref) => shares[ref]);
       if (Object.keys(shares).length !== refs.length
           || amounts.some((amount) => typeof amount !== "number" || !Number.isSafeInteger(amount) || amount < 1)
           || amounts.reduce<number>((sum, amount) => sum + Number(amount), 0) !== (refs.length ? total : 0)) {
-        errors.push(`Assign at least 1 damage to each chosen target and use exactly ${total} damage.`);
+        errors.push(counters ? "Assign at least one counter to each chosen target and use all three counters."
+          : `Assign at least 1 damage to each chosen target and use exactly ${total} damage.`);
       }
     }
   } else if (control === "copy_targets") {
@@ -747,8 +753,8 @@ export function executableChoices(form: ChoiceForm, values: ChoiceValues): Choic
     if (name) permitted.add(name);
     if (field.control === "targets") {
       permitted.add("modes");
-      const allocation = selectedDamageAllocation(field, values);
-      if (allocation) result[DAMAGE_ALLOCATION_FIELD] = structuredClone(allocation.shares);
+      const allocation = selectedTargetAllocation(field, values);
+      if (allocation) result[allocation.name] = structuredClone(allocation.shares);
     }
   }
   const variants = activeVariants(form, values);

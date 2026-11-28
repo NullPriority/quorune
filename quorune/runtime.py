@@ -375,8 +375,15 @@ class GameActor:
         return {**self._lifecycle_summary(), "changed": True}
 
     def _observe_message(self, message: _ActorMessage) -> dict[str, Any]:
+        principal = str(message.principal)
+        if message.include_lifecycle and principal.startswith("pilot:"):
+            player = self.service.session.state.players.get(principal.removeprefix("pilot:"))
+            if player is not None and not player.in_game:
+                # Browser routes keep the authenticated seat for reconnects
+                # and receipt retries, while the live view becomes public.
+                principal = "spectator"
         packet = self.service.observe(
-            str(message.principal),
+            principal,
             full=message.full,
             cursor_key=message.cursor_key,
             observation_epoch=self._observation_epoch,

@@ -492,8 +492,25 @@ class ReferenceSetChoice:
         }
 
 
+@dataclass(frozen=True, slots=True)
+class OptionalVariableManaChoice:
+    maximum: int
+
+    def __post_init__(self):
+        if type(self.maximum) is not int or self.maximum < 0:
+            raise SemanticChoiceError("Optional mana requires a nonnegative payable bound")
+
+    def choice_schema(self):
+        return {
+            "pay": {"type": "boolean", "label": "Pay the optional mana cost", "default": False},
+            "x": {"type": "integer", "label": "X (mana to pay)", "minimum": 0,
+                  "maximum": self.maximum, "default": 0},
+        }
+
+
 ChoiceModel = (
     ScalarChoice
+    | OptionalVariableManaChoice
     | CastOrDeclineChoice
     | ObjectChoice
     | TargetAssignmentChoice

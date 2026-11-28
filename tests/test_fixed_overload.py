@@ -542,7 +542,7 @@ class FixedOverloadRuntimeTests(unittest.TestCase):
         expected = {'Mind Rake', 'Scale Up', 'Stirring Address', 'Mizzium Mortars', 'Dynacharge',
                     'Electrickery', 'Dragonshift', "Mizzix's Mastery", 'Blustersquall', 'Cyclonic Rift',
                     'Damn', 'Downsize', 'Mizzium Skin', 'Vandalblast', 'Weapon Surge', 'March of Progress',
-                    'Eldritch Immunity'}
+                    'Eldritch Immunity', 'Winds of Abandon'}
         rows = [r for r in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards'] if 'Overload' in r.get('keywords', ())]
         self.assertEqual(27, len(rows))
         session = self.session(70296008)

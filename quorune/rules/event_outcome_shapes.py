@@ -1,8 +1,10 @@
 """Payload-derived requirements for exact cast and damage occurrence results."""
 from collections.abc import Mapping
+from math import isfinite
 
 from ..life_change import LIFE_LOSS_CAPABILITY, LIFE_LOSS_EVENT
 from ..replacement.immutable import FrozenMap, thaw_value
+from .effect_shape_walkers import nested_effects
 from ..source_sacrifice_model import (
     SOURCE_SACRIFICE_FIELD, fixed_source_sacrifice_dependencies, fixed_source_sacrifice_effect,
 )
@@ -20,6 +22,63 @@ _LOSS = {'op':'lose_game','player':'$context.target'}
 _ZERO_MANA_FIELD = "mana_spent_total"
 _ZERO_MANA_DAMAGE = {"op": "damage", "source": "$source", "target": "$context.player", "amount": 5}
 _OPPONENT_CAST = {"field": "controller", "op": "ne", "value": "$source.controller"}
+CAST_REVEAL_MANA_VALUE_COUNTER = "cast_reveal_mana_value_counter"
+CAST_REVEAL_COUNTER_CAPABILITIES = (
+    CAST_EVENT_COUNTER_CAPABILITY, "stack.counter.effect", "trigger.event.normalized_spell_cast",
+    "trigger.placement.apnap", "effect.choice.optional_fixed", "library.select.fixed_controller",
+)
+
+
+def cast_reveal_counter_effect(*, player="$controller", stack="$context.stack", mana_value="$context.mana_value"):
+    return {
+        "op": "offer_optional_effect", "player": player,
+        "effects": [{
+            "op": "counter_stack_target", "stack": stack,
+            CAST_REVEAL_MANA_VALUE_COUNTER: {"schema_version": 1, "mana_value": mana_value},
+        }],
+    }
+
+
+def uses_cast_reveal_counter(effect):
+    if not isinstance(effect, Mapping) or effect.get("op") != "offer_optional_effect":
+        return False
+    children = effect.get("effects")
+    return isinstance(children, (list, tuple)) and any(
+        isinstance(child, Mapping) and CAST_REVEAL_MANA_VALUE_COUNTER in child for child in children
+    )
+
+
+def validate_cast_reveal_counter(effect, *, actor=None):
+    if not uses_cast_reveal_counter(effect) or len(effect["effects"]) != 1:
+        raise ValueError("The optional reveal must have exactly one original cast result")
+    child = effect["effects"][0]
+    marker = child[CAST_REVEAL_MANA_VALUE_COUNTER]
+    if not isinstance(marker, Mapping) or type(marker.get("schema_version")) is not int:
+        raise ValueError("The cast reveal comparison requires a closed versioned value")
+    stack, mana_value = child.get("stack"), marker.get("mana_value")
+    if actor is None:
+        expected = cast_reveal_counter_effect()
+    else:
+        if (not isinstance(actor, str) or not actor or actor.startswith("$")
+                or not isinstance(stack, str) or not stack or stack.startswith("$")
+                or type(mana_value) not in (int, float) or mana_value < 0
+                or type(mana_value) is float and not isfinite(mana_value)):
+            raise ValueError("The reveal comparison requires a real actor and committed spell facts")
+        expected = cast_reveal_counter_effect(player=actor, stack=stack, mana_value=mana_value)
+    if thaw_value(effect) != expected:
+        raise ValueError("The optional top reveal has a rebound stack or mana value")
+    return stack, mana_value
+
+
+def cast_reveal_counter_program_dependencies(program):
+    if not any(CAST_REVEAL_MANA_VALUE_COUNTER in effect for effect in nested_effects((program.effects, program.handlers))):
+        return ()
+    if ((program.event, program.active_zone) != ("spell.cast", "battlefield") or program.target_schema is not None
+            or program.cost_schema is not None or program.handlers or len(program.effects) != 1
+            or FrozenMap(program.event_condition or {}) != FrozenMap(_OPPONENT_CAST)):
+        raise ValueError("The reveal comparison requires its original untargeted opponent-cast trigger")
+    validate_cast_reveal_counter(program.effects[0])
+    return CAST_REVEAL_COUNTER_CAPABILITIES
 
 
 def opponent_life_loss_condition():
@@ -281,12 +340,36 @@ def _cast_trigger_sacrifice_counter_program_dependencies(program):
 
 
 def event_outcome_node_capabilities(*, effects, target_schema, mechanic_ids):
-    del mechanic_ids
-    if target_schema is not None: return ()
-    from .event_counter_threshold import source_depletion_counter_node_capabilities
+    from .received_damage_watch import watched_damage_node_capabilities
 
+    if required := watched_damage_node_capabilities(effects, target_schema):
+        return required
+    del mechanic_ids
+
+    if target_schema is not None: return ()
+    from .source_subtype_progression import uses_ring_damage_outcome, ring_damage_outcome_dependencies
+    if len(effects) == 1 and uses_ring_damage_outcome(effects[0]):
+        try:
+            return ring_damage_outcome_dependencies(effects[0])
+        except ValueError:
+            return ()
+    from .event_counter_threshold import source_depletion_counter_node_capabilities
+    from .combat_receiving_life import combat_receiving_life_node_capabilities
+
+    from .opponent_draw_followup import distinct_draw_node_capabilities
+
+    if required := distinct_draw_node_capabilities(effects, target_schema):
+        return required
+    if required := combat_receiving_life_node_capabilities(effects, target_schema):
+        return required
     if required := source_depletion_counter_node_capabilities(effects, target_schema):
         return required
+    if len(effects) == 1 and uses_cast_reveal_counter(effects[0]):
+        try:
+            validate_cast_reveal_counter(effects[0])
+        except (TypeError, ValueError, KeyError):
+            return ()
+        return CAST_REVEAL_COUNTER_CAPABILITIES
     if required := _cast_event_counter_birds_dependencies(effects, projected=True):
         return required
     if required := _cast_trigger_sacrifice_counter_dependencies(effects):
@@ -325,6 +408,29 @@ def event_outcome_runtime_dependencies(program):
 
     if dependencies := meld_pair_runtime_dependencies(program):
         return dependencies
+    from .main_phase_combats import main_phase_combat_program_dependencies
+    if dependencies := main_phase_combat_program_dependencies(program):
+        return dependencies
+    from .tap_attack_result import tap_attack_program_dependencies
+
+    if owned := tap_attack_program_dependencies(program):
+        return owned
+    from .library_creature_arrival import arrival_program_dependencies
+
+    if dependencies := arrival_program_dependencies(program):
+        return dependencies
+    from .received_damage_watch import watched_damage_runtime_dependencies
+
+    if required := watched_damage_runtime_dependencies(program):
+        return required
+    from .combat_receiving_life import combat_receiving_life_runtime_dependencies
+
+    if required := combat_receiving_life_runtime_dependencies(program):
+        return required
+    from .source_subtype_progression import ring_damage_outcome_program_dependencies
+
+    if outcome := ring_damage_outcome_program_dependencies(program):
+        return outcome
     from .faction_trigger_shapes import faction_trigger_runtime_dependencies
     from .paid_creature_library_search import paid_creature_search_program_dependencies
     if dependencies := paid_creature_search_program_dependencies(program):
@@ -334,6 +440,10 @@ def event_outcome_runtime_dependencies(program):
     if dependencies := paid_artifact_search_runtime_dependencies(program):
         return dependencies
     if dependencies := faction_trigger_runtime_dependencies(program):
+        return dependencies
+    from .opponent_draw_followup import distinct_draw_runtime_dependencies
+
+    if dependencies := distinct_draw_runtime_dependencies(program):
         return dependencies
     from .controlled_subtype_damage_batch import controlled_subtype_damage_runtime_dependencies
 
@@ -406,6 +516,8 @@ def event_outcome_runtime_dependencies(program):
         return _cast_trigger_sacrifice_counter_program_dependencies(program)
     if _requires_cast_event_counter_birds(program):
         return _cast_event_counter_birds_program_dependencies(program)
+    if required := cast_reveal_counter_program_dependencies(program):
+        return required
     from .shared_type_library import mandatory_shared_type_cast_program_dependencies
 
     if required := mandatory_shared_type_cast_program_dependencies(program):
@@ -443,7 +555,9 @@ def event_outcome_runtime_dependencies(program):
 
 def event_outcome_program_is_closed(program):
     from ..meld_model import MELD_CAPABILITY
+    from .combat_receiving_life import uses_combat_receiving_life
     from .faction_trigger_model import FACTION_DRAW_CAPABILITY
+    from .opponent_draw_followup import DISTINCT_DRAW_CAPABILITY
     from .event_counter_threshold import SOURCE_DEPLETION_THRESHOLD_CAPABILITY
     from .paid_noncreature_counter_transform import CAPABILITY as PAID_CAST_TRANSFORM_CAPABILITY
 
@@ -451,11 +565,12 @@ def event_outcome_program_is_closed(program):
     except (TypeError,ValueError): return False
     return (
         bool(required)
-        and (len(program.effects) == 1 or MELD_CAPABILITY in required
+        and (len(program.effects) == 1 or MELD_CAPABILITY in required or uses_combat_receiving_life(program.effects)
              or CAST_TRIGGER_SACRIFICE_COUNTER_CAPABILITY in required
              or CAST_EVENT_COUNTER_BIRDS_CAPABILITY in required
              or SOURCE_DEPLETION_THRESHOLD_CAPABILITY in required
              or PAID_CAST_TRANSFORM_CAPABILITY in required
-             or FACTION_DRAW_CAPABILITY in required)
+             or FACTION_DRAW_CAPABILITY in required
+             or DISTINCT_DRAW_CAPABILITY in required)
         and set(required).issubset(program.capability_dependencies)
     )

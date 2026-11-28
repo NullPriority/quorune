@@ -24,6 +24,8 @@ from ..power_sacrifice_model import (
     ATTACK_SACRIFICE_STAT_FIELD, ATTACK_SACRIFICE_STAT_TEMPLATE, validate_attack_sacrifice_stat_effect,
     CONTROLLER_SACRIFICE_LIFE_FIELD, CONTROLLER_SACRIFICE_LIFE_TEMPLATE,
     ENTRY_SACRIFICE_POWER_DRAW_FIELD, ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE, GREATEST_POWER_SACRIFICE_FIELD,
+    ENTRY_SACRIFICE_POWER_TREASURE_FIELD, ENTRY_SACRIFICE_POWER_TREASURE_TEMPLATE,
+    ENTRY_SACRIFICE_POWER_TREASURE_CAPABILITY, validate_entry_sacrifice_power_treasure,
     GreatestPowerSacrificeSpec, validate_controller_sacrifice_toughness_life, validate_entry_sacrifice_power_life_draw,
 )
 from ..public_characteristic_aggregate_model import PUBLIC_STAT_AGGREGATE_CAPABILITY
@@ -119,16 +121,26 @@ _ENTRY_SACRIFICE_POWER_DRAW_DEPENDENCIES = (
 )
 
 
+_ENTRY_SACRIFICE_TREASURE_DEPENDENCIES = (
+    "choice.affected_player.fixed_sacrifice", SOURCE_EXCLUDED_SACRIFICE_CAPABILITY,
+    "zone.change.destination_replacement", "trigger.event.normalized_zone_change",
+    "token.creation.fixed_definition", ENTRY_SACRIFICE_POWER_TREASURE_CAPABILITY,
+)
+
+
 def entry_sacrifice_power_condition():
     return {"field": "card", "op": "eq", "value": "$source.ref"}
 
 
 def _entry_sacrifice_power_draw_runtime_dependencies(program):
-    template = ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE.replace("fixed-counter-", "fixed-typed-effect-", 1)
-    if not (
-        template in str(program.provenance.get("template_id") or "").split("+")
-        or contains_nested_key((program.effects, program.handlers), ENTRY_SACRIFICE_POWER_DRAW_FIELD)
-    ):
+    templates = str(program.provenance.get("template_id") or "").split("+")
+    treasure_template = ENTRY_SACRIFICE_POWER_TREASURE_TEMPLATE.replace("fixed-counter-", "fixed-typed-effect-", 1)
+    treasure = treasure_template in templates or contains_nested_key(
+        (program.effects, program.handlers), ENTRY_SACRIFICE_POWER_TREASURE_FIELD,
+    )
+    draw_template = ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE.replace("fixed-counter-", "fixed-typed-effect-", 1)
+    if not (treasure or draw_template in templates
+            or contains_nested_key((program.effects, program.handlers), ENTRY_SACRIFICE_POWER_DRAW_FIELD)):
         return ()
     if (
         (program.event, program.active_zone) != ("permanent.enter", "battlefield")
@@ -137,6 +149,9 @@ def _entry_sacrifice_power_draw_runtime_dependencies(program):
         or thaw_value(program.event_condition) != entry_sacrifice_power_condition()
     ):
         raise ValueError("Entry sacrifice and power result require the exact original source entry")
+    if treasure:
+        validate_entry_sacrifice_power_treasure(program.effects[0])
+        return _ENTRY_SACRIFICE_TREASURE_DEPENDENCIES
     validate_entry_sacrifice_power_life_draw(program.effects[0])
     return _ENTRY_SACRIFICE_POWER_DRAW_DEPENDENCIES
 
@@ -346,6 +361,12 @@ def fixed_affected_player_sacrifice_node_capabilities(
         except ValueError:
             return ()
         return _ATTACK_SACRIFICE_STAT_DEPENDENCIES if target_schema is None else ()
+    if ENTRY_SACRIFICE_POWER_TREASURE_FIELD in effect:
+        try:
+            validate_entry_sacrifice_power_treasure(effect)
+        except ValueError:
+            return ()
+        return _ENTRY_SACRIFICE_TREASURE_DEPENDENCIES if target_schema is None else ()
     if ENTRY_SACRIFICE_POWER_DRAW_FIELD in effect:
         try:
             validate_entry_sacrifice_power_life_draw(effect)
@@ -373,6 +394,10 @@ def fixed_affected_player_sacrifice_node_capabilities(
         ):
             return (FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY, "zone.change.destination_replacement")
         return ()
+    return _ordinary_sacrifice_node_capabilities(effect, target_schema, mechanics)
+
+
+def _ordinary_sacrifice_node_capabilities(effect, target_schema, mechanics):
     excluded = 'exclude_ref' in effect
     if (excluded != (SOURCE_EXCLUDED_SACRIFICE_MECHANIC in mechanics)
             or excluded and effect.get('exclude_ref') != '$source.zone_object'):

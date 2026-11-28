@@ -59,6 +59,98 @@ class PaidArtifactLibrarySearchTests(InheritedNativeFixture, unittest.TestCase):
             DeckEntry("Generic Bound Plains", 30),
         ], ["Isamaru, Hound of Konda"])
 
+    def test_oswald_fiddlebender_keeps_white_artifact_price_and_bay_separate(self):
+        from quorune.compiler.activated_costs import parse_compiled_activation_line
+
+        card = self.db.lookup("Oswald Fiddlebender", fuzzy=False)
+        options = {"capability_registry": self.registry, "capability_profile": PROFILE}
+        ir = compile_oracle_card(card, **options)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual(PAID_ARTIFACT_SEARCH_TEMPLATE, node.template_id)
+        self.assertEqual((paid_artifact_search_effect(),), tuple(node.effects))
+        choices, timing = parse_compiled_activation_line(
+            card.oracle_text, card_name=card.name, keywords=card.keywords)
+        ability, = choices
+        self.assertTrue(ability.sorcery_speed and ability.tap_source)
+        self.assertFalse(ability.choices[0].another)
+        self.assertEqual({"W": 1}, {key: amount for key, amount in ability.mana.items() if amount})
+        self.assertIsNone(timing)
+        self.assertEqual(1, node.cost["mana"]["W"])
+        self.assertIn("q", node.cost["choices"][0])
+        for revised in (
+            card.oracle_text.replace("Sacrifice an artifact", "Sacrifice another artifact"),
+            card.oracle_text.replace("{W}, {T}", "{2}, {T}"),
+            card.oracle_text.replace("put it", "put that card"),
+            card.oracle_text.replace(" Activate only as a sorcery.", ""),
+        ):
+            with self.subTest(text=revised):
+                self.assertNotEqual("exact", compile_oracle_card(replace(card, oracle_text=revised), **options).status)
+        bay = self.db.lookup(ORIGINAL, fuzzy=False)
+        bay_program = compile_best_available_card_program(
+            self.db, bay, semantic_registry=SemanticRegistry(), **options)
+        self.assertTrue(bind_card_program_runtime(
+            bay_program, capability_registry=self.registry, profile=PROFILE)["strict_capability_ready"])
+        bay_ability, = (row for row in bay_program.abilities if row.event == "activate")
+        self.assertEqual((paid_artifact_search_effect(),), tuple(bay_ability.effects))
+        self.assertEqual(1, bay_ability.cost_schema["choices"][0]["other"])
+
+    def test_oswald_fiddlebender_sacrifices_its_artifact_source_and_replays_private_search(self):
+        game = self.session(802026)
+        game.state.config.semantic_policy = "trusted_only"
+        source = self.add(game.engine, "Oswald Fiddlebender")
+        coating = self.add(game.engine, "Liquimetal Coating")
+        found = self.add(game.engine, "Darksteel Ingot", zone="library")
+        lower = self.add(game.engine, "Ichor Wellspring", zone="library")
+        self.assert_closed(game, source)
+        self.assert_closed(game, coating)
+        self.prepare(game, mana={"W": 1, "C": 2})
+        self.checkpoint(game)
+
+        def offered(permanent):
+            packet = game.packet("pilot:A", full=True)
+            return next(action for action in packet["decision"]["ctx"]["legal"]["actions"]
+                        if action["id"].startswith(f"activate:{permanent.ref}:"))
+
+        activation = offered(source)
+        self.assertEqual({"W": 1}, activation["cost_summary"]["m"])
+        command = {"action_id": activation["id"], "cost_objects": [source.ref], "pay": "auto"}
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:A", command).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        coat = game.act("pilot:A", {"action_id": offered(coating)["id"], "targets": [source.ref], "pay": "auto"})
+        self.assertTrue(coat.ok, coat.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertIn("Artifact", game.engine._effective_card_data(source)["type_line"])
+        self.assertEqual(activation["id"], offered(source)["id"])
+
+        original = game.state.cards[source.object_id].logical_object_id
+        shuffles = sum(event.code == "library.shuffle" for event in game.state.events)
+        result = game.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        self.assertEqual(0, game.state.players["A"].mana_pool["W"])
+        self.assertEqual(2, game.state.players["A"].mana_pool["C"])
+        item = game.state.stack[-1]
+        receipt = PaidArtifactSearchReceipt.from_dict(item.context[PAID_ARTIFACT_SEARCH_CONTEXT])
+        self.assertEqual((original, original, 2),
+                         (receipt.source_logical_object_id, receipt.snapshot.logical_object_id,
+                          receipt.snapshot.mana_value))
+        self.assertEqual("semantic.search", self.resolve(game).kind)
+        candidates = game.packet("pilot:A", full=True)["decision"]["ctx"]["search_cards"]
+        self.assertEqual({found.ref}, {row["id"] for row in candidates})
+        for seat in "BCD":
+            projection = json.dumps(game.packet(f"pilot:{seat}", full=True))
+            self.assertNotIn(found.ref, projection)
+            self.assertNotIn(lower.ref, projection)
+        game = self.replay(game, load=True)
+        result = game.act("pilot:A", {"action_id": "choose", "search_cards": [found.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(("battlefield", "A"),
+                         (game.state.cards[found.object_id].zone, game.state.cards[found.object_id].controller))
+        self.assertEqual(shuffles + 1, sum(event.code == "library.shuffle" for event in game.state.events))
+        self.replay(game, load=True)
+
     def test_paid_artifact_search_compiles_only_the_complete_price_and_exact_result(self):
         record = replace(query_record(RULE_TEXT), type_line="Artifact", power=None, toughness=None)
         options = {"capability_registry": self.registry, "capability_profile": PROFILE}

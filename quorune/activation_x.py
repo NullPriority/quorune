@@ -100,6 +100,13 @@ def source_discard_activation_x_program_dependencies(program) -> tuple[str, ...]
             or any(type(value) is not int or value < 0 for value in mana.values())
             or any(mana.get(key, 0) != expected.get(key, 0) for key in set(mana) | set(expected))):
         raise ValueError('Hand-source activation X fixed mana differs from its typed price')
+    from .cycling_abilities import VARIABLE_CYCLING_HANDLER_ID
+
+    if any(isinstance(descriptor, Mapping) and descriptor.get("handler_id") == VARIABLE_CYCLING_HANDLER_ID
+           for descriptor in getattr(program, "handlers", ())):
+        from .rules.cycling_activation_x import variable_cycling_payment_program_dependencies
+
+        return variable_cycling_payment_program_dependencies(program)
     return (ANNOUNCED_ACTIVATION_X_CAPABILITY, ANNOUNCED_ACTIVATION_X_SOURCE_DISCARD_CAPABILITY)
 
 
@@ -165,6 +172,10 @@ def chosen_activation_x(ability, response) -> int | None:
         if minimum:
             raise ValueError("Activation X must be an explicit positive integer")
         raise ValueError("Activation X must be an explicit nonnegative integer")
+    from .rules.announced_artifact_sacrifice_return import has_announced_artifact_sacrifice
+
+    if value == 0 and has_announced_artifact_sacrifice(ability):
+        raise ValueError('Artifact surrender requires an explicitly positive X')
     return value
 
 

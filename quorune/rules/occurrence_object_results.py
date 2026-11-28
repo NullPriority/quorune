@@ -328,9 +328,11 @@ def collect_occurrence_runtime_requirements(program, required: set[str], blocker
     """Collect independently validated event-result bindings and their exact diagnostics."""
     from .death_controller_opponents import death_opponents_program_dependencies
     from .controlled_creature_counter_tokens import controlled_creature_counter_token_runtime_dependencies
+    from .fixed_controller_effect_shapes import entry_counter_draw_runtime_dependencies
     from .saga_chapter_grants import saga_chapter_grant_runtime_dependencies
 
     for resolve, label in (
+        (entry_counter_draw_runtime_dependencies, "entry_counter_draw"),
         (occurrence_object_runtime_dependencies, "occurrence_object"),
         (saga_chapter_grant_runtime_dependencies, "saga_chapter_grant"),
         (death_opponents_program_dependencies, "death_controller_opponents"),

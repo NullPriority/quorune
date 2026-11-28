@@ -43,13 +43,17 @@ def _clan_label(line):
 def faction_face_ability_compiler(fallback, *, material_rows, card_types):
     """Bind faction branches only where their whole entry choice is present."""
     source = tuple(" ".join(row[0].casefold().split()) for row in material_rows)
+    if "enchantment" in card_types:
+        from .jeskai_temur_faction import jeskai_temur_face_compiler
+
+        faction_compiler = jeskai_temur_face_compiler(fallback, source)
+        if faction_compiler is not fallback:
+            return faction_compiler
     paired = "enchantment" in card_types and source in (
         (_ENTRY, _BROTHERHOOD, _ENCLAVE), (_CLAN_ENTRY, _MARDU, _JESKAI),
     )
     if not paired and not any(_clan_label(line) for line in source):
-        from .jeskai_temur_faction import jeskai_temur_face_compiler
-
-        return jeskai_temur_face_compiler(fallback, source)
+        return fallback
 
     def compile_ability(**fields):
         line = fields["line"]

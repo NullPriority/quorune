@@ -8,7 +8,7 @@ from ..rules.announced_mana_value_target import (
     announced_mana_value_capability,
     declare_activation_mana_value_equality, declare_activation_graveyard_mana_value_limit,
     exact_artifact_destruction_price, exact_land_return_x_activation_price,
-    declare_announced_mana_value_limit,
+    declare_announced_mana_value_limit, declare_cast_x_equality,
     declare_own_graveyard_mana_value_limit,
     distinct_graveyard_reanimation_effect,
     distinct_own_graveyard_mana_value_schema,
@@ -38,10 +38,47 @@ def _distinct_graveyard_return_template(text):
     )
 
 
+_CAST_X_RETURN_DRAW = re.compile(
+    r"Return target nonland permanent with mana value X to its owner['’]s hand\. Draw a card[.]?", re.IGNORECASE,
+)
+
+
+def prepare_announced_target_spell_rows(rows, mana_cost):
+    from ..util import mana_cost_to_vector
+    from .ir_model import SourceSpan
+
+    if len(rows) != 2:
+        return rows
+    first, second = rows
+    material = " ".join(f"{first[1]} {second[1]}".split())
+    if _CAST_X_RETURN_DRAW.fullmatch(material) is None or mana_cost_to_vector(mana_cost)[1].count("X") != 1:
+        return rows
+    return ((f"{first[0]}\n{second[0]}", material, SourceSpan(first[2].start, second[2].end, first[2].line)),)
+
+
+def _cast_x_equal_return_draw_template(text):
+    if _CAST_X_RETURN_DRAW.fullmatch(text) is None:
+        return None
+    from .draw_templates import fixed_draw_effect_template
+    from .fixed_effect_clause_sequences import FixedEffectClauseSequenceTemplate, FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC
+    from .return_to_hand_templates import ReturnToHandTarget, TargetedReturnToHandEffectTemplate
+
+    bounce = TargetedReturnToHandEffectTemplate(ReturnToHandTarget.NONLAND_PERMANENT).compiled()
+    draw = fixed_draw_effect_template("Draw a card.")
+    leaf = FixedEffectClauseSequenceTemplate(
+        (bounce[0], draw[0]), (*bounce[1], *draw[1]), bounce[2],
+        (FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC, *bounce[3], *draw[3]),
+    )
+    name, effects, target, mechanics = leaf.compiled()
+    return _TEMPLATE_PREFIX + name, effects, declare_cast_x_equality(target), mechanics
+
+
 def announced_mana_value_target_template(text: str, *, has_cast_x: bool):
     if not has_cast_x:
         return None
     normalized = " ".join(text.strip().split())
+    if result := _cast_x_equal_return_draw_template(normalized):
+        return result
     distinct = _distinct_graveyard_return_template(normalized)
     if distinct is not None:
         return distinct
@@ -97,8 +134,31 @@ def _activation_graveyard_return_template(ability, text):
     return _TEMPLATE_PREFIX + name, effects, declare_activation_graveyard_mana_value_limit(target), mechanics
 
 
+def _activation_saga_return_template(ability, text):
+    if (ability.zones != ("battlefield",) or not ability.sorcery_speed or ability.activation_conditions
+            or re.fullmatch(
+                r"Return target Saga card with mana value X from your graveyard to the battlefield "
+                r"with a finality counter on it\. It gains haste until end of turn\."
+                r"(?: Activate only as a sorcery\.)?", text.strip(), re.I,
+            ) is None):
+        return None
+    from .activated_costs import activated_ability_cost
+    from .reanimation_templates import FIXED_TARGET_REANIMATION_MECHANIC
+    from ..reanimation_entry_counters import REANIMATION_ENTRY_COUNTER_MECHANIC
+    from ..rules.announced_mana_value_target import exact_saga_return_x_activation_price, saga_activation_graveyard_schema
+    from ..rules.reanimation_followup import REANIMATION_FINALITY_HASTE_VERSION, ReanimationFinalityHaste
+
+    if not exact_saga_return_x_activation_price(activated_ability_cost(ability)):
+        return None
+    effect = {"op": "reanimate", "schema_version": REANIMATION_FINALITY_HASTE_VERSION, "card": "$target.0",
+              "controller": "$controller", "tapped": False, "followup": ReanimationFinalityHaste.to_dict()}
+    return (_TEMPLATE_PREFIX + "fixed-saga-finality-haste-reanimation-v1", (effect,),
+            saga_activation_graveyard_schema(),
+            (FIXED_TARGET_REANIMATION_MECHANIC, REANIMATION_ENTRY_COUNTER_MECHANIC, "cr-115-targets"))
+
+
 def announced_activation_mana_value_target_template(ability, text: str):
-    if graveyard := _activation_graveyard_return_template(ability, text):
+    if graveyard := _activation_saga_return_template(ability, text) or _activation_graveyard_return_template(ability, text):
         return graveyard
     if ability.announced_energy_reanimation:
         from ..rules.announced_energy_reanimation import declared_energy_reanimation_target_schema, energy_reanimation_text_matches

@@ -20,6 +20,49 @@ from scripts.build_test_database import build_fixture_database
 from test_controller_creature_keyword_absence import register_card
 
 
+class OpponentGraveyardExileCastCompilerTests(unittest.TestCase):
+    def test_graveyard_exile_pool_requires_full_scope_and_skips_empty_delayed_set(self):
+        from types import SimpleNamespace
+        from test_granted_skulk import record
+        from quorune.rules.opponents_graveyards_exile_cast import (
+            CAPABILITY, DELAYED_MARKER, RETURN_OPERATION, check_exile_pool_end_step,
+        )
+
+        body = ("Exile all opponents' graveyards. You may cast spells from among those cards this turn, "
+                "and mana of any type can be spent to cast them. At the beginning of the next end step, "
+                "if any of those cards remain exiled, return them to their owners' graveyards.")
+        registry = load_default_capability_registry()
+
+        def compile_text(text):
+            row = replace(record(text, "Sorcery"), name="Synthetic Test Card")
+            return compile_oracle_card(row, capability_registry=registry, capability_profile="commander_review")
+
+        complete = body + "\nExile Synthetic Test Card."
+        ir = compile_text(complete)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        self.assertTrue(any(CAPABILITY in node.capability_dependencies for node in ir.faces[0].nodes))
+        for mutated in (
+            complete.replace("all opponents' graveyards", "target player's graveyard"),
+            complete.replace("cast spells", "play cards"),
+            complete.replace("owners' graveyards", "owners' hands"),
+            complete.replace("next end step", "your next end step"),
+        ):
+            with self.subTest(mutated=mutated):
+                self.assertNotEqual("exact", compile_text(mutated).status)
+
+        dynamic = {"op": RETURN_OPERATION, "schema_version": 1, "objects": [
+            {"object_id": "one", "ref": "ref-one", "logical_object_id": "one@1"},
+        ]}
+        trigger = SimpleNamespace(condition={DELAYED_MARKER: 1}, once=True, referred_object_ids=["one"],
+                                  stack_template={"context":{"dynamic_effects":[dynamic]}})
+        state = SimpleNamespace(cards={})
+        self.assertIsNone(check_exile_pool_end_step(state, trigger, {"phase":"combat","step":"beginning_combat"}))
+        self.assertFalse(check_exile_pool_end_step(state, trigger, {"phase":"ending","step":"end_step"}))
+        trigger.referred_object_ids = ["wrong"]
+        with self.assertRaisesRegex(ValueError, "original linked set"):
+            check_exile_pool_end_step(state, trigger, {"phase":"ending","step":"end_step"})
+
+
 class DelayedPublicExileReturnSetTests(InheritedNativeFixture, unittest.TestCase):
     playing = untap_fixture.NextPlayerUntapRestrictionTests.playing
 
@@ -33,6 +76,52 @@ class DelayedPublicExileReturnSetTests(InheritedNativeFixture, unittest.TestCase
         cls.deck = DeckDefinition("Original delayed return objects", [
             DeckEntry("Isamaru, Hound of Konda", 1, "commander"), DeckEntry("Plains", 30),
         ], ["Isamaru, Hound of Konda"])
+
+    def test_actual_mnemonic_betrayal_casts_the_linked_spell_and_returns_only_uncast_originals(self):
+        game = self.playing(60374021)
+        source = self.add(game.engine, "Mnemonic Betrayal", zone="hand")
+        paid = self.add(game.engine, "Lightning Bolt", zone="graveyard", seat="B", ref="mnemonic-red-spell")
+        held = self.add(game.engine, "Grizzly Bears", zone="graveyard", seat="C", ref="mnemonic-held-card")
+        land = self.add(game.engine, "Plains", zone="graveyard", seat="D", ref="mnemonic-land")
+        own = self.add(game.engine, "Grizzly Bears", zone="graveyard", ref="mnemonic-own")
+        unexpected = self.add(game.engine, "Lightning Bolt", zone="exile", seat="D", ref="mnemonic-outside-pool")
+        for item in (source, paid):
+            self.assert_closed(game, item)
+        game.state.config.semantic_policy = "trusted_only"
+        self.prepare(game, mana={"U": 3, "B": 1, "C": 1})
+        self.checkpoint(game)
+        self.cast(game, "A", source)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(("exile", "exile", "exile", "exile", "graveyard"),
+                         tuple(self.current(game, item).zone for item in (source, paid, held, land, own)))
+        delayed, = (row for row in game.state.delayed_triggers if row.active)
+        self.assertEqual({paid.object_id, held.object_id, land.object_id}, set(delayed.referred_object_ids))
+        game = self.replay(game, load=True)
+        self.priority(game,"A")
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        ids = {row["id"] for row in actions}
+        self.assertIn("cast:" + paid.ref, ids)
+        self.assertNotIn("play-land:" + land.ref, ids)
+        self.assertNotIn("cast:" + unexpected.ref, ids)
+        before = authoritative_state_hash(game.state)
+        request = {"action_id":"cast:" + paid.ref,"targets":["D"],"pay":"auto"}
+        self.assertFalse(game.act("pilot:B",request).ok)
+        self.assertEqual(before,authoritative_state_hash(game.state))
+        self.assertEqual(0,game.state.players["A"].mana_pool["R"])
+        cast = game.act("pilot:A",request)
+        self.assertTrue(cast.ok,cast.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("graveyard",self.current(game,paid).zone)
+        self.assertIn(paid.object_id,game.state.players["B"].zones["graveyard"])
+        self.until(game,lambda current: current.state.step=="end_step" and
+                   any(item.label=="Return the remaining exiled graveyard cards" for item in current.state.stack))
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(("graveyard","graveyard","exile","exile"),
+                         tuple(self.current(game,item).zone for item in (held,land,unexpected,source)))
+        self.assertIn(held.object_id,game.state.players["C"].zones["graveyard"])
+        self.assertIn(land.object_id,game.state.players["D"].zones["graveyard"])
+        self.replay(game,load=True)
 
     def test_two_complete_originals_keep_fixed_separate_public_selection_and_locked_delay(self):
         for name, selector, targeted in (("Ghostway", "$controller", False), ("Sudden Disappearance", "$target.0", True)):

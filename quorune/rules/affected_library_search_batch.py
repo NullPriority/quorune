@@ -7,6 +7,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 
 from ..errors import GameRuleError
+from ..library_search_model import is_public_search_split
 from ..object_predicate import ObjectQuerySpec
 from ..replacement.immutable import FrozenMap
 from ..util import stable_json
@@ -20,6 +21,14 @@ EXILE_LAND_SEARCH_FIELD = "exile_land_search_version"
 SEARCH_BATCH_FIELD = "exile_land_search_batch"
 SEARCH_BATCH_VERSION = 32
 EXILE_SEARCH_QUERY = ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
+
+
+def is_exile_land_search(effect: Mapping) -> bool:
+    """Route the persisted batch independently of the public split using v32."""
+    return effect.get("op") == "search" and (
+        SEARCH_BATCH_FIELD in effect
+        or (effect.get("schema_version") == SEARCH_BATCH_VERSION and not is_public_search_split(effect))
+    )
 
 
 def exile_land_target_schema():

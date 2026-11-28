@@ -27,7 +27,7 @@ def source_sacrifice_power_price_is_closed(cost):
     )
 
 
-def activation_creature_sacrifice_choice(cost):
+def activation_creature_sacrifice_choice(cost, *, card_type="creature"):
     if not isinstance(cost, Mapping):
         choices = getattr(cost, 'choices', None)
         if not isinstance(choices, (tuple, list)) or any(not isinstance(c, CostChoice) for c in choices):
@@ -63,9 +63,44 @@ def activation_creature_sacrifice_choice(cost):
     except (TypeError, ValueError, KeyError):
         return None
     if (price is None or price.operation != 'sacrifice_one' or choice.count != 1
-            or not ('creature' in price.predicate.types_all or price.predicate.types_any == ('creature',))):
+            or not (card_type in price.predicate.types_all or price.predicate.types_any == (card_type,))):
         return None
     return choice
+
+PAID_ENCHANTMENT_MANA_VALUE_CONTEXT = "paid_activation_enchantment_mana_value"
+
+
+def activation_enchantment_sacrifice_choice(cost):
+    from ...object_predicate import ObjectQuerySpec
+
+    choice = activation_creature_sacrifice_choice(cost, card_type="enchantment")
+    if (choice is None or not choice.another or cost["tap_source"]
+            or {name: amount for name, amount in cost["mana"].items() if amount} != {"GENERIC": 2, "B": 1}
+            or choice.fixed_zone_change_cost().predicate != ObjectQuerySpec(
+                zones=("battlefield",), controller="$actor", types_any=("enchantment",), known_to_actor=True)):
+        return None
+    return choice
+
+
+def paid_enchantment_pump_effect():
+    from ...scalar_effect_amount_model import ScalarAmountOrigin, ScalarEffectAmountSpec
+
+    amount = ScalarEffectAmountSpec(
+        ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE, characteristic="mana_value", schema_version=12,
+    ).to_dict()
+    return {
+        "op": "apply_source_characteristics_until_end_of_turn", "card": "$source.zone_object",
+        "set_card_types": None, "set_subtypes": None, "set_colors": None,
+        "base_power": None, "base_toughness": None, "power": amount, "toughness": 0, "keywords": [],
+    }
+
+
+def activation_enchantment_pump_is_exact(*, effects, cost_schema, target_schema):
+    from ...replacement.immutable import thaw_value
+
+    return (target_schema is None and tuple(thaw_value(effects)) == (paid_enchantment_pump_effect(),)
+            and activation_enchantment_sacrifice_choice(cost_schema) is not None)
+
 
 def _ordinary_paid_creature_choice(cost_schema):
     from ...object_predicate import ObjectQuerySpec

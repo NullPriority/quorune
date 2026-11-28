@@ -367,7 +367,7 @@ from .token_replacements import (
 from .tap_state_handlers import TAP_STATE_HANDLERS
 from .whole_hand_discard import WholeHandDiscardHandler
 from .random_discard import RandomDiscardHandler
-from .random_graveyard_returns import RandomGraveyardReturnHandler
+from .random_graveyard_returns import RandomGraveyardReturnHandler, RANDOM_GRAVEYARD_EXILE_CAST_HANDLER
 from .temporary_cast_restrictions import TemporaryCastRestrictionHandler
 from .temporary_draw_redirect import TemporaryDrawRedirectHandler
 from .target_combat_damage_multiplier import TargetCombatDamageMultiplierHandler
@@ -445,7 +445,7 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
             AscendSpellHandler(),
             WholeHandDiscardHandler(),
             RandomDiscardHandler(),
-            RandomGraveyardReturnHandler(),
+            RandomGraveyardReturnHandler(), RANDOM_GRAVEYARD_EXILE_CAST_HANDLER,
             TemporaryCastRestrictionHandler(), TemporaryDrawRedirectHandler(), ProtectedAttackPaymentHandler(),
             TargetCombatDamageMultiplierHandler(),
             NextTurnAttackRestrictionHandler(),

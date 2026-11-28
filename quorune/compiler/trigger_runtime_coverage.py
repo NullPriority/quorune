@@ -28,8 +28,10 @@ from ..spell_history_transform_model import SPELL_HISTORY_TRANSFORM_COVERAGE
 def fixed_typed_result_requires_current_ability(binding, template, required):
     from ..rules.combat_keyword_share import TEMPLATE as COMBAT_KEYWORD_SHARE_TEMPLATE
     from ..entry_designations import LINKED_PLAYER_CAST_MILL_TEMPLATE, LINKED_PLAYER_RECEIVED_DAMAGE_TEMPLATE
+    from ..rules.event_damage_sources import PAIRED_RECEIVING_DAMAGE_RESULT, TARGETED_RECEIVING_DAMAGE_RESULT
     from ..rules.counter_placement_blocking import COUNTER_PLACEMENT_BLOCKING_TEMPLATE
     from ..rules.counter_recipient_control import COUNTER_RECIPIENT_CONTROL_TEMPLATE
+    from ..rules.entrant_power_branch import ENTRANT_GREATEST_POWER_DRAW_TEMPLATE
     from ..rules.source_power_opponent_damage import SOURCE_POWER_OPPONENT_DAMAGE_TEMPLATE
     from ..rules.exile_origin_creature_counters import TEMPLATE as EXILE_ORIGIN_COUNTER_TEMPLATE
     from ..power_sacrifice_model import (
@@ -39,20 +41,23 @@ def fixed_typed_result_requires_current_ability(binding, template, required):
     from .fixed_source_combat_growth import FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS
     from ..rules.attached_copy_payment import TEMPLATE as ATTACHED_COPY_PAYMENT_TEMPLATE
     from ..rules.cast_coin_transform import TEMPLATE as CAST_COIN_TRANSFORM_TEMPLATE
+    from ..rules.combat_receiving_life import COMBAT_RECEIVING_LIFE_TEMPLATE
 
-    return required and (
+    return template == ENTRANT_GREATEST_POWER_DRAW_TEMPLATE or required and (
         template in FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS
         or binding.variant == "fixed_entry_return_requirement"
         or template in {
         "captured-legendary-cast-counter-keyword-v3",
             LEGENDARY_WIZARD_HAND_CAST_TEMPLATE, COUNTER_PLACEMENT_BLOCKING_TEMPLATE, COUNTER_RECIPIENT_CONTROL_TEMPLATE,
-            SOURCE_POWER_OPPONENT_DAMAGE_TEMPLATE, CAST_COIN_TRANSFORM_TEMPLATE,
+            SOURCE_POWER_OPPONENT_DAMAGE_TEMPLATE, CAST_COIN_TRANSFORM_TEMPLATE, COMBAT_RECEIVING_LIFE_TEMPLATE,
             EXILE_ORIGIN_COUNTER_TEMPLATE,
             "scheduled-player-hand-difference-v1", "linked-entry-opponent-upkeep-damage-v1",
             "fixed-counter-upkeep-target-hand-life-v1", "upkeep-fixed-other-controlled-creature-damage-v1",
             CONTROLLER_SACRIFICE_LIFE_TEMPLATE, ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE, ATTACK_SACRIFICE_STAT_TEMPLATE,
             LINKED_PLAYER_RECEIVED_DAMAGE_TEMPLATE, LINKED_PLAYER_CAST_MILL_TEMPLATE, ATTACHED_COPY_PAYMENT_TEMPLATE,
             COMBAT_KEYWORD_SHARE_TEMPLATE,
+            TARGETED_RECEIVING_DAMAGE_RESULT,
+            PAIRED_RECEIVING_DAMAGE_RESULT,
         }
     )
 
@@ -63,11 +68,17 @@ def trigger_runtime_coverage(binding, *, current_ability, qualified_zone_variant
 
     if binding.variant == NONHAND_ENTRY_PUMP_VARIANT:
         values.extend(("intervening_condition", NONHAND_ENTRY_PUMP_COVERAGE))
+    from ..rules.attacker_mana_payment import DEFENDED_ATTACK_COVERAGE, DEFENDED_ATTACK_VARIANT
+
+    if binding.variant == DEFENDED_ATTACK_VARIANT:
+        values.extend(("intervening_condition", DEFENDED_ATTACK_COVERAGE))
     from .delayed_object_templates import DELAYED_SOURCE_CONVERT_TEMPLATE
+    from .fixed_effect_clause_sequences import FIXED_PROLIFERATE_SEQUENCE_TEMPLATE
     from .recipient_control_templates import SOURCE_UPKEEP_HANDOFF_TEMPLATE
     from ..rules.die_roll_draw import MECHANIC as DIE_DRAW_HAND_SIZE_MECHANIC
     from ..rules.trigger_source_information import UNTAPPED_DAMAGE_DRAW_COVERAGE, UNTAPPED_DAMAGE_DRAW_VARIANT
     from ..rules.opposing_death_delayed_return import OPPOSING_DEATH_DELAYED_RETURN_MECHANIC
+    from ..triggered_mana_model import SOURCE_MANA_TAP_TARGET_TOKEN_CAPABILITY
     if result_template_id in {SOURCE_UPKEEP_HANDOFF_TEMPLATE, DELAYED_SOURCE_CONVERT_TEMPLATE}:
         current_ability = True
     if result_template_id == SOURCE_UPKEEP_HANDOFF_TEMPLATE:
@@ -78,9 +89,15 @@ def trigger_runtime_coverage(binding, *, current_ability, qualified_zone_variant
         current_ability = True
     if DIE_DRAW_HAND_SIZE_MECHANIC in effect_mechanics:
         current_ability = True
+    if SOURCE_MANA_TAP_TARGET_TOKEN_CAPABILITY in binding.public_capabilities:
+        current_ability = True
 
     if binding.variant == UNTAPPED_DAMAGE_DRAW_VARIANT:
         values.append(UNTAPPED_DAMAGE_DRAW_COVERAGE)
+    from ..saga_lifecycle import FINAL_SAGA_CHAPTER_RESOLVED_EVENT
+
+    if binding.event.value == FINAL_SAGA_CHAPTER_RESOLVED_EVENT:
+        current_ability = True
     if (binding.event.value == FIRST_LIFE_GAIN_EVENT or PREPARATION_RESULT_MECHANIC in effect_mechanics
             or OPPOSING_DEATH_DELAYED_RETURN_MECHANIC in effect_mechanics
             or binding.variant in {"source_graveyard_arrival_shuffle", "unpaid_creature_entry_group"}):
@@ -113,6 +130,8 @@ def trigger_runtime_coverage(binding, *, current_ability, qualified_zone_variant
         values.append('one_or_more_event_batch')
     if binding.variant in multi_event_variants:
         values.append('fixed_multi_event_subscription')
+    if binding.variant == "source_enters_or_attacks" and result_template_id == FIXED_PROLIFERATE_SEQUENCE_TEMPLATE:
+        values.append(FIXED_PROLIFERATE_SEQUENCE_TEMPLATE)
     if getattr(getattr(binding, "spell_subject", None), "requires_no_mana_spent", False):
         values.extend((CURRENT_ABILITY_FRAGMENT_COVERAGE, "intervening_condition"))
     if EVENT_SPELL_COPY_MECHANIC in effect_mechanics and is_other_spell_self_cast_condition(binding.event_condition):

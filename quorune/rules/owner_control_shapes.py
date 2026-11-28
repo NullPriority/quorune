@@ -13,7 +13,9 @@ def owner_control_node_capabilities(*,effects,target_schema,mechanic_ids):
 
 
 def owner_control_runtime_dependencies(program):
-    required=set()
+    from .directional_control import directional_control_runtime_dependencies
+
+    required=set(directional_control_runtime_dependencies(program))
     def visit(value):
         if isinstance(value,Mapping):
             if value.get('op')==OWNER_CONTROL_OPERATION:

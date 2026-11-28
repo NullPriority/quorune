@@ -2,8 +2,11 @@ from __future__ import annotations
 
 from dataclasses import replace
 
-from ..activated_ability_descriptor import SOURCE_COUNTER_PLACEMENT_CAPABILITY, SOURCE_COUNTER_PLACEMENT_FIELD
-
+from ..activated_ability_descriptor import (
+    SOURCE_COUNTER_PLACEMENT_CAPABILITY, SOURCE_COUNTER_PLACEMENT_FIELD,
+    SOURCE_LIBRARY_BOTTOM_CAPABILITY, SOURCE_LIBRARY_BOTTOM_FIELD, SOURCE_LIBRARY_BOTTOM_TEXT,
+    normalize_source_library_bottom_cost, source_library_bottom_mana_price,
+)
 from . import regex_working_set as re
 from typing import Any, Sequence
 
@@ -76,9 +79,9 @@ def _parse_compiled_activation_material(material, *, card_name, keywords):
     from .announced_reinforce_nodes import parse_reinforce_activation_material
     abilities = parse_reinforce_activation_material(material, card_name=card_name, keywords=keywords)
     return tuple(
-        _compile_source_equipment_unattach_cost(
+        fixed_source_library_bottom_cost(_compile_source_equipment_unattach_cost(
             compile_ability_local_mana_reduction(_compile_commander_identity_life_cost(ability), source_name=card_name)
-        )
+        ))
         for ability in abilities
     )
 
@@ -104,6 +107,16 @@ def _compile_commander_identity_life_cost(ability: ActivatedAbility) -> Activate
     remaining = tuple(" ".join(clause.casefold().replace("’", "'").split())
                       for clause in ability.uncompiled_costs)
     return replace(ability, uncompiled_costs=()) if remaining == (PRICE_CLAUSE,) else ability
+
+
+def fixed_source_library_bottom_cost(ability: ActivatedAbility) -> ActivatedAbility:
+    missing = tuple(map(normalize_source_library_bottom_cost, ability.uncompiled_costs))
+    if missing != (SOURCE_LIBRARY_BOTTOM_TEXT,) or source_library_bottom_mana_price(ability.cost_text) != dict(ability.mana):
+        return ability
+    try:
+        return replace(ability, source_library_bottom=True, uncompiled_costs=())
+    except ValueError:
+        return ability
 
 
 def activated_ability_cost_capabilities(
@@ -159,6 +172,13 @@ def activated_ability_cost_capabilities(
     from ..rules.announced_subtype_sacrifice import ANNOUNCED_SUBTYPE_SACRIFICE_CAPABILITY, announced_subtype_sacrifice_choice
     if announced_subtype_sacrifice_choice(ability) is not None:
         additional.append(ANNOUNCED_SUBTYPE_SACRIFICE_CAPABILITY)
+    from ..rules.announced_artifact_sacrifice_return import ARTIFACT_SACRIFICE_X_CAPABILITY, has_announced_artifact_sacrifice
+
+    if has_announced_artifact_sacrifice(ability):
+        additional.extend((ARTIFACT_SACRIFICE_X_CAPABILITY, "target.revalidate_resolution"))
+    from ..rules.announced_hand_discard import ANNOUNCED_HAND_DISCARD_CAPABILITY, announced_hand_discard_choice
+    if announced_hand_discard_choice(ability) is not None:
+        additional.append(ANNOUNCED_HAND_DISCARD_CAPABILITY)
     if ability.announced_x_symbols is not None:
         from ..activation_x import activation_x_capabilities, has_controlled_land_return_x_price
         additional.extend(activation_x_capabilities(symbols=ability.announced_x_symbols,
@@ -229,11 +249,16 @@ def activated_ability_cost_capabilities(
     if any(choice.tap_schema_version == 3 for choice in ability.choices):
         from ..rules.activation_costs import LEGENDARY_TAP_ACTIVATION_CAPABILITY
         additional.append(LEGENDARY_TAP_ACTIVATION_CAPABILITY)
-    if any(choice.sacrifice_schema_version is not None for choice in ability.choices):
-        from ..keyword_sacrifice_cost_model import KEYWORD_SACRIFICE_CAPABILITY
+    from ..keyword_sacrifice_cost_model import KEYWORD_SACRIFICE_CAPABILITY, KEYWORD_SACRIFICE_COST_VERSION
+    from ..rules.named_sacrifice_cost_model import NAMED_SACRIFICE_CAPABILITY, NAMED_SACRIFICE_COST_VERSION
+    if any(choice.sacrifice_schema_version == KEYWORD_SACRIFICE_COST_VERSION for choice in ability.choices):
         additional.append(KEYWORD_SACRIFICE_CAPABILITY)
+    if any(choice.sacrifice_schema_version == NAMED_SACRIFICE_COST_VERSION for choice in ability.choices):
+        additional.append(NAMED_SACRIFICE_CAPABILITY)
     if ability.source_counter_placement_cost is not None:
         additional.append(SOURCE_COUNTER_PLACEMENT_CAPABILITY)
+    if ability.source_library_bottom:
+        additional.append(SOURCE_LIBRARY_BOTTOM_CAPABILITY)
     if ability.mill_library_cost:
         from ..rules.activation.mill_library_cost import MILL_LIBRARY_ACTIVATION_COST_CAPABILITY
         additional.append(MILL_LIBRARY_ACTIVATION_COST_CAPABILITY)
@@ -295,6 +320,8 @@ def activated_ability_cost(
         result["activation_limit"] = ability.activation_limit.value
     if ability.power_up is not None:result['power_up']=ability.power_up.to_dict()
     if ability.random_discard_payment:result['random_discard_payment']=ability.random_discard_payment
+    if ability.source_library_bottom:
+        result[SOURCE_LIBRARY_BOTTOM_FIELD] = True
     if ability.mill_library_cost:
         result['mill_library_cost'] = ability.mill_library_cost
     if ability.source_counter_placement_cost is not None:

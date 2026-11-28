@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from .continuous_effect_model import ContinuousEffectDuration
 from .next_spell_cost_model import (
-    NEXT_TURN_SPELL_COST_VERSION, ResolvedNextSpellCostReduction, validate_next_spell_cost_instruction,
+    NEXT_TURN_SPELL_COST_VERSION, NEXT_ELIGIBLE_FREE_VERSION, ResolvedNextSpellCostReduction, validate_next_spell_cost_instruction,
 )
 from .cast_cost_modifiers import CastCostAffectedController,PublicCastCostModifierSpec
 from .object_query import object_matches_query,object_query_result
@@ -25,6 +25,9 @@ def apply_next_spell_cost_reduction(host,effect,*,actor,reason,operation=None):
     if next_turn:
         host._log(actor, 'casting.next_turn_cost.created', 'A casting cost reduction applies until your next turn.',
             {'effect_id': pending.effect_id, 'amount': pending.amount, 'spell_query': query.to_dict()}, importance=1)
+    elif pending.schema_version == NEXT_ELIGIBLE_FREE_VERSION:
+        host._log(actor, "casting.next_alternative.created", "The next eligible creature spell has a mana alternative.",
+                  {"effect_id": pending.effect_id, "spell_query": query.to_dict()}, importance=1)
     elif pending.schema_version == 2:
         host._log(actor,'casting.turn_cost.created','A casting cost reduction applies this turn.',
             {'effect_id':pending.effect_id,'amount':pending.amount,'spell_query':query.to_dict(),
@@ -57,6 +60,20 @@ def active_next_spell_cost_reductions(host,seat,card,cast_type_line=None,face_do
         for effect in matching_next_spell_cost_reductions(host,seat,card,cast_type_line,face_down_method) if effect.amount)
 
 
+def next_eligible_free_base_options(host, seat, card, *, cast_type_line, has_mana_x, x_value, commander_tax):
+    if has_mana_x and x_value not in (None, 0):
+        return []
+    matched = tuple(effect for effect in matching_next_spell_cost_reductions(host, seat, card, cast_type_line)
+                    if effect.schema_version == NEXT_ELIGIBLE_FREE_VERSION)
+    if not matched:
+        return []
+    source = min(matched, key=lambda effect: (effect.timestamp, effect.effect_id))
+    return [{"id": f"next-eligible-free:{source.effect_id}", "kind": "alternate",
+             "label": "Cast without paying its mana cost",
+             "requirements": host._mana_vector({"GENERIC": commander_tax}),
+             **({"x_value_policy": "zero"} if has_mana_x else {})}]
+
+
 def consume_next_spell_rules(host,proposal,card,*,preparing):
     """Preserve historical next-spell flags and consume only completed casts."""
     stats=host.state.players[proposal.seat].stats
@@ -67,5 +84,7 @@ def consume_next_spell_rules(host,proposal,card,*,preparing):
     if not preparing:
         from .continuous_effect_state import consume_continuous_effects
         matched=matching_next_spell_cost_reductions(host,proposal.seat,card,proposal.type_line)
-        consume_continuous_effects(host.state,tuple(effect.effect_id for effect in matched if effect.schema_version == 1))
+        consume_continuous_effects(host.state, tuple(
+            effect.effect_id for effect in matched if effect.schema_version in {1, NEXT_ELIGIBLE_FREE_VERSION}
+        ))
     return used_improvise,used_uncounterable,next_payments

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 """CR 613.8 applicability dependencies for represented type changes."""
 
+from collections import Counter
 from copy import deepcopy
 from dataclasses import dataclass, replace
 from itertools import groupby
@@ -72,10 +73,11 @@ def _type_effect_matches_object(effect, base, context):
     return _matches(effect.applies, base, context)
 
 
-def _current_type_dependencies(remaining, base, context):
+def _current_type_dependencies(remaining, base, context, enabled=None):
     from .continuous_effects import _apply_operation
 
-    matches = {key: _type_effect_matches_object(effect, base, context) for key, effect in remaining.items()}
+    matches = {key: (enabled is None or key in enabled) and _type_effect_matches_object(effect, base, context)
+               for key, effect in remaining.items()}
     dependencies = {key: set(effect.depends_on).intersection(remaining) for key, effect in remaining.items()}
     for earlier_id, earlier in remaining.items():
         if not matches[earlier_id]:
@@ -84,7 +86,8 @@ def _current_type_dependencies(remaining, base, context):
         for operation in earlier.operations:
             _apply_operation(preview, operation, context)
         for later_id, later in remaining.items():
-            if earlier_id != later_id and earlier.characteristic_defining == later.characteristic_defining:
+            if (earlier_id != later_id and earlier.characteristic_defining == later.characteristic_defining
+                    and (enabled is None or later_id in enabled)):
                 if _type_effect_matches_object(later, preview, context) != matches[later_id]:
                     dependencies[later_id].add(earlier_id)
     return dependencies
@@ -134,6 +137,63 @@ def live_dependency_effect_order(effects, dependencies_for, cycles):
 class TypeEffectOrder:
     effect_ids: tuple[str, ...]
     dependency_cycles: tuple[tuple[str, ...], ...]
+    inactive_recipient_scopes: frozenset[str] = frozenset()
+
+
+def _enchantment_threshold(effect):
+    if effect.layer is Layer.TYPE and len(effect.operations) == 1:
+        operation = effect.operations[0]
+        if operation.op == "add_creature_for_enchantment_threshold":
+            return operation.value
+    return None
+
+
+def _is_battlefield_enchantment(base, context):
+    return (context.get("zone") == "battlefield" and not context.get("phased_out")
+            and any(kind.casefold() == "enchantment" for kind in base.card_types))
+
+
+def _controlled_enchantments(rows):
+    return Counter(base.controller for base, context, _ in rows if _is_battlefield_enchantment(base, context))
+
+
+def _meets_enchantment_threshold(effect, counts):
+    threshold = _enchantment_threshold(effect)
+    return threshold is None or counts[effect.applies.controller] >= threshold
+
+
+def _enchantment_threshold_dependencies(result, remaining, rows, counts, enabled):
+    from .continuous_effects import _apply_operation
+
+    conditional = {key: effect for key, effect in remaining.items() if _enchantment_threshold(effect) is not None}
+    for earlier_id in enabled:
+        earlier = remaining[earlier_id]
+        if not any(op.op in {"set_types","add_types","remove_types"} and op.field in {None,"card_types"}
+                   for op in earlier.operations):
+            continue
+        updated = counts.copy()
+        for base, context, local in rows:
+            if earlier_id not in local or not _type_effect_matches_object(earlier, base, context):
+                continue
+            preview = deepcopy(base)
+            for operation in earlier.operations:
+                _apply_operation(preview, operation, context)
+            updated[base.controller] += int(_is_battlefield_enchantment(preview, context)) - int(
+                _is_battlefield_enchantment(base, context))
+        for later_id, later in conditional.items():
+            if (earlier_id != later_id and earlier.characteristic_defining == later.characteristic_defining
+                    and _meets_enchantment_threshold(later, updated) != (later_id in enabled)):
+                result[later_id].add(earlier_id)
+
+
+def retain_active_type_recipient_scopes(effects, board_order):
+    if board_order is None:
+        if any(_enchantment_threshold(effect) is not None for effect in effects):
+            from .continuous_effect_model import ContinuousEffectError
+            raise ContinuousEffectError("Enchantment animation requires its current battlefield type order")
+        return effects
+    inactive = board_order.inactive_recipient_scopes
+    return tuple(effect for effect in effects if effect.recipient_scope_anchor not in inactive) if inactive else effects
 
 
 def battlefield_type_effect_order(views):
@@ -148,27 +208,38 @@ def battlefield_type_effect_order(views):
                      is not ContinuousEffectDuration.WHILE_SOURCE_PRESENT)}
         all_effects.update(local)
         rows.append((base, context, local))
+    has_threshold = any(_enchantment_threshold(effect) is not None for effect in all_effects.values())
 
     def dependencies_for(remaining):
         result = {key: set(effect.depends_on).intersection(remaining)
                   for key,effect in remaining.items()}
+        counts = _controlled_enchantments(rows) if has_threshold else None
+        enabled = (frozenset(key for key, effect in remaining.items() if _meets_enchantment_threshold(effect, counts))
+                   if counts is not None else None)
         for base, context, local in rows:
             dependencies = _current_type_dependencies(
-                {key: effect for key, effect in local.items() if key in remaining}, base, context,
+                {key: effect for key, effect in local.items() if key in remaining}, base, context, enabled,
             )
             for key, prerequisites in dependencies.items():
                 result[key].update(prerequisites)
+        if enabled is not None:
+            _enchantment_threshold_dependencies(result, remaining, rows, counts, enabled)
         return result
 
     cycles = []
     ordered = []
+    inactive = set()
     for effect in live_dependency_effect_order(all_effects.values(), dependencies_for, cycles):
         ordered.append(effect.effect_id)
+        if (_enchantment_threshold(effect) is not None
+                and not _meets_enchantment_threshold(effect, _controlled_enchantments(rows))):
+            inactive.add(effect.effect_id)
+            continue
         for base, context, local in rows:
             if effect.effect_id in local and _type_effect_matches_object(effect, base, context):
                 for operation in effect.operations:
                     _apply_operation(base, operation, context)
-    return TypeEffectOrder(tuple(ordered), tuple(cycles))
+    return TypeEffectOrder(tuple(ordered), tuple(cycles), frozenset(inactive))
 
 
 def effects_with_live_type_recipient_scopes(ordered, present, base, context, cycles, board_order=None):

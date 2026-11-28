@@ -5,7 +5,9 @@ from __future__ import annotations
 from typing import Any, Mapping
 from ..replacement.model import ReplacementEffectError
 
+from ..activated_ability_descriptor import SOURCE_LIBRARY_BOTTOM_OFFER
 from ..additional_cost_vocabulary import FIXED_ZONE_CHANGE_COST_CONTRACTS
+from .announced_hand_discard import ANNOUNCED_HAND_DISCARD_KIND, announced_hand_discard_predicate
 from .announced_subtype_sacrifice import (
     ANNOUNCED_SUBTYPE_SACRIFICE_KIND, announced_subtype_sacrifice_predicate,
 )
@@ -13,23 +15,32 @@ from ..creature_subtypes import canonical_creature_subtype
 from ..object_predicate import ObjectQuerySpec
 
 
-def announced_subtype_replay_cost_refs(choice, response):
-    if (choice.get("k") != ANNOUNCED_SUBTYPE_SACRIFICE_KIND or choice.get("z") != "battlefield"
+ANNOUNCED_ZONE_COST_ORIGINS = {
+    ANNOUNCED_SUBTYPE_SACRIFICE_KIND: "battlefield",
+    ANNOUNCED_HAND_DISCARD_KIND: "hand",
+}
+
+
+def announced_zone_cost_replay_refs(choice, response):
+    kind = choice.get("k")
+    if (kind not in ANNOUNCED_ZONE_COST_ORIGINS or choice.get("z") != ANNOUNCED_ZONE_COST_ORIGINS[kind]
             or type(choice.get("n")) is not int or choice["n"] != 0 or not isinstance(choice.get("q"), Mapping)):
         return None
-    from .activation.announced_subtype_sacrifice import selected_subtype_sacrifice_refs
+    from .activation.announced_selected_zone_cost import selected_announced_cost_refs
 
     try:
-        refs = selected_subtype_sacrifice_refs(response, response.get("x"))
+        refs = selected_announced_cost_refs(response, response.get("x"))
         query = ObjectQuerySpec.from_dict(choice["q"])
-    except (TypeError, ValueError) as exc:
+    except (TypeError, ValueError):
+        return None
+    if kind == ANNOUNCED_HAND_DISCARD_KIND:
+        if query != announced_hand_discard_predicate():
+            return None
+    elif (len(query.subtypes_all) != 1 or canonical_creature_subtype(query.subtypes_all[0]) is None
+            or query != announced_subtype_sacrifice_predicate(query.subtypes_all[0])):
         return None
     legal = choice.get("legal_refs")
-    if (len(query.subtypes_all) != 1 or canonical_creature_subtype(query.subtypes_all[0]) is None
-            or query != announced_subtype_sacrifice_predicate(query.subtypes_all[0])
-            or not isinstance(legal, (list, tuple)) or any(ref not in legal for ref in refs)):
-        return None
-    return refs
+    return refs if isinstance(legal, (list, tuple)) and all(ref in legal for ref in refs) else None
 from .announced_energy_reanimation import FIELD as ENERGY_REANIMATION_FIELD, energy_reanimation_sacrifice_choice
 from ..replacement.immutable import thaw_value
 from ..util import stable_json
@@ -78,6 +89,23 @@ def energy_reanimation_replacement_entries(response, entries):
     return refs, by_ref
 
 
+def selected_activation_zone_cost_count(response: Mapping[str, Any], choice: Mapping[str, Any]) -> int | None:
+    """Keep a retained fixed count or bind the exact positive announced artifact count."""
+    count = choice.get("n")
+    if "count_parameter" not in choice:
+        return count if type(count) is int and 1 <= count <= 10 else None
+    from .announced_artifact_sacrifice_return import announced_artifact_predicate
+    from ..replacement.immutable import thaw_value
+
+    value = response.get("x")
+    if (choice["count_parameter"] != "x" or choice.get("k") != "sacrifice_one"
+            or type(count) is not int or count != 1 or "other" in choice or choice.get("z") != "battlefield"
+            or thaw_value(choice.get("q")) != announced_artifact_predicate().to_dict()
+            or type(value) is not int or value < 1):
+        return None
+    return value
+
+
 def activation_zone_change_cost_reference(
     response: Mapping[str, Any],
     *,
@@ -105,43 +133,18 @@ def activation_zone_change_cost_reference(
             return None
         source, creature = refs
         return object_ref if ((destination, object_ref) in {("hand", source), ("graveyard", creature)}) else None
-    if 'random_discard' in cost_summary and any(field in cost_summary for field in ('choose_cost','discard_self','exile_self','sac_self')):
+    if 'random_discard' in cost_summary and any(field in cost_summary for field in ('choose_cost','discard_self','exile_self','sac_self',SOURCE_LIBRARY_BOTTOM_OFFER)):
         return None
     source_ref = response.get("source")
     source_flags = {
         field
-        for field in ("discard_self", "exile_self", "sac_self")
+        for field in ("discard_self", "exile_self", "sac_self", SOURCE_LIBRARY_BOTTOM_OFFER)
         if field in cost_summary
     }
-    source_cost_valid = bool(
-        type(source_ref) is str
-        and source_ref
-        and response.get("from") == origin
-        and object_ref == source_ref
-        and (
-            (
-                source_flags == {"discard_self"}
-                and type(cost_summary["discard_self"]) is int
-                and cost_summary["discard_self"] == 1
-                and origin == "hand"
-                and destination == "graveyard"
-            )
-            or (
-                source_flags == {"exile_self"}
-                and type(cost_summary["exile_self"]) is int
-                and cost_summary["exile_self"] == 1
-                and destination == "exile"
-            )
-            or (
-                source_flags == {"sac_self"}
-                and type(cost_summary["sac_self"]) is int
-                and cost_summary["sac_self"] == 1
-                and origin == "battlefield"
-                and destination == "graveyard"
-            )
-        )
-    )
-    if source_cost_valid:
+    if _source_activation_zone_cost_matches(
+        response, cost_summary, source_flags, source_ref=source_ref, origin=origin,
+        destination=destination, object_ref=object_ref,
+    ):
         return object_ref
     if source_flags or type(source_ref) is not str or not source_ref:
         return None
@@ -185,9 +188,10 @@ def activation_zone_change_cost_reference(
     ):
         return None
     choice = choices[0]
-    if choice.get("k") == ANNOUNCED_SUBTYPE_SACRIFICE_KIND:
-        refs = announced_subtype_replay_cost_refs(choice, response)
-        return object_ref if (origin, destination) == ("battlefield", "graveyard") and refs and object_ref in refs else None
+    if choice.get("k") in ANNOUNCED_ZONE_COST_ORIGINS:
+        refs = announced_zone_cost_replay_refs(choice, response)
+        expected_origin = ANNOUNCED_ZONE_COST_ORIGINS[choice["k"]]
+        return object_ref if (origin, destination) == (expected_origin, "graveyard") and refs and object_ref in refs else None
     cost_kind = choice.get("k")
     from ..combat_entry_activations import FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND
 
@@ -212,20 +216,63 @@ def activation_zone_change_cost_reference(
         cost_kind = combat_return["operation"]
     contract = FIXED_ZONE_CHANGE_COST_CONTRACTS.get(str(cost_kind or ""))
     legal_refs = choice.get("legal_refs")
+    count = selected_activation_zone_cost_count(response, choice)
     if (
         contract is None
         or contract[0] != origin
         or contract[1] != destination
         or choice.get("z") != origin
-        or type(choice.get("n")) is not int
-        or not 1 <= choice.get("n") <= 10
-        or len(raw_refs) != choice['n']
+        or len(raw_refs) != count
         or not isinstance(choice.get("q"), Mapping)
         or not isinstance(legal_refs, (list, tuple))
         or any(ref not in legal_refs for ref in raw_refs)
     ):
         return None
     return object_ref
+
+
+def _source_activation_zone_cost_matches(response, cost_summary, source_flags, *, source_ref, origin, destination, object_ref):
+    mana = cost_summary.get("m")
+    return bool(
+        type(source_ref) is str
+        and source_ref
+        and response.get("from") == origin
+        and object_ref == source_ref
+        and (
+            (
+                source_flags == {"discard_self"}
+                and type(cost_summary["discard_self"]) is int
+                and cost_summary["discard_self"] == 1
+                and origin == "hand"
+                and destination == "graveyard"
+            )
+            or (
+                source_flags == {"exile_self"}
+                and type(cost_summary["exile_self"]) is int
+                and cost_summary["exile_self"] == 1
+                and destination == "exile"
+            )
+            or (
+                source_flags == {SOURCE_LIBRARY_BOTTOM_OFFER}
+                and type(cost_summary[SOURCE_LIBRARY_BOTTOM_OFFER]) is int
+                and cost_summary[SOURCE_LIBRARY_BOTTOM_OFFER] == 1
+                and origin == "battlefield"
+                and destination == "library"
+                and set(cost_summary) == {SOURCE_LIBRARY_BOTTOM_OFFER, "m", "tap"}
+                and type(cost_summary["tap"]) is int and cost_summary["tap"] == 1
+                and isinstance(mana, Mapping) and bool(mana)
+                and all(key in {"GENERIC", "W", "U", "B", "R", "G", "C"}
+                        and type(amount) is int and amount > 0 for key, amount in mana.items())
+            )
+            or (
+                source_flags == {"sac_self"}
+                and type(cost_summary["sac_self"]) is int
+                and cost_summary["sac_self"] == 1
+                and origin == "battlefield"
+                and destination == "graveyard"
+            )
+        )
+    )
 
 
 def counted_activation_replacement_selections(response: Mapping[str, Any], object_refs: tuple[str, ...]) -> tuple[Any, ...]:

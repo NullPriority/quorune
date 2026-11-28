@@ -114,6 +114,36 @@ def controlled_counter_subjects(card_type, *, exclude_source=False):
     )
 
 
+def controlled_nonflying_counter_subjects() -> AffectedPermanentSetSpec:
+    return AffectedPermanentSetSpec(
+        query=ObjectQuerySpec(zones=("battlefield",), types_all=("creature",), keywords_none=("flying",)),
+        controller_relation=PermanentControllerRelation.ACTOR,
+    )
+
+
+def controlled_nonflying_counter_payload_dependencies(effect) -> tuple[str, ...]:
+    """Validate the represented characteristic exclusion before binding the batch."""
+    if effect.get("op") != "place_counters_on_set":
+        return ()
+    affected = effect.get("set")
+    query = affected.get("query") if isinstance(affected, Mapping) else None
+    if not isinstance(query, Mapping) or not query.get("keywords_none"):
+        return ()
+    from .replacement.immutable import FrozenMap
+
+    if (set(effect) != {"op", "source", "set", "counter", "amount"}
+            or effect["source"] != "$source" or effect["counter"] != "flying"
+            or type(effect["amount"]) is not int or effect["amount"] != 1
+            or FrozenMap(affected) != FrozenMap(controlled_nonflying_counter_subjects().to_dict())):
+        raise ValueError("A negative keyword counter set requires one flying counter on each controlled creature without flying")
+    return (
+        "counter.producer.fixed_permanent_set_effect",
+        "state_query.permanent.public_state_predicate",
+        "counter.characteristic.keyword",
+        "combat.block.flying",
+    )
+
+
 def bind_counter_receipt_source_exclusion(host, item, effect):
     """Exclude the original source of a receipt-qualified creature-set result."""
     if (not isinstance(effect, Mapping) or effect.get("op") != "place_counters_on_set"

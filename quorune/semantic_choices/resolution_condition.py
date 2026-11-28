@@ -103,7 +103,9 @@ class PublicResolutionConditionHandler:
             return _prepare_counter_recipient_control(effect, context)
         if uses_entrant_power_branch(effect):
             try:
-                result = resolved_entrant_power_branch(effect, context.actor, context.stack_controller)
+                result = resolved_entrant_power_branch(
+                    effect, context.actor, context.stack_controller, active_seats=context.query.active_seats,
+                )
             except (KeyError, TypeError, ValueError) as exc:
                 raise SemanticChoiceError(str(exc)) from exc
             return SemanticChoicePreparation(

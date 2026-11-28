@@ -28,6 +28,18 @@ from .util import stable_json
 _REASON_FIELD = "reason"
 
 
+def validate_created_token_exclusions(spec, exclusions):
+    from .continuous_effect_model import ContinuousObjectIdentity
+    from .object_predicate import ObjectQuerySpec
+
+    if (not isinstance(exclusions, tuple)
+            or any(not isinstance(identity, ContinuousObjectIdentity) for identity in exclusions)
+            or len({identity.object_id for identity in exclusions}) != len(exclusions)):
+        raise ValueError('Destruction exemptions require distinct committed token incarnations')
+    if exclusions and spec != AffectedPermanentSetSpec(ObjectQuerySpec(zones=('battlefield',), types_all=('creature',))):
+        raise ValueError('Created-token exemptions require the complete current creature set')
+
+
 class DestructionSetError(ValueError):
     """A mass-destruction snapshot or transaction is invalid."""
 
@@ -102,6 +114,9 @@ class DestructionSetSnapshot:
 
 
 class DestructionSetQuery(Protocol):
+    state: Any
+
+    def _attachment_public_state(self, card) -> tuple[bool, bool, bool]: ...
     def affected_permanent_active_seats(self) -> tuple[str, ...]: ...
 
     def affected_permanent_apnap_order(self) -> tuple[str, ...]: ...
@@ -112,8 +127,6 @@ class DestructionSetQuery(Protocol):
 
 
 class DestructionSetHost(DestructionSetQuery, Protocol):
-    state: Any
-
     def _log(
         self,
         actor: str | None,
@@ -134,16 +147,22 @@ def snapshot_destruction_set(
     spec: AffectedPermanentSetSpec,
     source_ref: str | None = None,
     object_rows: Sequence[ObjectQueryResult] | None = None,
+    excluded_created_tokens=(),
 ) -> DestructionSetSnapshot:
     """Freeze the complete affected set before destruction preflight."""
 
     try:
-        from .attachment_destruction_model import AttachmentDestructionSetSpec, current_attachment_destruction_rows
+        from .attachment_destruction_model import (
+            AttachmentDestructionSetSpec, current_attachment_destruction_rows,
+            current_enchanted_destruction_rows, uses_enchanted_permanent_state,
+        )
+        rows = query.affected_permanent_object_rows(actor) if object_rows is None else object_rows
         if isinstance(spec, AttachmentDestructionSetSpec):
-            object_rows = current_attachment_destruction_rows(query,
-                query.affected_permanent_object_rows(actor) if object_rows is None else object_rows)
+            rows = current_attachment_destruction_rows(query, rows)
+        elif uses_enchanted_permanent_state(spec.query):
+            rows = current_enchanted_destruction_rows(query, rows)
         selected = select_affected_permanents(
-            query.affected_permanent_object_rows(actor) if object_rows is None else object_rows,
+            rows,
             spec,
             actor=actor,
             active_seats=query.affected_permanent_active_seats(),
@@ -152,6 +171,11 @@ def snapshot_destruction_set(
         )
         if isinstance(spec, RelativePowerDestructionSetSpec):
             selected = select_relative_power_destruction_rows(selected, spec, actor=actor)
+        validate_created_token_exclusions(spec, excluded_created_tokens)
+        if excluded_created_tokens:
+            excluded = {(identity.object_id, identity.logical_object_id) for identity in excluded_created_tokens}
+            selected = tuple(row for row in selected
+                if not (row.token and (row.object_id, row.logical_object_id) in excluded))
     except AffectedPermanentSetError as exc:
         raise DestructionSetError(str(exc)) from exc
     return DestructionSetSnapshot(
@@ -203,6 +227,7 @@ def resolve_destruction_set(
     replacement_selections: Sequence[str | Mapping[str, Any]] = (),
     followup: DestructionFollowup | None = None,
     ordered_exclusion: OrderedIncarnationExclusion | None = None,
+    excluded_created_tokens=(),
 ) -> DestructionResult | CommittedQuantityFollowup:
     """Resolve one fixed affected set through the canonical destruction owner."""
 
@@ -236,6 +261,7 @@ def resolve_destruction_set(
                      if (row.object_id, row.logical_object_id) not in ordered_exclusion.protected)
     snapshot = snapshot_destruction_set(
         host, actor=actor, spec=spec, source_ref=source_ref, object_rows=rows,
+        excluded_created_tokens=excluded_created_tokens,
     )
     if followup is not None and followup.uses_artifact_life:
         from .rules.artifact_destruction_life import capture_original_artifact_values

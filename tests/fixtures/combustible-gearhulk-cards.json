@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "3494a575-f68e-4e78-9f6b-142cd8a0edea",
+      "name": "Combustible Gearhulk",
+      "mana_cost": "{4}{R}{R}",
+      "type_line": "Artifact Creature \u2014 Construct",
+      "oracle_text": "First strike\nWhen this creature enters, target opponent may have you draw three cards. If the player doesn't, you mill three cards, then this creature deals damage to that player equal to the total mana value of those cards.",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "First strike",
+        "Mill"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 6.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "3494a575-f68e-4e78-9f6b-142cd8a0edea",
+      "published_at": "2016-09-20",
+      "source": "wotc",
+      "comment": "If you have fewer than three cards in your library, the opponent may choose to have you draw three cards. If so, you'll lose the game as state-based actions are performed."
+    },
+    {
+      "oracle_id": "3494a575-f68e-4e78-9f6b-142cd8a0edea",
+      "published_at": "2016-09-20",
+      "source": "wotc",
+      "comment": "While Combustible Gearhulk's triggered ability is resolving, no player may take any actions other than those specified by the Gearhulk. Once the opponent makes a choice, players can't cast spells or activate abilities until after the cards are drawn or put into the graveyard and damage has been dealt (if applicable)."
+    },
+    {
+      "oracle_id": "3494a575-f68e-4e78-9f6b-142cd8a0edea",
+      "published_at": "2016-09-20",
+      "source": "wotc",
+      "comment": "If any of the cards put into your graveyard have {X} in their mana cost, X is considered to be 0."
+    }
+  ]
+}

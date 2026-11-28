@@ -8442,45 +8442,48 @@
     },
     {
       "evidence_class": "interaction",
-      "assurance_kind": "fail_closed_runtime_admission",
-      "test_id": "test_exact_all_colors_fragment_does_not_admit_unowned_saga_and_replacement",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_kami_war_transforms_attacks_and_defender_chooses_its_power_bonus_in_replay",
       "piece_ids": [
         "capability.continuous.characteristics.all_colors_definition",
-        "residual.card_form.ordinary-saga-chapter-event-binding"
+        "capability.counter.producer.saga_lore"
       ],
       "capability_ids": [
-        "continuous.characteristics.all_colors_definition"
+        "continuous.characteristics.all_colors_definition",
+        "counter.producer.saga_lore"
       ],
       "interaction_order": 2,
-      "assertion": "The Kami War's exact back-face all-colors definition cannot admit the full unowned Saga and transformed-return source. Original pinned siblings remain material and the whole-card binding remains non-strict, including the represented back-face fixture."
+      "assertion": "The actual Kami War advances to chapter III during ordinary turn progression. After the chapter resolves, the manifested back face has all five colors."
     },
     {
       "evidence_class": "interaction",
-      "assurance_kind": "fail_closed_runtime_admission",
-      "test_id": "test_exact_all_colors_fragment_does_not_admit_unowned_saga_and_replacement",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_kami_war_transforms_attacks_and_defender_chooses_its_power_bonus_in_replay",
       "piece_ids": [
         "capability.continuous.characteristics.all_colors_definition",
-        "residual.replacement.replacement-applicability"
+        "capability.zone.linked_exile_return.transformed_source"
       ],
       "capability_ids": [
-        "continuous.characteristics.all_colors_definition"
+        "continuous.characteristics.all_colors_definition",
+        "zone.linked_exile_return.transformed_source"
       ],
       "interaction_order": 2,
-      "assertion": "Normal full-source binding keeps the Kami War's replacement/applicability residual beside its exact all-colors leaf; no whole-card runtime support or unavailable cast is manufactured. Rejection preserves authoritative state and replay."
+      "assertion": "Chapter III returns the actual Kami War transformed as O-Kagachi. The source keeps its exact all-colors definition and the saved game replays."
     },
     {
       "evidence_class": "interaction",
-      "assurance_kind": "fail_closed_runtime_admission",
-      "test_id": "test_exact_all_colors_fragment_does_not_admit_unowned_saga_and_replacement",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_kami_war_transforms_attacks_and_defender_chooses_its_power_bonus_in_replay",
       "piece_ids": [
         "capability.continuous.characteristics.all_colors_definition",
-        "residual.replacement.self-replacement-and-prevention-ordering"
+        "capability.zone.return.defending_nonland_graveyard_growth"
       ],
       "capability_ids": [
-        "continuous.characteristics.all_colors_definition"
+        "continuous.characteristics.all_colors_definition",
+        "zone.return.defending_nonland_graveyard_growth"
       ],
       "interaction_order": 2,
-      "assertion": "The pinned Kami War source retains unresolved replacement ordering and Saga semantics. An exact characteristic fragment never clears those siblings or provides strict gameplay admission; unavailable commands reject before mutation and the saved state replays."
+      "assertion": "The manifested all-colors O-Kagachi attacks and the defender chooses an eligible nonland card from the attacker's graveyard. The card returns to hand, its mana value increases power, and the pending choice and final state replay exactly."
     },
     {
       "evidence_class": "interaction",

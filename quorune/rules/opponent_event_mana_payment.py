@@ -16,6 +16,11 @@ from .opponent_cast_copy_payment import (
     is_optional_cast_copy_result, opponent_instant_or_sorcery_condition, validate_cast_copy_payment_occurrence,
     validate_optional_cast_copy_result,
 )
+from .attacker_mana_payment import (
+    ATTACKER_MANA_PAYMENT_VERSION, ATTACKER_PAYER_REFERENCE, DEFENDED_ATTACK_COVERAGE,
+    attacker_token_capabilities, defended_attack_condition, defended_attack_recheck,
+    is_attacker_payment,
+)
 
 
 OPPONENT_EVENT_MANA_PAYMENT_FIELD = "opponent_event_mana_payment_version"
@@ -40,6 +45,8 @@ def opponent_event_payment_conditions_match(event, condition, child):
         return False
     if is_optional_cast_copy_result(child):
         return event == "spell.cast" and FrozenMap(condition) == FrozenMap(opponent_instant_or_sorcery_condition())
+    if event == "creature.attacks":
+        return child.get("op") == "create_token" and FrozenMap(condition) == FrozenMap(defended_attack_condition())
     if child.get("op") == "offer_draw":
         return event == "spell.cast" and FrozenMap(condition) in _CAST_CONDITIONS
     return event == "card.drawn" and FrozenMap(condition) == _DRAW_CONDITION
@@ -53,12 +60,14 @@ def _payer_event(child):
     return "spell.cast" if child.get("op") in {"draw", "offer_draw"} or is_optional_cast_copy_result(child) else "card.drawn"
 
 
-def opponent_event_mana_payment_effect(amount, child):
+def opponent_event_mana_payment_effect(amount, child, *, attacker=False):
     cost, _ = mana_cost_to_vector(f"{{{amount}}}")
     spec = FixedEffectPaymentSpec("mana", requirements=cost)
     return {
-        "op": "offer_optional_mana_payment", "schema_version": 2, OPPONENT_EVENT_MANA_PAYMENT_FIELD: 1,
-        "player": _payer_reference(child), "beneficiary": "$controller", "cost": cost,
+        "op": "offer_optional_mana_payment", "schema_version": 2,
+        OPPONENT_EVENT_MANA_PAYMENT_FIELD: ATTACKER_MANA_PAYMENT_VERSION if attacker else 1,
+        "player": ATTACKER_PAYER_REFERENCE if attacker else _payer_reference(child),
+        "beneficiary": "$controller", "cost": cost,
         "payment": spec.to_dict(), "effects": [], "declined_effects": [child],
     }
 
@@ -154,10 +163,12 @@ def _payment_parts(effect, *, actor=None, beneficiary="$controller", continuatio
     if continuation:
         fields |= _LOCALS
     source_power = uses_opponent_source_power_payment(effect)
+    attacker = is_attacker_payment(effect)
+    version = ATTACKER_MANA_PAYMENT_VERSION if attacker else 2 if source_power else 1
     if (not isinstance(effect, Mapping) or set(effect) != fields
             or effect["op"] != "offer_optional_mana_payment" or type(effect["schema_version"]) is not int
             or effect["schema_version"] != 2 or type(effect[OPPONENT_EVENT_MANA_PAYMENT_FIELD]) is not int
-            or effect[OPPONENT_EVENT_MANA_PAYMENT_FIELD] != (2 if source_power else 1)
+            or effect[OPPONENT_EVENT_MANA_PAYMENT_FIELD] != version
             or effect["beneficiary"] != beneficiary
             or effect["effects"] not in ([], ())):
         raise ValueError("Opponent mana payment has an unsupported result or actor shape")
@@ -181,12 +192,15 @@ def _payment_parts(effect, *, actor=None, beneficiary="$controller", continuatio
     if not isinstance(declined, (list, tuple)) or len(declined) != 1 or not isinstance(declined[0], Mapping):
         raise ValueError("Opponent mana payment requires one complete unpaid result")
     child, = declined
-    if effect["player"] != (actor if actor is not None else _payer_reference(child)):
+    source_payer = ATTACKER_PAYER_REFERENCE if attacker else _payer_reference(child)
+    if effect["player"] != (actor if actor is not None else source_payer):
         raise ValueError("Opponent mana payment lost its actual payer")
     if source_power:
         if FrozenMap(child) != FrozenMap(_source_power_declined_draw(beneficiary)) or type(child.get("count")) is not int:
             raise ValueError("Declining a source-power price requires the mandatory controller draw")
         caps = ("zone.draw.library_to_hand",)
+    elif attacker:
+        caps = attacker_token_capabilities(child, beneficiary)
     else:
         caps = _unpaid_capabilities(child, beneficiary, resolved=actor is not None)
     return spec, (FrozenMap(child),), caps
@@ -208,6 +222,11 @@ def opponent_event_mana_payment_program_dependencies(program, effect):
             raise ValueError("A source-power payment needs the original first opposing noncreature cast")
         return _checked_source_power_template(effect)
     _, children, _ = _payment_parts(effect)
+    attacker = is_attacker_payment(effect)
+    if attacker != (program.event == "creature.attacks") or (
+        attacker and not {"intervening_condition", DEFENDED_ATTACK_COVERAGE} <= set(program.coverage)
+    ):
+        raise ValueError("An attacker payment requires the complete defending condition")
     if (program.active_zone != "battlefield" or program.target_schema is not None
             or program.handlers or program.cost_schema is not None or tuple(program.effects) != (effect,)
             or not opponent_event_payment_conditions_match(program.event, program.event_condition, children[0])):
@@ -229,6 +248,14 @@ def bind_event_player_payment_choice(item, effect, *, resuming_actor=None):
     if not uses_opponent_event_mana_payment(effect):
         return
     event = item.context.get("event")
+    if is_attacker_payment(effect):
+        payer = effect.get("player")
+        if (item.kind != "triggered_ability" or event != "creature.attacks"
+                or not defended_attack_recheck(item.context, item.controller)
+                or resuming_actor is not None and resuming_actor != payer):
+            raise ValueError("Only the sealed controller of the original attacker may decide whether to pay")
+        resolved_opponent_event_mana_payment(effect, payer, item.controller, continuation=resuming_actor is not None)
+        return
     payer = item.context.get("controller" if event == "spell.cast" else "player")
     _, children = resolved_opponent_event_mana_payment(
         effect, payer, item.controller, continuation=resuming_actor is not None,

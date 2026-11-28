@@ -161,6 +161,10 @@ def source_depletion_counter_program_dependencies(program):
 
 
 def event_counter_threshold_program_dependencies(program):
+    from .life_gain_counter_reset import life_gain_counter_reset_program_dependencies
+
+    if reset := life_gain_counter_reset_program_dependencies(program):
+        return reset
     if source_depletion := source_depletion_counter_program_dependencies(program):
         return source_depletion
     def mentions(value):

@@ -3,6 +3,11 @@ from __future__ import annotations
 """Versioned target-set counter payloads retain scalar predicate/amount owners."""
 
 from collections.abc import Mapping
+from ..announced_counter_allocation import (
+    ANNOUNCED_COUNTER_CAPABILITY, ANNOUNCED_COUNTER_MECHANIC, BOUND_COUNTER_SHARES,
+    COUNTER_ALLOCATION_FIELD, uses_announced_counter_amount, validate_announced_counter_effect,
+    validate_announced_counter_schema, validate_bound_counter_shares,
+)
 from ..counter_names import EXISTING_COUNTER_AMOUNT,is_existing_counter_amount
 from ..target_cardinality import validate_selected_target_count
 from ..replacement.immutable import FrozenMap
@@ -47,7 +52,7 @@ def _split_two_target_schema_is_closed(schema, *, allows_zero_targets):
 
 def validate_quantified_counter_target_effect(effect,*,resolved=False):
     required={'op','schema_version','cards','maximum_targets','counter','amount','source'}
-    optional={'announced_target_count'}|({'reason','_replacement_selections'} if resolved else set())
+    optional={'announced_target_count'}|({'reason','_replacement_selections',BOUND_COUNTER_SHARES} if resolved else set())
     if not isinstance(effect,Mapping) or not required<=set(effect) or set(effect)-required-optional:
         raise ValueError('Quantified counter target fields are malformed')
     if effect['op']!='place_counters_on_targets' or type(effect['schema_version']) is not int or effect['schema_version']!=2:
@@ -62,7 +67,16 @@ def validate_quantified_counter_target_effect(effect,*,resolved=False):
     if type(name) is not str or not name or name!=' '.join(name.casefold().split()):raise ValueError('Counter name is not canonical')
     relative=is_existing_counter_amount(amount) or (resolved and type(amount) is str and amount==EXISTING_COUNTER_AMOUNT)
     split = uses_split_two_counter_amount(effect)
-    if split:
+    if BOUND_COUNTER_SHARES in effect:
+        validate_bound_counter_shares(
+            effect[BOUND_COUNTER_SHARES], refs=effect["cards"], counter_name=name,
+            amount=amount, maximum_targets=maximum,
+        )
+    elif uses_announced_counter_amount(effect):
+        if resolved:
+            raise ValueError("Three-counter distribution must be bound before resolution")
+        validate_announced_counter_effect(effect)
+    elif split:
         spec = SplitTwoCounterTargetAmount.from_dict(amount)
         if (resolved or variable or maximum != 2 or name not in {"+1/+1", "-1/-1"}
                 or spec.allows_zero_targets and name != "+1/+1"):
@@ -82,7 +96,14 @@ def quantified_counter_target_capabilities(*,effects,target_schema,mechanic_ids)
     effect=effects[0]
     try:
         variable,relative=validate_quantified_counter_target_effect(effect)
-        if variable:return ()
+        if variable:
+            from .committed_nonland_mill import MILL_MECHANIC, committed_mill_counter_dependencies
+
+            return committed_mill_counter_dependencies(effects, target_schema) if MILL_MECHANIC in mechanic_ids else ()
+        if uses_announced_counter_amount(effect):
+            return _announced_counter_node_capabilities(effect, target_schema, mechanic_ids)
+        if ANNOUNCED_COUNTER_MECHANIC in mechanic_ids or COUNTER_ALLOCATION_FIELD in target_schema:
+            return ()
         split = uses_split_two_counter_amount(effect)
         paid_white = uses_paid_white_entry_amount(effect["amount"])
         if ((PAID_WHITE_ENTRY_TARGET_MECHANIC in mechanic_ids) != paid_white
@@ -115,14 +136,34 @@ def quantified_counter_target_capabilities(*,effects,target_schema,mechanic_ids)
     except (ValueError,TypeError,KeyError):return ()
 
 
+def _announced_counter_node_capabilities(effect, schema, mechanics):
+    if ANNOUNCED_COUNTER_MECHANIC not in mechanics:
+        return ()
+    validate_announced_counter_schema(schema)
+    from .counter_placement_capability_shapes import fixed_counter_placement_node_capabilities
+
+    scalar = {"op": "place_counters", "card": "$target.0", "counter": effect["counter"],
+              "amount": 1, "source": effect["source"]}
+    group, = schema["groups"]
+    target = {key: value for key, value in group.items() if key not in {"min", "max"}}
+    owned = fixed_counter_placement_node_capabilities(
+        effects=(scalar,), target_schema={**target, "count": 1}, mechanic_ids=mechanics,
+    )
+    if not owned:
+        return ()
+    return tuple(sorted({*owned, ANNOUNCED_COUNTER_CAPABILITY, QUANTIFIED_COUNTER_CAPABILITY,
+                         "counter.producer.fixed_permanent_target_set_effect", "target.revalidate_resolution"}))
+
+
 def quantified_counter_payload_dependencies(value):
     if value.get('op')!='place_counters_on_targets' or 'schema_version' not in value:return ()
     _variable,relative=validate_quantified_counter_target_effect(value)
     use_split = (SPLIT_TWO_COUNTER_TARGET_CAPABILITY,) if uses_split_two_counter_amount(value) else ()
     paid_white = ((PAID_WHITE_ENTRY_TARGET_CAPABILITY, MANA_SPENT_COUNTS_CAPABILITY)
                   if uses_paid_white_entry_amount(value["amount"]) else ())
+    announced = (ANNOUNCED_COUNTER_CAPABILITY,) if uses_announced_counter_amount(value) else ()
     return (QUANTIFIED_COUNTER_CAPABILITY,'counter.producer.fixed_permanent_target_set_effect',
-            *(('counter.producer.named_doubling',) if relative else ()), *use_split, *paid_white)
+            *(('counter.producer.named_doubling',) if relative else ()), *use_split, *paid_white, *announced)
 
 
 def bind_paid_white_entry_target_amount(effect, item):
@@ -198,6 +239,29 @@ def split_two_counter_program_dependencies(program):
     )
     if SPLIT_TWO_COUNTER_TARGET_CAPABILITY not in required:
         raise ValueError("Two-counter distribution requires its original target and amount authorities")
+    return required
+
+
+def counter_distribution_program_dependencies(program):
+    split = split_two_counter_program_dependencies(program)
+    if split:
+        return split
+    schema = program.target_schema
+    if not (
+        ANNOUNCED_COUNTER_CAPABILITY in program.capability_dependencies
+        or isinstance(schema, Mapping) and COUNTER_ALLOCATION_FIELD in schema
+        or any(uses_announced_counter_amount(effect) for effect in program.effects)
+    ):
+        return ()
+    if (program.active_zone != "battlefield" or not isinstance(program.event, str)
+            or not program.event.startswith("saga.chapter.")
+            or program.handlers or program.cost_schema is not None):
+        raise ValueError("Announced three-counter distribution requires its ordinary Saga trigger")
+    required = quantified_counter_target_capabilities(
+        effects=program.effects, target_schema=schema, mechanic_ids=program.coverage,
+    )
+    if ANNOUNCED_COUNTER_CAPABILITY not in required:
+        raise ValueError("Announced three-counter distribution lost its original target or allocation authority")
     return required
 
 

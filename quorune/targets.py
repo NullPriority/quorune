@@ -32,6 +32,7 @@ CONTROLLER_ISLAND_TARGET_PREDICATE = "creature_controller_controls_island"
 
 
 ISLAND_COUNT_POWER_TARGET_PREDICATE = "creature_power_at_most_controlled_islands"
+ACTIVATED_TAP_COST_TARGET_PREDICATE = "creature_with_activated_tap_cost"
 
 
 PUBLIC_TARGET_ZONES = {
@@ -134,6 +135,9 @@ def _target_zones(raw: Mapping[str, Any]) -> tuple[str, ...]:
     return zones
 
 
+DEFENDING_CONTROLLER_RELATION = "defending_player"
+
+
 def _target_relations(raw: Mapping[str, Any]) -> tuple[str, str, str]:
     controller = str(
         raw.get("controller", raw.get("controller_relation", "any"))
@@ -145,7 +149,12 @@ def _target_relations(raw: Mapping[str, Any]) -> tuple[str, str, str]:
         ("owner", owner),
         ("player", player),
     ):
-        if relation not in ({"any", "you", "opponent", "spell_owner"} if name=="owner" else {"any", "you", "opponent"}):
+        allowed = {"any", "you", "opponent"}
+        if name == "owner":
+            allowed.add("spell_owner")
+        elif name == "controller":
+            allowed.add(DEFENDING_CONTROLLER_RELATION)
+        if relation not in allowed:
             raise ValueError(f"Unknown {name} relation {relation!r}")
     return controller, owner, player
 
@@ -356,6 +365,7 @@ _TARGET_GROUP_FIELDS = frozenset(
         "enchantment",
         "permanent",
         "source_exclusion",
+        "exclude_source_incarnation",
         "another",
         "distinct",
         "allow_reuse",
@@ -439,6 +449,7 @@ class TargetGroup:
     enchantment: bool | None = None
     permanent: bool | None = None
     source_exclusion: bool = False
+    exclude_source_incarnation: bool = False
     another: bool = False
     min_targets: int = 1
     max_targets: int = 1
@@ -473,6 +484,12 @@ class TargetGroup:
             raise ValueError("Entry exchange requires one battlefield permanent target")
         if self.aura_attachment is not None:
             validate_aura_attachment_target_group(self)
+        if self.controller_relation == DEFENDING_CONTROLLER_RELATION and (
+            (self.zones, self.categories, self.types_any, self.min_targets, self.max_targets)
+            != (("battlefield",), ("permanent",), ("creature",), 1, 1)
+            or self.controller_seat is not None
+        ):
+            raise ValueError("A defending-player controller requires one battlefield creature")
         if any(type(value)is not bool for value in (self.distinct_controllers,self.retain_controller)):
             raise ValueError('Controller target constraints must be boolean')
         if (self.distinct_controllers or self.retain_controller) and (self.zones!=('battlefield',) or self.categories!=('permanent',)):
@@ -488,6 +505,10 @@ class TargetGroup:
             raise ValueError("Distinct mana value requires a typed own-graveyard creature group")
         if type(self.same_owner) is not bool:
             raise ValueError("Target same_owner constraint must be boolean")
+        if type(self.exclude_source_incarnation) is not bool or (
+            self.exclude_source_incarnation and (self.source_exclusion or self.another)
+        ):
+            raise ValueError("The exact source-incarnation exclusion is a distinct boolean target constraint")
         if self.combat_state is not None and (
             type(self.combat_state) is not str
             or self.combat_state not in _TARGET_COMBAT_STATES
@@ -665,6 +686,7 @@ class TargetGroup:
             **_target_boolean_fields(raw),
             "combat_state": _target_combat_state(raw),
             "source_exclusion": bool(raw.get("source_exclusion", False)),
+            "exclude_source_incarnation": raw.get("exclude_source_incarnation", False),
             "another": bool(raw.get("another", False)),
             "min_targets": minimum,
             "max_targets": maximum,

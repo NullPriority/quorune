@@ -600,7 +600,7 @@ def main() -> int:
     discovered = discover_tests(ROOT)
     if args.bootstrap_declarations:
         source = bootstrap_declarations(registry_value, discovered)
-        DECLARATIONS_PATH.write_text(_json_text(source), encoding="utf-8")
+        DECLARATIONS_PATH.write_text(_json_text(source), encoding="utf-8", newline="\n")
         return 0
     source = read_evidence_document(DECLARATIONS_PATH)
     index = build_index(
@@ -612,7 +612,7 @@ def main() -> int:
         return 0
     expected = _json_text(index)
     if args.write:
-        OUTPUT_PATH.write_text(expected, encoding="utf-8")
+        OUTPUT_PATH.write_text(expected, encoding="utf-8", newline="\n")
         return 0
     actual = OUTPUT_PATH.read_text(encoding="utf-8") if OUTPUT_PATH.exists() else ""
     if actual != expected:

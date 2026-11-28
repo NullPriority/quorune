@@ -4,7 +4,7 @@ from collections.abc import Mapping
 
 from .continuous_effect_model import ContinuousObjectIdentity
 from .linked_exile_return_model import LINKED_RETURN_OPERATION
-from .library_search_model import LINKED_ARTIFACT_SEARCH_VERSION
+from .library_search_model import LINKED_ARTIFACT_SEARCH_VERSION, LINKED_SAGA_LIBRARY_SEARCH_VERSION
 from .replacement.immutable import thaw_value
 
 
@@ -127,3 +127,50 @@ def linked_artifact_library_choice(wrapper, *, player):
     child, = wrapper["effects"]
     validate_linked_artifact_library_instruction(child)
     return child
+
+
+LINKED_SAGA_LIBRARY_CAPABILITY = "zone.exile.linked_saga_library"
+LINKED_SAGA_LIBRARY_MECHANIC = "linked-saga-library-exile"
+LINKED_SAGA_LIBRARY_PHASE = "linked_saga_library_phase"
+LINKED_SAGA_LIBRARY_PAIR = "saga:linked-library-exile"
+LINKED_SAGA_LIBRARY_PHASES = ("search", "reveal_and_lose_life", "enter_permanents", "owner_hands")
+
+
+def linked_saga_library_instruction(phase):
+    if phase == "search":
+        return {"op": "search", "schema_version": LINKED_SAGA_LIBRARY_SEARCH_VERSION,
+                LINKED_SAGA_LIBRARY_PHASE: phase, "zone": "library", "selector": {},
+                "count": {"minimum": 1, "maximum": 1}, "destination": "exile",
+                "reveal": False, "shuffle_after": True}
+    if phase not in LINKED_SAGA_LIBRARY_PHASES:
+        raise ValueError("Unknown linked Saga library phase")
+    return {"op": LINKED_RETURN_OPERATION, "schema_version": 1, LINKED_SAGA_LIBRARY_PHASE: phase}
+
+
+def uses_linked_saga_library_instruction(value):
+    return isinstance(value, Mapping) and LINKED_SAGA_LIBRARY_PHASE in value
+
+
+def linked_saga_library_phase(value):
+    if not uses_linked_saga_library_instruction(value):
+        raise ValueError("Linked Saga library instruction has no bound phase")
+    phase = value[LINKED_SAGA_LIBRARY_PHASE]
+    if (type(value.get("schema_version")) is not int or thaw_value(value) != linked_saga_library_instruction(phase)
+            or phase == "search" and (type(value["reveal"]) is not bool or type(value["shuffle_after"]) is not bool
+                                    or any(type(bound) is not int for bound in value["count"].values()))):
+        raise ValueError("Linked Saga library instruction does not match its closed phase")
+    return phase
+
+
+def linked_saga_library_chapter_effects(chapter):
+    if chapter == 1:
+        return (linked_saga_library_instruction("search"),)
+    if chapter == 2:
+        return (linked_saga_library_instruction("reveal_and_lose_life"),)
+    if chapter == 3:
+        return (
+            {"op": "offer_optional_effect", "player": "$controller",
+             "effects": [linked_saga_library_instruction("enter_permanents")]},
+            linked_saga_library_instruction("owner_hands"),
+        )
+    raise ValueError("Linked Saga library spells have exactly three represented chapters")

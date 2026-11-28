@@ -26,7 +26,7 @@ def commit_activation_payments(host, proposal, source, ability, response, mana_o
         pay_mill_library_activation_cost(host, proposal.seat, ability, response)
     from ...mana_source_discovery import capture_hand_mana_window
 
-    reserved = source if ability.discard_source or ability.exile_source else None
+    reserved = source if ability.discard_source or ability.exile_source or ability.source_library_bottom else None
     with capture_hand_mana_window(host, proposal.seat, reserved_source=reserved):
         if has_bounded_sacrifice(ability):
             from .bounded_type_sacrifice import pay_bounded_type_sacrifice

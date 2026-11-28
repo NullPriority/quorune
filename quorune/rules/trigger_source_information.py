@@ -108,13 +108,24 @@ def trigger_result_source_information(host, *, source, program, event, stack_con
     from .kicked_artifact_entry import kicked_artifact_entry_trigger_context
     from .enchanted_departure_events import enchanted_departure_observer_context
     from .opposing_death_delayed_return import opposing_death_observer_context
+    from .linked_death_token_copy import linked_death_token_leave_context
+
+    from .linked_graveyard_mana import linked_graveyard_mana_source_context
+
+    from .committed_nonland_mill import committed_mill_target_context
+
+    from .cast_name_graveyard_returns import capture_cast_name_graveyard_return
 
     result = entry_x_graveyard_trigger_context(program, source, stack_context)
+    result.update(linked_graveyard_mana_source_context(source, program, event))
+    result.update(committed_mill_target_context(program, event, occurrence_context))
+    result.update(capture_cast_name_graveyard_return(host, program, event, stack_context))
     result.update(kicked_artifact_entry_trigger_context(program, source, stack_context))
     result.update(death_counter_shuffle_context(source, program, event, occurrence_context))
     result.update(entry_x_support_trigger_context(program, source, stack_context))
     result.update(enchanted_departure_observer_context(source, program, event, occurrence_context))
     result.update(opposing_death_observer_context(source, program))
+    result.update(linked_death_token_leave_context(source, program, event, occurrence_context))
     from ..phasing_model import phase_out_effect
     from ..extra_combat_model import uses_other_creature_extra_combat
     from .source_counter_distribution import uses_source_counter_distribution
@@ -183,7 +194,16 @@ def trigger_result_source_information(host, *, source, program, event, stack_con
     from .source_charge_life_totals import source_charge_life_trigger_context
 
     result.update(source_charge_life_trigger_context(source, program))
+    from .discarded_card_cast import discarded_card_cast_source_context
+
+    result.update(discarded_card_cast_source_context(host, source, program))
     result.update(original_source_tap_context(host.state, source, program))
+    from .tap_state_capability_shapes import is_source_untap_counter_sequence
+
+    if event in {"permanent.tap", "permanent.untap"} and is_source_untap_counter_sequence(
+        program.effects, program.target_schema,
+    ):
+        result["source_logical_object_id"] = source.logical_object_id
     from .any_number_sacrifice import ANY_NUMBER_SACRIFICE_FIELD
     if any(ANY_NUMBER_SACRIFICE_FIELD in effect and effect.get("exclude_ref") == "$source.zone_object"
            for effect in program.effects):

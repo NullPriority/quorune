@@ -5,7 +5,10 @@ from collections.abc import Mapping, Sequence
 from typing import Any, Protocol
 
 from .ability_fragments import canonical_ability_fragments
-from .delayed_triggers import materialize_delayed_trigger
+from .delayed_triggers import (
+    materialize_delayed_trigger, turn_creature_cast_draw_matches, turn_creature_cast_draw_occurrence_context,
+)
+from .turn_creature_cast_draw_model import TURN_CREATURE_CAST_DRAW_FIELD
 from .errors import GameRuleError, StateInvariantError
 from .model import CardInstance, DelayedTrigger, StackItem
 from .trigger_participation import WardSpec
@@ -17,6 +20,7 @@ from .trigger_batches import (
     begin_pending_trigger_placement,
     complete_pending_trigger_group,
     create_pending_trigger_batch,
+    equivalent_untargeted_trigger_refs,
     merge_pending_trigger_batch,
 )
 
@@ -153,11 +157,33 @@ class TriggerProcessingOwner:
             if result is False:
                 trigger.active = False
             return result is True
+        from .rules.opponents_graveyards_exile_cast import DELAYED_MARKER, check_exile_pool_end_step
+
+        if DELAYED_MARKER in trigger.condition:
+            try:
+                result = check_exile_pool_end_step(self.state, trigger, context)
+            except ValueError as exc:
+                raise GameRuleError(str(exc)) from exc
+            if result is False:
+                trigger.active = False
+            return result is True
+
         from .rules.source_bound_delayed_return import SOURCE_BOUND_NEXT_END_STEP, source_bound_end_step_result
 
         if SOURCE_BOUND_NEXT_END_STEP in trigger.condition:
             try:
                 result = source_bound_end_step_result(self.state, trigger, context)
+            except ValueError as exc:
+                raise GameRuleError(str(exc)) from exc
+            if result is False:
+                trigger.active = False
+            return result is True
+        from .chosen_attack_turn_model import DELAYED_FIELD as CHOSEN_ATTACK_END_STEP
+        if CHOSEN_ATTACK_END_STEP in trigger.condition:
+            from .rules.chosen_attack_turn import chosen_attack_end_step_matches
+
+            try:
+                result = chosen_attack_end_step_matches(self.state, trigger, context)
             except ValueError as exc:
                 raise GameRuleError(str(exc)) from exc
             if result is False:
@@ -179,9 +205,16 @@ class TriggerProcessingOwner:
                     and (context.get("phase"), context.get("step"), context.get("player"))
                     == ("ending", "end_step", trigger.controller))
         if event_kind == "spell.cast":
-            from .event_spell_copy_model import NEXT_CAST_COPY_FIELD
-            from .rules.event_spell_copy import next_cast_copy_matches
+            from .event_spell_copy_model import NEXT_CAST_COPY_FIELD, SAME_TURN_CAST_KEYWORD_FIELD
+            from .rules.event_spell_copy import next_cast_copy_matches, same_turn_cast_keyword_matches
+            from .rules.next_cast_library_access import NEXT_CAST_LIBRARY_ACCESS, next_cast_library_matches
 
+            if SAME_TURN_CAST_KEYWORD_FIELD in trigger.condition:
+                return same_turn_cast_keyword_matches(trigger, context)
+            if NEXT_CAST_LIBRARY_ACCESS in trigger.condition:
+                return next_cast_library_matches(trigger, context)
+            if TURN_CREATURE_CAST_DRAW_FIELD in trigger.condition:
+                return turn_creature_cast_draw_matches(trigger, context)
             return NEXT_CAST_COPY_FIELD in trigger.condition and next_cast_copy_matches(trigger, context)
         for key, original_expected in trigger.condition.items():
             expected = original_expected
@@ -231,12 +264,22 @@ class TriggerProcessingOwner:
             stack_id=self.host._stable_runtime_id("stack", ref),
             visibility=self.host.seats,
         )
-        if trigger.event_kind == "spell.cast":
-            from .rules.event_spell_copy import bind_next_cast_copy_occurrence
+        if TURN_CREATURE_CAST_DRAW_FIELD in trigger.condition:
+            item.context.update(turn_creature_cast_draw_occurrence_context(self.state, trigger, event_context))
+        elif trigger.event_kind == "spell.cast":
+            from .event_spell_copy_model import SAME_TURN_CAST_KEYWORD_FIELD
+            from .rules.event_spell_copy import bind_next_cast_copy_occurrence, bind_same_turn_cast_keyword_occurrence
+            from .rules.next_cast_library_access import NEXT_CAST_LIBRARY_ACCESS, bind_next_cast_library_occurrence
 
             if event_context is None:
-                raise ValueError("Next-cast copy requires its committed spell occurrence")
-            bind_next_cast_copy_occurrence(self.host, trigger, item, event_context)
+                raise ValueError("Delayed cast result requires its committed spell occurrence")
+            if SAME_TURN_CAST_KEYWORD_FIELD in trigger.condition:
+                binder = bind_same_turn_cast_keyword_occurrence
+            elif NEXT_CAST_LIBRARY_ACCESS in trigger.condition:
+                binder = bind_next_cast_library_occurrence
+            else:
+                binder = bind_next_cast_copy_occurrence
+            binder(self.host, trigger, item, event_context)
         from .rules.watched_combat_draw import WATCHED_COMBAT_DRAW_FIELD, watched_combat_draw_amount
 
         if WATCHED_COMBAT_DRAW_FIELD in trigger.condition:
@@ -246,6 +289,12 @@ class TriggerProcessingOwner:
             item.context["dynamic_effects"] = [
                 {"op": "draw", "player": trigger.controller, "count": amount, "private": True},
             ]
+        from .received_damage_model import RECEIVED_DAMAGE_WATCH_FIELD
+
+        if RECEIVED_DAMAGE_WATCH_FIELD in trigger.stack_template:
+            from .rules.received_damage_watch import bind_watched_damage_occurrence
+
+            bind_watched_damage_occurrence(self.host, trigger, item, event_context)
         return item
 
     def issue_trigger_order(
@@ -457,12 +506,96 @@ def collect_trigger_items(
     return triggered
 
 
+def _watched_combat_draw_triggers(host, events):
+    from .continuous_effect_model import ContinuousObjectIdentity
+    from .goad_instruction import WATCHED_COMBAT_DRAW_FIELD
+
+    clocks = tuple(trigger for trigger in host.state.delayed_triggers
+                   if trigger.active and WATCHED_COMBAT_DRAW_FIELD in trigger.condition)
+    if not clocks:
+        return ()
+    hits = tuple((event.source_object_id, event.source_logical_object_id) for event in events
+                 if event.was_dealt and event.combat and event.target_kind == "player")
+    if not hits:
+        return ()
+    owner = TriggerProcessingOwner(host)
+    result = []
+    for trigger in clocks:
+        scope = trigger.condition[WATCHED_COMBAT_DRAW_FIELD]
+        if (trigger.event_kind != "damage.dealt" or trigger.once is not False
+                or set(trigger.condition) != {WATCHED_COMBAT_DRAW_FIELD} or not isinstance(scope, Mapping)
+                or set(scope) != {"schema_version", "expires_at_turns_begun", "watched"}
+                or type(scope["schema_version"]) is not int or scope["schema_version"] != 1
+                or type(scope["expires_at_turns_begun"]) is not int or scope["expires_at_turns_begun"] < 1
+                or not isinstance(scope["watched"], (tuple, list)) or not scope["watched"]
+                or not trigger.source_object_id or not trigger.source_logical_object_id
+                or trigger.expires_turn_sequence is not None or trigger.referred_object_ids
+                or trigger.stack_template != {"context": {"dynamic_effects": [
+                    {"op": "draw", "player": "$controller", "count": 1, "private": True},
+                ]}}):
+            raise GameRuleError("Watched combat draw lost its original typed scope")
+        watched = tuple(ContinuousObjectIdentity.from_dict(value) for value in scope["watched"])
+        watched_ids = {(identity.object_id, identity.logical_object_id) for identity in watched}
+        if len(watched_ids) != len(watched):
+            raise GameRuleError("Watched combat draw repeated an original incarnation")
+        player = host.state.players.get(trigger.controller)
+        if (player is None or trigger.controller not in host.active_seats
+                or player.turns_begun >= scope["expires_at_turns_begun"]):
+            trigger.active = False
+            continue
+        result.extend(owner.materialize_delayed_trigger(trigger) for hit in hits if hit in watched_ids)
+    return tuple(result)
+
+
+def additional_damage_batch_triggers(host, events):
+    from .initiative_runtime import initiative_combat_triggers
+
+    return (*initiative_combat_triggers(host, events), *_watched_combat_draw_triggers(host, events))
+
+
+def collect_received_damage_watch_items(host, context):
+    """Materialize the repeating watches once per actual grouped recipient."""
+    from .received_damage_model import RECEIVED_DAMAGE_EVENT, RECEIVED_DAMAGE_WATCH_FIELD
+
+    owner = TriggerProcessingOwner(host)
+    return [
+        owner.materialize_delayed_trigger(trigger, event_context=context)
+        for trigger in host.state.delayed_triggers
+        if RECEIVED_DAMAGE_WATCH_FIELD in trigger.stack_template
+        and owner.trigger_matches(trigger, RECEIVED_DAMAGE_EVENT, context)
+    ]
+
+
 def replace_pending_trigger_batch(host, index: int, batch: PendingTriggerBatch) -> None:
     """Replace one validated immutable batch through its existing write owner."""
     if type(index) is not int or not isinstance(batch, PendingTriggerBatch):
         raise StateInvariantError('Pending trigger replacement requires a typed batch and index')
     host.state.pending_trigger_batches[index] = batch
 
+
+
+def pin_same_turn_cast_keyword_source_departures(host, departures):
+    from .event_spell_copy_model import SAME_TURN_CAST_KEYWORD_FIELD
+    from .target_source import TARGETING_SOURCE_CONTEXT, TargetingSourceBinding, capture_targeting_source
+
+    updates = []
+    for trigger in host.state.delayed_triggers:
+        if not trigger.active or SAME_TURN_CAST_KEYWORD_FIELD not in trigger.condition:
+            continue
+        source = departures.get((trigger.source_object_id, trigger.source_logical_object_id))
+        if source is None:
+            continue
+        context = trigger.stack_template.get("context")
+        if not isinstance(context, Mapping):
+            raise ValueError("The delayed keyword trigger lost its targeting source")
+        bound = TargetingSourceBinding.from_dict(context.get(TARGETING_SOURCE_CONTEXT))
+        if (source.object_id, source.logical_object_id, source.zone) != (bound.object_id, bound.logical_object_id, bound.zone):
+            raise ValueError("The delayed keyword trigger changed its source binding")
+        current = capture_targeting_source(host, source, schema_version=bound.schema_version)
+        updates.append((trigger, {**trigger.stack_template,
+                                  "context": {**context, TARGETING_SOURCE_CONTEXT: current.to_dict()}}))
+    for trigger, template in updates:
+        trigger.stack_template = template
 
 
 def trigger_occurrence_observations(host, program, event, context):
@@ -474,6 +607,8 @@ def trigger_occurrence_observations(host, program, event, context):
     from .rules.entrant_name_absence import entrant_name_trigger_context
     from .rules.entry_control_exchange import entry_exchange_trigger_context
     from .rules.discarded_card_exile import discarded_card_exile_trigger_context
+    from .saga_lifecycle import final_saga_life_drain_context
+    from .rules.combat_receiving_life import combat_receiving_life_trigger_context
 
     try:
         return {
@@ -485,6 +620,8 @@ def trigger_occurrence_observations(host, program, event, context):
             **entrant_name_trigger_context(program, event, context),
             **entry_exchange_trigger_context(program, event, context),
             **discarded_card_exile_trigger_context(program, event),
+            **final_saga_life_drain_context(program, event, context, host.state.cards.values()),
+            **combat_receiving_life_trigger_context(host, program, event, context),
         }
     except (TypeError, ValueError, KeyError) as exc:
         raise GameRuleError(str(exc)) from exc
@@ -712,21 +849,29 @@ def begin_pending_trigger_batch(host: TriggerProcessingHost) -> bool:
             replace_pending_trigger_batch(host, 0, started)
         batch = started
         group = batch.groups[0]
+        refs = [group.items[0].ref]
         if len(group.items) > 1:
-            TriggerProcessingOwner(host).issue_trigger_order(
-                group.controller,
-                [(item.ref, item.label) for item in group.items],
-                {
-                    "trigger_batch_id": batch.batch_id,
-                    "trigger_refs": [item.ref for item in group.items],
-                },
-            )
-            return True
+            automatic_refs = None
+            if getattr(getattr(host.state, "config", None), "identical_trigger_order_version", None) == 1:
+                automatic_refs = equivalent_untargeted_trigger_refs(
+                    group.items, host.semantics.get(group.items[0].source_ability_id),
+                )
+            if automatic_refs is None:
+                TriggerProcessingOwner(host).issue_trigger_order(
+                    group.controller,
+                    [(item.ref, item.label) for item in group.items],
+                    {
+                        "trigger_batch_id": batch.batch_id,
+                        "trigger_refs": [item.ref for item in group.items],
+                    },
+                )
+                return True
+            refs = automatic_refs
         try:
             ordered, remaining = complete_pending_trigger_group(
                 batch,
                 controller=group.controller,
-                refs=[group.items[0].ref],
+                refs=refs,
             )
         except TriggerBatchError as exc:
             raise StateInvariantError(str(exc)) from exc
@@ -1056,13 +1201,17 @@ def expire_controlled_combat_token_triggers(host: TriggerProcessingHost) -> None
             trigger.active = False
 
 
-def expire_next_cast_copy_triggers(host: TriggerProcessingHost) -> None:
+def expire_same_turn_spell_cast_triggers(host: TriggerProcessingHost) -> None:
     from .event_spell_copy_model import NEXT_CAST_COPY_FIELD
+    from .rules.next_cast_library_access import NEXT_CAST_LIBRARY_ACCESS
 
     for trigger in host.state.delayed_triggers:
-        if (trigger.active and NEXT_CAST_COPY_FIELD in trigger.condition
+        if (trigger.active and ({NEXT_CAST_COPY_FIELD, NEXT_CAST_LIBRARY_ACCESS, TURN_CREATURE_CAST_DRAW_FIELD} & trigger.condition.keys())
                 and trigger.expires_turn_sequence < host.state.turn_sequence):
             trigger.active = False
+
+
+expire_next_cast_copy_triggers = expire_same_turn_spell_cast_triggers
 
 
 def expire_target_death_return_triggers(host: TriggerProcessingHost) -> None:
@@ -1071,6 +1220,14 @@ def expire_target_death_return_triggers(host: TriggerProcessingHost) -> None:
     for trigger in host.state.delayed_triggers:
         if (trigger.active and trigger.event_kind == TARGET_DEATH_RETURN_EVENT
                 and trigger.expires_turn_sequence < host.state.turn_sequence):
+            trigger.active = False
+
+
+def expire_turn_attacker_untap_triggers(host: TriggerProcessingHost) -> None:
+    from .rules.main_phase_combat_runtime import expires_attack_untap_in_cleanup
+
+    for trigger in host.state.delayed_triggers:
+        if trigger.active and expires_attack_untap_in_cleanup(trigger, host.state.turn_sequence):
             trigger.active = False
 
 

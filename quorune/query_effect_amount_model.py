@@ -64,6 +64,12 @@ _ALLOWED_ZONES = frozenset({"battlefield", "graveyard", "hand"})
 def _query_is_layer_five_closed(query: ObjectQuerySpec) -> bool:
     """Keep effect quantities on the existing cycle-safe layer-5 boundary."""
 
+    if query.state_predicate is not None:
+        return query == ObjectQuerySpec(
+            zones=("battlefield",), types_all=("creature",),
+            state_predicate=PermanentStatePredicateSpec(attacking=True),
+        )
+
     if (
         len(query.zones) != 1
         or query.zones[0] not in _ALLOWED_ZONES
@@ -77,7 +83,6 @@ def _query_is_layer_five_closed(query: ObjectQuerySpec) -> bool:
         or query.include_phased_out
         or query.known_to_actor is not None
         or query.exclude_ref is not None
-        or query.state_predicate is not None
     ):
         return False
     if query.zones == ("hand",):

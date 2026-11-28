@@ -36,7 +36,16 @@ from .counted_entry_counters import (
 )
 from .entry_reservations import share_entry_reservations
 from .entry_counter_types import project_entry_time_counter_types
-from .damage_redirection import finite_damage_redirection, split_finite_redirection
+from .counter_instruction_grouping import (
+    combine_counter_instruction_choices,
+    direct_counter_instruction_indices,
+    entry_counter_instruction_indices,
+)
+from .damage_redirection import (
+    finite_damage_redirection,
+    split_finite_redirection,
+    exclusive_damage_scope_effects,
+)
 
 
 class ReplacementChoiceRequired(ReplacementEffectError):
@@ -84,8 +93,20 @@ def replacement_tree_choice(
             if redirected_battlefield_entry_counter(current, child):
                 continue
             nested = visit(child, (*path, index))
-            if nested is not None:
-                return nested
+            if nested is None:
+                continue
+            if nested.path == (*path, index):
+                siblings = entry_counter_instruction_indices(current, child, all_effects)
+                members = []
+                for sibling in siblings:
+                    candidate = current.children[sibling]
+                    if redirected_battlefield_entry_counter(current, candidate):
+                        continue
+                    applicable = replacement_choice(candidate, entry_counter_order_effects(candidate, all_effects))
+                    if applicable is not None:
+                        members.append(((*path, sibling), applicable))
+                return combine_counter_instruction_choices(nested, members)
+            return nested
         return None
 
     return visit(event, ())
@@ -133,9 +154,28 @@ def apply_tree_replacement(
             "Replacement tree choice is stale or out of order"
         )
     from .entry_counter_ordering import entry_counter_order_effects
+    if pending.counter_instruction_members:
+        result = event
+        for path, changed in _counter_instruction_updates(
+            pending, selected_effect_id, all_effects, objects=objects, card_name=card_name,
+        ):
+            result = _replace_event_at_path(result, path, changed)
+        return result
     adapted=entry_counter_order_effects(pending.choice.event, all_effects)
     changed=apply_replacement(pending.choice,adapted,selected_effect_id,objects=objects,card_name=card_name)
     return _replace_event_at_path(event, pending.path, changed)
+
+
+def _counter_instruction_updates(pending, selected_effect_id, effects, *, objects=None, card_name=None):
+    from .entry_counter_ordering import entry_counter_order_effects
+
+    choice = canonical_replacement_selection(pending.choice, selected_effect_id)
+    if objects is not None or card_name is not None:
+        raise ReplacementEffectError("A counter instruction accepts one replacement choice")
+    for path, member in pending.counter_instruction_members:
+        if choice in member.legal_selections:
+            adapted = entry_counter_order_effects(member.event, effects)
+            yield path, apply_replacement(member, adapted, choice)
 
 
 def _available_entry_counter_transfers(batch, effects):
@@ -171,6 +211,7 @@ def _available_batch_effects(batch, effects):
     eligible = available_basic_land_payments(batch, _available_entry_counter_transfers(batch, effects))
     if not batch.journal:
         return eligible
+    eligible = exclusive_damage_scope_effects(batch.journal, eligible)
     used = {selection.effect_id for selection in batch.journal}
     return tuple(effect for effect in eligible if effect.effect_id not in used or not (
         finite_damage_redirection(effect) is not None
@@ -253,6 +294,14 @@ def next_batch_replacement_choice(
     if pending_basic_land_payment(pending.choice.event):
         shared_entry_order = False
         event_order_options = ()
+    if not pending.path and not event_order_options:
+        indices = direct_counter_instruction_indices(batch.events, pending.choice.event, available_effects)
+        if indices:
+            members = [
+                ((value[2],), value[3].choice) for value in same_chooser
+                if not value[3].path and value[2] in indices
+            ]
+            pending = combine_counter_instruction_choices(pending, members)
     result = _batch_choice_for_event(
         batch,
         all_effects=all_effects,
@@ -624,6 +673,12 @@ def apply_batch_replacement(
     index = pending.event_index
     if branches is not None:
         events[index:index + 1] = branches
+    elif not pending.path and pending.tree_choice.counter_instruction_members:
+        for (member_index,), changed in _counter_instruction_updates(
+            pending.tree_choice, canonical_selection, available_effects,
+            objects=supplied_objects, card_name=card_name,
+        ):
+            events[member_index] = changed
     else:
         events[index] = apply_tree_replacement(events[index], available_effects, pending.tree_choice,
                                                canonical_selection, objects=supplied_objects, card_name=card_name)
@@ -925,8 +980,14 @@ def replacement_choice_payload(
     object_choices, object_schema = _entry_object_choice_payload(choices, by_id)
     if object_choices:
         choice_schema["replacement_objects"] = object_schema
+    members = pending.tree_choice.counter_instruction_members
+    placements = [
+        {"kind": member.event.payload["counter_name"], "amount": member.event.payload["amount"]}
+        for _, member in members
+    ]
     return {
         "chooser": pending.choice.chooser,
+        **({"counter_instruction_placements": placements} if placements else {}),
         "prompt": "Choose the next replacement or prevention effect.",
         "options": options,
         **({"card_name_choices": name_choices} if name_choices else {}),

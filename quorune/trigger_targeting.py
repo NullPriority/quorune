@@ -5,11 +5,15 @@ from hashlib import sha256
 from typing import Any, Mapping, Protocol
 
 from .entry_control_exchange_model import ENTRY_EXCHANGE_TARGET_FIELD
+from .errors import GameRuleError
 from .linked_ability_exile_model import LINKED_ABILITY_EXILE_ANNOTATION, LinkedAbilityExile
-from .mandatory_loop_model import MandatoryLinkedLoopWatch
+from .mandatory_loop_model import LINKED_EXILE_LOOP_FAMILY, RECEIVED_DAMAGE_LOOP_FAMILY
 from .public_history_query_model import PUBLIC_HISTORY_QUERY_CAPABILITY
 from .rules.linked_exile_return_shapes import linked_ability_exile_runtime_dependencies
-from .rules.modal_selection import OPTIONAL_COMBAT_TRIGGER_MODAL_CAPABILITY, has_distinct_turn_trigger_modes
+from .rules.modal_selection import (
+    has_distinct_turn_trigger_modes,
+    optional_trigger_mode_capability,
+)
 from .target_source import stack_targeting_source
 from .targets import TargetGroup
 from .util import stable_json
@@ -60,7 +64,7 @@ class TriggerTargetingHost(Protocol):
 
 def _reset_linked_loop(state):
     if state.mandatory_linked_loop is not None and state.mandatory_linked_loop.cursor is not None:
-        state.mandatory_linked_loop = MandatoryLinkedLoopWatch()
+        state.mandatory_linked_loop = state.mandatory_linked_loop.cleared()
 
 
 def record_linked_loop_decision(state, decision):
@@ -221,15 +225,46 @@ def _observe_linked_loop(host, item, program, schema):
     except (ValueError, TypeError, KeyError):
         _reset_linked_loop(state)
         return False
-    state.mandatory_linked_loop, repeated = watch.observe(signature, item.ref)
+    return _observe_mandatory_position(
+        host, signature, item.ref, family=LINKED_EXILE_LOOP_FAMILY,
+        reason="Mandatory linked abilities repeated a forced cycle.",
+    )
+
+
+def _observe_mandatory_position(host, signature, cursor, *, family, reason):
+    state = host.state
+    state.mandatory_linked_loop, repeated = state.mandatory_linked_loop.observe(signature, cursor, family=family)
     if repeated:
         from .state_based_execution import commit_game_draw
-        commit_game_draw(host, reason="Mandatory linked abilities repeated a forced cycle.")
+
+        commit_game_draw(host, reason=reason)
     return repeated
 
 
+def observe_received_damage_loop(host):
+    watch = host.state.mandatory_linked_loop
+    if watch is None or watch.schema_version != 2:
+        return False
+    from .rules.received_damage_loop import received_damage_loop_position
+
+    try:
+        position = received_damage_loop_position(host)
+    except (GameRuleError, KeyError, TypeError, ValueError):
+        position = None
+    if position is None:
+        if watch.family == RECEIVED_DAMAGE_LOOP_FAMILY:
+            _reset_linked_loop(host.state)
+        return False
+    signature, cursor = position
+    return _observe_mandatory_position(
+        host, signature, cursor, family=RECEIVED_DAMAGE_LOOP_FAMILY,
+        reason="Mandatory received-damage abilities repeated a forced cycle.",
+    )
+
+
 def _can_decline_trigger_modes(program) -> bool:
-    return program is not None and OPTIONAL_COMBAT_TRIGGER_MODAL_CAPABILITY in program.capability_dependencies
+    return (program is not None
+            and optional_trigger_mode_capability(program.target_schema) in program.capability_dependencies)
 
 
 def remove_declined_optional_trigger(host: TriggerTargetingHost, item, program) -> bool:
@@ -308,6 +343,9 @@ def begin_pending_trigger_target_selection(
                     },
                     importance=2,
                 )
+                removed_invalid_trigger = True
+                break
+            if public_schema.get("legal_modes") == [] and remove_declined_optional_trigger(host, item, program):
                 removed_invalid_trigger = True
                 break
             host.permissions.issue(

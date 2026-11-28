@@ -3,6 +3,7 @@ from __future__ import annotations
 """Capability closure for fixed life and ordered controller effects."""
 
 from typing import Any, Iterable, Mapping, Sequence
+from ..event_counter_reference import EVENT_ENTRY_OBJECT
 
 from .node_capability_shapes import (
     fixed_counter_placement_node_capabilities,
@@ -395,6 +396,13 @@ def fixed_counter_controller_effect_sequence_node_capabilities(
         normalized_counter = {**counter_effect, "card": "$source"}
     elif counter_effect.get("card") == "$target.0":
         normalized_counter = counter_effect
+    elif counter_effect.get("card") == EVENT_ENTRY_OBJECT:
+        draw = effects[1]
+        if (target_schema is not None or effects[0] is not counter_effect
+                or counter_effect.get("counter") != "+1/+1" or counter_effect.get("amount") != 1
+                or draw.get("op") != "draw" or draw.get("count") != 1):
+            return ()
+        normalized_counter = counter_effect
     else:
         return ()
     counter_dependencies = fixed_counter_placement_node_capabilities(
@@ -437,6 +445,43 @@ def fixed_counter_controller_effect_sequence_node_capabilities(
             }
         )
     )
+
+
+def is_controlled_nontoken_creature_entry(event, active_zone, condition):
+    from ..replacement.immutable import FrozenMap
+    from .entrant_name_absence import NONTOKEN_CONTROLLED_CREATURE_ENTRY
+
+    return (
+        (event, active_zone) == ("creature.enter", "battlefield")
+        and isinstance(condition, Mapping)
+        and FrozenMap(condition) == NONTOKEN_CONTROLLED_CREATURE_ENTRY
+        and condition["all"][1]["value"] is False
+    )
+
+
+def entry_counter_draw_runtime_dependencies(program):
+    """Validate that the ordered result is bound to its printed entry domain."""
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+
+    effects = program.effects
+    coverage = set(program.coverage)
+    if not (
+        {_FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC, "fixed-entry-event-object-counter"} <= coverage
+        or len(effects) == 2 and effects[1].get("op") == "draw"
+        and effects[0].get("op") == "place_counters" and effects[0].get("card") == EVENT_ENTRY_OBJECT
+    ):
+        return ()
+    required = fixed_counter_controller_effect_sequence_node_capabilities(
+        effects=effects, target_schema=program.target_schema, mechanic_ids=coverage,
+    )
+    if not (
+        required and effects[0].get("card") == EVENT_ENTRY_OBJECT
+        and CURRENT_ABILITY_FRAGMENT_COVERAGE in coverage
+        and is_controlled_nontoken_creature_entry(program.event, program.active_zone, program.event_condition)
+        and program.cost_schema is None and not program.handlers
+    ):
+        raise ValueError("An entry counter and draw require the original controlled nontoken creature occurrence")
+    return (*required, "counter.producer.fixed_event_trigger", "trigger.event.normalized_zone_change", "trigger.placement.apnap")
 
 
 __all__ = [

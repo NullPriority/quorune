@@ -150,9 +150,31 @@ def tapped_entry_untap_binding(material_line, *, card_name=None):
     )
 
 
+
+
+def final_saga_chapter_binding_spec(material_line: str, *, card_name: str | None):
+    from ..saga_lifecycle import (
+        FINAL_SAGA_CHAPTER_CONTROLLED_CONDITION, FINAL_SAGA_CHAPTER_RESOLVED_CAPABILITY,
+        FINAL_SAGA_CHAPTER_RESOLVED_EVENT,
+    )
+
+    chapter = re.fullmatch(
+        r"Whenever the final chapter ability of a Saga you control resolves, (?P<body>.+)",
+        material_line, re.IGNORECASE,
+    )
+    if chapter is None:
+        return None
+    return FixedPublicEventBindingSpec(
+        event=FINAL_SAGA_CHAPTER_RESOLVED_EVENT, variant="controlled_final_saga_chapter",
+        body=chapter["body"], template_id="fixed-controlled-final-saga-chapter-trigger-v1",
+        mechanic="trigger-event-normalized-public-action", condition=FINAL_SAGA_CHAPTER_CONTROLLED_CONDITION,
+        capabilities=(FINAL_SAGA_CHAPTER_RESOLVED_CAPABILITY,),
+    )
+
+
 def public_trigger_binding_spec(material_line: str, *, card_name: str | None):
     """Keep established public grammar precedence before the tap extension."""
-    from .fixed_public_event_trigger_bindings import fixed_public_event_binding_spec
+    from .entrant_x_reflexive import fixed_public_binding_with_entrant_x as fixed_public_event_binding_spec
     from .qualified_zone_event_bindings import attached_player_creature_entry_binding_spec
     from .fixed_public_action_event_bindings import _point_combat_spec, fixed_public_action_event_binding_spec
     from .fixed_public_multi_event_bindings import (
@@ -185,7 +207,7 @@ def public_trigger_binding_spec(material_line: str, *, card_name: str | None):
         return points
     if tapped_entry := tapped_entry_untap_binding(material_line, card_name=card_name):
         return tapped_entry
-    for parser in (monarch_became_binding_spec, source_death_land_exile_binding, source_departure_hand_return_binding, source_departure_library_binding, unblocked_attacker_binding_spec, attached_player_creature_entry_binding_spec,entry_creature_pump_binding,fixed_public_event_binding_spec, fixed_public_action_event_binding_spec,
+    for parser in (final_saga_chapter_binding_spec, monarch_became_binding_spec, source_death_land_exile_binding, source_departure_hand_return_binding, source_departure_library_binding, unblocked_attacker_binding_spec, attached_player_creature_entry_binding_spec,entry_creature_pump_binding,fixed_public_event_binding_spec, fixed_public_action_event_binding_spec,
                    tap_state_event_binding_spec, counter_placement_event_binding_spec, eerie_binding_spec, fixed_public_multi_event_binding_spec, phase_occurrence_binding_spec, target_announcement_binding_spec, self_death_return_binding, scheduled_player_binding_spec, source_damage_death_binding,token_creation_event_binding_spec,crime_event_binding_spec,chosen_color_event_binding_spec,chosen_type_event_binding_spec,explore_event_binding_spec,mutate_event_binding_spec):
         value = parser(material_line, card_name=card_name)
         if value is not None:
@@ -207,6 +229,18 @@ def tap_state_bound_result(binding, body: str, *, effect_template, card_name: st
         return SourceTapStateEffectTemplate(TapStateAction.PROHIBIT_NEXT_UNTAP, "creature").compiled(), False
     if binding.variant not in TAP_STATE_EVENT_VARIANTS:
         return None
+    if binding.variant == "source_" + TAP_STATE_EVENT_VARIANT:
+        from ..rules.tap_state_capability_shapes import is_source_untap_counter_sequence
+        from .closed_effect_programs import closed_effect_program_template
+        from .source_self_effect_templates import normalized_source_result_body, pin_source_result_incarnation
+
+        def compile_source_clause(clause):
+            source_clause = normalized_source_result_body(clause) or clause
+            return pin_source_result_incarnation(effect_template(source_clause, card_name=card_name))
+
+        sequence = closed_effect_program_template(body, compile_component=compile_source_clause)
+        if sequence is not None and is_source_untap_counter_sequence(sequence.effects, sequence.target_schema):
+            return sequence.compiled(), False
     from .per_player_query_life import source_tap_opponent_poison_threshold_life_result
 
     qualified = source_tap_opponent_poison_threshold_life_result(binding, body)

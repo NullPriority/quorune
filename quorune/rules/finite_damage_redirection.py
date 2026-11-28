@@ -28,7 +28,8 @@ def finite_damage_redirection_target():
 
 
 def uses_finite_damage_redirection(effect):
-    return effect.get("op") == "create_damage_redirection" and "maximum_damage" in effect
+    return (effect.get("op") == "create_damage_redirection" and "maximum_damage" in effect
+            and "grantor_owned_redirect" not in effect)
 
 
 def _has_free_activation_price(cost):

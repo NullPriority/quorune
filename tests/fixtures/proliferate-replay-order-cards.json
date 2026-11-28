@@ -1,6 +1,58 @@
 {
   "cards": [
     {
+      "cmc": 7.0,
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Trample",
+        "Proliferate"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{B}{G}",
+      "name": "Agent Frank Horrigan",
+      "oracle_id": "aedcde3b-3ed5-443c-a81c-03d785153e55",
+      "oracle_text": "Trample\nAgent Frank Horrigan has indestructible as long as it attacked this turn.\nWhenever Agent Frank Horrigan enters or attacks, proliferate twice. (To proliferate, choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "power": "8",
+      "produced_mana": [],
+      "released_at": "2024-03-08",
+      "toughness": "6",
+      "type_line": "Legendary Creature — Mutant Warrior"
+    },
+    {
       "cmc": 1.0,
       "color_identity": [
         "W"
@@ -462,6 +514,60 @@
       "comment": "While resolving a cumulative upkeep trigger of a permanent, you’ll fail to put a counter on that permanent, then you may pay for the age counters already on it. If it has no age counters on it, you may pay {0}.",
       "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
       "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Agent Frank Horrigan enters the battlefield attacking, it doesn’t have indestructible since it was never declared as an attacker.",
+      "oracle_id": "aedcde3b-3ed5-443c-a81c-03d785153e55",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players can respond to a spell or ability whose effect includes proliferating. Once that spell or ability starts to resolve, however, and its controller chooses which permanents and players will get new counters, it’s too late for anyone to respond.",
+      "oracle_id": "aedcde3b-3ed5-443c-a81c-03d785153e55",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a player or permanent has more than one kind of counter on it, and you choose for it to get additional counters, it must get one of each kind of counter it already has. You can’t have it get just one kind of counter it already has and not the others.",
+      "oracle_id": "aedcde3b-3ed5-443c-a81c-03d785153e55",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability that causes Agent Frank Horrigan to have indestructible starts to apply as soon as it’s declared as an attacker. It applies for the remainder of the turn. It doesn’t matter what happens to the player or permanent it attacked after that point.",
+      "oracle_id": "aedcde3b-3ed5-443c-a81c-03d785153e55",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "While proliferating twice, players can’t respond between proliferating the first time and proliferating the second time.",
+      "oracle_id": "aedcde3b-3ed5-443c-a81c-03d785153e55",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose any permanent that has a counter, including ones controlled by opponents. You can choose any player who has a counter, including opponents. You can’t choose cards in any zone other than the battlefield, even if they have counters on them.",
+      "oracle_id": "aedcde3b-3ed5-443c-a81c-03d785153e55",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You don’t have to choose every permanent or player that has a counter—only the ones you want to add counters to. Since “any number” includes zero, you don’t have to choose any permanents at all, and you don’t have to choose any players at all.",
+      "oracle_id": "aedcde3b-3ed5-443c-a81c-03d785153e55",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some spells and abilities that cause you to proliferate may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won’t resolve. You won’t proliferate.",
+      "oracle_id": "aedcde3b-3ed5-443c-a81c-03d785153e55",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you proliferate twice, you don’t have to choose the same set of players and/or permanents to get additional counters each time.",
+      "oracle_id": "aedcde3b-3ed5-443c-a81c-03d785153e55",
+      "published_at": "2024-03-08",
       "source": "wotc"
     }
   ],

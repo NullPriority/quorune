@@ -254,8 +254,9 @@ def _outer_nodes(
     trusted_mechanics: frozenset[str],
     capability_registry: CapabilityRegistry,
     capability_profile: str,
+    saga_chapter_body: bool = False,
 ) -> tuple[OracleNode, ...] | None:
-    if set(printed_card_types).intersection(_SPELL_CARD_TYPES):
+    if saga_chapter_body or set(printed_card_types).intersection(_SPELL_CARD_TYPES):
         node = _spell_outer_node(
             node_id=node_id,
             line=line,
@@ -671,9 +672,18 @@ def typed_token_ability_nodes(
     trigger_node: TriggerNode,
     grant_effect_templates: GrantEffectTemplates,
     compile_spell_shell: Callable[[str], tuple[OracleNode, ...] | None] | None = None,
+    saga_chapter_body: bool = False,
 ) -> tuple[OracleNode, ...] | None:
     """Compile one closed token shell plus independently exact abilities."""
 
+    from .linked_death_token_copy import linked_death_token_copy_nodes
+
+    linked_death = linked_death_token_copy_nodes(
+        record=record, face_id=face_id, node_id=node_id, line=line, material_line=material_line, span=span,
+        source_name=source_name, registry=capability_registry, profile=capability_profile,
+    )
+    if linked_death is not None:
+        return linked_death
     from .named_equipment_token_templates import named_equipment_ability_shell, equipment_token_children
     equipment_shell = named_equipment_ability_shell(material_line)
     post_entry = _COPY_DEATH_DRAW_GRANT.fullmatch(material_line)
@@ -714,6 +724,7 @@ def typed_token_ability_nodes(
         trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
+        saga_chapter_body=saga_chapter_body,
     )
     if outer_nodes is None:
         return None

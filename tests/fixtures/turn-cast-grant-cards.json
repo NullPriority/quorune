@@ -1665,6 +1665,53 @@
         "tlr": "not_legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "322f0459-f394-44f0-977b-55fd0cbe0712",
+      "name": "Yawgmoth's Will",
+      "mana_cost": "{2}{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "Until end of turn, you may play lands and cast spells from your graveyard.\nIf a card would be put into your graveyard from anywhere this turn, exile that card instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2014-06-16",
+      "cmc": 3.0,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "banned",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "banned",
+        "vintage": "restricted"
+      }
     }
   ],
   "rulings": [
@@ -2153,6 +2200,48 @@
       "published_at": "2021-09-24",
       "source": "wotc",
       "comment": "\"Disturb [cost]\" means \"You may cast this card transformed from your graveyard by paying [cost] rather than its mana cost.\""
+    },
+    {
+      "oracle_id": "322f0459-f394-44f0-977b-55fd0cbe0712",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "The second ability creates a replacement effect. It applies to both costs and effects."
+    },
+    {
+      "oracle_id": "322f0459-f394-44f0-977b-55fd0cbe0712",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "If you play a card using Yawgmoth’s Will and something triggers only when “cast from your hand”, that something will not trigger. Such things trigger based on where the card came from."
+    },
+    {
+      "oracle_id": "322f0459-f394-44f0-977b-55fd0cbe0712",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "To “play a card” is to either cast a spell or to put a land onto the battlefield using the main phase special action."
+    },
+    {
+      "oracle_id": "322f0459-f394-44f0-977b-55fd0cbe0712",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "If an effect asks you to discard a card, you can’t “discard” something that is in your graveyard. Those cards are not in your hand. Thus, Cycling abilities of cards in the graveyard can’t be activated."
+    },
+    {
+      "oracle_id": "322f0459-f394-44f0-977b-55fd0cbe0712",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "If you cast a Buyback spell, then there will be two effects trying to replace where the card goes. You get to choose if the Buyback returns the card to your hand or the card gets exiled."
+    },
+    {
+      "oracle_id": "322f0459-f394-44f0-977b-55fd0cbe0712",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "It will exile itself since it goes to the graveyard after its effect starts."
+    },
+    {
+      "oracle_id": "322f0459-f394-44f0-977b-55fd0cbe0712",
+      "published_at": "2006-10-15",
+      "source": "wotc",
+      "comment": "You cannot Suspend a card from your graveyard, only your hand."
     }
   ]
 }

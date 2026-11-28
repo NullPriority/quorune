@@ -12,7 +12,9 @@ from ..rules.modal_selection import (
     COMMANDER_CAST_MODE_LIMIT_FIELD, conditional_cast_mode_capability, wizard_cast_mode_limit_matches,
 )
 from ..util import stable_json
-from ..rules.modal_selection import DISTINCT_TURN_TRIGGER_MODES_FIELD, valid_distinct_turn_trigger_modes
+from ..rules.modal_selection import (
+    DISTINCT_TURN_GRAVEYARD_MODES_VERSION, DISTINCT_TURN_TRIGGER_MODES_FIELD, valid_distinct_turn_trigger_modes,
+)
 from .declared_effect_amounts import contains_declared_effect_amount
 from .linked_exile_return_templates import scope_linked_return_bindings
 
@@ -37,6 +39,7 @@ _NONREPEATING_HEADERS = {
     "Choose one or both —": (1, 2),
     "Choose one or more —": (1, None),
     "Choose any number —": (0, None),
+    "Choose up to one —": (0, 1),
     "Choose two —": (2, 2),
 }
 _DISTINCT_TURN_HEADERS = (
@@ -125,6 +128,7 @@ class FixedNonrepeatingModalTemplate:
         schema = deepcopy(dict(self._target_schema))
         supported_bounds = {
             (0, mode_total),
+            (0, 1),
             (1, 1),
             (1, mode_total),
             (2, 2),
@@ -283,6 +287,11 @@ def fixed_nonrepeating_modal_template(
     if any(body is None or not body.strip() for body in bodies):
         return None
     distinct_turn_modes = header in _DISTINCT_TURN_HEADERS
+    distinct_turn_version = (
+        DISTINCT_TURN_GRAVEYARD_MODES_VERSION
+        if context_prefix.casefold() == "whenever one or more cards leave your graveyard, "
+        else 1
+    )
     if distinct_turn_modes and (not context_prefix or len(bodies) != 3):
         return None
     minimum_modes, fixed_maximum = (1, 1) if distinct_turn_modes else _NONREPEATING_HEADERS[header]
@@ -340,7 +349,7 @@ def fixed_nonrepeating_modal_template(
             "min_modes": minimum_modes,
             "max_modes": maximum_modes,
             "modes": modes,
-            **({DISTINCT_TURN_TRIGGER_MODES_FIELD: 1} if distinct_turn_modes else {}),
+            **({DISTINCT_TURN_TRIGGER_MODES_FIELD: distinct_turn_version} if distinct_turn_modes else {}),
         },
         mechanic_ids=tuple(dict.fromkeys(mechanic_ids)),
     )

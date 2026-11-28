@@ -57,9 +57,14 @@ def _typed_declaration_dependencies(templates):
     from ..continuous_conditions import FixedPublicStateConditionKind
     from ..battlefield_mana_value_query import even_mana_value_blocker_dependencies
 
+    from ..declaration_fragments import DEFENDING_PLAYER_RAD_BLOCK_CAPABILITY, DEFENDING_PLAYER_RAD_BLOCK_TEMPLATE
     required={DECLARATION_COMPONENT_CAPABILITY_ID}
     for template in templates:
         required.update(even_mana_value_blocker_dependencies(template))
+        if isinstance(template, DeclarationCostTemplate) and template.capability_id is not None:
+            required.add(template.capability_id)
+        if template.template_id == DEFENDING_PLAYER_RAD_BLOCK_TEMPLATE:
+            required.add(DEFENDING_PLAYER_RAD_BLOCK_CAPABILITY)
         condition=getattr(template,'condition',None)
         if not isinstance(condition,FixedPublicStateConditionSpec):continue
         required.add(PUBLIC_STATE_DECLARATION_CAPABILITY_ID)
@@ -347,6 +352,7 @@ def declaration_static_node(
                     "source_condition": template.source_condition,
                     "includes_planeswalkers": template.includes_planeswalkers,
                     **({"mana_calculation": template.mana_calculation} if template.mana_calculation else {}),
+                    **({'phyrexian_life': template.phyrexian_life} if template.phyrexian_life is not None else {}),
                 },
             )
         residual_id = append_residual(
@@ -683,6 +689,13 @@ def _attached_characteristic_declaration_grant(
             characteristic_body,
             flags=re.IGNORECASE,
         )
+        if re.fullmatch(r"can['\u2019]t be blocked", rule_body, re.IGNORECASE):
+            characteristic_body = re.sub(
+                r"^(has .+?), (is .+ in addition to its other types)$",
+                r"\1 and \2",
+                characteristic_body,
+                flags=re.IGNORECASE,
+            )
         characteristics = attached_fixed_characteristics_handler(
             f"{subject} {characteristic_body}.",
             source_name=source_name,
@@ -701,7 +714,7 @@ def _attached_reverse_declaration_grant(
     source_name: str,
 ) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
     match = re.fullmatch(
-        r"(?P<subject>Enchanted creature) "
+        r"(?P<subject>(?:Enchanted|Equipped) creature) "
         r"(?P<rule>can't be blocked) and has (?P<keyword>[A-Za-z -]+)\.?",
         text,
         re.IGNORECASE,

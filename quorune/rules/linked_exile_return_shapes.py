@@ -149,6 +149,11 @@ def linked_ability_exile_node_capabilities(*, effects, target_schema, mechanic_i
     if effect.get("cards") != "$targets":
         return ()
     from .node_capability_shapes import targeted_exile_node_capabilities
+    if (isinstance(target_schema, Mapping) and type(target_schema.get("up_to")) is int
+            and target_schema["up_to"] == 1 and {"count", "min", "max"}.isdisjoint(target_schema)):
+        # The same linked exile carries zero or one announced target.
+        target_schema = {key: value for key, value in target_schema.items() if key != "up_to"}
+        target_schema["count"] = 1
     required = targeted_exile_node_capabilities(effects=({"op": "exile_permanent", "card": "$target.0"},),
         target_schema=target_schema, mechanic_ids=mechanic_ids)
     return (*required, *_LINKED_PAIR) if required else ()
@@ -183,6 +188,16 @@ def announced_opponent_exile_target_schema():
     schema.update(distinct_controllers=True, retain_controller=True,
                   count_parameter=AnnouncedTargetCardinality(
                       selection="up_to", parameter="any_number", schema_version=2).to_dict())
+    return schema
+
+
+ANNOUNCED_NONSAGA_EXILE_CAPABILITY = "zone.exile_until_source_departure.announced_non_saga_player_set"
+
+
+def announced_nonsaga_exile_target_schema():
+    schema = announced_opponent_exile_target_schema()
+    schema["controller_relation"] = "any"
+    schema["subtypes_none"] = ["saga"]
     return schema
 
 
@@ -364,8 +379,11 @@ def linked_ability_exile_runtime_dependencies(program):
         return linked_death_upkeep.program_dependencies(program)
     from .effect_shape_walkers import nested_effects
     from .linked_return_subtype_counter import linked_subtype_counter_runtime_dependencies
+    from .linked_exile_owner_tokens import linked_exile_owner_token_dependencies
 
     if required := linked_subtype_counter_runtime_dependencies(program):
+        return required
+    if required := linked_exile_owner_token_dependencies(program):
         return required
     if any(uses_controller_library_top_hand(effect) for effect in nested_effects((program.effects, program.handlers))):
         return _controller_library_top_hand_runtime_dependencies(program)
@@ -415,6 +433,12 @@ def linked_ability_exile_runtime_dependencies(program):
             raise ValueError("A linked Fading return requires the unwrapped source-departure trigger")
         return required
     phase = effects[0]["phase"]
+    from ..linked_exile_return_model import is_linked_behold_hand_return_spec
+
+    if is_linked_behold_hand_return_spec(effects[0]["spec"]) and (
+        program.cost_schema is not None or program.handlers or program.trigger_limit is not None
+    ):
+        raise ValueError("Linked Behold requires an unqualified and unwrapped source departure")
     if LINKED_BATCH_DEPARTURE_RETURN_CAPABILITY in required and (optional or program.cost_schema is not None or program.handlers):
         raise ValueError("A linked batch requires its complete unwrapped source trigger")
     if (phase == "exile" and program.event != "permanent.enter.self"
@@ -583,6 +607,16 @@ def linked_exile_return_node_capabilities(*, effects: Sequence[Mapping[str, Any]
                 if spec.schema_version == LINKED_PUBLIC_ALL_CREATURES_END_STEP_VERSION else ()
             )
             return (LINKED_EXILE_RETURN_CAPABILITY, *(("target.revalidate_resolution",) if expected else ()), *haste, *activated)
+        if thaw_value(target_schema) == announced_nonsaga_exile_target_schema():
+            from ..target_cardinality import ANY_NUMBER_TARGET_CAPABILITY
+
+            if (first["cards"] != "$targets" or "cr-115-targets" not in mechanics
+                    or spec != LinkedExileReturnSpec(timing="source_departure", schema_version=2)):
+                return ()
+            return (
+                LINKED_EXILE_RETURN_CAPABILITY, CONDITIONAL_EXILE_CAPABILITY, ANNOUNCED_NONSAGA_EXILE_CAPABILITY,
+                ANY_NUMBER_TARGET_CAPABILITY, "target.set.one_per_player", "target.revalidate_resolution",
+            )
         if spec.announced_opponents:
             if (first["cards"] != "$targets" or thaw_value(target_schema) != announced_opponent_exile_target_schema()
                     or "cr-115-targets" not in mechanics):
@@ -610,10 +644,17 @@ def linked_exile_return_node_capabilities(*, effects: Sequence[Mapping[str, Any]
             if first["cards"] != "$targets" or group.zones != ("battlefield",) or group.categories != ("permanent",) or group.max_targets not in {1, 2, 3, 4, 5, 6, 999} or group.min_targets not in {0, group.max_targets}:
                 return ()
             if group.owner_relation != "any":
-                if "cr-115-targets" not in mechanics or not is_owned_creature_end_step_return(spec, target_schema):
+                if "cr-115-targets" not in mechanics:
                     return ()
-                return (LINKED_EXILE_RETURN_CAPABILITY, OWNED_CREATURE_END_STEP_RETURN_CAPABILITY,
-                        "target.revalidate_resolution")
+                if is_owned_creature_end_step_return(spec, target_schema):
+                    return (LINKED_EXILE_RETURN_CAPABILITY, OWNED_CREATURE_END_STEP_RETURN_CAPABILITY,
+                            "target.revalidate_resolution")
+                expected = {"zones": ["battlefield"], "categories": ["permanent"], "count": 1,
+                            "source_exclusion": True, "owner_relation": "you"}
+                if (thaw_value(target_schema) != expected
+                        or spec != LinkedExileReturnSpec(timing="immediate", controller="actor")):
+                    return ()
+                return (LINKED_EXILE_RETURN_CAPABILITY, "target.revalidate_resolution")
     except (TypeError, ValueError):
         return ()
     return tuple(sorted({LINKED_EXILE_RETURN_CAPABILITY,

@@ -7,6 +7,7 @@ from ...object_predicate import ObjectQuerySpec
 from ...object_query import object_query_result, object_matches_query
 from ...effect_runtime.hand_inspection import validate_entry_hand_reveal, begin_stack_cost_hand_reveal
 from ..behold_additional_cost import BEHOLD_ADDITIONAL_COST_KIND, fixed_behold_additional_cost
+from ...linked_exile_return_model import ExiledObjectIdentity
 from .model import CastProposalError
 
 
@@ -36,9 +37,11 @@ def behold_cost_selection(host, *, seat, source, cost, response, hint, choice_sc
     if not cards:
         return False, None
     refs = [card.ref for card in cards]
+    label = (f'Behold and exile a matching {cost.subtype}' if cost.linked_exile_pair
+             else f'Behold a matching {cost.subtype}: choose a permanent or reveal a hand card')
     choice_schema['behold_cards'] = {'type': 'object_ref_array', 'legal_refs': refs,
         'minimum': 1, 'maximum': 1, 'distinct': True, 'payment': 'behold',
-        'label': f'Behold a matching {cost.subtype}: choose a permanent or reveal a hand card'}
+        'label': label}
     if hint:
         return True, None
     selected = response.get('behold_cards')
@@ -79,18 +82,49 @@ def _validate_selection(host, proposal, source, selected, cost):
     return card
 
 
+def _selected_behold_cost(selected, selected_option):
+    costs = selected_option.get('additional_costs', ())
+    position = selected.get('cost_position')
+    if type(position) is not int or not 0 <= position < len(costs):
+        raise CastProposalError('Behold casting cost position changed')
+    cost = fixed_behold_additional_cost(costs[position])
+    if cost is None:
+        raise CastProposalError('Behold casting cost disappeared')
+    return cost
+
+
+def commit_linked_behold_cost(host, proposal, source, result, selected, selected_option, response):
+    from copy import deepcopy
+    from .zone_cost_commit import commit_card_cost_changes
+
+    cost = _selected_behold_cost(selected, selected_option)
+    if cost.linked_exile_pair is None:
+        return
+    card = _validate_selection(host, proposal, source, selected, cost)
+    journal = response.get('_mana_replacement_selections') or {}
+    if (not isinstance(journal, Mapping) or len(journal) > 1
+            or any(type(key) is not str or not key.startswith('zone.change:')
+                   or not key.endswith(f':{card.ref}') or not isinstance(rows, (list, tuple))
+                   for key, rows in journal.items())):
+        raise CastProposalError('The Behold exile replacement journal is malformed')
+    before = card.logical_object_id
+    attachments = [host.state.cards[oid].ref for oid in card.attachments if oid in host.state.cards]
+    change = (card, card.zone, card.controller, before, deepcopy(host._effective_card_data(card)),
+              attachments, 'exile', 'exile', tuple(next(iter(journal.values()), ())))
+    commit_card_cost_changes(host, proposal, source, result, (change,), required_paid_facts=())
+    if card.zone == 'exile' and card.logical_object_id != before and not (card.is_token or card.is_spell_copy):
+        result.beheld_linked_exile = (cost.linked_exile_pair, ExiledObjectIdentity(
+            card.object_id, card.ref, card.logical_object_id))
+
+
 def commit_behold_additional_costs(host, proposal, source, item, selected_option):
     payments = []
     for selected in selected_option.get('selected_additional_costs', ()):
         if selected.get('kind') != BEHOLD_ADDITIONAL_COST_KIND:
             continue
-        costs = selected_option.get('additional_costs', ())
-        position = selected.get('cost_position')
-        if type(position) is not int or not 0 <= position < len(costs):
-            raise CastProposalError('Behold casting cost position changed')
-        cost = fixed_behold_additional_cost(costs[position])
-        if cost is None:
-            raise CastProposalError('Behold casting cost disappeared')
+        cost = _selected_behold_cost(selected, selected_option)
+        if cost.linked_exile_pair is not None:
+            continue
         card = _validate_selection(host, proposal, source, selected, cost)
         identity = selected['selection']
         if card.zone == 'hand':

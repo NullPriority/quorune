@@ -8,6 +8,19 @@ def _is_controller_life_gain(binding):
             and binding.event_condition == {"field": "player", "op": "eq", "value": "$source.controller"})
 
 
+def life_gain_counter_reset_result(text, *, binding):
+    from ..rules.life_gain_counter_reset import LIFE_GAIN_COUNTER_RESET_MECHANIC, life_gain_counter_reset_effects
+
+    if not _is_controller_life_gain(binding) or not re.fullmatch(
+        r"Put that many ribbon counters on this creature[.] Then if there are "
+        r"three or more ribbon counters on this creature, remove those counters and untap it[.]?",
+        text.strip(), re.I,
+    ):
+        return None
+    return ("life-gain-counter-threshold-reset-v1", life_gain_counter_reset_effects(),
+            None, (LIFE_GAIN_COUNTER_RESET_MECHANIC,)), True
+
+
 def life_gain_counted_self_growth_result(text, *, binding):
     if not _is_controller_life_gain(binding):
         return None

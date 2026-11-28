@@ -90,6 +90,25 @@ def mill_library_cost_runtime_dependencies(program):
     return (MILL_LIBRARY_ACTIVATION_COST_CAPABILITY,)
 
 
+def source_library_bottom_runtime_dependencies(program):
+    from ..activated_ability_descriptor import SOURCE_LIBRARY_BOTTOM_CAPABILITY, SOURCE_LIBRARY_BOTTOM_FIELD
+    from ..compiler.activated_costs import activated_ability_cost
+
+    field = SOURCE_LIBRARY_BOTTOM_FIELD
+    price = getattr(program, "cost_schema", None) or {}
+    catalogs = [handler["ability"] for handler in program.handlers
+                if handler.get("handler_id") == ACTIVATED_ABILITY_CATALOG_HANDLER_ID]
+    if field not in price and not any(field in ability for ability in catalogs):
+        return ()
+    if (program.event, program.active_zone) != ("activate", "battlefield") or len(catalogs) != 1 or not program.effects:
+        raise ValueError("Owner-library-bottom requires a cataloged battlefield activation and resolving effect")
+    ability, = activated_abilities_from_descriptors(program.handlers)
+    if (not ability.source_library_bottom or price.get(field) is not True
+            or thaw_value(price) != activated_ability_cost(ability)):
+        raise ValueError("Owner-library-bottom requires the exact compiled source price")
+    return (SOURCE_LIBRARY_BOTTOM_CAPABILITY,)
+
+
 def source_counter_placement_runtime_dependencies(program):
     from ..activated_ability_descriptor import (
         SOURCE_COUNTER_PLACEMENT_CAPABILITY, SOURCE_COUNTER_PLACEMENT_FIELD,
@@ -191,7 +210,7 @@ def activated_catalog_runtime_dependencies(program):
 
     return (*forage_activation_runtime_dependencies(program), *ability_local_mana_reduction_runtime_dependencies(program),
             *fixed_mana_spend_rule_runtime_dependencies(program), *mill_library_cost_runtime_dependencies(program),
-            *source_counter_placement_runtime_dependencies(program),
+            *source_counter_placement_runtime_dependencies(program), *source_library_bottom_runtime_dependencies(program),
             *land_play_mana_runtime_dependencies(program),
             *land_potential_runtime_dependencies(program), *noted_mana_program_dependencies(program),
             *paid_commander_target_runtime_dependencies(program), *controller_top_exile_runtime_dependencies(program),
@@ -259,6 +278,8 @@ class ActivatedAbilityCatalogHandler:
                 raise ValueError('Announced activation X requires complete-card admission')
             if compiled.ability_local_mana_reduction is not None and not required:
                 raise ValueError('Ability-local mana reduction requires complete-card admission')
+            if compiled.source_library_bottom and not required:
+                raise ValueError('Owner-library-bottom costs require complete-card admission')
             if compiled.reconfigure and not required:
                 raise ValueError('Reconfigure requires complete-card admission')
             if compiled.saddle_threshold is not None and not required:
@@ -303,7 +324,7 @@ def activated_ability_catalog_descriptor(
 
     requires_complete_card_program = (requires_complete_card_program or has_forage_cost(ability) or ability.chooses_activation_x
         or has_bounded_sacrifice(ability) or ability.ability_local_mana_reduction is not None
-        or ability.reconfigure or ability.saddle_threshold is not None or has_source_equipment_unattach(ability))
+        or ability.source_library_bottom or ability.reconfigure or ability.saddle_threshold is not None or has_source_equipment_unattach(ability))
     return {
         "handler_id": ACTIVATED_ABILITY_CATALOG_HANDLER_ID,
         "schema_version": 1,

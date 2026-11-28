@@ -360,6 +360,8 @@ def _commit_linked_entry_opponent(prepared, card, *, host) -> None:
     if card.zone != "battlefield":
         raise ValueError("An entry opponent choice requires its completed battlefield entry")
     choice = EntryOpponentChoice.from_dict(raw)
+    if choice.changes_entry_controller:
+        return
     provider = host.semantics.get(choice.entry_program_key) if host is not None else None
     if choice.any_player:
         if (

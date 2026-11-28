@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { activationStopSignature, findSafeAutoPass, priorityActivityHold, selectedPriorityStop } from "../src/tableAutomation.ts";
+import { activationStopSignature, findSafeAutoPass, ownSpellResponseHold, priorityActivityHold, priorityHoldForScope, readSourcePriorityYieldOffer, remainsOfCapturedStack, selectedPriorityStop, sourcePriorityYieldStatus } from "../src/tableAutomation.ts";
 import { loopFrame, opponentResponded, repeatableOffer } from "../src/loopShortcuts.ts";
 import type { ProjectedView } from "../src/protocol.ts";
 
@@ -170,4 +170,60 @@ test("an ignored activation survives renewal and stops again when its choices ch
   assert.equal(findSafeAutoPass([pass, { ...renewed, form: { legal_refs: ["B", "C"] } }], window), null);
   assert.equal(findSafeAutoPass([pass, { ...renewed, cost_summary: { life: 2 } }], window), null);
   assert.equal(findSafeAutoPass([pass, offered]), null);
+});
+
+
+test("routine mana can pass the active main without passing a strategic mana choice", () => {
+  const pass = { action: "pass" };
+  const mana = { action: "activate", mana_ability: true, cost_summary: { tap: 1 } };
+  const window = { activePlayer: "A", principalSeat: "A", phase: "precombat_main", stackDepth: 0 };
+  assert.equal(findSafeAutoPass([pass, mana], window), pass);
+  assert.equal(findSafeAutoPass([pass, mana, { action: "play_land" }], window), null);
+  assert.equal(findSafeAutoPass([pass, { ...mana, form: { fields: [] } }], window), null);
+  assert.equal(findSafeAutoPass([pass, { ...mana, cost_summary: { sac_self: 1 } }], window), null);
+});
+
+test("a represented response to your own spell stays available", () => {
+  const pass = { action: "pass" };
+  const mana = { action: "activate", mana_ability: true, cost_summary: { tap: 1 } };
+  const response = { action: "activate", cost_summary: { sacrifice: 1 } };
+  const spell = { kind: "spell", ctl: "A" };
+  assert.equal(ownSpellResponseHold(spell, "A", [pass, mana]), false);
+  assert.equal(ownSpellResponseHold(spell, "A", [pass, mana, response]), true);
+  assert.equal(ownSpellResponseHold(spell, "B", [pass, response]), false);
+  assert.equal(ownSpellResponseHold({ ...spell, kind: "spell_copy" }, "A", [pass, response]), false);
+});
+
+test("stack resolve consent covers only its original unmodified remaining suffix", () => {
+  const captured = ["top:target-A", "middle", "bottom"];
+  for (const current of [captured, ["middle", "bottom"], ["bottom"], []]) {
+    assert.equal(remainsOfCapturedStack(captured, current), true);
+  }
+  for (const current of [["top:target-B", "middle", "bottom"], ["middle", "top:target-A", "bottom"],
+    ["new-opponent-object", "bottom"], ["top:target-A", "bottom"]]) {
+    assert.equal(remainsOfCapturedStack(captured, current), false);
+  }
+});
+
+test("explicit pass for this turn overrides ordinary response and step stops only for its pilot", () => {
+  for (const ordinary of ["Response to your spell", "Graveyard activity", "First main phase", "Beginning of combat"]) {
+    assert.equal(priorityHoldForScope(false, false, ordinary), ordinary);
+    assert.equal(priorityHoldForScope(true, false, ordinary), undefined);
+  }
+  assert.equal(priorityHoldForScope(true, true, "Response to your spell"), "Loop shortcut");
+});
+
+test("source yield requires the same opaque owner scope and passive exact top window", () => {
+  const id = "f".repeat(64);
+  const offer = readSourcePriorityYieldOffer({ id, targeted: false });
+  assert.deepEqual(offer, { id, targeted: false });
+  assert.equal(readSourcePriorityYieldOffer({ id: "not-opaque", targeted: false }), undefined);
+  const pass = { action: "pass" };
+  assert.equal(sourcePriorityYieldStatus(id, offer, "priority", [pass]), "ready");
+  assert.equal(sourcePriorityYieldStatus("a".repeat(64), offer, "priority", [pass]), "inactive");
+  assert.equal(sourcePriorityYieldStatus(id, undefined, "priority", [pass]), "inactive");
+  assert.equal(sourcePriorityYieldStatus(id, undefined, "priority", [pass], true), "changed");
+  assert.equal(sourcePriorityYieldStatus(id, { id, targeted: true }, "priority", [pass]), "targeted");
+  assert.equal(sourcePriorityYieldStatus(id, offer, "semantic.target", []), "choice");
+  assert.equal(sourcePriorityYieldStatus(id, offer, "priority", [pass, { action: "activate" }]), "response");
 });

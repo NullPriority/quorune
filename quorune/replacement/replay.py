@@ -901,23 +901,24 @@ def _casting_zone_cost_event_is_valid(
 
 
 def _activation_batch_cost_refs(response:Mapping[str,Any]) -> tuple[str,...] | None:
+    from ..rules.activation_zone_change_costs import selected_activation_zone_cost_count
+
     summary=response.get('cost_summary')
     if not isinstance(summary,Mapping):return None
     if 'random_discard' in summary:
         refs=response.get('_random_discard_cost_refs')
         count=summary['random_discard']
-        count_valid=type(count) is int and 1<=count<=4
+        count = count if type(count) is int and 1 <= count <= 4 else None
     else:
         refs=response.get('cost_objects') or response.get('cost_cards')
         choices=summary.get('choose_cost')
         if not isinstance(choices,(list,tuple)) or len(choices)!=1 or not isinstance(choices[0],Mapping):return None
-        from ..rules.announced_subtype_sacrifice import ANNOUNCED_SUBTYPE_SACRIFICE_KIND
-        if choices[0].get('k') == ANNOUNCED_SUBTYPE_SACRIFICE_KIND:
-            from ..rules.activation_zone_change_costs import announced_subtype_replay_cost_refs
-            resolved = announced_subtype_replay_cost_refs(choices[0], response)
+        from ..rules.activation_zone_change_costs import ANNOUNCED_ZONE_COST_ORIGINS, announced_zone_cost_replay_refs
+        if choices[0].get('k') in ANNOUNCED_ZONE_COST_ORIGINS:
+            resolved = announced_zone_cost_replay_refs(choices[0], response)
             return resolved if resolved and len(resolved) > 1 else None
-        count=choices[0].get('n');count_valid=type(count) is int
-    if (not count_valid or not isinstance(refs,(list,tuple)) or not 2<=len(refs)<=10
+        count = selected_activation_zone_cost_count(response, choices[0])
+    if (count is None or not isinstance(refs,(list,tuple)) or len(refs) < 2
             or count!=len(refs) or any(type(ref) is not str or not ref for ref in refs)
             or len(set(refs))!=len(refs)):
         return None
@@ -1129,9 +1130,9 @@ def _counted_activation_cost_event_is_valid(
     if 'random_discard' in summary:destination='graveyard'
     else:
         choices=summary['choose_cost']
-        from ..rules.announced_subtype_sacrifice import ANNOUNCED_SUBTYPE_SACRIFICE_KIND
+        from ..rules.activation_zone_change_costs import ANNOUNCED_ZONE_COST_ORIGINS
         kind = choices[0].get('k')
-        if kind == ANNOUNCED_SUBTYPE_SACRIFICE_KIND:
+        if kind in ANNOUNCED_ZONE_COST_ORIGINS:
             destination = 'graveyard'
         else:
             contract=FIXED_ZONE_CHANGE_COST_CONTRACTS.get(str(kind or ''))
@@ -1428,6 +1429,7 @@ def _decode_semantic_intent_continuation(
             "resolving_exile_land_play",
             "resolving_shared_type_library_play",
             "targeted_graveyard_cast",
+            "discarded_card_cast",
             "exile_graveyard_copies",
             "life_change",
             "life_gain_cost_batch",
@@ -1441,6 +1443,7 @@ def _decode_semantic_intent_continuation(
             "counted_sacrifice_token",
             "counted_sacrifice_quantity",
             "exploit_sacrifice",
+            "opponent_blight_batch",
             "place_counter_batch",
             "place_counters",
             "place_counters_on_set",

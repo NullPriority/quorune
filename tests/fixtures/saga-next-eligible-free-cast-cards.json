@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "pinned_oracle_card",
+  "source": "Pinned World War Hulk and constructed color and spell-type controls.",
+  "cards": [
+    {
+      "oracle_id": "8c4da760-8913-46ca-b00c-bba6d877d482",
+      "name": "World War Hulk",
+      "mana_cost": "{3}{G}{G}",
+      "type_line": "Enchantment — Saga",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — The next red or green creature spell you cast this turn can be cast without paying its mana cost.\nII — Put three +1/+1 counters on target creature you control.\nIII — Choose target creature you control. Until end of turn, double its power and toughness and it gains trample.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Double"
+      ],
+      "produced_mana": [],
+      "layout": "saga",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 5.0
+    },
+    {
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
+      "released_at": "2026-08-09",
+      "layout": "normal",
+      "keywords": [],
+      "produced_mana": [],
+      "oracle_id": "00000000-0000-4000-8000-601611200001",
+      "name": "Printed Green Creature",
+      "mana_cost": "{1}{G}",
+      "cmc": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "type_line": "Creature — Bear",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
+      "released_at": "2026-08-09",
+      "layout": "normal",
+      "keywords": [],
+      "produced_mana": [],
+      "oracle_id": "00000000-0000-4000-8000-601611200002",
+      "name": "Printed Red Creature",
+      "mana_cost": "{1}{R}",
+      "cmc": 2,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "type_line": "Creature — Dragon",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
+      "released_at": "2026-08-09",
+      "layout": "normal",
+      "keywords": [],
+      "produced_mana": [],
+      "oracle_id": "00000000-0000-4000-8000-601611200003",
+      "name": "Printed Red Noncreature",
+      "mana_cost": "{R}",
+      "cmc": 1,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "type_line": "Instant",
+      "oracle_text": "You gain 1 life."
+    }
+  ],
+  "rulings": []
+}

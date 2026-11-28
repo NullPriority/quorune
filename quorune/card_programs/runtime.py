@@ -235,6 +235,9 @@ class _FixedPublicStateSnapshotResolver:
         fact = condition.fact
         if not isinstance(fact, FixedPublicStateFact):
             return None
+        if fact is FixedPublicStateFact.CURRENT_COMBAT_BEFORE_BLOCKERS:
+            return int(self.state.phase == "combat"
+                       and self.state.step in {"beginning_combat", "declare_attackers"})
         if fact in BLOCK_DECLARATION_TIMING_FACTS:
             from ..unblocked_attacker_model import CURRENT_UNBLOCKED_ATTACKER_EVENT_VERSION
 
@@ -1065,6 +1068,16 @@ def _continuous_component_source_context(
     if descriptor.get('handler_id') == SOULBOND_GRANT_HANDLER:
         from ..soulbond_state import paired_object_identity
         paired_object = paired_object_identity(state, source)
+    from ..protection_attachment_exceptions import (
+        CONTROLLED_ATTACHMENT_PROTECTION_HANDLER, simultaneous_attached_protection_cutoff,
+    )
+
+    attached_object = (
+        attached_object_identity(state.cards, source) if getattr(source, "attached_to", None) else None
+    )
+    protection_cutoff = None
+    if descriptor.get("handler_id") == CONTROLLED_ATTACHMENT_PROTECTION_HANDLER and attached_object is not None:
+        protection_cutoff = simultaneous_attached_protection_cutoff(source, attached_object.logical_object_id)
     return ContinuousEffectSourceContext(
         cipher_encoded_object=_cipher_encoded_object(state, source, descriptor),
         enchanted_player=current_attached_player_seat(source,state.players),
@@ -1100,11 +1113,8 @@ def _continuous_component_source_context(
         counter_placement_recipients=_counter_placement_recipient_identities(state, source, descriptor),
         public_type_objects=_descriptor_public_type_objects(source,descriptor,state=state,
                                                            resolver=public_state_resolver),
-        attached_object=(
-            attached_object_identity(state.cards, source)
-            if getattr(source, "attached_to", None)
-            else None
-        ),
+        attached_object=attached_object,
+        attachment_protection_cutoff=protection_cutoff,
     )
 
 

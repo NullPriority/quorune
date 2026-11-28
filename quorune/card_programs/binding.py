@@ -168,11 +168,20 @@ def bind_semantic_program_runtime(
             required.add(POWER_UP_CAPABILITY)
         if handler_id == 'activation.catalog.pinned.v1' and not is_structural_activated_ability_catalog_program(program) and descriptor.get('ability',{}).get('announced_x_symbols') is not None:
             from ..activation_x import CONTROLLED_LAND_RETURN_X_COST, activation_x_capabilities
-            ability = descriptor['ability']
-            required.update(activation_x_capabilities(symbols=ability['announced_x_symbols'],
-                sacrifice_source=ability.get('sacrifice_source', False),
-                discard_cards=bool(ability.get('choices')) and ability.get('cost_text') != CONTROLLED_LAND_RETURN_X_COST,
-                discard_source=ability.get('discard_source', False)))
+            from ..rules.cycling_activation_x import variable_cycling_payment_program_dependencies
+
+            ability = descriptor["ability"]
+            try:
+                scoped = variable_cycling_payment_program_dependencies(program)
+            except (ValueError, TypeError, KeyError) as exc:
+                blockers.add(f"runtime_variable_cycling:invalid:{exc}")
+                scoped = ()
+            required.update(scoped or activation_x_capabilities(
+                symbols=ability["announced_x_symbols"],
+                sacrifice_source=ability.get("sacrifice_source", False),
+                discard_cards=bool(ability.get("choices")) and ability.get("cost_text") != CONTROLLED_LAND_RETURN_X_COST,
+                discard_source=ability.get("discard_source", False),
+            ))
         if descriptor.get("schema_version") != registered["schema_version"]:
             blockers.add(f"runtime_handler:schema_mismatch:{handler_id}")
         if descriptor.get("event") != registered["event"]:
@@ -252,6 +261,8 @@ def bind_card_program_runtime(
     )
     from ..rules.equipped_planeswalker import validate_equipped_planeswalker_child
     from ..rules.granted_death_treasure import validate_granted_death_treasure_child
+    from ..rules.grantor_damage_redirection import validate_grantor_redirect_grant_child
+    from ..rules.target_graveyard_flashback import validate_attached_flashback_trigger
 
     ability_bindings = [
         bind_semantic_program_runtime(
@@ -271,6 +282,14 @@ def bind_card_program_runtime(
     abilities_by_key = {ability.key: ability for ability in card_program.abilities}
     for ability in card_program.abilities:
         try:
+            validate_attached_flashback_trigger(ability, abilities_by_key.get)
+        except (TypeError, ValueError, KeyError) as exc:
+            blockers.add(f"ability:{ability.ability_id}:runtime_attached_flashback_trigger:invalid:{exc}")
+        try:
+            validate_grantor_redirect_grant_child(ability, abilities_by_key.get)
+        except (TypeError, ValueError, KeyError) as exc:
+            blockers.add(f"ability:{ability.ability_id}:runtime_grantor_redirect_child:invalid:{exc}")
+        try:
             validate_temporary_combat_draw_unblockable_child(ability, abilities_by_key.get)
         except (TypeError, ValueError, KeyError) as exc:
             blockers.add(f"ability:{ability.ability_id}:runtime_temporary_combat_draw_child:invalid:{exc}")
@@ -287,6 +306,12 @@ def bind_card_program_runtime(
         except (TypeError, ValueError, KeyError) as exc:
             blockers.add(f"ability:{ability.ability_id}:runtime_equipped_planeswalker_child:invalid:{exc}")
     from ..rules.linked_color_cast_exile import validate_linked_color_cast_card_group
+    from ..rules.hideaway_play import validate_hideaway_card_pair
+
+    try:
+        validate_hideaway_card_pair(card_program.abilities)
+    except (TypeError, ValueError, KeyError) as exc:
+        blockers.add(f"runtime_hideaway_card_pair:invalid:{exc}")
 
     try:
         validate_linked_color_cast_card_group(card_program.abilities)
@@ -298,6 +323,18 @@ def bind_card_program_runtime(
         validate_linked_hand_mana_group(card_program.abilities)
     except (TypeError, ValueError, KeyError) as exc:
         blockers.add(f"runtime_linked_hand_mana_group:invalid:{exc}")
+    from ..rules.linked_graveyard_mana import validate_linked_graveyard_mana_group
+
+    try:
+        validate_linked_graveyard_mana_group(card_program.abilities)
+    except (TypeError, ValueError, KeyError) as exc:
+        blockers.add(f"runtime_linked_graveyard_mana_group:invalid:{exc}")
+    from ..rules.behold_additional_cost import validate_linked_behold_card_group
+
+    try:
+        validate_linked_behold_card_group(card_program.abilities)
+    except (TypeError, ValueError, KeyError) as exc:
+        blockers.add(f"runtime_linked_behold_group:invalid:{exc}")
     basis = str(card_program.trust_closure.get("trust_basis") or "unresolved")
     if basis in {"provisional", "unresolved"}:
         blockers.add(f"trust_basis:{basis}")
@@ -331,6 +368,7 @@ def bind_card_program_runtime(
                 blocker.startswith("trust_basis:")
                 or blocker.startswith("runtime_linked_color_cast_group:")
                 or blocker.startswith("runtime_linked_hand_mana_group:")
+                or blocker.startswith("runtime_linked_graveyard_mana_group:")
                 or blocker == "compatibility_provenance:missing"
                 for blocker in blockers
             )

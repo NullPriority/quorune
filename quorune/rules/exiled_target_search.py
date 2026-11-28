@@ -67,6 +67,10 @@ def stage_combined_entry_selection(host, item, effect, selected: Sequence[str], 
             raise GameRuleError("Combined entry selection no longer matches the basic-land search")
         land = _land_identity(card).to_dict()
     item.context[_SELECTION] = {"land": land, "prohibited": prohibited}
+    if not prohibited:
+        from .opponent_library_search import dispatch_own_library_search
+
+        dispatch_own_library_search(host, searcher=item.controller, owner=item.controller)
 
 
 def _selected_land(host, item, selection):

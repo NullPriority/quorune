@@ -101,6 +101,7 @@ class FixedPublicStateFact(StrEnum):
     CONTROLS_A_GREATEST_MANA_VALUE_ARTIFACT = "controls_a_greatest_mana_value_artifact"
     CONTROLS_A_GREATEST_POWER_CREATURE = "controls_a_greatest_power_creature"
     CONTROLS_EACH_GREATEST_POWER_CREATURE = "controls_each_greatest_power_creature"
+    CURRENT_COMBAT_BEFORE_BLOCKERS = "current_combat_before_blockers"
     CURRENT_COMBAT_AFTER_BLOCKERS = "current_combat_after_blockers"
     CURRENT_DECLARE_BLOCKERS_STEP = "current_declare_blockers_step"
     CONTROLLER_COMPLETED_A_DUNGEON = "controller_completed_a_dungeon"
@@ -164,6 +165,7 @@ class FixedPublicStateFact(StrEnum):
 
 
 BLOCK_DECLARATION_TIMING_FACTS = frozenset({
+    FixedPublicStateFact.CURRENT_COMBAT_BEFORE_BLOCKERS,
     FixedPublicStateFact.CURRENT_COMBAT_AFTER_BLOCKERS,
     FixedPublicStateFact.CURRENT_DECLARE_BLOCKERS_STEP,
 })

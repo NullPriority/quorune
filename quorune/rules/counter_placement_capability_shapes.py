@@ -85,8 +85,17 @@ def fixed_counter_placement_set_node_capabilities(*, effects, target_schema, mec
         return declared_attack_counter_effect_capabilities(effects[0])
     from ..counter_placement_sets import (
         PAIRED_PLANESWALKER_LOYALTY_FIELD, SOURCE_AND_CONTROLLED_SUBTYPE_FIELD,
-        paired_planeswalker_loyalty_dependencies, source_and_controlled_subtype_dependencies,
+        controlled_nonflying_counter_payload_dependencies, paired_planeswalker_loyalty_dependencies,
+        source_and_controlled_subtype_dependencies,
     )
+
+    if len(effects) == 1:
+        try:
+            nonflying = controlled_nonflying_counter_payload_dependencies(effects[0])
+        except ValueError:
+            return ()
+        if nonflying:
+            return nonflying if target_schema is None and {"cr-122-counters", "flying"} <= set(mechanic_ids) else ()
 
     if len(effects) == 1 and SOURCE_AND_CONTROLLED_SUBTYPE_FIELD in effects[0]:
         if target_schema is not None or "cr-122-counters" not in mechanic_ids:

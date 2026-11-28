@@ -685,3 +685,213 @@ class TemporaryBlockCapacityCompilerTests(unittest.TestCase):
                     self.assertNotEqual('exact', status)
         with patch('quorune.compiler.resolution_effect_templates.temporary_block_capacity_template', return_value=None):
             self.assertNotEqual('exact', compile_oracle_card(card, capability_registry=self.registry).status)
+
+
+class RequiredBlockingCapacityTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    source_name = 'Required Blocking Test Instant'
+    session = witnesses.BoundEffectProgramRuntimeTests.session
+    add = witnesses.BoundEffectProgramRuntimeTests.add
+    checkpoint = witnesses.BoundEffectProgramRuntimeTests.checkpoint
+    replay = witnesses.BoundEffectProgramRuntimeTests.replay
+    resolve = witnesses.BoundEffectProgramRuntimeTests.resolve
+    assert_closed_capacity_original = TemporaryBlockCapacityRuntimeTests.assert_closed_capacity_original
+
+    @classmethod
+    def source_fixture(cls):
+        return {'cards': [{
+            'name': cls.source_name, 'oracle_id': 'ce161bb7-f1f0-4d1d-93e5-60eccab66e30',
+            'mana_cost': '{W}', 'cmc': 1, 'type_line': 'Instant', 'color_identity': ['W'],
+            'oracle_text': 'Cast this spell only during combat before blockers are declared.\n'
+                           'Target creature defending player controls can block any number of creatures this turn. '
+                           'It blocks each attacking creature this turn if able.',
+        }]}
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'required-blocking.sqlite3'
+        fixture = path.with_suffix('.json')
+        payload = cls.source_fixture()
+        payload['schema_version'] = 1
+        for index, name, text in (
+            (0, 'Required Blocking Test Body', ''), (1, 'Required Blocking Test Flier', 'Flying'),
+        ):
+            payload['cards'].append({
+                'name': name, 'oracle_id': f'f6562363-2fa9-48a7-bd43-d171654a000{index}',
+                'type_line': 'Creature', 'power': '0', 'toughness': '5', 'oracle_text': text,
+                'keywords': [text] if text else [],
+            })
+        fixture.write_text(json.dumps(payload), encoding='utf-8')
+        fixtures = ROOT / 'tests/fixtures'
+        build_fixture_database([fixtures / 'bound-effect-program-cards.json',
+            fixtures / 'combat-damage-dealer-recipient-control-cards.json', fixture], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition('Required blocking', [
+            DeckEntry('Generic Bound Commander', 1, 'commander'), DeckEntry('Generic Bound Plains', 30),
+        ], ['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):
+        BlockCapacityRuntimeTests.tearDownClass.__func__(cls)
+
+    def pass_until(self, session, predicate):
+        for _ in range(40):
+            if predicate(session.state.pending_decision):
+                return
+            if session.state.pending_decision.kind == 'combat.damage':
+                command = {'action_id': 'assign_damage', 'assignments': []}
+            else:
+                self.assertEqual('priority', session.state.pending_decision.kind)
+                command = {'action_id': 'pass'}
+            result = session.act(session.pending_principals()[0], command)
+            self.assertTrue(result.ok, result.summary)
+        self.fail('Expected priority or declaration window never opened')
+
+    def submit(self, session, seat, action_id, **params):
+        result = session.act('pilot:' + seat, {'action_id': action_id, **params})
+        self.assertTrue(result.ok, result.summary)
+
+    def assert_rejected(self, session, seat, action_id, **params):
+        before = authoritative_state_hash(session.state)
+        result = session.act('pilot:' + seat, {'action_id': action_id, **params})
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+
+    def test_required_capacity_closes_and_exact_descriptor_rejects_open_forms(self):
+        from quorune.rules.block_capacity_effect import temporary_block_capacity_capabilities
+        from quorune.block_capacity_rule_model import DEFENDING_CREATURE_TARGET, REQUIRED_BLOCK_CAPACITY
+
+        card = self.db.lookup(self.source_name)
+        ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        timing, spell = ir.faces[0].nodes
+        self.assertTrue(timing.handlers)
+        self.assertEqual({DEFENDING_CREATURE_TARGET, REQUIRED_BLOCK_CAPACITY},
+                         {DEFENDING_CREATURE_TARGET, REQUIRED_BLOCK_CAPACITY} & set(spell.capability_dependencies))
+        runtime = lambda effects, schema: temporary_block_capacity_capabilities(
+            effects=effects, target_schema=schema, mechanic_ids=spell.mechanics,
+        )
+        effect, = spell.effects
+        self.assertFalse(runtime(({**effect, 'require_each_attacker': 1},), spell.target_schema))
+        self.assertFalse(runtime(({**effect, 'card': '$source.zone_object'},), spell.target_schema))
+        self.assertFalse(runtime((effect,), {**spell.target_schema, 'controller_relation': 'opponent'}))
+        malformed = replace(card, oracle_text=card.oracle_text.replace('each attacking creature', 'a creature'))
+        self.assertNotEqual('exact', compile_oracle_card(malformed, capability_registry=self.registry).status)
+
+    def test_required_capacity_normal_cast_and_two_combats_replay(self):
+        self.assert_closed_capacity_original(self.source_name)
+        session = self.session(647509)
+        engine = session.engine
+        spell = self.add(engine, self.source_name, seat='C', zone='hand')
+        held = self.add(engine, self.source_name, seat='C', zone='hand', ref='held-instant')
+        hidden = self.add(engine, 'Generic Bound Body', seat='D', zone='hand', ref='hidden-defender-card')
+        self.add(engine, 'Generic Bound Plains', seat='C', ref='ready-white-mana')
+        guard = self.add(engine, 'Required Blocking Test Body', seat='B', ref='chosen-guard')
+        other = self.add(engine, 'Required Blocking Test Body', seat='D', ref='other-defending-guard')
+        attackers = [self.add(engine, 'Required Blocking Test Body', ref=f'ground-{i}') for i in range(5)]
+        flier = self.add(engine, 'Required Blocking Test Flier', ref='cannot-block-flier')
+        for card in (*attackers, flier):
+            card.acquired_control_turn_count = -1
+        engine.state.active_player = 'A'
+        engine.state.started = True
+        engine.state.phase = 'combat'
+        engine.state.step = 'beginning_combat'
+        engine.state.phase_index = TURN_STEPS.index(('combat', 'beginning_combat'))
+        engine.state.extra_combat_phases = 1
+        engine.state.players['C'].mana_pool['W'] = 2
+        engine._grant_priority('C')
+        engine.pump()
+        self.checkpoint(session)
+
+        decision = session.packet('pilot:C', full=True)['decision']
+        options = decision['ctx']['legal']['actions']
+        action = next(row for row in options if row['id'] == 'cast:' + spell.ref)
+        legal = action['target_schema']['legal_refs']
+        self.assertIn(guard.ref, legal)
+        self.assertIn(other.ref, legal)
+        self.assertNotIn(attackers[0].ref, legal)
+        self.assertNotIn(hidden.ref, json.dumps(decision))
+        self.assertIn(hidden.ref, json.dumps(session.packet('pilot:D', full=True)))
+        self.assert_rejected(session, 'C', action['id'], targets=[attackers[0].ref], pay='auto')
+        self.submit(session, 'C', action['id'], targets=[guard.ref], pay='auto')
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual('graveyard', session.state.cards[spell.object_id].zone)
+
+        for combat, ground in enumerate((attackers[:2], attackers[2:4])):
+            if combat == 1:
+                self.pass_until(session, lambda decision: decision.kind == 'priority'
+                                and 'C' in decision.actors and session.state.step == 'beginning_combat')
+                options = session.packet('pilot:C', full=True)['decision']['ctx']['legal']['actions']
+                self.assertIn('cast:' + held.ref, [row['id'] for row in options])
+            self.pass_until(session, lambda decision: decision.kind == 'combat.attackers')
+            attacks = {card.ref: 'B' for card in ground}
+            if combat == 0:
+                attacks.update({flier.ref: 'B', attackers[4].ref: 'D'})
+            self.submit(session, 'A', 'attack', attackers=attacks)
+            self.pass_until(session, lambda decision: decision.kind == 'combat.blockers')
+            offer = session.packet('pilot:B', full=True)['decision']['ctx']['declaration_constraints']
+            self.assertEqual(2, offer.get('capacities', {}).get(guard.ref))
+            self.assertEqual({card.ref for card in ground}, {
+                row['option'] for row in offer.get('requirements', ()) if row['variable'] == guard.ref
+            })
+            self.assert_rejected(session, 'B', 'block', blocks={guard.ref: ground[0].ref})
+            if combat == 0:
+                self.assert_rejected(session, 'B', 'block', blocks={guard.ref: [ground[0].ref, flier.ref]})
+                session = self.replay(session, load=True)
+            self.submit(session, 'B', 'block', blocks={guard.ref: [card.ref for card in ground]})
+            if combat == 0:
+                self.submit(session, 'D', 'block', blocks={})
+            self.assertTrue(all(guard.object_id in session.state.combat.blockers[card.object_id] for card in ground))
+            self.pass_until(session, lambda decision: decision.kind == 'priority' and 'C' in decision.actors)
+            options = session.packet('pilot:C', full=True)['decision']['ctx']['legal']['actions']
+            self.assertNotIn('cast:' + held.ref, [row['id'] for row in options])
+            self.assert_rejected(session, 'C', 'cast:' + held.ref, targets=[guard.ref], pay='auto')
+        start_turn = session.state.turn_sequence
+        self.pass_until(session, lambda decision: session.state.turn_sequence > start_turn)
+        self.assertFalse(any(getattr(rule, 'require_each_attacker', False)
+                            for rule in session.state.continuous_effects or ()))
+        self.replay(session)
+
+    def test_required_capacity_projection_mutation_is_killed(self):
+        from quorune.declaration_requirement_runtime import typed_blocker_requirements
+
+        def omit_live_requirements(host, blockers_by_ref, *, error_type, domains):
+            return typed_blocker_requirements(host, blockers_by_ref, error_type=error_type)
+
+        with patch('quorune.engine.typed_blocker_requirements', side_effect=omit_live_requirements):
+            with self.assertRaises(AssertionError):
+                self.test_required_capacity_normal_cast_and_two_combats_replay()
+
+    def test_required_capacity_pins_announced_defending_controller(self):
+        session = self.session(647510)
+        engine = session.engine
+        spell = self.add(engine, self.source_name, seat='C', zone='hand')
+        steal = self.add(engine, 'Word of Seizing', seat='D', zone='hand')
+        guard = self.add(engine, 'Required Blocking Test Body', seat='B', ref='seized-guard')
+        engine.state.active_player = 'A'
+        engine.state.started = True
+        engine.state.phase = 'combat'
+        engine.state.step = 'beginning_combat'
+        engine.state.phase_index = TURN_STEPS.index(('combat', 'beginning_combat'))
+        engine.state.players['C'].mana_pool['W'] = 1
+        engine.state.players['D'].mana_pool.update({'R': 2, 'C': 3})
+        engine._grant_priority('C')
+        engine.pump()
+        self.checkpoint(session)
+        self.submit(session, 'C', 'cast:' + spell.ref, targets=[guard.ref], pay='auto')
+        self.pass_until(session, lambda decision: 'D' in decision.actors)
+        self.submit(session, 'D', 'cast:' + steal.ref, targets=[guard.ref], pay='auto')
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual('D', session.state.cards[guard.object_id].controller)
+        self.assertEqual('graveyard', session.state.cards[spell.object_id].zone)
+        self.assertFalse(any(rule.subject.object_id == guard.object_id
+                            for rule in session.state.continuous_effects or ()
+                            if getattr(rule, 'require_each_attacker', False)))
+        self.replay(session)
+
+    def test_defending_controller_retention_mutation_is_killed(self):
+        with patch('quorune.selection.target_validation.target_controller_matches_snapshot', return_value=True):
+            with self.assertRaises(AssertionError):
+                self.test_required_capacity_pins_announced_defending_controller()

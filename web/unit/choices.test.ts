@@ -137,6 +137,23 @@ test("Announced damage is editable and only submitted for its active target form
   assert.deepEqual(executableChoices(form([]), edited), {});
 });
 
+test("Announced counter shares use a distinct target form and preserve a selected split", () => {
+  const choices = form([{ name: "targets", control: "targets", schema: {
+    groups: [{ id: "target", min: 1, max: 3, legal_refs: ["first", "second", "third"] }],
+    target_counter_allocation: { schema_version: 1, total: 3 },
+  } }]);
+  const targets = { target: ["first", "second"] };
+  assert.deepEqual(executableChoices(choices, { targets }), {
+    targets, target_counter_allocation: { first: 2, second: 1 },
+  });
+  const edited = { targets, target_counter_allocation: { first: 1, second: 2 } };
+  assert.deepEqual(validateChoices(choices, edited), []);
+  assert.deepEqual(executableChoices(choices, edited), edited);
+  const invalid = { targets, target_counter_allocation: { first: 3, second: 0 } };
+  assert.match(validateChoices(choices, invalid).join(), /all three counters/);
+  assert.deepEqual(executableChoices(form([]), edited), {});
+});
+
 test("Variable divided damage uses the announced X and the printed target ceiling", () => {
   const xField = { name: "x", control: "integer", minimum: 0, maximum: 6 };
   const group = { id: "target", min: 0, max: 2, legal_refs: ["B", "D"] };

@@ -154,6 +154,45 @@ def is_announced_x_hand_cast_effect(effect) -> bool:
     return isinstance(permission, Mapping) and permission.get("schema_version") == ANNOUNCED_X_HAND_CAST_VERSION
 
 
+def bounded_hand_cast_amount_slot(operation, path):
+    return operation == "choose_objects" and path == (BOUNDED_HAND_CAST_FIELD, "mana_value_limit", "maximum")
+
+
+def _hand_cast_limit(effect):
+    permission = effect.get(BOUNDED_HAND_CAST_FIELD) if isinstance(effect, Mapping) else None
+    return permission.get("mana_value_limit") if isinstance(permission, Mapping) else None
+
+
+def has_announced_x_hand_cast_amount(effect):
+    from .query_effect_amount_model import CAST_X_AMOUNT_KIND
+
+    limit = _hand_cast_limit(effect)
+    amount = limit.get("maximum") if isinstance(limit, Mapping) else None
+    return isinstance(amount, Mapping) and amount.get("kind") == CAST_X_AMOUNT_KIND
+
+
+def with_hand_cast_version(effect, version):
+    return {**effect, BOUNDED_HAND_CAST_FIELD: {**effect[BOUNDED_HAND_CAST_FIELD], "schema_version": version}}
+
+
+def _announced_x_hand_cast_dependencies(effect):
+    from .query_effect_amount_model import CastXAmountSpec, DECLARED_AMOUNT_CAPABILITY
+
+    bound = _hand_cast_limit(effect)
+    if not has_announced_x_hand_cast_amount(effect) or CastXAmountSpec.from_dict(bound["maximum"]) != CastXAmountSpec():
+        raise ValueError("The hand cast ceiling requires one unscaled announced X")
+    projected = {
+        **effect,
+        BOUNDED_HAND_CAST_FIELD: {
+            **effect[BOUNDED_HAND_CAST_FIELD],
+            "mana_value_limit": {**bound, "maximum": 0},
+        },
+    }
+    if BoundedHandCastSpec.from_effect(projected).schema_version != ANNOUNCED_X_HAND_CAST_VERSION:
+        raise ValueError("The announced hand cast requires its scoped version")
+    return (BOUNDED_HAND_CAST_CAPABILITY, DECLARED_AMOUNT_CAPABILITY)
+
+
 def bounded_hand_cast_payload_dependencies(effect):
     if not isinstance(effect, Mapping) or BOUNDED_HAND_CAST_FIELD not in effect:
         return ()
@@ -177,8 +216,10 @@ def bounded_hand_cast_payload_dependencies(effect):
         if spec.hand_owner != DAMAGED_PLAYER_HAND_CAST_OWNER:
             raise ValueError("The inspected hand cast requires the committed damage recipient")
         return DAMAGED_PLAYER_HAND_CAST_DEPENDENCIES
+    if has_announced_x_hand_cast_amount(effect):
+        return _announced_x_hand_cast_dependencies(effect)
     if BoundedHandCastSpec.from_effect(effect).schema_version != 1:
-        raise ValueError("Shared-type hand free cast requires its original bound stack instruction")
+        raise ValueError("A scoped hand free cast requires its original bound stack instruction")
     return (BOUNDED_HAND_CAST_CAPABILITY,)
 
 

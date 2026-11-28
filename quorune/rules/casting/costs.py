@@ -415,9 +415,9 @@ def _additional_x_with_free_mana(host, seat, card, program, *, suppress_source_c
 
 
 def _printed_or_fixed_cast_base(host, seat, card, program, *, x_value, hint, cast_without_mana,
-                                alternative_base, suppress_source_costs, resolving_exile_authority):
+                                alternative_base, suppress_source_costs, resolving_paid_zone):
     if alternative_base is None and not cast_without_mana:
-        if resolving_exile_authority:
+        if resolving_paid_zone is not None:
             from .face_queries import current_printed_cast_mana_cost
             record = host.card_record(card)
             if record is None or not current_printed_cast_mana_cost(host, card, record).strip():
@@ -447,7 +447,7 @@ def _initial_options(
     alternative_base: Mapping[str, Any] | None,
     suppress_source_costs: bool,
     cast_type_line: str | None = None,
-    resolving_exile_authority: bool = False,
+    resolving_paid_zone: str | None = None,
 ) -> tuple[
     list[dict[str, Any]],
     list[dict[str, Any]],
@@ -457,11 +457,11 @@ def _initial_options(
     x_value = response.get("x")
     temporary_permission, intrinsic_disturb, alternative_base, cast_without_mana, separately_payable = initial_cast_base_authority(
         host, seat, card, alternative_base, force_without_mana_cost=force_without_mana_cost,
-        suppress_source_costs=suppress_source_costs, resolving_exile_authority=resolving_exile_authority,
+        suppress_source_costs=suppress_source_costs, resolving_exile_authority=resolving_paid_zone == "exile",
     )
     printed_base = _printed_or_fixed_cast_base(host, seat, card, program, x_value=x_value, hint=hint,
         cast_without_mana=cast_without_mana, alternative_base=alternative_base,
-        suppress_source_costs=suppress_source_costs, resolving_exile_authority=resolving_exile_authority)
+        suppress_source_costs=suppress_source_costs, resolving_paid_zone=resolving_paid_zone)
     if printed_base is None:
         return None
     printed, has_x = printed_base
@@ -498,7 +498,7 @@ def _initial_options(
         force_without_mana_cost=force_without_mana_cost,
         alternative_base=alternative_base,
         suppress_source_costs=suppress_source_costs or alternative_base is not None,
-        resolving_exile_authority=resolving_exile_authority,
+        resolving_paid_zone=resolving_paid_zone,
     )
     from .harmonize_costs import harmonize_base_options
 
@@ -1453,7 +1453,7 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
 
 
 def _cast_cost_options_for_submission(host, seat, card, program, submission, *, hint, force_without_mana_cost,
-        alternative_base, cast_type_line, suppress_source_costs, resolving_exile_authority,
+        alternative_base, cast_type_line, suppress_source_costs, resolving_paid_zone,
         minimum_library_x, source_grant_only=None, ignore_timing=False):
     from ..cross_zone_characteristics import prospective_cross_zone_spell_type_line
 
@@ -1471,7 +1471,7 @@ def _cast_cost_options_for_submission(host, seat, card, program, submission, *, 
         alternative_base=alternative_base,
         suppress_source_costs=suppress_source_costs,
         cast_type_line=cast_type_line,
-        resolving_exile_authority=resolving_exile_authority,
+        resolving_paid_zone=resolving_paid_zone,
     )
     if initial is None:
         return ()
@@ -1547,7 +1547,7 @@ def _cast_cost_options_for_submission(host, seat, card, program, submission, *, 
                 continue
         from .spell_mana_payments import cast_cost_option_mana_spend_context
         spend_context = cast_cost_option_mana_spend_context(host, seat, card, option_cast_type_line,
-            option=option, suppress_opponent_exile_mana=force_without_mana_cost or resolving_exile_authority,
+            option=option, suppress_opponent_exile_mana=force_without_mana_cost or resolving_paid_zone == "exile",
             face_down=suppress_source_costs)
         from .targeted_costs import target_cost_variants
         from .target_count_costs import target_count_price_variants

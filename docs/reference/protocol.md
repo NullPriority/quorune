@@ -160,7 +160,8 @@ A client must:
 Target-dependent casting offers may include `target_costs` on a cost option and
 its target form field. Public clauses identify the current source components
 and matching target references. Each payable price row gives the selected mode
-set, applicable component set, exact mana requirements and display label.
+set, applicable component set, exact mana requirements and a display label.
+A life-priced component and payable row include its current `life` amount.
 Multiple matching targets charge one component once. The browser selects a
 display row as targets change and flags an absent payable combination. This
 metadata grants no command fields; clients submit the ordinary cost option,

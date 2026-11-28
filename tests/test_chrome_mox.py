@@ -51,6 +51,147 @@ class LinkedHandManaTests(InheritedNativeFixture, unittest.TestCase):
         self.resolve_top(game)
         return self.resolve(game)
 
+    def pit_scene(self, seed, *, extra_land=False):
+        game = self.session(seed)
+        source = self.add(game.engine, "Pit of Offerings", zone="hand", ref="pit-of-offerings")
+        satyr = self.add(game.engine, "Voyaging Satyr", ref="pit-untapper")
+        satyr.acquired_control_turn_count = -1
+        if extra_land:
+            self.add(game.engine, "Exploration")
+        self.assert_closed(game, source)
+        game.state.config.semantic_policy = "trusted_only"
+        return game, source, satyr
+
+    def pit_enter(self, game, source, refs):
+        self.priority(game, "A")
+        self.act_checked(game, "A", {"action_id": "play-land:" + source.ref})
+        source = game.state.cards[source.object_id]
+        self.assertTrue(source.tapped)
+        self.target(game, "A", list(refs))
+        return source
+
+    def pit_untap(self, game, source, satyr):
+        self.priority(game, "A")
+        source = game.state.cards[source.object_id]
+        choices = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action = next(row for row in choices if row["id"].startswith("activate:" + satyr.ref + ":"))
+        self.act_checked(game, "A", {"action_id": action["id"], "targets": [source.ref]})
+        self.assertIsNone(self.resolve(game))
+        self.assertFalse(game.state.cards[source.object_id].tapped)
+
+    def pit_mana_action(self, game, source, *, linked=True):
+        self.priority(game, "A")
+        source = game.state.cards[source.object_id]
+        abilities = game.engine._activated_abilities(source)
+        ability, = (candidate for candidate in abilities
+                    if (candidate.color_set_mana_output is not None) == linked)
+        action = "activate:" + source.ref + ":" + ability.ability_id
+        return next(row for row in game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    if row["id"] == action)
+
+    def test_pit_of_offerings_uses_the_public_union_and_removes_departed_colors(self):
+        game, source, satyr = self.pit_scene(60725510)
+        charm = self.add(game.engine, "Boros Charm", seat="B", zone="graveyard")
+        bears = self.add(game.engine, "Grizzly Bears", seat="C", zone="graveyard")
+        ring = self.add(game.engine, "Sol Ring", zone="graveyard")
+        self.add(game.engine, "Counterspell", seat="D", zone="exile", ref="unrelated-exile")
+        removal = self.add(game.engine, "Pull from Eternity", zone="hand", ref="pull-linked-charm")
+        private = self.add(game.engine, "Counterspell", seat="B", zone="hand", ref="private-pit-hand")
+        self.prepare(game, mana={"W": 1})
+        self.checkpoint(game)
+        source = self.pit_enter(game, source, [charm.ref, bears.ref, ring.ref])
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertTrue(all(game.state.cards[c.object_id].zone == "exile" for c in (charm, bears, ring)))
+        self.assertNotIn(private.ref, json.dumps(game.packet("pilot:A", full=True)))
+        self.pit_untap(game, source, satyr)
+        self.assertEqual({"C", "W", "R", "G"}, self.colors(game, source))
+        choices = self.pit_mana_action(game, source)["choice_schema"]["mana_output"]["options"]
+        self.assertEqual([{"W": 1}, {"R": 1}, {"G": 1}], [row["value"] for row in choices])
+        self.cast(game, "A", removal, [game.state.cards[charm.object_id].ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("graveyard", game.state.cards[charm.object_id].zone)
+        self.assertEqual({"C", "G"}, self.colors(game, source))
+        offer = self.pit_mana_action(game, source)
+        self.assert_rejected(game, "A", {"action_id": offer["id"], "mana_output": {"R": 1}})
+        self.assert_rejected(game, "A", {"action_id": offer["id"], "mana_output": {"C": 1}})
+        self.act_checked(game, "A", {"action_id": offer["id"], "mana_output": {"G": 1}})
+        self.assertEqual(1, game.state.players["A"].mana_pool["G"])
+        self.assertTrue(game.state.cards[source.object_id].tapped)
+        self.assertFalse(game.state.stack)
+        self.replay(game)
+
+    def test_pit_of_offerings_reentry_isolates_old_links_and_can_tap_for_zero(self):
+        game, source, satyr = self.pit_scene(60725511, extra_land=True)
+        charm = self.add(game.engine, "Boros Charm", seat="B", zone="graveyard")
+        ring = self.add(game.engine, "Sol Ring", zone="graveyard")
+        bounce = self.add(game.engine, "Boomerang", zone="hand", ref="bounce-old-pit")
+        self.prepare(game, mana={"U": 2})
+        self.checkpoint(game)
+        source = self.pit_enter(game, source, [charm.ref])
+        old = source.logical_object_id
+        self.cast(game, "A", bounce, [source.ref])
+        self.resolve_top(game)
+        source = game.state.cards[source.object_id]
+        self.assertEqual("hand", source.zone)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("exile", game.state.cards[charm.object_id].zone)
+        source = self.pit_enter(game, source, [ring.ref])
+        self.assertNotEqual(old, source.logical_object_id)
+        self.assertIsNone(self.resolve(game))
+        self.pit_untap(game, source, satyr)
+        self.assertEqual({"C"}, self.colors(game, source))
+        modes = [mode for row in game.engine.available_mana_sources("A") if row.ref == source.ref for mode in row.modes]
+        self.assertEqual(1, len(modes))
+        self.assertEqual(1, modes[0].bundle["C"])
+        before = dict(game.state.players["A"].mana_pool)
+        action = self.pit_mana_action(game, source)
+        self.assert_rejected(game, "A", {"action_id": action["id"], "mana_output": {"W": 1}})
+        self.act_checked(game, "A", {"action_id": action["id"]})
+        self.assertEqual(before, dict(game.state.players["A"].mana_pool))
+        self.assertTrue(game.state.cards[source.object_id].tapped)
+        self.assertFalse(game.state.stack)
+        self.assertEqual(["exile", "exile"], [game.state.cards[c.object_id].zone for c in (charm, ring)])
+        self.replay(game)
+
+    def test_pit_of_offerings_partial_target_survival_and_normal_colorless_mana(self):
+        game, source, satyr = self.pit_scene(60725512)
+        taken_early = self.add(game.engine, "Boros Charm", seat="B", zone="graveyard")
+        survives = self.add(game.engine, "Grizzly Bears", seat="C", zone="graveyard")
+        cremate = self.add(game.engine, "Cremate", zone="hand")
+        self.prepare(game, mana={"B": 1})
+        self.checkpoint(game)
+        source = self.pit_enter(game, source, [taken_early.ref, survives.ref])
+        self.cast(game, "A", cremate, [taken_early.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(["exile", "exile"], [game.state.cards[c.object_id].zone for c in (taken_early, survives)])
+        self.pit_untap(game, source, satyr)
+        self.assertEqual({"C", "G"}, self.colors(game, source))
+        offer = self.pit_mana_action(game, source, linked=False)
+        self.act_checked(game, "A", {"action_id": offer["id"]})
+        self.assertEqual(1, game.state.players["A"].mana_pool["C"])
+        self.assertEqual(0, game.state.players["A"].mana_pool["G"])
+        self.replay(game)
+
+    def test_pit_of_offerings_exact_pair_and_closed_scope_are_required(self):
+        from quorune.rules.linked_graveyard_mana import validate_linked_graveyard_mana_group
+
+        record = self.db.lookup("Pit of Offerings", fuzzy=False)
+        self.assertEqual("exact", compile_oracle_card(record, capability_registry=self.registry).status)
+        with patch("quorune.compiler.linked_graveyard_mana.paired_linked_graveyard_mana",
+                   side_effect=lambda nodes, *_args, **_kwargs: nodes):
+            self.assertEqual("partial", compile_oracle_card(record, capability_registry=self.registry).status)
+        program = compile_card_program(self.db, record, capability_registry=self.registry,
+                                       capability_profile="commander_review", trust_level="trusted")
+        reader, = (handler for ability in program.abilities for handler in ability.handlers
+                   if handler["handler_id"] == "ability.activated.mana.linked-graveyard-colors.v1")
+        self.assertEqual(("ab4", 3), (reader["ability"]["ability_id"], reader["ability"]["line_index"]))
+        with self.assertRaises(ValueError):
+            validate_linked_graveyard_mana_group(tuple(a for a in program.abilities if a.event != "permanent.enter.self"))
+        for text in ("up to two target cards", "up to three target creature cards"):
+            changed = replace(record, oracle_text=record.oracle_text.replace("up to three target cards", text))
+            self.assertNotEqual("exact", compile_oracle_card(changed, capability_registry=self.registry).status)
+
     def test_exact_pair_is_required_and_unsupported_grammar_remains_residual(self):
         card = self.db.lookup("Chrome Mox", fuzzy=False)
         registry = self.registry

@@ -28,6 +28,12 @@ for an Oracle ID and records face identity, source hashes, provenance, typed
 nodes, material residuals, capability dependencies, trust basis, and a single
 artifact fingerprint. The versioned JSON schema is the serialization authority.
 
+Printed fixed source-characteristic activations on a transforming card can
+occupy the same line on two faces. The compiler keeps the first resolving
+program's key and qualifies a colliding later program by its source face.
+Each face's catalog still exposes the printed activation slot and directs
+payment and resolution to its own program.
+
 Trusted-only Commander setup accepts ordinary front-face type eligibility or a
 current, source-bound CardProgram declaration for a printed planeswalker
 permission. The setup owner checks the declaration's face, canonical program
@@ -340,6 +346,14 @@ recipient incarnation end applicability. A later layer-six ability removal
 does not undo the prior layer-two effect. Conditional and
 enchanted-player scopes remain residuals.
 
+A directional control activation uses the ordinary left-or-right choice and
+locks the current nonland sets of the active seated players into one control
+batch. It excludes the original source incarnation. The shared layer-two
+owner applies all acquisitions at one timestamp and retains prior custody
+for player departure. An immediate owned-permanent blink uses the linked
+exile and return transaction. Its target predicate checks ownership and the
+other-object restriction independently of current control.
+
 A represented battlefield trigger may carry a closed optional `trigger_limit`
 descriptor. The compiler composes the exact once-each-turn suffix with an
 independently closed event and result, and retains the full source span.
@@ -476,6 +490,11 @@ and the source span of its independently compiled mana child. The recipient's
 current controller uses normal mana-activation legality, and the continuous
 effect expires during cleanup.
 
+A resolved Saga chapter can schedule a repeatable same-turn noncreature
+cast trigger for its original controller. Each qualifying committed cast
+produces an ordinary targeted ability and uses the existing keyword owner.
+The delayed trigger retains its source binding across the Saga's departure.
+
 Explicit abilities in supported fixed creature-token definitions use the same
 boundary. The compiler lowers the token shell and each independently exact
 quoted child together, stores only typed copiable fragments on the created
@@ -483,6 +502,11 @@ token, and pins activated or triggered child programs to stable semantic
 identities. The token remains the runtime source after the creating object
 leaves. More than two quoted abilities, unsupported children, reminder-only
 profiles, and nonfixed token shells remain residual.
+
+An ordinary Saga chapter can carry a fixed token definition with an
+independently supported quoted ability. The chapter keeps its source span
+and chapter event. The token carries the quoted ability through the same
+copiable fragment and child program used by other token-producing effects.
 
 Commander pairing is also a CardProgram declaration boundary. Exact ordinary
   `Partner`, the four pinned `Partner—[text]` variants, `Partner with`,

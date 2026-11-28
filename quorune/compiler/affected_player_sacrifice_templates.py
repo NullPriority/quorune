@@ -16,6 +16,7 @@ from ..apnap_object_payment import (
 from ..power_sacrifice_model import (
     ATTACK_SACRIFICE_STAT_TEMPLATE, ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE, GreatestPowerSacrificeSpec,
     attack_sacrifice_stat_effect, entry_sacrifice_power_life_draw_effect,
+    ENTRY_SACRIFICE_POWER_TREASURE_TEMPLATE, entry_sacrifice_power_treasure_effect,
 )
 from ..player_maximum_model import LAND_COUNT_METRIC, land_count_maximizers_reference
 from ..basic_land_types import BASIC_LAND_MANA
@@ -447,10 +448,29 @@ def counted_sacrifice_damage_template(text, *, card_name):
 def any_number_sacrifice_template(text):
     from ..rules.any_number_sacrifice import ANY_NUMBER_SACRIFICE_TEMPLATE, any_number_sacrifice_effect
 
+    from ..replacement.immutable import thaw_value
+    from ..rules.graveyard_return_choices import COMMITTED_GRAVEYARD_RETURN_RECIPE
+
     material = " ".join(text.split()).casefold()
     life_text = "sacrifice any number of permanents. you gain 2 life for each permanent sacrificed this way."
-    if material == life_text:
+    bounded_search = (
+        "sacrifice any number of creatures. search your library and/or graveyard for a creature card with mana "
+        "value less than or equal to the number of creatures sacrificed this way and put it onto the battlefield. "
+        "if you search your library this way, shuffle."
+    )
+    if material == bounded_search:
+        from ..rules.named_searches import sacrifice_bound_creature_search_recipe
+
+        domain, followup = "creatures", sacrifice_bound_creature_search_recipe()
+    elif material == (
+        "sacrifice any number of artifacts, enchantments, and/or tokens. "
+        "return that many creature cards from your graveyard to the battlefield."
+    ):
+        domain = "artifact_enchantment_token"
+        followup = thaw_value(COMMITTED_GRAVEYARD_RETURN_RECIPE)
+    elif material == life_text:
         domain = "permanents"
+
         followup = {"op": "life", "player": "$controller", "delta": 2}
     elif material == (
         "sacrifice any number of lands. search your library for up to that many land cards, "
@@ -667,21 +687,38 @@ _ENTRY_SACRIFICE_POWER = re.compile(
 )
 
 
+_ENTRY_SACRIFICE_TREASURE_VARIANT = "source_entry_selected_sacrifice_treasure"
+_ENTRY_SACRIFICE_TREASURE = re.compile(
+    r"When this creature enters, (?P<body>you may sacrifice another creature you control\. "
+    r"If you do, create a number of Treasure tokens equal to that creature['’]s power\.)",
+    re.I,
+)
+
+
 def entry_sacrifice_power_draw_binding_spec(text):
-    match = _ENTRY_SACRIFICE_POWER.fullmatch(text)
-    if match is None or (match["optional"] is None) != (match["paid"] is None):
+    treasure = _ENTRY_SACRIFICE_TREASURE.fullmatch(text)
+    match = treasure or _ENTRY_SACRIFICE_POWER.fullmatch(text)
+    if match is None or (treasure is None and (match["optional"] is None) != (match["paid"] is None)):
         return None
     from ..rules.affected_player_sacrifice_capability_shapes import entry_sacrifice_power_condition
     from .fixed_public_event_trigger_bindings import FixedPublicEventBindingSpec
 
     return FixedPublicEventBindingSpec(
-        event="permanent.enter", variant=_ENTRY_SACRIFICE_POWER_VARIANT, body=match["body"],
-        template_id=ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE, mechanic="trigger-event-normalized-zone-change",
+        event="permanent.enter", body=match["body"],
+        variant=_ENTRY_SACRIFICE_TREASURE_VARIANT if treasure else _ENTRY_SACRIFICE_POWER_VARIANT,
+        template_id=ENTRY_SACRIFICE_POWER_TREASURE_TEMPLATE if treasure else ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE,
+        mechanic="trigger-event-normalized-zone-change",
         condition=entry_sacrifice_power_condition(),
     )
 
 
 def entry_sacrifice_power_draw_result(binding, body):
+    if binding.variant == _ENTRY_SACRIFICE_TREASURE_VARIANT and body == binding.body:
+        return (
+            (ENTRY_SACRIFICE_POWER_TREASURE_TEMPLATE, (entry_sacrifice_power_treasure_effect(),), None,
+             (FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, "sacrifice", SOURCE_EXCLUDED_SACRIFICE_MECHANIC, "cr-111-tokens")),
+            True,
+        )
     if binding.variant != _ENTRY_SACRIFICE_POWER_VARIANT or body != binding.body:
         return None
     return (

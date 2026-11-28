@@ -9,6 +9,7 @@ from .declaration_costs import (
 )
 from .declaration_fragments import (
     ComparedStat,
+    DEFENDING_PLAYER_RAD_BLOCK_TEMPLATE,
     DeclarationBattlefieldCondition,
     DeclarationCombatCondition,
     DeclarationCondition,
@@ -715,40 +716,9 @@ def parse_declaration_restriction_line(
     if parse_declaration_cost_line(line).recognized:
         return DeclarationRestrictionParse(False)
 
-    legacy_battlefield = _SELF_BATTLEFIELD_CONDITION.fullmatch(line)
-    legacy_conditional_evasion = _SELF_CONDITIONAL_UNBLOCKABLE.fullmatch(line)
-    legacy_public_condition = (
-        legacy_battlefield is not None
-        and _battlefield_condition(
-            (
-                "source_controller"
-                if legacy_battlefield.group("source")
-                else "defending_player"
-            ),
-            legacy_battlefield.group("filter"),
-        )
-        is not None
-    ) or (
-        legacy_conditional_evasion is not None
-        and _battlefield_condition(
-            "defending_player",
-            legacy_conditional_evasion.group("condition"),
-        )
-        is not None
-    ) or any(
-        pattern.fullmatch(line) is not None
-        for pattern in (
-            _SELF_PLAYER_STATE_CONDITION,
-            _SELF_CAST_SPELL_THIS_TURN,
-            _SELF_OPPONENT_DAMAGED_THIS_TURN,
-            _SELF_CONTROLLED_CREATURE_DIED_THIS_TURN,
-            _SELF_ALREADY_ATTACKED_PLAYER_THIS_TURN,
-            _SELF_CONDITIONAL_BLOCKER_FILTER,
-            _SELF_ATTACKING_ALONE_EVASION,
-            _ATTACHED_ATTACKING_ALONE_EVASION,
-            _SELF_NO_OTHER_CREATURE_EVASION,
-        )
-    )
+    from .declaration_condition_precedence import has_legacy_declaration_condition
+
+    legacy_public_condition = has_legacy_declaration_condition(line)
     match = (
         None
         if legacy_public_condition
@@ -1270,21 +1240,13 @@ def parse_declaration_restriction_line(
                 scope="self",
             )
 
-    if _SELF_MONARCH_BLOCKER_CONDITION.fullmatch(line):
-        return DeclarationRestrictionParse(
-            True,
-            DeclarationRestrictionTemplate(
-                template_id="intrinsic-monarch-controller-evasion-v1",
-                declarations=("block",),
-                scope="source_option",
-                condition=DeclarationPlayerStateCondition(
-                    player="defending_player",
-                    state="monarch",
-                ),
-            ),
-            declarations=("block",),
-            scope="source_option",
-        )
+    rad_defender = line == "this creature can't be blocked as long as defending player has a rad counter."
+    if rad_defender or _SELF_MONARCH_BLOCKER_CONDITION.fullmatch(line):
+        return DeclarationRestrictionParse(True, DeclarationRestrictionTemplate(
+            template_id=DEFENDING_PLAYER_RAD_BLOCK_TEMPLATE if rad_defender else "intrinsic-monarch-controller-evasion-v1",
+            declarations=("block",), scope="source_option",
+            condition=DeclarationPlayerStateCondition("defending_player", "rad_counter" if rad_defender else "monarch"),
+        ), declarations=("block",), scope="source_option")
 
     match = _GLOBAL_MONARCH_SOURCE_CONTROLLER_ATTACK.fullmatch(line)
     if match:

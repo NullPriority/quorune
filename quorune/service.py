@@ -398,6 +398,40 @@ class GameService:
             )
         return None
 
+    def _command_availability_error(
+        self, envelope: CommandEnvelope, principal: str,
+    ) -> CommandReceipt | None:
+        status = self.session.record_status
+        if status not in {"created", "in_progress"}:
+            administrative_stop = (
+                status == "paused"
+                and (self.session.pause_reason or {}).get("kind") == "administrative_stop"
+            )
+            return self._receipt(
+                envelope,
+                ok=False,
+                code="game_paused" if status == "paused" else "game_not_active",
+                summary=(
+                    "Game is administratively stopped; resume it before "
+                    "submitting a new command"
+                    if administrative_stop
+                    else "Game is paused at a rules or fidelity boundary and "
+                    "cannot accept new commands"
+                    if status == "paused"
+                    else f"Game is {status} and cannot accept new commands"
+                ),
+            )
+        if principal.startswith("pilot:"):
+            player = self.session.state.players.get(principal.removeprefix("pilot:"))
+            if player is not None and not player.in_game:
+                return self._receipt(
+                    envelope,
+                    ok=False,
+                    code="player_not_active",
+                    summary="You are observing this game after leaving it",
+                )
+        return None
+
     def command(
         self,
         envelope: CommandEnvelope,
@@ -429,36 +463,8 @@ class GameService:
                 )
             return replace(prior.receipt, replayed=True)
 
-        if self.session.record_status not in {"created", "in_progress"}:
-            status = self.session.record_status
-            administrative_stop = (
-                status == "paused"
-                and (self.session.pause_reason or {}).get("kind")
-                == "administrative_stop"
-            )
-            receipt = self._receipt(
-                envelope,
-                ok=False,
-                code=(
-                    "game_paused"
-                    if status == "paused"
-                    else "game_not_active"
-                ),
-                summary=(
-                    "Game is administratively stopped; resume it before "
-                    "submitting a new command"
-                    if administrative_stop
-                    else "Game is paused at a rules or fidelity boundary and "
-                    "cannot accept new commands"
-                    if status == "paused"
-                    else f"Game is {status} and cannot accept new commands"
-                ),
-            )
-            return (
-                self.remember(envelope, principal, receipt)
-                if commit_idempotency
-                else receipt
-            )
+        if error := self._command_availability_error(envelope, principal):
+            return self.remember(envelope, principal, error) if commit_idempotency else error
 
         decision = self.session.state.pending_decision
         if decision is None or decision.decision_id != envelope.decision_id:

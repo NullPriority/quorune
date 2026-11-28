@@ -45,6 +45,16 @@ def cast_snow_payment_kwargs(option: Mapping) -> dict[str, int]:
     return {"snow_required": amount} if amount else {}
 
 
+def phyrexian_mana_choices(symbol: str) -> tuple[tuple[str, str | int], ...]:
+    """The ordinary colors or two life represented by one Phyrexian symbol."""
+    parts = symbol.upper().split('/')
+    colors = parts[:-1]
+    if (len(parts) not in (2, 3) or parts[-1] != 'P'
+            or len(set(colors)) != len(colors) or not set(colors).issubset('WUBRG')):
+        return ()
+    return (*(("mana", color) for color in colors), ('life', 2))
+
+
 def printed_phyrexian_life_payment(option: Mapping) -> int:
     if PRINTED_PHYREXIAN_LIFE_FIELD not in option:
         return 0

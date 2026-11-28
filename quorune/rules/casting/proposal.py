@@ -128,7 +128,7 @@ class CastProposalHost(CastCostHost, Protocol):
         alternative_base: Mapping[str, Any] | None = None,
         cast_type_line: str | None = None,
         suppress_source_costs: bool = False,
-        resolving_exile_authority: bool = False,
+        resolving_paid_zone: str | None = None,
         resolving_library_authority: bool = False,
         ignore_timing: bool = False,
     ) -> list[dict[str, Any]]: ...
@@ -650,9 +650,9 @@ def _cast_program_and_cost(
     resolving_library=(request.during_resolution and request.authorized_from_zone=='library'
         and request.force_without_mana_cost and request.ignore_timing)
     if resolving_library:cost_query['resolving_library_authority']=True
-    if (request.during_resolution and request.authorized_from_zone == "exile"
+    if (request.during_resolution and request.authorized_from_zone in {"exile", "graveyard"}
             and request.authorized_cost_option is None and not request.force_without_mana_cost):
-        cost_query["resolving_exile_authority"] = True
+        cost_query["resolving_paid_zone"] = request.authorized_from_zone
     if request.cost_option_id is None:
         advertised = tuple(
             CastCostOption.from_dict(value)
@@ -991,8 +991,8 @@ def _cast_offer_payload(
         }
         from ..optional_life_cost_model import optional_life_cost_amount
         from ...printed_mana_cost_model import printed_phyrexian_life_payment
-        from .library_top_life import mana_value_life_amount
-        life_payment = optional_life_cost_amount(raw) + printed_phyrexian_life_payment(raw) + mana_value_life_amount(raw)
+        from .optional_life_costs import alternate_cast_life_amount
+        life_payment = optional_life_cost_amount(raw) + printed_phyrexian_life_payment(raw) + alternate_cast_life_amount(raw)
         if life_payment:
             projected['additional_life']=life_payment
         if public_schema is not None:
@@ -1042,7 +1042,7 @@ def _cast_offer_costs(host, seat, card, program, *, cast_method, face_down, type
             "requirements": {"GENERIC": 3, **{color: 0 for color in "WUBRGC"}},
         }
     authority = {"force_without_mana_cost": True} if resolving_payment == "free" else (
-        {"resolving_exile_authority": True} if resolving_payment == "paid" else {})
+        {"resolving_paid_zone": resolving_origin} if resolving_payment == "paid" else {})
     if resolving_payment is not None:authority['ignore_timing']=True
     if resolving_payment=='free' and resolving_origin=='library':authority['resolving_library_authority']=True
     return tuple(
@@ -1071,7 +1071,7 @@ def build_cast_offer(
         card.zone != resolving_origin
         or resolving_payment not in ("free", "paid")
         or resolving_origin not in {"exile", "graveyard", "hand", "library"}
-        or resolving_payment == "paid" and resolving_origin != "exile"
+        or resolving_payment == "paid" and resolving_origin not in {"exile", "graveyard"}
     ):
         return CastProposalResult("unavailable", "zone_permission")
     record = host.card_record(card)

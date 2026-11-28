@@ -6,7 +6,7 @@ import unittest
 
 from common import keep_all, load_assets, make_session
 from quorune.errors import GameRuleError
-from quorune.model import GameState
+from quorune.model import GameConfig, GameState
 from quorune.semantics import SemanticProgram
 from quorune.trigger_batches import (
     PendingTriggerBatch,
@@ -15,6 +15,7 @@ from quorune.trigger_batches import (
     begin_pending_trigger_placement,
     complete_pending_trigger_group,
     create_pending_trigger_batch,
+    equivalent_untargeted_trigger_refs,
     merge_pending_trigger_batch,
 )
 from quorune.trigger_processing import (
@@ -42,6 +43,54 @@ def trigger_payload(
 
 
 class TriggerBatchModelTests(unittest.TestCase):
+    def test_identical_order_uses_exact_source_and_context_and_retains_copy_audit(self):
+        program = SimpleNamespace(
+            key="fixture:trigger", trust_level="trusted", requires_arbiter=False,
+            handlers=(), target_schema=None, cost_schema=None,
+            effects=({"op": "life", "player": "$controller", "delta": 1},),
+            event_condition=None,
+        )
+        context = {"event": "permanent.enter", "source_logical_object_id": "source@2", "amount": 1}
+        base = trigger_payload("S1", "A", label="Same ability", context=context)
+        base.update(source_object_id="source", semantic_key=program.key)
+        copy_row = {**base, "ref": "S2", "stack_id": "stack-S2",
+                    "context": {**context, "additional_trigger_copy": 1,
+                                "additional_trigger_source": {"schema_version": 1}}}
+        first = PendingTriggerItem.from_dict(base)
+        second = PendingTriggerItem.from_dict(copy_row)
+        self.assertEqual(["S1", "S2"], equivalent_untargeted_trigger_refs((first, second), program))
+        self.assertEqual(copy_row, second.to_dict())
+
+        for changed in (
+            {**copy_row, "source_object_id": "another-source"},
+            {**copy_row, "context": {**context, "source_logical_object_id": "source@3"}},
+            {**copy_row, "context": {**context, "amount": True}},
+            {**copy_row, "context": {**context, "trigger_target_selection_pending": True}},
+            {**copy_row, "context": {**context, "additional_trigger_copy": None}},
+            {**copy_row, "targets": ["B"]},
+            {**copy_row, "visibility": ["A"]},
+        ):
+            with self.subTest(changed=changed):
+                self.assertIsNone(equivalent_untargeted_trigger_refs(
+                    (first, PendingTriggerItem.from_dict(changed)), program,
+                ))
+        program.effects = ({"op": "life", "delta": "$context.additional_trigger_copy"},)
+        self.assertIsNone(equivalent_untargeted_trigger_refs((first, second), program))
+        program.effects = ({"op": "counter_stack", "target": "$stack"},)
+        self.assertIsNone(equivalent_untargeted_trigger_refs((first, second), program))
+
+    def test_identical_order_config_preserves_absence_for_old_replay(self):
+        new = GameConfig().to_dict()
+        self.assertEqual(1, new["identical_trigger_order_version"])
+        old = dict(new)
+        old.pop("identical_trigger_order_version")
+        restored = GameConfig.from_dict(old)
+        self.assertIsNone(restored.identical_trigger_order_version)
+        self.assertEqual(old, restored.to_dict())
+        for invalid in (True, 0, 1.0, None):
+            with self.subTest(invalid=invalid), self.assertRaises(ValueError):
+                GameConfig.from_dict({**new, "identical_trigger_order_version": invalid})
+
     def test_pending_item_deep_freezes_caller_data(self):
         payload = trigger_payload(
             "S1",

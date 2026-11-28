@@ -33,6 +33,7 @@ class ChoiceStackView:
     kind: str | None = None
     copy_prohibited: bool = False
     announced_copy_scope: FrozenMap | None = None
+    resolving_graveyard_original: bool = False
 
     def __post_init__(self) -> None:
         if self.copy_source is not None and not isinstance(self.copy_source,FrozenMap):object.__setattr__(self,'copy_source',FrozenMap(self.copy_source))
@@ -233,6 +234,7 @@ class SnapshotSemanticChoiceQuery:
     current_turn_sequence: int = 0
     committed_discard_ids: tuple[str, ...] = ()
     defined_discard_characteristic_ids: tuple[str, ...] = ()
+    name_sticker_facts: FrozenMap = field(default_factory=FrozenMap)
     resolution_condition_facts: FrozenMap = field(default_factory=FrozenMap)
     rules_profile: str = ''
     library_search_allowed_by_seat: FrozenMap = field(default_factory=FrozenMap)
@@ -299,6 +301,7 @@ class SnapshotSemanticChoiceQuery:
             "opponent_cast_colors_by_seat",
             "draw_permissions_by_seat",
             "resolution_condition_facts",
+            "name_sticker_facts",
             "library_search_allowed_by_seat",
             "library_search_refs_by_seat",
             "ring_choice_plans",

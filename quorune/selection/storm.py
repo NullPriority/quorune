@@ -82,6 +82,10 @@ class StormTargetChoiceOwnerMixin:
             )
             self._grant_priority(self.state.active_player)
             return
+        from .storm_copy_replacements import begin_replaced_storm_batch
+
+        if begin_replaced_storm_batch(self, item, count, template):
+            return
         target_schema = template.get("target_schema")
         if not isinstance(target_schema, Mapping) or template.get('commander_copy_new_targets') is False:
             context = StormCompletionContext(
@@ -361,6 +365,11 @@ class StormTargetChoiceOwnerMixin:
             self._grant_priority(self.state.active_player)
 
     def _complete_storm_choice(self, decision: Any) -> None:
+        from .storm_copy_replacements import CONTINUATION, complete_replaced_storm_batch
+
+        if CONTINUATION in decision.continuation:
+            complete_replaced_storm_batch(self, decision)
+            return
         context = self._storm_completion_context(decision)
         copies = self._build_storm_copies(context)
         self._commit_storm_copies(context, copies)

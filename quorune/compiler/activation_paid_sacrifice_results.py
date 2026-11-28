@@ -26,6 +26,7 @@ from ..rules.commander_return_choice import (
 from .paid_sacrifice_amount_templates import _paid_sacrifice_stat_template
 from .loot_transform_graveyard_templates import loot_transform_and_graveyard_cast_gate, loot_transform_or_graveyard_cast
 from .void_counter_play_templates import void_counter_play_activation_gate, void_counter_play_activation_result
+from .silver_exile_loyalty_templates import silver_loyalty_activation_gate, silver_loyalty_activation_result
 from .controller_top_exile_activation import controller_top_exile_activation, controller_top_exile_activation_gate
 from .loyalty_spell_results import fixed_loyalty_spell_result, fixed_loyalty_spell_result_gate
 
@@ -58,8 +59,22 @@ def compile_activation_result(ability, *, source_name, text, compile_fixed, publ
         return repeated
     from .controlled_creature_main_combat import controlled_untap_combat_activation
     from .meld_pair_templates import meld_pair_activation_template
+    from .die_roll_library_depth import die_library_depth_activation
+    from ..rules.chosen_attack_turn import INSTRUCTION, TARGET, chosen_attack_turn_activation_matches
+    from ..chosen_attack_turn_model import MECHANIC as CHOSEN_ATTACK_MECHANIC
+    from ..replacement.immutable import thaw_value
+
+    if (public_timing is None and " ".join(text.casefold().replace("’", "'").split()) ==
+            "target opponent chooses any number of creatures they control. during that player's next turn, "
+            "the chosen creatures attack if able, and other creatures can't attack. at the beginning of "
+            "that turn's end step, destroy each of the chosen creatures that didn't attack this turn."
+            and chosen_attack_turn_activation_matches(ability)):
+        return ("chosen-creatures-next-attack-turn-v1", (thaw_value(INSTRUCTION),), thaw_value(TARGET),
+                (CHOSEN_ATTACK_MECHANIC, "cr-115-targets"))
     from .source_mutation_damage import source_mutation_damage_activation
 
+    if die_depth := die_library_depth_activation(ability, text, public_timing=public_timing):
+        return die_depth
     if special := (source_mutation_damage_activation(ability, text, public_timing=public_timing)
                    or controlled_untap_combat_activation(ability, text, public_timing=public_timing)
                    or meld_pair_activation_template(ability, text, source_name=source_name, public_timing=public_timing)):
@@ -84,6 +99,9 @@ def compile_activation_result(ability, *, source_name, text, compile_fixed, publ
 
     if damage := loyalty_damage_activation_template(ability, text, source_name=source_name, public_timing=public_timing):
         return damage
+    from ..rules.enchantment_loyalty_results import enchantment_loyalty_template
+    if result := enchantment_loyalty_template(ability, text):
+        return result
 
     if public_timing is None and ability.zones == ("battlefield",) and not ability.mana_ability:
         from ..rules.next_personal_turn_protection import (
@@ -118,10 +136,14 @@ def compile_activation_result(ability, *, source_name, text, compile_fixed, publ
             return ordered_exile
     if chosen_color_draw_text(ability.cost_text, text):
         return "chosen-color-paid-draw-v1", (draw_effect(),), None, ("cr-121-drawing-a-card",)
+    if silver_exile := silver_loyalty_activation_result(ability, text, public_timing=public_timing):
+        return silver_exile
     if void_play := void_counter_play_activation_result(ability, text, public_timing=public_timing):
         return void_play
     if commander_return := commander_return_activation_result(ability, text, public_timing=public_timing):
         return commander_return
+    if ordered_owner := ordered_source_owner_hand_entry_activation(ability, text, public_timing=public_timing):
+        return ordered_owner
     if source_top := (draw_source_owner_top_activation(ability, text, public_timing=public_timing)
                       or loot_transform_or_graveyard_cast(ability, source_name=source_name, text=text, public_timing=public_timing)):
         return source_top
@@ -145,7 +167,7 @@ def compile_activation_result(ability, *, source_name, text, compile_fixed, publ
         return top_exile
     if private_top := controller_library_top_delayed_hand_activation(ability, text, public_timing=public_timing):
         return private_top
-    if movement := fixed_counter_movement_activation_result(ability, text):
+    if movement := fixed_counter_movement_activation_result(ability, text, source_name=source_name):
         return movement
     if text.casefold().startswith("monstrosity x,"):
         from .self_counter_keyword_actions import controlled_counter_monstrosity_activation
@@ -224,8 +246,39 @@ def activation_result_dependency_gate(**scope):
             required, capability_registry=scope["capability_registry"], capability_profile=scope["capability_profile"],
         )
     from .controlled_creature_main_combat import controlled_untap_combat_activation_gate
+    from ..rules.ordered_source_owner_hand_entry import (
+        CAPABILITY as OWNER_DRAW_LAND_CAPABILITY, MECHANIC as OWNER_DRAW_LAND_MECHANIC,
+        ordered_source_owner_hand_entry_capabilities,
+    )
+
+    if OWNER_DRAW_LAND_MECHANIC in scope["mechanics"]:
+        required = ordered_source_owner_hand_entry_capabilities(
+            scope["effects"], scope["target_schema"], scope["active_zone"], scope["cost_schema"], scope["mechanics"],
+        )
+        if not required:
+            return DependencyGate(blockers=(f"capability:{OWNER_DRAW_LAND_CAPABILITY}",))
+        return explicit_capabilities_gate(
+            required, capability_registry=scope["capability_registry"], capability_profile=scope["capability_profile"],
+        )
+    from ..rules.chosen_attack_turn import chosen_attack_turn_node_capabilities
+    from ..chosen_attack_turn_model import MECHANIC as CHOSEN_ATTACK_MECHANIC
+
+    if CHOSEN_ATTACK_MECHANIC in scope["mechanics"]:
+        required = chosen_attack_turn_node_capabilities(**{
+            key: scope[key] for key in ("effects", "target_schema", "mechanics", "cost_schema")
+        })
+        if not required or scope["active_zone"] != "battlefield":
+            return DependencyGate(blockers=(f"mechanic:{CHOSEN_ATTACK_MECHANIC}",))
+        return explicit_capabilities_gate(
+            required, capability_registry=scope["capability_registry"], capability_profile=scope["capability_profile"],
+        )
     from .delayed_object_templates import target_death_return_activation_gate
+    from .die_roll_library_depth import die_library_depth_activation_gate
     from .finite_damage_redirection_nodes import finite_damage_redirection_gate
+    from ..rules.chosen_damage_redirection import (
+        CAPABILITY as CHOSEN_REDIRECTION_CAPABILITY, MECHANIC as CHOSEN_REDIRECTION_MECHANIC,
+        chosen_damage_redirection_capabilities, uses_chosen_damage_redirection,
+    )
     from .impulse_access_templates import shuffled_top_free_play_activation_gate
     from .meld_pair_templates import meld_pair_activation_gate
     from .opponent_library_exile_templates import draw_then_opponent_exile_activation_gate
@@ -233,6 +286,38 @@ def activation_result_dependency_gate(**scope):
 
     from ..rules.next_personal_turn_protection import activated_protection_node_capabilities
     from ..rules.loyalty_damage import loyalty_damage_capabilities
+    from ..fixed_counter_movement_model import (
+        FIXED_COUNTER_MOVEMENT_OPERATION, SOURCE_BOUND_COUNTER_MOVEMENT_VERSION,
+        SOURCE_GIVES_COUNTERS_THEN_DRAW, SOURCE_RECEIVES_MISSING_KINDS,
+    )
+
+    effects = scope["effects"]
+    if (scope["active_zone"] == "battlefield" and len(effects) == 1
+            and effects[0].get("op") == FIXED_COUNTER_MOVEMENT_OPERATION
+            and effects[0].get("schema_version") == SOURCE_BOUND_COUNTER_MOVEMENT_VERSION
+            and effects[0].get("form") in (SOURCE_RECEIVES_MISSING_KINDS, SOURCE_GIVES_COUNTERS_THEN_DRAW)):
+        from ..rules.fixed_counter_movement import fixed_counter_movement_node_capabilities
+
+        required = fixed_counter_movement_node_capabilities(
+            effects=effects, target_schema=scope["target_schema"],
+            mechanic_ids=scope["mechanics"], cost_schema=scope["cost_schema"],
+        )
+        if required:
+            return explicit_capabilities_gate(
+                required, capability_registry=scope["capability_registry"], capability_profile=scope["capability_profile"],
+            )
+
+    if die_depth := die_library_depth_activation_gate(**scope):
+        return die_depth
+    if CHOSEN_REDIRECTION_MECHANIC in scope["mechanics"] or uses_chosen_damage_redirection(scope["effects"]):
+        required = chosen_damage_redirection_capabilities(**{
+            key: scope[key] for key in ("effects", "target_schema", "mechanics", "active_zone", "cost_schema")
+        })
+        if not required:
+            return DependencyGate(blockers=(f"capability:{CHOSEN_REDIRECTION_CAPABILITY}",))
+        return explicit_capabilities_gate(
+            required, capability_registry=scope["capability_registry"], capability_profile=scope["capability_profile"],
+        )
 
     if loyalty_damage := loyalty_damage_capabilities(**{
         key: scope[key] for key in ("effects", "target_schema", "mechanics", "active_zone", "cost_schema")
@@ -259,7 +344,7 @@ def activation_result_dependency_gate(**scope):
         return explicit_capabilities_gate(
             required, capability_registry=scope["capability_registry"], capability_profile=scope["capability_profile"],
         )
-    return (controlled_untap_combat_activation_gate(**scope) or meld_pair_activation_gate(**scope) or fixed_loyalty_spell_result_gate(**scope) or paid_type_activation_gate(**scope) or commander_lifelink_gate(**scope) or noted_mana_charge_gate(**scope)
+    return (controlled_untap_combat_activation_gate(**scope) or meld_pair_activation_gate(**scope) or fixed_loyalty_spell_result_gate(**scope) or paid_type_activation_gate(**scope) or enchantment_loyalty_activation_gate(**scope) or commander_lifelink_gate(**scope) or noted_mana_charge_gate(**scope)
             or loot_transform_and_graveyard_cast_gate(**scope)
             or controller_top_exile_activation_gate(**scope)
             or draw_then_opponent_exile_activation_gate(**scope)
@@ -267,8 +352,10 @@ def activation_result_dependency_gate(**scope):
             or draw_source_owner_top_activation_gate(**scope) or linked_loyalty_activation_gate(**scope)
             or finite_damage_redirection_gate(**scope) or either_commander_return_gate(**scope)
             or source_sacrifice_power_life_gate(**scope)
+            or paid_damage_mana_value_gate(**scope)
             or target_death_return_activation_gate(**scope) or controlled_arrival_proliferate_activation_gate(**scope)
-            or void_counter_play_activation_gate(**scope) or artifact_sacrifice_return_activation_gate(**scope))
+            or silver_loyalty_activation_gate(**scope) or void_counter_play_activation_gate(**scope)
+            or artifact_sacrifice_return_activation_gate(**scope))
 
 
 def paid_type_activation_gate(*, effects, target_schema, mechanics, active_zone, cost_schema,
@@ -284,6 +371,21 @@ def paid_type_activation_gate(*, effects, target_schema, mechanics, active_zone,
     return explicit_capabilities_gate(
         required, capability_registry=capability_registry, capability_profile=capability_profile,
     )
+
+
+
+def enchantment_loyalty_activation_gate(**scope):
+    from ..rules.enchantment_loyalty_results import enchantment_loyalty_node_capabilities
+
+    required = enchantment_loyalty_node_capabilities(**{
+        key: scope[key] for key in ("effects", "target_schema", "mechanics", "active_zone", "cost_schema")
+    })
+    if required:
+        return explicit_capabilities_gate(
+            required, capability_registry=scope["capability_registry"], capability_profile=scope["capability_profile"],
+        )
+    return None
+
 
 def either_commander_return_gate(**scope):
     from ..rules.owned_commander_battlefield_return import own_commander_return_node_capabilities
@@ -359,6 +461,27 @@ def artifact_sacrifice_return_activation_gate(**scope):
     )
 
 
+def ordered_source_owner_hand_entry_activation(ability, text, *, public_timing):
+    from ..rules.ordered_source_owner_hand_entry import (
+        MECHANIC, TEMPLATE, controller_owner_draw_land_effects, has_pendant_price,
+    )
+    from .hand_entry_templates import fixed_draw_then_hand_entry_template
+    from ..rules.closed_effect_program_shapes import CLOSED_EFFECT_PROGRAM_MECHANIC
+
+    normalized = " ".join(text.casefold().replace("’", "'").split())
+    first = "draw a card, then you may put a land card from your hand onto the battlefield."
+    owner = "this artifact's owner draws a card, then that player may put a land card from their hand onto the battlefield."
+    if (normalized != first + " " + owner or ability.zones != ("battlefield",) or ability.mana_ability
+            or not has_pendant_price(activated_ability_cost(ability, public_timing=public_timing))):
+        return None
+    normal = fixed_draw_then_hand_entry_template(first)
+    effects = controller_owner_draw_land_effects()
+    if normal is None or normal[1] != effects[:2]:
+        return None
+    ordinary_mechanics = tuple(value for value in normal[3] if value != CLOSED_EFFECT_PROGRAM_MECHANIC)
+    return TEMPLATE, effects, None, (MECHANIC, *ordinary_mechanics)
+
+
 def draw_source_owner_top_activation(ability, text, *, public_timing):
     from ..rules.owner_library_position_shapes import DRAW_SOURCE_OWNER_TOP_MECHANIC, draw_source_owner_top_effects, has_exact_tap_price
 
@@ -404,6 +527,21 @@ def linked_loyalty_activation_gate(
     )
     if not required:
         return DependencyGate(blockers=(f"capability:{LOYALTY_X_CAPABILITY}",))
+    return explicit_capabilities_gate(
+        required, capability_registry=capability_registry, capability_profile=capability_profile,
+    )
+
+
+def paid_damage_mana_value_gate(*, capability_registry, capability_profile, **scope):
+    from ..rules.activation.paid_mana_value_damage import (
+        PAID_DAMAGE_MANA_VALUE_MECHANIC, paid_damage_mana_value_node_capabilities,
+    )
+
+    if PAID_DAMAGE_MANA_VALUE_MECHANIC not in scope["mechanics"]:
+        return None
+    required = paid_damage_mana_value_node_capabilities(**scope)
+    if not required:
+        return DependencyGate(blockers=(f"mechanic:{PAID_DAMAGE_MANA_VALUE_MECHANIC}",))
     return explicit_capabilities_gate(
         required, capability_registry=capability_registry, capability_profile=capability_profile,
     )
@@ -476,6 +614,29 @@ def random_target_activation_result(ability, *, source_name, text, public_timing
 
 def activation_paid_sacrifice_result(ability, *, source_name, text, compile_fixed):
     cost = activated_ability_cost(ability)
+    if text.strip().casefold() == "this creature gets +x/+0 until end of turn, where x is the sacrificed enchantment's mana value.":
+        from ..rules.activation.paid_characteristic_price import activation_enchantment_sacrifice_choice, paid_enchantment_pump_effect
+        from ..scalar_effect_amount_model import PAID_SACRIFICE_MANA_VALUE_MECHANIC
+
+        if not ability.mana_ability and activation_enchantment_sacrifice_choice(cost) is not None:
+            return ("paid-enchantment-source-power-v1", (paid_enchantment_pump_effect(),), None,
+                    ("cr-611-continuous-effects", "fixed-source-characteristics-until-end-of-turn",
+                     SCALAR_AMOUNT_MECHANIC, PAID_SACRIFICE_MANA_VALUE_MECHANIC))
+    from ..rules.activation.paid_mana_value_damage import (
+        PAID_DAMAGE_MANA_VALUE_MECHANICS, PAID_DAMAGE_MANA_VALUE_TEMPLATE, PRINTED_PAID_DAMAGE_RESULT,
+        paid_damage_mana_value_effect, paid_damage_mana_value_price_is_closed, paid_damage_mana_value_target_schema,
+    )
+
+    if (
+        ability.boast and not ability.mana_ability and not ability.sorcery_speed
+        and ability.zones == ("battlefield",)
+        and text.strip().casefold().replace("’", "'") == PRINTED_PAID_DAMAGE_RESULT.casefold()
+        and paid_damage_mana_value_price_is_closed(cost)
+    ):
+        return (
+            PAID_DAMAGE_MANA_VALUE_TEMPLATE, (paid_damage_mana_value_effect(),),
+            paid_damage_mana_value_target_schema(), PAID_DAMAGE_MANA_VALUE_MECHANICS,
+        )
     if ability.mana_ability or activation_creature_sacrifice_choice(cost) is None:
         return None
     from .paid_sacrifice_condition_templates import paid_sacrifice_condition_template

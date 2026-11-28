@@ -8,14 +8,16 @@ from ..damage_values import DamageRecipientSnapshot
 from ..damage_scope_facts import current_damage_scope_facts,current_damage_combat_partners,canonical_damage_scope_facts
 from ..damage_prevention_permission import UNPREVENTABLE_SOURCE_FACT
 from .permanent_event_state import captured_permanent_event_state
-from ..permanent_event_state_model import COUNTERED_COMBAT_DRAW_PROLIFERATE_CAPABILITY, COUNTERED_DAMAGE_SOURCE_CAPABILITY
+from ..permanent_event_state_model import (
+    ABOVE_BASE_POWER_CAPABILITY, COUNTERED_COMBAT_DRAW_PROLIFERATE_CAPABILITY, COUNTERED_DAMAGE_SOURCE_CAPABILITY,
+)
 
 
 def _normalized_keywords(values):
     return tuple(sorted({" ".join(str(value).casefold().split()) for value in values if str(value).strip()}))
 
 
-def _subscribes_to_counter_presence(host, source, card_types, capability):
+def _subscribes_to_creature_damage_fact(host, source, card_types, capability):
     registry = getattr(host, "semantics", None)
     if (registry is None or source.zone != "battlefield" or source.phased_out
             or "creature" not in card_types):
@@ -26,7 +28,7 @@ def _subscribes_to_counter_presence(host, source, card_types, capability):
 
 def _source_counter_presence(host, source, card_types):
     """Only a retained subscriber requests its extra public source fact."""
-    if not _subscribes_to_counter_presence(host, source, card_types, COUNTERED_DAMAGE_SOURCE_CAPABILITY):
+    if not _subscribes_to_creature_damage_fact(host, source, card_types, COUNTERED_DAMAGE_SOURCE_CAPABILITY):
         return None
     amount = source.counters.get("+1/+1", 0)
     if type(amount) is not int or amount < 0:
@@ -34,8 +36,19 @@ def _source_counter_presence(host, source, card_types):
     return amount > 0
 
 
+def _source_power_above_base(host, source, card_types):
+    if not _subscribes_to_creature_damage_fact(host, source, card_types, ABOVE_BASE_POWER_CAPABILITY):
+        return None
+    from ..object_query import exact_numeric_characteristic
+
+    values = host._effective_card_data(source, include_base_power=True)
+    effective = exact_numeric_characteristic(source, values, "power")
+    base = values.get("base_power")
+    return effective > base if type(base) is int and effective is not None else None
+
+
 def _source_any_counter_presence(host, source, card_types):
-    if not _subscribes_to_counter_presence(host, source, card_types, COUNTERED_COMBAT_DRAW_PROLIFERATE_CAPABILITY):
+    if not _subscribes_to_creature_damage_fact(host, source, card_types, COUNTERED_COMBAT_DRAW_PROLIFERATE_CAPABILITY):
         return None
     from ..counter_snapshot import permanent_counter_total
 
@@ -106,6 +119,7 @@ def source_snapshot(
     return DamageSourceSnapshot(
         had_plus_one_counter=_source_counter_presence(host, source, card_types) if combat else None,
         had_any_counter=_source_any_counter_presence(host, source, card_types) if combat else None,
+        power_above_base=_source_power_above_base(host, source, card_types) if combat else None,
         permanent_state=captured_permanent_event_state(host,source,data),
         physical_commander_identities=physical_commander_damage_identities(source),
         ref=source.ref,

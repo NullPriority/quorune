@@ -16,6 +16,7 @@ SELF_TARGET_REDUCTION_CAPABILITY='casting.cost.self_target_generic_reduction'
 BATTLEFIELD_TARGET_REDUCTION_CAPABILITY='casting.cost.battlefield_target_generic_reduction'
 PUBLIC_TARGET_COST_CAPABILITY='casting.cost.public_target_subject'
 DISTINCT_TARGET_COST_CAPABILITY='casting.cost.distinct_target_generic'
+TARGETED_SPELL_LIFE_COST_CAPABILITY = 'casting.cost.targeted_fixed_life'
 
 
 class TargetedCostSubject(StrEnum):
@@ -36,10 +37,20 @@ class TargetedSpellCostSpec:
     target_subject: TargetCostSubjectSpec | None=None
     spell_predicate: ObjectQuerySpec | None=None
     counted_targets: str | None=None
+    life: int = 0
 
     def __post_init__(self):
         if not isinstance(self.subject,TargetedCostSubject):raise ValueError('Target-dependent spell cost subject must be typed')
         if type(self.generic) is not int or type(self.schema_version) is not int:raise ValueError('Target-dependent cost requires exact integers')
+        if self.schema_version == 6:
+            if (self.subject is not TargetedCostSubject.SOURCE or self.generic != 0
+                    or type(self.life) is not int or self.life != 3
+                    or any(value is not None for value in (self.target_schema, self.caster_relation,
+                        self.target_subject, self.spell_predicate, self.counted_targets))):
+                raise ValueError("Fixed targeted life cost requires the exact source and life price")
+            return
+        if type(self.life) is not int or self.life != 0:
+            raise ValueError("Historical target cost schemas reserve the life field")
         if self.schema_version == 5:
             _validate_distinct_target_cost(self)
             return
@@ -85,6 +96,8 @@ class TargetedSpellCostSpec:
             raise ValueError('Historical target-dependent cost requires a positive fixed generic increase')
 
     def to_dict(self):
+        if self.schema_version == 6:
+            return {"schema_version": 6, "subject": self.subject.value, "life": self.life}
         if self.schema_version == 5:
             return {'schema_version':5,'subject':self.subject.value,'generic':self.generic,
                 'caster_relation':self.caster_relation,'spell_predicate':self.spell_predicate.to_dict(),
@@ -100,6 +113,10 @@ class TargetedSpellCostSpec:
     @classmethod
     def from_dict(cls,value):
         if not isinstance(value,Mapping):raise ValueError('Target-dependent spell cost requires an object')
+        if type(value.get("schema_version")) is int and value["schema_version"] == 6:
+            if set(value) != {"schema_version", "subject", "life"}:
+                raise ValueError("Targeted life costs have a closed schema")
+            return cls(TargetedCostSubject(value["subject"]), 0, 6, life=value["life"])
         if type(value.get('schema_version')) is int and value['schema_version']==5:
             if set(value)!={'schema_version','subject','generic','caster_relation','spell_predicate','counted_targets'}:
                 raise ValueError('Distinct-target spell costs have a closed schema')
@@ -172,25 +189,55 @@ class TargetedSpellCostSource:
         count=sum(self.matches_target(ref) for ref in set(targets))
         return self.spec.generic * (count if self.spec.schema_version==5 else bool(count))
 
-    def applies(self,targets):return bool(self.adjustment(targets))
+    def life_payment(self, targets):
+        return self.spec.life if self.source_ref in targets else 0
+
+    def applies(self,targets):return bool(self.adjustment(targets) or self.life_payment(targets))
 
 
 def validate_targeted_spell_cost_fact(value):
     if not isinstance(value,Mapping):raise ValueError('Target-dependent spell cost fact requires an object')
-    version=value.get('schema_version');expected={'schema_version','generic','sources'}|({'generic_reduction'} if version in (2,3) else set())
-    if (set(value)!=expected or type(version) is not int or version not in (1,2,3)
+    version=value.get('schema_version')
+    expected = {'schema_version', 'generic', 'sources'}
+    if version in (2, 3, 4):
+        expected.add('generic_reduction')
+    if version == 4:
+        expected.add('life')
+    if (set(value)!=expected or type(version) is not int or version not in (1,2,3,4)
             or type(value['generic']) is not int or value['generic']<0 or not isinstance(value['sources'],(list,tuple))):
         raise ValueError('Target-dependent spell cost fact fields are closed')
-    if version in {2,3} and (type(value['generic_reduction']) is not int or value['generic_reduction']<0):raise ValueError('Target-dependent reduction must be nonnegative')
+    if version in {2,3,4} and (type(value['generic_reduction']) is not int or value['generic_reduction']<0):raise ValueError('Target-dependent reduction must be nonnegative')
+    if version == 4 and (type(value["life"]) is not int or value["life"] <= 0):
+        raise ValueError("Target-dependent life payment requires a positive integral cost")
     components=set();total=0;reduction=0
+    life = 0
+    row_fields = {'component_id', 'source_ref', 'source_identity', 'controller', 'generic'}
+    if version == 4:
+        row_fields.add('life')
     for source in value['sources']:
-        if (not isinstance(source,Mapping) or set(source)!={'component_id','source_ref','source_identity','controller','generic'}
+        if (not isinstance(source,Mapping) or set(source)!=row_fields
                 or any(type(source[key]) is not str or not source[key] for key in ('component_id','source_ref','source_identity','controller'))
-                or type(source['generic']) is not int or (source['generic']<1 if version==1 else source['generic']==0) or source['component_id'] in components):
+                or type(source['generic']) is not int or source['component_id'] in components
+                or (source['generic'] < 1 if version == 1 else version != 4 and source['generic'] == 0)):
             raise ValueError('Target-dependent spell cost repeats or loses its captured source')
+        if version == 4:
+            cost = source["life"]
+            if type(cost) is not int or cost not in (0, 3) or bool(cost) == bool(source["generic"]):
+                raise ValueError("A targeted source must contribute its exact mana or life price")
+            life += cost
         components.add(source['component_id']);total+=max(0,source['generic']);reduction+=max(0,-source['generic'])
-    if value['generic']!=total or version in {2,3} and value['generic_reduction']!=reduction:raise ValueError('Target-dependent spell cost differs from its source total')
+    if (value['generic'] != total or version in {2, 3, 4} and value['generic_reduction'] != reduction
+            or version == 4 and value['life'] != life):
+        raise ValueError('Target-dependent spell cost differs from its source total')
     return total
+
+
+def targeted_spell_life_payment(option):
+    fact = option.get("targeted_cost")
+    if not isinstance(fact, Mapping) or fact.get("schema_version") != 4:
+        return 0
+    validate_targeted_spell_cost_fact(fact)
+    return fact["life"]
 
 
 def self_target_reduction_runtime_dependencies(program):
@@ -198,6 +245,11 @@ def self_target_reduction_runtime_dependencies(program):
     for descriptor in program.handlers:
         if descriptor.get('handler_id')!=TARGETED_SPELL_COST_HANDLER:continue
         spec=TargetedSpellCostSpec.from_dict(descriptor.get('modifier'))
+        if spec.schema_version == 6:
+            if program.active_zone != 'battlefield' or program.event != TARGETED_SPELL_COST_EVENT:
+                raise ValueError('Targeted life payment requires a current battlefield cost source')
+            required = tuple(sorted({*required,TARGETED_SPELL_LIFE_COST_CAPABILITY,TARGETED_SPELL_COST_CAPABILITY}))
+            continue
         if spec.schema_version==5:
             if program.active_zone!='battlefield' or program.event!=TARGETED_SPELL_COST_EVENT:
                 raise ValueError('Distinct-target spell cost requires current battlefield source activity')

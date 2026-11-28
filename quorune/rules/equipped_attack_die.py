@@ -5,7 +5,7 @@ from __future__ import annotations
 from ..event_counter_reference import resolve_event_counter_recipient
 from ..replacement.immutable import FrozenMap
 from .attached_greatest_power_condition import _has_maximum_creature_power
-from .random_selection import publish_resolution_die_roll
+from .night_shift_dice import roll_adjusted_game_die
 
 
 CAPABILITY = "random.die.equipped_attack_growth"
@@ -86,9 +86,7 @@ def bind_equipped_attack_die(host, item, effect, *, instruction_pointer):
     host._require_seat(controller, in_game=True)
     attacker = resolve_event_counter_recipient(host, item)
     if roll:
-        result = publish_resolution_die_roll(
-            host, controller=controller, stack_ref=item.ref, instruction_pointer=instruction_pointer, sides=_SIDES,
-        )
+        result = roll_adjusted_game_die(host, item, sides=_SIDES, instruction_pointer=instruction_pointer).single_result
         return _growth(attacker, result) if attacker is not None else None
     card = next((row for row in host.state.cards.values() if row.ref == attacker), None) if attacker is not None else None
     return _draw(controller) if _has_maximum_creature_power(host, card) else None

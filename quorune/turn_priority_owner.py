@@ -187,6 +187,9 @@ class TurnPriorityDecisionOwner:
         )
         if plan is not None:
             self.commit_priority_grant(plan)
+            from .trigger_targeting import observe_received_damage_loop
+
+            observe_received_damage_loop(self.host)
 
     def defer_post_resolution(self) -> None:
         if (

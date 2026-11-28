@@ -10,6 +10,7 @@ from ...semantic_runtime.cast_costs import FixedSpellCostReductionSpec, active_f
 from ...self_cast_reductions import evaluated_self_reduction
 from ...targeted_spell_costs import validate_targeted_spell_cost_fact
 from .colored_hand_credit import HAND_CREDIT_AMOUNT
+from .optional_creature_payments import SACRIFICE_CREDIT_AMOUNT
 
 
 def fixed_generic_reduction(
@@ -81,6 +82,7 @@ def apply_static_reductions(
             host, seat, card, cast_type_line=cast_type_line, face_down_method=face_down_method,
             _public_modifiers=public_modifiers,
         ) + option.get(HAND_CREDIT_AMOUNT, 0) + harmonize_generic_reduction(option)
+    fixed_reduction += option.pop(SACRIFICE_CREDIT_AMOUNT, 0)
     _apply_fixed_generic_increases(option, public_modifiers)
     colored_increases: dict[str, int] = {}
     colored_reductions: dict[str, int] = {}

@@ -2,7 +2,7 @@ import type { PublicGameEvent } from "./api";
 import { SeatLabel, tableSeat } from "./SeatLabel";
 import { asRecord, cardName } from "./CardSurface";
 import type { JsonValue } from "./generated/protocol";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 const lowDetailEvents = new Set(["priority.pass", "combat.remove", "combat.damage.assigned"]);
 
@@ -27,6 +27,7 @@ export function RecentActivity({ events, cards, describeEvent, onInspect, onOpen
   collapsed: boolean;
   onToggle: () => void;
 }) {
+  const [expanded, setExpanded] = useState(false);
   const [byName, names] = useMemo(() => {
     const found = new Map<string, JsonValue>();
     for (const card of cards.values()) {
@@ -71,10 +72,15 @@ export function RecentActivity({ events, cards, describeEvent, onInspect, onOpen
     return parts;
   }
   return (
-    <section className="activity-panel" data-testid="activity-panel">
-      <header><button type="button" className="link-button" aria-expanded={!collapsed} onClick={onToggle}>
-        {collapsed ? "Show recent activity" : "Collapse recent activity"}
-      </button><button type="button" className="link-button" onClick={onOpenLog}>Full log</button></header>
+    <section className={`activity-panel${expanded ? " activity-panel-expanded" : ""}`} data-testid="activity-panel">
+      <header>
+        <button type="button" className="link-button" aria-expanded={!collapsed} onClick={onToggle}>
+          {collapsed ? "Show recent activity" : "Collapse recent activity"}
+        </button>
+        {!collapsed && <button type="button" className="link-button" aria-pressed={expanded}
+          onClick={() => setExpanded((value) => !value)}>{expanded ? "Compact" : "Enlarge"}</button>}
+        <button type="button" className="link-button" onClick={onOpenLog}>Full log</button>
+      </header>
       {!collapsed && <ol aria-label="Recent activity" tabIndex={0}>
         {visibleEvents.slice(-30).reverse().map((event) => <li key={event.id}>
           {tableSeat(event.actor) ? <SeatLabel seat={event.actor} /> : <span>Game</span>}<span>{describe(event)}</span>

@@ -38,12 +38,19 @@ class FixedStatMultiplier:
     factor: int
     stat: MultipliedStat
     grant_first_strike: bool = False
+    grant_trample: bool = False
 
     def __post_init__(self):
         if type(self.factor) is not int or self.factor not in (2, 3) or not isinstance(self.stat, MultipliedStat):
             raise ValueError("A fixed stat multiplier requires a closed factor and characteristic")
-        if type(self.grant_first_strike) is not bool:
+        if type(self.grant_first_strike) is not bool or type(self.grant_trample) is not bool:
             raise ValueError("A fixed stat multiplier keyword grant must be boolean")
+        if self.grant_trample and (self.grant_first_strike or self.factor != 2 or self.stat is not MultipliedStat.BOTH):
+            raise ValueError("The trample rider requires its exact power and toughness doubling")
+
+    @property
+    def granted_keyword(self):
+        return "First Strike" if self.grant_first_strike else "Trample" if self.grant_trample else None
 
     def delta(self, power: int | None, toughness: int | None) -> tuple[int, int]:
         if any(value is not None and type(value) is not int for value in (power, toughness)):
@@ -63,13 +70,13 @@ def decode_fixed_stat_multiplier(effect, *, controller: str | None = None):
     fields = {"op", "schema_version", "factor", "stat"}
     if not is_fixed_stat_multiplier(effect) or type(effect["schema_version"]) is not int:
         raise ValueError("Fixed stat multiplier version is malformed")
-    first_strike = "grant_first_strike" in effect
-    if first_strike:
-        fields.add("grant_first_strike")
-        if effect["grant_first_strike"] is not True:
-            raise ValueError("A combined stat result grants the fixed keyword or omits the field")
+    riders = {"grant_first_strike", "grant_trample"} & effect.keys()
+    if any(effect[rider] is not True for rider in riders):
+        raise ValueError("A combined stat result grants the fixed keyword or omits the field")
+    fields.update(riders)
     try:
-        spec = FixedStatMultiplier(effect["factor"], MultipliedStat(effect["stat"]), first_strike)
+        spec = FixedStatMultiplier(effect["factor"], MultipliedStat(effect["stat"]),
+                                  "grant_first_strike" in riders, "grant_trample" in riders)
     except KeyError as exc:
         raise ValueError("Fixed stat multiplier fields are incomplete") from exc
     if set(effect) == fields | {"card"}:
@@ -79,12 +86,12 @@ def decode_fixed_stat_multiplier(effect, *, controller: str | None = None):
         if controller is None:
             if type(ref) is str and _SCALAR_TARGET.fullmatch(ref):
                 return spec, ref, False
-            if not first_strike and type(ref) is str and ref in {_SOURCE, ATTACK_MULTIPLIER_RECIPIENT}:
+            if not riders and type(ref) is str and ref in {_SOURCE, ATTACK_MULTIPLIER_RECIPIENT}:
                 return spec, ref, False
-            if not first_strike and isinstance(ref, Mapping) and AttachmentReferenceSpec.from_dict(ref) == EQUIPPED_MULTIPLIER_RECIPIENT:
+            if not riders and isinstance(ref, Mapping) and AttachmentReferenceSpec.from_dict(ref) == EQUIPPED_MULTIPLIER_RECIPIENT:
                 return spec, EQUIPPED_MULTIPLIER_RECIPIENT, False
         raise ValueError("Fixed stat multiplier has an unbound recipient")
-    if first_strike or set(effect) != fields | {"predicate", "exclude_source"} or type(effect["exclude_source"]) is not bool:
+    if riders or set(effect) != fields | {"predicate", "exclude_source"} or type(effect["exclude_source"]) is not bool:
         raise ValueError("Fixed stat multiplier selection fields are closed")
     query = ObjectQuerySpec.from_dict(effect["predicate"])
     expected = ObjectQuerySpec(zones=("battlefield",), controller=controller or "$controller",
@@ -97,8 +104,8 @@ def decode_fixed_stat_multiplier(effect, *, controller: str | None = None):
 def fixed_stat_multiplier_runtime_dependencies(effect, *, target_schema):
     spec, subject, _exclude = decode_fixed_stat_multiplier(effect)
     required = {STAT_MULTIPLIER_CAPABILITY, _BASE_CAPABILITY}
-    if spec.grant_first_strike:
-        required.update(FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES["First Strike"])
+    if spec.granted_keyword:
+        required.update(FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[spec.granted_keyword])
     if isinstance(subject, ObjectQuerySpec):
         required.update(object_query_capabilities(subject))
     elif isinstance(subject, AttachmentReferenceSpec):
@@ -125,7 +132,7 @@ def fixed_stat_multiplier_runtime_dependencies(effect, *, target_schema):
                            for index, group in enumerate(groups) if group.get("id", f"target_{index}") == group_id), None)
         allowed = tuple(direct_permanent_target_spec(text).to_target_schema()
                         for text in ("target creature", "target creature you control"))
-        if schema not in allowed:
+        if schema not in allowed or spec.grant_trample and (subject != "$target.0" or schema != allowed[1]):
             raise ValueError("A targeted stat multiplier requires its own closed creature target")
         required.add(_TARGET_CAPABILITY)
     return tuple(sorted(required))
@@ -172,9 +179,9 @@ def apply_fixed_stat_multiplier(host, effect, *, actor, reason):
             if "creature" in current.types:
                 groups[spec.delta(current.effective_power, current.effective_toughness)].append(card)
         for (power, toughness), cards in groups.items():
-            if spec.grant_first_strike:
+            if spec.granted_keyword:
                 components = [ResolutionContinuousComponent(
-                    Layer.ABILITY, "6", (ContinuousOperation("add_ability", "First Strike"),),
+                    Layer.ABILITY, "6", (ContinuousOperation("add_ability", spec.granted_keyword),),
                 )]
                 if power or toughness:
                     components.append(ResolutionContinuousComponent(

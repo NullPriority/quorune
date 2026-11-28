@@ -127,23 +127,58 @@ def closed_static_card_node(*, record, node_id, line, material_line, span,
     if recipients is not None:
         return recipients
     card_types, subtypes, _supertypes = type_parts(type_line)
-    if "artifact" in card_types and "equipment" in subtypes:
-        from .attached_combat_strike import equipped_combat_strike_template
-
-        combat_strike = equipped_combat_strike_template(material_line)
-        if combat_strike is not None:
-            return runtime_handler_node(
-                node_id=node_id, line=line, span=span, compiled=combat_strike,
-                kind="static_ability", event="characteristics.evaluate",
-                runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
-                dependency_reason="Equipped first strike requires live attachment, block and subtype authorities.",
-                capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals,
-            )
+    attached_combat = _attached_combat_template(material_line, card_types, subtypes)
+    if attached_combat is not None:
+        compiled, event, reason = attached_combat
+        return runtime_handler_node(
+            node_id=node_id, line=line, span=span, compiled=compiled,
+            kind="static_ability", event=event,
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason=reason,
+            capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals,
+        )
     return closed_static_or_replacement_node(node_id=node_id, line=line, material_line=material_line,
         span=span, source_name=face_name or record.name, card_types=card_types,
         permanent_card_types=permanent_card_types, source_is_class='class' in subtypes,
         capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals,
         announced_x_available=not record.faces and record.mana_cost.count('{X}') == 1)
+
+
+def _attached_combat_template(text: str, card_types: set[str], subtypes: set[str]):
+    if (
+        "enchantment" in card_types
+        and "aura" in subtypes
+        and " ".join(text.casefold().split()).removesuffix(".")
+        == "enchanted creature can attack as though it had haste"
+    ):
+        from ..rules.attached_attack_haste import (
+            ATTACHED_ATTACK_HASTE_CAPABILITY,
+            ATTACHED_ATTACK_HASTE_HANDLER,
+            ATTACK_PERMISSION_EVENT,
+            AttackHasteScope,
+        )
+
+        descriptor = {
+            "handler_id": ATTACHED_ATTACK_HASTE_HANDLER,
+            "schema_version": 1,
+            "event": ATTACK_PERMISSION_EVENT,
+            "scope": AttackHasteScope.ENCHANTED_CREATURE.value,
+        }
+        return (
+            ("attached-attack-as-haste-v1", descriptor, ATTACHED_ATTACK_HASTE_CAPABILITY),
+            ATTACK_PERMISSION_EVENT,
+            "The enchanted creature needs a current attachment and attack-only permission.",
+        )
+    if "artifact" in card_types and "equipment" in subtypes:
+        from .attached_combat_strike import equipped_combat_strike_template
+
+        combat_strike = equipped_combat_strike_template(text)
+        if combat_strike is not None:
+            return (
+                combat_strike, "characteristics.evaluate",
+                "Equipped first strike requires live attachment, block and subtype authorities.",
+            )
+    return None
 
 
 def closed_static_or_replacement_node(
@@ -176,6 +211,36 @@ def closed_static_or_replacement_node(
     return _closed_static_body_node(material_line=material,**arguments)
 
 
+def _closed_declaration_grant_node(*, node_id, line, material_line, span, source_name,
+                                   capability_registry, capability_profile, residuals):
+    """Bind a queried static declaration grant to its established runtime event."""
+    declaration_grant = static_block_as_though_handler(material_line,source_name=source_name) or static_landwalk_permission_handler(material_line,source_name=source_name) or static_block_capacity_handler(material_line,source_name=source_name) or static_toughness_assignment_handler(material_line,source_name=source_name) or static_as_unblocked_handler(material_line,source_name=source_name) or static_defender_permission_handler(material_line, source_name=source_name) or fixed_static_declaration_grant_handler(
+        material_line,
+        source_name=source_name,
+    )
+    if declaration_grant is not None:
+        declaration_permission = (isinstance(declaration_grant[1], Mapping)
+            and declaration_grant[1].get('event') == DEFENDER_DECLARATION_EVENT)
+        return runtime_handler_node(
+            node_id=node_id,
+            line=line,
+            span=span,
+            compiled=declaration_grant,
+            kind="static_ability",
+            event=(DEFENDER_DECLARATION_EVENT if declaration_permission else "characteristics.evaluate"),
+            runtime_coverage=("fixed_static_declaration_grant", *(
+                ('current_ability_fragment_required',) if declaration_permission else ())),
+            dependency_reason=(
+                "queried declaration rules require their continuous ability "
+                "grant and combat declaration capabilities"
+            ),
+            capability_registry=capability_registry,
+            capability_profile=capability_profile,
+            residuals=residuals,
+        )
+    return None
+
+
 def _closed_static_body_node(
     *,
     node_id: str,
@@ -192,11 +257,24 @@ def _closed_static_body_node(
     announced_x_available: bool = False,
 ) -> OracleNode | None:
     """Dispatch closed nontriggered static and replacement line owners."""
+    from .retained_die_roll import extra_die_replacement_node
+
+    if die := extra_die_replacement_node(node_id=node_id, line=line, material_line=material_line, span=span,
+            capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals):
+        return die
 
     from .classic_flash import classic_flash_node
     classic=classic_flash_node(node_id=node_id,line=line,material_line=material_line,span=span,
         capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
     if classic is not None:return classic
+
+    from .night_shift_dice import night_shift_adjustment_node
+
+    if permanent_card_types.intersection(card_types):
+        adjustment = night_shift_adjustment_node(node_id=node_id, line=line, material_line=material_line, span=span,
+            capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
+        if adjustment is not None:
+            return adjustment
 
     from .external_entry_counters import external_entry_counter_node
     counters=external_entry_counter_node(node_id=node_id,line=line,material_line=material_line,span=span,
@@ -285,30 +363,12 @@ def _closed_static_body_node(
     )
     if no_maximum is not None:
         return no_maximum
-    declaration_grant = static_block_as_though_handler(material_line,source_name=source_name) or static_landwalk_permission_handler(material_line,source_name=source_name) or static_block_capacity_handler(material_line,source_name=source_name) or static_toughness_assignment_handler(material_line,source_name=source_name) or static_as_unblocked_handler(material_line,source_name=source_name) or static_defender_permission_handler(material_line, source_name=source_name) or fixed_static_declaration_grant_handler(
-        material_line,
-        source_name=source_name,
+    declaration_grant = _closed_declaration_grant_node(
+        node_id=node_id, line=line, material_line=material_line, span=span, source_name=source_name,
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals,
     )
     if declaration_grant is not None:
-        declaration_permission = (isinstance(declaration_grant[1], Mapping)
-            and declaration_grant[1].get('event') == DEFENDER_DECLARATION_EVENT)
-        return runtime_handler_node(
-            node_id=node_id,
-            line=line,
-            span=span,
-            compiled=declaration_grant,
-            kind="static_ability",
-            event=(DEFENDER_DECLARATION_EVENT if declaration_permission else "characteristics.evaluate"),
-            runtime_coverage=("fixed_static_declaration_grant", *(
-                ('current_ability_fragment_required',) if declaration_permission else ())),
-            dependency_reason=(
-                "queried declaration rules require their continuous ability "
-                "grant and combat declaration capabilities"
-            ),
-            capability_registry=capability_registry,
-            capability_profile=capability_profile,
-            residuals=residuals,
-        )
+        return declaration_grant
     declaration = declaration_static_node(
         node_id=node_id,
         line=line,

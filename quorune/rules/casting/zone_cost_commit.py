@@ -114,6 +114,12 @@ def _resolve_fixed_zone_change_additional_cost(
             status="unpayable",
             reason="zone_change_cost_unpayable",
         )
+    if cost.island_pair:
+        from ..island_pair_discard_cost import selected_discard_has_island
+
+        if not selected_discard_has_island(host, proposal.seat, raw_refs, exclude_object_id=proposal.object_id):
+            raise CastProposalError("The discard pair requires an Island card", status="unpayable",
+                                    reason="zone_change_cost_unpayable")
     paid = tuple(
         host._resolve_object(
             proposal.seat,

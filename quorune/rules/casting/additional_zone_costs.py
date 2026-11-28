@@ -142,6 +142,13 @@ def _fixed_zone_change_selection(
         or len(set(values)) != count
     ):
         return False, None
+    if cost.island_pair:
+        from ..island_pair_discard_cost import selected_discard_has_island
+
+        if ("discard_cards" in response and "cost_cards" in response) or not selected_discard_has_island(
+            host, seat, values, exclude_object_id=source_object_id,
+        ):
+            return False, None
     selected = {
         "kind": ZONE_CHANGE_COST_KIND,
         "operation": cost.operation,

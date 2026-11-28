@@ -7,13 +7,14 @@ from ..counter_snapshot import permanent_counter_snapshot
 from ..fixed_counter_movement_model import (
     CHOSEN_OPPONENT_CREATURE_TO_CONTROLLED, FIXED_COUNTER_MOVEMENT_CAPABILITY,
     FIXED_COUNTER_MOVEMENT_OPERATION, FixedCounterMovementSpec,
-    OPTIONAL_CHOSEN_CONTROLLED_CREATURES,
+    OPTIONAL_CHOSEN_CONTROLLED_CREATURES, SOURCE_GIVES_COUNTERS_THEN_DRAW, SOURCE_RECEIVES_MISSING_KINDS,
 )
 from ..replacement.immutable import FrozenMap
 from ..semantic_runtime.counter_movement_intent import MoveCountersIntent, MoveCounterSetIntent
 from .graft import can_move_plus_one_counter
 from .counter_movement_quantities import (
     QUANTITIES_FIELDS, complete_counter_movement_quantities, prepare_counter_movement_quantities,
+    prepare_missing_counter_kinds,
 )
 from .model import (
     AutoContinue, ScalarChoice, SemanticChoiceCompletion, SemanticChoiceError,
@@ -45,10 +46,10 @@ def _pin_movement(effect, spec, context):
     recipient = context.query.object(recipient_ref, zones=("battlefield",))
     if (source is None or recipient is None
             or spec.receiver_is_ability_source and recipient.logical_object_id != context.source_logical_object_id
-            or spec.moves_all_source_counters and source.logical_object_id != context.source_logical_object_id):
+            or (spec.moves_all_source_counters or spec.form == SOURCE_GIVES_COUNTERS_THEN_DRAW) and source.logical_object_id != context.source_logical_object_id):
         return None
     pinned = FrozenMap({**effect, "from_identity": source.logical_object_id, "to_identity": recipient.logical_object_id})
-    return pinned if (spec.chooses_counter_kind or spec.chooses_counter_quantities or spec.moves_all_source_counters
+    return pinned if (spec.is_source_bound or spec.chooses_counter_kind or spec.chooses_counter_quantities or spec.moves_all_source_counters
                       or can_move_plus_one_counter(pinned, context.query)) else None
 
 
@@ -210,6 +211,8 @@ class FixedCounterMovementHandler:
             return _prepare_chosen_movement(pinned, context, optional=spec.optional)
         if resuming and (spec.optional or pinned != FrozenMap(effect)):
             raise SemanticChoiceError("The original counter movement changed before replacement resume")
+        if spec.form == SOURCE_RECEIVES_MISSING_KINDS:
+            return prepare_missing_counter_kinds(pinned, context)
         if pinned is None:
             return SemanticChoicePreparation(
                 request=None, continuation_effect=FrozenMap(effect),

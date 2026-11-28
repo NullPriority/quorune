@@ -10,6 +10,7 @@ from .object_predicate import ObjectQuerySpec
 
 PUBLIC_STAT_AGGREGATE_CAPABILITY='quantity_expression.public_characteristic_aggregate'
 DISTINCT_PUBLIC_CHARACTERISTIC_COUNT_CAPABILITY = 'quantity_expression.distinct_public_characteristic_count'
+OTHER_PERMANENT_MANA_VALUE_SUM_CAPABILITY = "quantity_expression.other_controlled_permanent_mana_value_sum"
 PUBLIC_POWER_THRESHOLD_CAPABILITY = "condition.characteristics.public_power_aggregate"
 CONTROLLED_CREATURES_POWER_QUERY = ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
 
@@ -36,6 +37,12 @@ class PublicCharacteristicAggregateSpec:
     schema_version: int=1
 
     def __post_init__(self):
+        if type(self.schema_version) is int and self.schema_version == 3:
+            if (self.characteristic, self.reduction, self.controller_relation, self.query) != (
+                "mana_value", "sum", "source_controller", ObjectQuerySpec(zones=("battlefield",)),
+            ):
+                raise ValueError("Other permanent mana value requires the exact controlled battlefield total")
+            return
         if type(self.schema_version) is int and self.schema_version == 2:
             if (self.reduction != 'distinct_count' or self.controller_relation != 'source_controller'
                     or not isinstance(self.query, ObjectQuerySpec)
@@ -57,6 +64,8 @@ class PublicCharacteristicAggregateSpec:
 
     @property
     def capability_dependencies(self) -> tuple[str, ...]:
+        if self.schema_version == 3:
+            return (PUBLIC_STAT_AGGREGATE_CAPABILITY, OTHER_PERMANENT_MANA_VALUE_SUM_CAPABILITY)
         if self.schema_version == 2:
             return (PUBLIC_STAT_AGGREGATE_CAPABILITY, DISTINCT_PUBLIC_CHARACTERISTIC_COUNT_CAPABILITY)
         return (PUBLIC_STAT_AGGREGATE_CAPABILITY,)

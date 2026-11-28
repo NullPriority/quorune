@@ -10,6 +10,8 @@ from .continuous_components import (ContinuousEffectComponentRegistry, FixedPowe
 @lru_cache(maxsize=1)
 def default_continuous_effect_component_registry(
 ) -> ContinuousEffectComponentRegistry:
+    from .riot_grants import NontokenRiotGrantHandler
+    from ..rules.attached_attack_haste import AttachedAttackHastePermissionHandler
     from .station_symbols import StationSymbolsHandler
     from .commander_keyword_grants import CommanderKeywordGrantHandler
     from .cipher import CipherEncodingGrantHandler
@@ -31,14 +33,17 @@ def default_continuous_effect_component_registry(
     from .conditional_chosen_characteristics import ConditionalChosenCharacteristicsHandler
     from .attached_continuous import AttachedFixedCharacteristicsHandler
     from .qualified_attached_settings import QualifiedAttachedCharacteristicsHandler
-    from .chosen_aura_protection import SourceChosenAuraProtectionHandler
+    from .chosen_aura_protection import (
+        SourceChosenAuraProtectionHandler, SourceChosenControlledAttachmentProtectionHandler,
+    )
     from .attached_commander_protection import AttachedCommanderProtectionHandler
     from .player_outcomes import MatchOutcomeRestrictionHandler
     from .soulbond import SoulbondPairedGrantHandler
     from .linked_exile_characteristics import LinkedExileCharacteristicsHandler
     from .linked_exile_activations import LinkedExileActivatedGrantHandler
-    from .fixed_characteristic_settings import FixedCharacteristicSettingsHandler, ConditionalCharacteristicSettingsHandler, ConditionalCreatureTypeRemovalHandler
     from .fixed_characteristic_settings import (
+        FixedCharacteristicSettingsHandler, ConditionalCharacteristicSettingsHandler,
+        ConditionalCreatureTypeRemovalHandler, ControlledEnchantmentAnimationHandler,
         AuraCountCharacteristicSettingsHandler, ControlledAuraRecipientSettingsHandler,
         FixedOpponentBaseToughnessHandler, NonownerCreatureModifierHandler,
     )
@@ -92,6 +97,7 @@ def default_continuous_effect_component_registry(
             ChosenBasicLandTypeHandler(),
             FixedQueryAbilityGrantHandler(),
             FixedQueryKeywordGrantHandler(),
+            NontokenRiotGrantHandler(),
             CombatCounterpartLifelinkHandler(),
             EquippedCombatStrikeHandler(),
             EquippedPlaneswalkerHandler(),
@@ -113,6 +119,7 @@ def default_continuous_effect_component_registry(
                 capability_dependencies=('continuous.power_toughness.fixed_anthem', COUNTER_TOTAL_CAPABILITY)),
             ConditionalDefenderPermissionHandler(),
             DefenderAttachmentPermissionHandler(),
+            AttachedAttackHastePermissionHandler(),
             DefenderDeclarationPermissionHandler(),
             ConditionalAsUnblockedAssignmentHandler(),
             ConditionalBlockCapacityHandler(),
@@ -129,6 +136,7 @@ def default_continuous_effect_component_registry(
             AttachedFixedCharacteristicsHandler(),
             QualifiedAttachedCharacteristicsHandler(),
             SourceChosenAuraProtectionHandler(),
+            SourceChosenControlledAttachmentProtectionHandler(),
             AttachedCommanderProtectionHandler(),
             MatchOutcomeRestrictionHandler(),
             SoulbondPairedGrantHandler(),
@@ -138,6 +146,7 @@ def default_continuous_effect_component_registry(
             EnchantedPlayerCharacteristicsHandler(),
             DisjointNegativeKeywordGrantHandler(),
             ConditionalCharacteristicSettingsHandler(),
+            ControlledEnchantmentAnimationHandler(),
             AuraCountCharacteristicSettingsHandler(),
             ControlledAuraRecipientSettingsHandler(),
             ConditionalCreatureTypeRemovalHandler(),
@@ -148,9 +157,7 @@ def default_continuous_effect_component_registry(
             SharedNameAnthemHandler(),
         )
     )
-    registry.require_registered_capabilities(
-        load_default_capability_registry()
-    )
+    registry.require_registered_capabilities(load_default_capability_registry())
     return registry.freeze()
 
 

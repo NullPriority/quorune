@@ -24,6 +24,8 @@ from ..fixed_top_exile import (
     RESOLVING_TOP_PLAY_MECHANIC,
     RESOLVING_TOP_PLAY_SCOPE,
     validate_fixed_top_exile,
+    ANNOUNCED_OPPONENT_FREE_PLAY_MECHANIC,
+    ANNOUNCED_OPPONENT_FREE_PLAY_SCOPE,
 )
 
 
@@ -40,6 +42,7 @@ def discover_node_capabilities(*,effects,target_schema,mechanic_ids):
         mechanic = {TOTAL_MANA_EXILE_SCOPE: TOTAL_MANA_EXILE_MECHANIC, CHOSEN_IMPULSE_SCOPE: CHOSEN_IMPULSE_MECHANIC,
                     OPPONENT_CHOSEN_IMPULSE_SCOPE: CHOSEN_IMPULSE_MECHANIC,
                     RESOLVING_TOP_PLAY_SCOPE: RESOLVING_TOP_PLAY_MECHANIC,
+                    ANNOUNCED_OPPONENT_FREE_PLAY_SCOPE: ANNOUNCED_OPPONENT_FREE_PLAY_MECHANIC,
                     LAND_EXILE_RETURN_SCOPE: LAND_EXILE_RETURN_MECHANIC,
                     ELECTED_NONLAND_EXILE_SCOPE: ELECTED_NONLAND_EXILE_MECHANIC,
                     TARGETED_EXILE_LAND_ENTRY_SCOPE: TARGETED_EXILE_LAND_ENTRY_MECHANIC,
@@ -53,7 +56,10 @@ def discover_node_capabilities(*,effects,target_schema,mechanic_ids):
                 return ()
             return (*required, 'target.revalidate_resolution')
         if operation == FIXED_TOP_EXILE_OPERATION and effects[0].get("scope") in {
-            LAND_EXILE_RETURN_SCOPE, TARGETED_EXILE_LAND_ENTRY_SCOPE, OPPONENT_CHOSEN_IMPULSE_SCOPE,
+            LAND_EXILE_RETURN_SCOPE,
+            TARGETED_EXILE_LAND_ENTRY_SCOPE,
+            OPPONENT_CHOSEN_IMPULSE_SCOPE,
+            ANNOUNCED_OPPONENT_FREE_PLAY_SCOPE,
         }:
             return required if _original_opponent_target(target_schema) else ()
         return required if target_schema is None else ()
@@ -177,6 +183,12 @@ def validate_fixed_top_exile_program_scope(program, values):
         return
     if scope == TARGETED_EXILE_LAND_ENTRY_SCOPE:
         _validate_targeted_exile_land_entry_program(program)
+        return
+    if scope == ANNOUNCED_OPPONENT_FREE_PLAY_SCOPE:
+        from .announced_hand_discard import announced_hand_discard_activation_dependencies
+
+        if not announced_hand_discard_activation_dependencies(program):
+            raise ValueError("Announced opponent exile requires its original paid activation")
         return
     if program.target_schema is not None:
         raise ValueError("Fixed top resolving casts require one closed untargeted instruction")

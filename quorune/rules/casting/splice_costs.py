@@ -57,14 +57,12 @@ def _printed_splice_source(host, card):
 
 
 def available_splice_sources(host, seat, spell, program, *, type_line=None):
-    from ...gift_card_model import GIFT_CAST_COST_FIELDS
-    from ..main_phase_creature_cohort import uses_creature_cohort_addendum
+    from ...gift_card_model import GIFT_CARD_COST_FIELD
     from ..gift_fish_spells import GIFT_FISH_COST_FIELD
-    from ..gift_counter_spells import GIFT_COUNTER_COST_FIELD
-    from ..gift_graveyard_spells import COST_FIELD as GIFT_GRAVEYARD_COST_FIELD, RETURN_COPY_COST_FIELD, SWEEP_RETURN_COST_FIELD, GREED_COST_FIELD
+    from ..main_phase_creature_cohort import uses_creature_cohort_addendum
 
     if (program is None or program.requires_arbiter
-            or GIFT_CAST_COST_FIELDS.union({GIFT_FISH_COST_FIELD, GIFT_COUNTER_COST_FIELD, GIFT_GRAVEYARD_COST_FIELD, RETURN_COPY_COST_FIELD, SWEEP_RETURN_COST_FIELD, GREED_COST_FIELD}).intersection(program.cost_schema or {})
+            or {GIFT_CARD_COST_FIELD, GIFT_FISH_COST_FIELD}.intersection(program.cost_schema or {})
             or not host.semantic_program_is_current_trusted(program)
             or any(uses_creature_cohort_addendum(effect) for effect in program.effects)):
         return {}

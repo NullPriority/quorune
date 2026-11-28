@@ -15,6 +15,7 @@ from ..target_land_type_model import (
     SOURCE_PRESENT_LAND_TYPE_CAPABILITY, NEXT_UNTAP_LAND_TYPE_CAPABILITY, SOURCE_EXIT_LAND_TYPE_CAPABILITY,
 )
 from ..resolution_characteristic_model import (
+    CountedTargetLandAnimationSpec, COUNTED_TARGET_LAND_ANIMATION_CAPABILITY, COUNTED_TARGET_LAND_ANIMATION_VERSION,
     CHARACTERISTIC_OPERATION, FIXED_TARGET_COLOR_CAPABILITY, FIXED_TARGET_COLOR_MECHANIC,
     FIXED_TARGET_COLOR_VERSION, decode_fixed_target_color, fixed_target_color_schema,
     DERIVED_CHARACTERISTIC_CAPABILITY, RECIPIENT_MANA_VALUE, DerivedResolutionCharacteristicsSpec,
@@ -294,6 +295,20 @@ def fixed_resolution_characteristic_capabilities(*, effects: Any, target_schema:
         if target_schema != target_player_creature_overwrite_schema() or "cr-115-targets" not in mechanics:
             return ()
         return tuple(sorted({*dependencies, "target.revalidate_resolution"}))
+    if isinstance(spec, CountedTargetLandAnimationSpec):
+        from ..compiler.direct_target import direct_permanent_target_spec
+        from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
+
+        target = direct_permanent_target_spec("target land you control")
+        if (selection != "$target.0" or target_schema != target.to_target_schema()
+                or not {"cr-115-targets", "trample", "haste"} <= mechanics):
+            return ()
+        return tuple(sorted({
+            *dependencies, COUNTED_TARGET_LAND_ANIMATION_CAPABILITY, "target.revalidate_resolution",
+            *spec.quantity.capability_dependencies,
+            *(capability for keyword in ("Trample", "Haste")
+              for capability in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword]),
+        }))
     if isinstance(spec, DerivedResolutionCharacteristicsSpec):
         from ..compiler.direct_target import DirectPermanentTargetSpec
         from ..query_effect_amount_model import DECLARED_AMOUNT_CAPABILITY
@@ -344,6 +359,36 @@ def fixed_resolution_characteristic_capabilities(*, effects: Any, target_schema:
         if 'cr-115-targets' not in mechanics:return ()
         dependencies.add('target.revalidate_resolution')
     return tuple(sorted(dependencies))
+
+
+def counted_land_animation_runtime_dependencies(program) -> tuple[str, ...]:
+    from .effect_shape_walkers import nested_effects
+
+    if not any(effect.get("op") == CHARACTERISTIC_OPERATION
+               and effect.get("schema_version") == COUNTED_TARGET_LAND_ANIMATION_VERSION
+               for effect in nested_effects((program.effects, program.handlers))):
+        return ()
+    from ..compiler.activated_costs import activated_ability_cost
+    from ..replacement.immutable import FrozenMap
+    from ..semantic_runtime.activated_abilities import activated_abilities_from_descriptors
+
+    owners = fixed_resolution_characteristic_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
+    abilities = activated_abilities_from_descriptors(program.handlers)
+    if (COUNTED_TARGET_LAND_ANIMATION_CAPABILITY not in owners
+            or (program.event, program.active_zone) != ("activate", "battlefield")
+            or program.event_condition is not None or len(program.handlers) != 1 or len(abilities) != 1):
+        raise ValueError("Counted land animation requires the exact ordinary battlefield activation")
+    ability, = abilities
+    if (ability.builtin_semantic_key != program.key or program.ability_id != f"ability:{ability.ability_id}"
+            or ability.mana_ability or ability.tap_source or ability.sorcery_speed or ability.uncompiled_costs
+            or ability.activation_conditions or ability.generic_reduction_per_legendary_creature
+            or ability.zones != ("battlefield",) or ability.cost_text != "{3}{G}"
+            or ability.target_schema != FrozenMap(program.target_schema)
+            or FrozenMap(activated_ability_cost(ability)) != FrozenMap(program.cost_schema or {})):
+        raise ValueError("Counted land animation lost the original target or activation price")
+    return owners
 
 
 def validate_derived_characteristic_program(program) -> tuple[str, ...]:

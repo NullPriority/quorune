@@ -13,25 +13,35 @@ def target_death_return_activation_template(ability, text):
     if (ability.mana_ability or ability.zones != ("battlefield",)
             or ability.sorcery_speed or ability.activation_conditions):
         return None
-    if not re.fullmatch(
+    body = " ".join(text.split())
+    battlefield = ability.sacrifice_source and re.fullmatch(
+        r"When target creature is put into your graveyard this turn, return that card to the battlefield\.",
+        body, re.I,
+    )
+    if battlefield:
+        return (
+            "target-creature-death-return-battlefield-v1", (target_death_return_effect(battlefield=True),),
+            target_death_return_target_schema(battlefield=True), TARGET_DEATH_RETURN_MECHANICS,
+        )
+    if re.fullmatch(
         r"Choose target creature with a counter on it\. "
         r"When that creature dies this turn, return that card to its owner['’]s hand\.",
-        " ".join(text.split()),
-        re.I,
+        body, re.I,
     ):
-        return None
-    return (
-        "target-counter-creature-death-return-v1", (target_death_return_effect(),),
-        target_death_return_target_schema(), TARGET_DEATH_RETURN_MECHANICS,
-    )
+        return (
+            "target-counter-creature-death-return-v1", (target_death_return_effect(),),
+            target_death_return_target_schema(), TARGET_DEATH_RETURN_MECHANICS,
+        )
+    return None
 
 
 def target_death_return_activation_gate(
     *, effects, target_schema, mechanics, active_zone, cost_schema, capability_registry, capability_profile,
 ):
     from ..delayed_object_model import (
-        TARGET_DEATH_RETURN_CAPABILITY, is_target_death_return_effect, target_death_return_node_capabilities,
-        target_death_return_price_is_closed,
+        TARGET_DEATH_BATTLEFIELD_CAPABILITY, TARGET_DEATH_RETURN_CAPABILITY,
+        is_target_death_battlefield_return, is_target_death_return_effect,
+        target_death_return_node_capabilities, target_death_return_price_is_closed,
     )
     from .dependency_gate import DependencyGate, explicit_capabilities_gate
 
@@ -40,8 +50,10 @@ def target_death_return_activation_gate(
     required = target_death_return_node_capabilities(
         effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
     )
-    if not required or active_zone != "battlefield" or not target_death_return_price_is_closed(cost_schema):
-        return DependencyGate(blockers=(f"capability:{TARGET_DEATH_RETURN_CAPABILITY}",))
+    battlefield = is_target_death_battlefield_return(effects[0])
+    if not required or active_zone != "battlefield" or not target_death_return_price_is_closed(cost_schema, battlefield=battlefield):
+        capability = TARGET_DEATH_BATTLEFIELD_CAPABILITY if battlefield else TARGET_DEATH_RETURN_CAPABILITY
+        return DependencyGate(blockers=(f"capability:{capability}",))
     return explicit_capabilities_gate(
         required, capability_registry=capability_registry, capability_profile=capability_profile,
     )

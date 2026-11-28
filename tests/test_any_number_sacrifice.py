@@ -23,12 +23,89 @@ from test_controller_creature_keyword_absence import register_card
 PROFILE = "commander_review"
 
 
+class CommittedGraveyardReturnCompilerTests(unittest.TestCase):
+    def test_counted_sacrifice_return_compiles_only_the_exact_untargeted_body(self):
+        from test_granted_skulk import record
+        from quorune.rules.graveyard_return_choices import COMMITTED_GRAVEYARD_RETURN_CAPABILITY
+
+        printed = (
+            "Sacrifice any number of artifacts, enchantments, and/or tokens. "
+            "Return that many creature cards from your graveyard to the battlefield."
+        )
+        registry = load_default_capability_registry()
+
+        def compile_text(text):
+            return compile_oracle_card(
+                record(text, "Sorcery"), capability_registry=registry, capability_profile=PROFILE,
+            )
+
+        ir = compile_text(printed)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertIsNone(node.target_schema)
+        self.assertIn(COMMITTED_GRAVEYARD_RETURN_CAPABILITY, node.capability_dependencies)
+        for unsupported in (
+            printed.replace("artifacts, enchantments, and/or tokens", "permanents"),
+            printed.replace("that many", "up to that many"),
+            printed.replace("creature cards", "target creature cards"),
+            printed.replace("your graveyard", "any graveyard"),
+            printed.replace("the battlefield.", "your hand."),
+        ):
+            with self.subTest(unsupported=unsupported):
+                self.assertNotEqual("exact", compile_text(unsupported).status)
+
+
+    def test_counted_return_rejects_detached_or_forged_count_and_authority(self):
+        from quorune.compiler.affected_player_sacrifice_templates import any_number_sacrifice_template
+        from quorune.rules.any_number_sacrifice import (
+            ANY_NUMBER_SACRIFICE_FIELD, any_number_sacrifice_commit_parts,
+            any_number_sacrifice_runtime_dependencies, resolve_any_number_sacrifice_followup,
+        )
+        from quorune.rules.graveyard_return_choices import (
+            COMMITTED_GRAVEYARD_RETURN_RECIPE, committed_graveyard_return_effect,
+            graveyard_return_choice_runtime_dependencies,
+        )
+        from quorune.semantics import SemanticProgram
+
+        _, effects, _, mechanics = any_number_sacrifice_template(
+            "Sacrifice any number of artifacts, enchantments, and/or tokens. "
+            "Return that many creature cards from your graveyard to the battlefield."
+        )
+        program = SemanticProgram(key="committed-return", label="Counted return", ability_id="spell:front",
+                                  effects=list(effects), coverage=list(mechanics))
+        self.assertTrue(any_number_sacrifice_runtime_dependencies(program))
+        forged = committed_graveyard_return_effect(3)
+        with self.assertRaisesRegex(ValueError, "closed owned instruction"):
+            graveyard_return_choice_runtime_dependencies(replace(program, effects=[forged]))
+        with self.assertRaisesRegex(ValueError, "sacrifice authority"):
+            graveyard_return_choice_runtime_dependencies(replace(program, effects=[COMMITTED_GRAVEYARD_RETURN_RECIPE]))
+        with self.assertRaisesRegex(ValueError, "original spell"):
+            any_number_sacrifice_runtime_dependencies(replace(program, event="permanent.enter.self", active_zone="battlefield"))
+
+        effect, = effects
+        marker = effect[ANY_NUMBER_SACRIFICE_FIELD]
+        self.assertEqual(5, marker["schema_version"])
+        with self.assertRaises(ValueError):
+            any_number_sacrifice_parts({**effect, ANY_NUMBER_SACRIFICE_FIELD: {**marker, "followup": forged}})
+        payload = {"schema_version": 5, "followup": COMMITTED_GRAVEYARD_RETURN_RECIPE,
+                   "selected_incarnations": {"one": "one@1"}}
+        self.assertEqual(COMMITTED_GRAVEYARD_RETURN_RECIPE, any_number_sacrifice_commit_parts(payload, ("one",), actor="A")[0])
+        with self.assertRaisesRegex(ValueError, "explicit payload revision"):
+            any_number_sacrifice_commit_parts({**payload, "schema_version": 1}, ("one",), actor="A")
+        for wrong_count in (True, -1, "2"):
+            with self.subTest(wrong_count=wrong_count), self.assertRaisesRegex(ValueError, "actual sacrifice count"):
+                resolve_any_number_sacrifice_followup(None, COMMITTED_GRAVEYARD_RETURN_RECIPE, wrong_count)
+
+
 class AnyNumberSacrificeTests(InheritedNativeFixture, unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temporary = TemporaryDirectory()
         path = Path(cls.temporary.name) / "any-number-sacrifice.sqlite3"
-        build_fixture_database([ROOT / "tests/fixtures/any-number-sacrifice-resolution-cards.json"], path)
+        build_fixture_database([
+            ROOT / "tests/fixtures/any-number-sacrifice-resolution-cards.json",
+            ROOT / "tests/fixtures/activation-result-views-cards.json",
+        ], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
         commander = "Isamaru, Hound of Konda"
@@ -60,11 +137,234 @@ class AnyNumberSacrificeTests(InheritedNativeFixture, unittest.TestCase):
         result = game.act("pilot:A", {"action_id": "choose", "cards": list(refs)})
         self.assertTrue(result.ok, result.summary)
 
+
+    def committed_return_choice(self, game, refs, count):
+        self.assertEqual(["pilot:A"], game.pending_principals())
+        context = game.packet("pilot:A", full=True)["decision"]["ctx"]
+        self.assertEqual("semantic.choice", game.state.pending_decision.kind)
+        action, = [action for action in context["legal_actions"] if action["id"] == "choose"]
+        schema = action["choice_schema"]
+        self.assertEqual(set(refs), set(schema["legal_refs"]))
+        self.assertEqual(("cards", count, count), (schema["field"], schema["minimum"], schema["maximum"]))
+        self.assertFalse(game.state.stack[-1].targets)
+
+    def test_actual_conquest_returns_owned_creature_fronts_in_one_batch(self):
+        game = self.session(76271125)
+        spell = self.add(game.engine, "Lich-Knights' Conquest", zone="hand")
+        token_spell = self.add(game.engine, "Raise the Alarm", zone="hand")
+        sacrificed = self.add(game.engine, "Ornithopter")
+        borrowed = self.add(game.engine, "Darksteel Relic", seat="B")
+        game.engine.change_control(borrowed.object_id, "A", reason="Fixture separates control and ownership")
+        unused = self.add(game.engine, "Omen of the Sea")
+        ordinary = self.add(game.engine, "Grizzly Bears", ref="conquest-ordinary-bear")
+        first = self.add(game.engine, "Soul Warden", zone="graveyard", ref="conquest-warden-first")
+        second = self.add(game.engine, "Soul Warden", zone="graveyard", ref="conquest-warden-second")
+        optional_candidate = self.add(game.engine, "Grizzly Bears", zone="graveyard", ref="conquest-grave-bear")
+        foreign = self.add(game.engine, "Soul Warden", seat="B", zone="graveyard")
+        self.start(game, spell, token_spell, first, second, mana={"C": 5, "B": 1, "W": 1})
+        self.cast(game, "A", token_spell)
+        self.assertIsNone(self.resolve(game))
+        tokens = tuple(card for card in game.state.cards.values() if card.is_token and card.zone == "battlefield")
+        self.assertEqual(2, len(tokens))
+        self.cast(game, "A", spell)
+        self.choice(game, (sacrificed.ref, borrowed.ref, unused.ref, *(card.ref for card in tokens)))
+        self.reject(game, "A", (ordinary.ref,))
+        self.choose(game, (sacrificed.ref, borrowed.ref, tokens[0].ref))
+        current = game.state.cards[sacrificed.object_id]
+        expected = (current.ref, first.ref, second.ref, optional_candidate.ref)
+        self.committed_return_choice(game, expected, 3)
+        self.assertIn(borrowed.object_id, game.state.players["B"].zones["graveyard"])
+        self.assertEqual("graveyard", current.zone)
+        self.assertFalse(any(item.kind == "triggered_ability" for item in game.state.stack))
+        self.reject(game, "A", (current.ref, first.ref))
+        self.reject(game, "A", (current.ref, first.ref, first.ref))
+        self.reject(game, "A", (current.ref, first.ref, foreign.ref))
+        self.reject(game, "B", (current.ref, first.ref, second.ref))
+        game = self.replay(game, load=True)
+        engine = game.engine
+        with patch.object(engine, "_move_cards_simultaneously", wraps=engine._move_cards_simultaneously) as moves:
+            self.choose(game, (current.ref, first.ref, second.ref))
+        batches = [set(call.args[0]) for call in moves.call_args_list
+                   if call.args and any(zone == "battlefield" for _, zone in call.args[0])]
+        self.assertEqual([{(card.object_id, "battlefield") for card in (sacrificed, first, second)}], batches)
+        self.assertEqual(("battlefield", "battlefield", "battlefield", "graveyard", "graveyard"),
+                         tuple(self.zone(game, value) for value in (sacrificed, first, second, optional_candidate, foreign)))
+        triggers = [item for item in game.state.stack if item.kind == "triggered_ability"]
+        triggers.extend(item for batch in game.state.pending_trigger_batches for item in batch.items)
+        for warden in (first, second):
+            self.assertEqual(2, sum(item.source_object_id == warden.object_id for item in triggers))
+        self.replay(game, load=True)
+
+    def test_actual_conquest_counts_redirected_sacrifices_and_caps_at_available_cards(self):
+        game = self.session(76271126)
+        spell = self.add(game.engine, "Lich-Knights' Conquest", zone="hand")
+        redirect = self.add(game.engine, "Leyline of the Void", seat="B")
+        own = self.add(game.engine, "Darksteel Relic", ref="conquest-redirect-first")
+        another = self.add(game.engine, "Darksteel Relic", ref="conquest-redirect-second")
+        borrowed = self.add(game.engine, "Ornithopter", seat="B")
+        game.engine.change_control(borrowed.object_id, "A", reason="Fixture separates control and ownership")
+        remaining = self.add(game.engine, "Grizzly Bears", zone="graveyard")
+        second = self.add(game.engine, "Doomed Traveler", zone="graveyard")
+        self.start(game, spell, redirect, mana={"C": 4, "B": 1})
+        self.cast(game, "A", spell)
+        self.choice(game, (own.ref, another.ref, borrowed.ref))
+        self.choose(game, (own.ref, another.ref, borrowed.ref))
+        self.assertEqual(("exile", "exile", "graveyard"), tuple(self.zone(game, card) for card in (own, another, borrowed)))
+        self.assertEqual("B", game.state.cards[borrowed.object_id].owner)
+        self.committed_return_choice(game, (remaining.ref, second.ref), 2)
+        game = self.replay(game, load=True)
+        self.reject(game, "A", (remaining.ref,))
+        self.choose(game, (remaining.ref, second.ref))
+        self.assertEqual(("battlefield", "battlefield"), tuple(self.zone(game, card) for card in (remaining, second)))
+        self.replay(game, load=True)
+
+    def test_actual_conquest_zero_sacrifices_skip_the_graveyard_choice(self):
+        game = self.session(76271127)
+        spell = self.add(game.engine, "Lich-Knights' Conquest", zone="hand")
+        relic = self.add(game.engine, "Darksteel Relic")
+        remaining = self.add(game.engine, "Grizzly Bears", zone="graveyard")
+        self.start(game, spell, mana={"C": 4, "B": 1})
+        self.cast(game, "A", spell)
+        self.choice(game, (relic.ref,))
+        self.choose(game, ())
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(("graveyard", "battlefield", "graveyard"),
+                         tuple(self.zone(game, card) for card in (spell, relic, remaining)))
+        self.replay(game, load=True)
+
     def actual_draws(self, game):
         return len(game.state.players["A"].draw_history)
 
     def zone(self, game, card):
         return game.state.cards[card.object_id].zone
+
+
+    def hunger_chapter(self, seed, *, redirect=False):
+        from quorune.engine import TURN_STEPS
+
+        game = self.session(seed)
+        saga = self.add(game.engine, "The Hunger Tide Rises", ref="hunger-saga")
+        saga.counters["lore"] = 3
+        payer = self.add(game.engine, "Isamaru, Hound of Konda", ref="hunger-creature")
+        larger = self.add(game.engine, "Grizzly Bears", zone="library", ref="hunger-large-private")
+        eligible = self.add(game.engine, "Doomed Traveler", zone="library", ref="hunger-small-private")
+        zero = self.add(game.engine, "Ornithopter", zone="graveyard", ref="hunger-zero-public")
+        outsider = self.add(game.engine, "Grizzly Bears", seat="B", ref="hunger-foreign-creature")
+        if redirect:
+            rip = self.add(game.engine, "Rest in Peace", seat="B")
+            self.assert_closed(game, rip)
+        self.assert_closed(game, saga)
+        game.state.config.semantic_policy = "trusted_only"
+        self.prepare(game)
+        game.state.phase_index = TURN_STEPS.index(("beginning", "draw"))
+        game.engine._grant_priority("A")
+        game.engine.pump()
+        self.checkpoint(game)
+        before = game.state.players["A"].stats.get("shuffle_count", 0)
+        self.until(game, lambda view: any(item.context.get("event") == "saga.chapter.4" for item in view.state.stack))
+        self.assertEqual(4, game.state.cards[saga.object_id].counters["lore"])
+        self.choice(game, (payer.ref,))
+        self.assertEqual("battlefield", self.zone(game, saga))
+        self.reject(game, "B", (outsider.ref,))
+        self.reject(game, "A", (outsider.ref,))
+        return game, saga, payer, larger, eligible, zero, before
+
+    def hunger_search_zone(self, game, zone):
+        self.assertEqual("semantic.choice", game.state.pending_decision.kind)
+        command = {"action_id": "choose", "choice": zone}
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:B", command).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        self.assertTrue(game.act("pilot:A", command).ok)
+        self.assertEqual("semantic.search", game.state.pending_decision.kind)
+        return game.state.pending_decision.payload_by_actor["A"]["legal_actions"][0]["choice_schema"]
+
+    def test_hunger_chapter_resolves_both_zones_from_the_committed_count_and_shuffles(self):
+        game, saga, payer, larger, eligible, zero, before = self.hunger_chapter(71444001)
+        game = self.replay(game, load=True)
+        self.choose(game, (payer.ref,))
+        self.assertEqual("graveyard", self.zone(game, payer))
+        self.assertEqual("battlefield", self.zone(game, saga))
+        game = self.replay(game, load=True)
+        choice = self.hunger_search_zone(game, "both")
+        self.assertEqual(1, choice["minimum"])
+        self.assertEqual({payer.ref, eligible.ref, zero.ref}, set(choice["legal_refs"]))
+        self.assertNotIn(larger.ref, json.dumps(game.packet("pilot:B", full=True)))
+        self.assertNotIn(eligible.ref, json.dumps(game.packet("pilot:B", full=True)))
+        game = self.replay(game, load=True)
+        before_selection = authoritative_state_hash(game.state)
+        for selected in ([], [larger.ref]):
+            self.assertFalse(game.act("pilot:A", {"action_id": "choose", "search_cards": selected}).ok)
+            self.assertEqual(before_selection, authoritative_state_hash(game.state))
+        result = game.act("pilot:A", {"action_id": "choose", "search_cards": [payer.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("battlefield", self.zone(game, payer))
+        self.assertEqual("graveyard", self.zone(game, saga))
+        self.assertEqual(before + 1, game.state.players["A"].stats["shuffle_count"])
+        self.replay(game, load=True)
+
+    def test_hunger_chapter_zero_sacrifices_can_find_a_zero_card_without_shuffling(self):
+        game, saga, payer, larger, eligible, zero, before = self.hunger_chapter(71444002)
+        library = tuple(game.state.players["A"].zones["library"])
+        self.choose(game, ())
+        self.assertEqual("battlefield", self.zone(game, payer))
+        game = self.replay(game, load=True)
+        choice = self.hunger_search_zone(game, "graveyard")
+        self.assertEqual([zero.ref], choice["legal_refs"])
+        self.assertEqual(1, choice["minimum"])
+        result = game.act("pilot:A", {"action_id": "choose", "search_cards": [zero.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("battlefield", self.zone(game, zero))
+        self.assertEqual("graveyard", self.zone(game, saga))
+        self.assertEqual(before, game.state.players["A"].stats.get("shuffle_count", 0))
+        self.assertEqual(library, tuple(game.state.players["A"].zones["library"]))
+        self.replay(game, load=True)
+
+    def test_hunger_chapter_counts_the_actual_redirected_sacrifice_before_private_search(self):
+        game, saga, payer, larger, eligible, zero, before = self.hunger_chapter(71444003, redirect=True)
+        self.choose(game, (payer.ref,))
+        self.assertEqual("exile", self.zone(game, payer))
+        choice = self.hunger_search_zone(game, "library")
+        self.assertEqual([eligible.ref], choice["legal_refs"])
+        self.assertEqual(0, choice["minimum"])
+        game = self.replay(game, load=True)
+        found = game.act("pilot:A", {"action_id": "choose", "search_cards": [eligible.ref]})
+        self.assertTrue(found.ok, found.summary)
+        self.assertEqual("battlefield", self.zone(game, eligible))
+        self.assertEqual("exile", self.zone(game, saga))
+        self.assertEqual(before + 1, game.state.players["A"].stats["shuffle_count"])
+        self.replay(game, load=True)
+
+    def test_hunger_chapter_committed_search_shape_and_authority_fail_closed(self):
+        from unittest.mock import patch
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.named_searches import (
+            SACRIFICE_BOUND_CREATURE_SEARCH_CAPABILITY, sacrifice_bound_creature_search_instruction,
+            sacrifice_bound_creature_search_zones,
+        )
+
+        profile = "commander_review"
+        game = self.session(71444004)
+        source = self.add(game.engine, "The Hunger Tide Rises")
+        self.assert_closed(game, source)
+        program, = (program for program in game.engine.semantics.programs_for_oracle(source.oracle_id)
+                    if program.event == "saga.chapter.4")
+        for cap in (SACRIFICE_BOUND_CREATURE_SEARCH_CAPABILITY, ANY_NUMBER_SACRIFICE_CAPABILITY):
+            kept = tuple(value for value in program.capability_dependencies if value != cap)
+            changed = replace(program, capability_dependencies=kept,
+                              capability_closure=self.registry.closure(kept, profile=profile).to_dict())
+            result = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile=profile)
+            self.assertFalse(result["strict"])
+            self.assertIn("capability:undeclared_runtime_dependency:" + cap, result["blockers"])
+        effect = sacrifice_bound_creature_search_instruction(("library", "graveyard"), 0)
+        self.assertEqual(("library", "graveyard"), sacrifice_bound_creature_search_zones(effect))
+        for changed in ({**effect, "shuffle_after": False}, {**effect, "zone": ["graveyard", "library"]},
+                        {**effect, "selector": {"types": ["creature"], "mana_value": {"maximum": True}}}):
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                sacrifice_bound_creature_search_zones(changed)
+        original = self.db.lookup("The Hunger Tide Rises", fuzzy=False)
+        with patch("quorune.compiler.resolution_effect_templates.any_number_sacrifice_template", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(original, capability_registry=self.registry).status)
 
     def test_actual_reprocess_accepts_a_strict_subset_and_draws_before_the_death_trigger(self):
         game = self.session(76271101)

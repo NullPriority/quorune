@@ -3,19 +3,22 @@
 from collections.abc import Mapping
 from dataclasses import dataclass, replace
 
+from ..rad_counter_model import ENTRY_RAD_COUNTER_CHILD
 from .model import ReplacementEffectError, ReplaceableEvent
 
 
 ENTRY_TIME_COUNTER_TYPES_FIELD = "_entry_time_counter_types"
 BATTLEFIELD_ENTRY_COUNTER_SCOPE = "_battlefield_entry_counter_scope"
 BATTLEFIELD_ENTRY_COUNTER_CHILD = "_battlefield_entry_counter"
+EXILE_ENTRY_COUNTER_CHILD = "_exile_entry_counter"
 
 
 def redirected_battlefield_entry_counter(parent: ReplaceableEvent, child: ReplaceableEvent) -> bool:
     """This nested placement needs the originally requested battlefield entry."""
     return (
         parent.kind == "zone.change"
-        and parent.payload.get(BATTLEFIELD_ENTRY_COUNTER_SCOPE) is True
+        and (parent.payload.get(BATTLEFIELD_ENTRY_COUNTER_SCOPE) is True
+             or child.payload.get(ENTRY_RAD_COUNTER_CHILD) is True)
         and parent.payload.get("destination") != "battlefield"
         and child.kind == "counter.place"
         and child.payload.get(BATTLEFIELD_ENTRY_COUNTER_CHILD) is True
@@ -24,7 +27,10 @@ def redirected_battlefield_entry_counter(parent: ReplaceableEvent, child: Replac
 
 def retain_committed_zone_counters(event: ReplaceableEvent) -> ReplaceableEvent:
     """Drop unrealized entry-counter trees while retaining counters from a new destination."""
-    children = tuple(child for child in event.children if not redirected_battlefield_entry_counter(event, child))
+    children = tuple(child for child in event.children
+                     if not redirected_battlefield_entry_counter(event, child)
+                     and not (event.kind == "zone.change" and event.payload.get("destination") != "exile"
+                              and child.kind == "counter.place" and child.payload.get(EXILE_ENTRY_COUNTER_CHILD) is True))
     return replace(event, children=children) if len(children) != len(event.children) else event
 
 

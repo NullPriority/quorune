@@ -1,6 +1,7 @@
 from __future__ import annotations
 from ..semantic_runtime.life_gain_cost_intent import LifeGainCostBatchIntent
 from ..bounded_hand_cast_model import ResolveBoundedHandCastIntent
+from ..resolving_cast_budget_model import ResolveBudgetedCastIntent
 from ..semantic_runtime.counter_movement_intent import COUNTER_MOVEMENT_INTENT_TYPES, CounterMovementIntent
 from ..discover_model import DiscoverCastIntent
 from ..fixed_top_exile import ResolvingExileLandPlayIntent
@@ -8,6 +9,7 @@ from ..rules.shared_type_library_play_model import ResolvingSharedTypeLibraryPla
 from ..rules.qualified_library_cast import ResolveQualifiedLibraryCastIntent
 from ..drawing.captured_hand import ResolveCapturedDrawCastIntent
 from ..targeted_graveyard_cast_model import GraveyardCastIntent
+from ..rules.discarded_card_cast import DiscardedCardCastIntent
 from ..semantic_runtime.champion_intent import CHAMPION_INTENT_TYPES
 
 from typing import Any, Mapping, Protocol, Sequence
@@ -195,9 +197,12 @@ def _source_ref(host: SemanticCounterCoordinationHost, item: Any) -> str | None:
 
 def _with_committed_quantity_followup(completion, intent, index, result, *, effect):
     from dataclasses import replace
+    from ..fixed_counter_movement_model import SOURCE_GIVES_COUNTERS_THEN_DRAW
     from ..rules.committed_quantity_followups import CommittedQuantityFollowup
+    from ..rules.counter_movement import COUNTER_MOVEMENT_DRAW
     from ..semantic_runtime.composition_intent import ResumeCompositionOrderIntent
     from ..semantic_runtime.graveyard_exile_result_intent import GraveyardExileLifeResultIntent
+    from ..semantic_runtime.counter_movement_intent import MoveCounterSetIntent
 
     from ..discard_result_model import (
         DiscardWholeHandsResultIntent, IntentResultPlayerDraws, PlayerDiscardCounts, SelectedLandDiscardCounterDraws,
@@ -227,7 +232,10 @@ def _with_committed_quantity_followup(completion, intent, index, result, *, effe
         return replace(completion, prepend_effects=(*result.effects, *completion.prepend_effects))
     if not isinstance(result, CommittedQuantityFollowup):
         return completion
-    if not isinstance(intent, (ResumeCompositionOrderIntent, GraveyardExileLifeResultIntent)) or index != len(completion.intents) - 1:
+    allowed_parent = isinstance(intent, (ResumeCompositionOrderIntent, GraveyardExileLifeResultIntent))
+    if isinstance(intent, MoveCounterSetIntent) and intent.mode == SOURCE_GIVES_COUNTERS_THEN_DRAW:
+        allowed_parent = result.effects == (COUNTER_MOVEMENT_DRAW,)
+    if not allowed_parent or index != len(completion.intents) - 1:
         raise SemanticChoiceError("A committed result follow-up needs its exact final typed parent")
     return replace(completion, prepend_effects=(*result.effects, *completion.prepend_effects))
 
@@ -248,12 +256,19 @@ def continue_semantic_completion(
     expected_intent_kind: str | None = None,
     expected_intent: Mapping[str, Any] | None = None,
     committed_completion: bool = False,
+    copy_replacements_applied: bool = False,
 ) -> bool:
     """Execute a completion, suspending supported intents before mutation."""
 
     intents = tuple(completion.intents)
     if type(start_index) is not int or start_index < 0 or start_index > len(intents):
         raise SemanticChoiceError("Semantic completion intent index is invalid")
+    if (not copy_replacements_applied and start_index == 0 and not replacement_selections
+            and expected_counter_intent is None and expected_intent_kind is None and expected_intent is None):
+        from ..selection.prepared_spell_copy_batch import begin_prepared_spell_copy_batch
+
+        if begin_prepared_spell_copy_batch(host, item, continuation, actor, response, completion):
+            return False
     if expected_counter_intent is not None and (
         expected_intent_kind is not None or expected_intent is not None
     ):
@@ -325,7 +340,9 @@ def continue_semantic_completion(
                     ResolveQualifiedLibraryCastIntent,
                     ResolveCapturedDrawCastIntent,
                     ResolveBoundedHandCastIntent,
+                    ResolveBudgetedCastIntent,
                     GraveyardCastIntent,
+                    DiscardedCardCastIntent,
                     PlaceCountersOnSetIntent,
                     *COUNTER_MOVEMENT_INTENT_TYPES,
                     LifeChangeIntent,

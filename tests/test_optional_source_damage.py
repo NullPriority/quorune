@@ -18,6 +18,7 @@ from quorune.rules.capabilities import CapabilityRegistry, load_default_capabili
 from quorune.rules.evidence import validate_capability_evidence_index
 from quorune.rules.evidence_storage import read_evidence_document
 from quorune.rules.optional_source_damage import (
+    OPTIONAL_GRANTED_CREATURE_DAMAGE_CAPABILITY,
     OPTIONAL_LAND_CONTROLLER_DAMAGE_CAPABILITY,
     OPTIONAL_SOURCE_DAMAGE_CAPABILITY,
 )
@@ -81,6 +82,68 @@ class OptionalSourceDamageTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual(lives, tuple(game.state.players[seat].life for seat in "BC"))
         self.assertEqual("battlefield", game.state.cards[creature.object_id].zone)
         self.replay(game, load=True)
+
+    def test_requiem_grants_before_current_creature_controller_chooses_and_replays(self):
+        for accept in (True, False):
+            with self.subTest(accept=accept):
+                game = self.session(61127250 + accept)
+                monolith = self.add(game.engine, "Requiem Monolith", ref="receiving-grant-artifact")
+                recipient = self.add(game.engine, "Ornithopter", seat="B", ref="receiving-grant-creature")
+                damage = self.add(game.engine, "Blazing Salvo", zone="hand", ref="later-receiving-damage")
+                self.assert_closed(game, monolith)
+                self.prepare(game, actor="A", active="B", mana={"R": 1})
+                legal = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                self.assertFalse(any(row["id"].startswith(f"activate:{monolith.ref}:") for row in legal))
+                self.prepare(game, actor="A", active="A", mana={"R": 1})
+                self.checkpoint(game)
+                legal = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                action, = [row for row in legal if row["id"].startswith(f"activate:{monolith.ref}:")]
+                activated = game.act("pilot:A", {"action_id": action["id"], "targets": [recipient.ref]})
+                self.assertTrue(activated.ok, activated.summary)
+                self.assertTrue(game.state.cards[monolith.object_id].tapped)
+                pending = self.resolve(game)
+                self.assertEqual(("semantic.choice", ["B"]), (pending.kind, pending.actors))
+                hand = len(game.state.players["B"].zones["hand"])
+                life = game.state.players["B"].life
+                command = {"action_id": "choose", "choice": "accept_damage" if accept else "decline_damage"}
+                before = authoritative_state_hash(game.state)
+                self.assertFalse(game.act("pilot:A", command).ok)
+                self.assertEqual(before, authoritative_state_hash(game.state))
+                game = self.replay(game, load=True)
+                chosen = game.act("pilot:B", command)
+                self.assertTrue(chosen.ok, chosen.summary)
+                self.assertIsNone(self.resolve(game))
+                if not accept:
+                    self.assertEqual(life, game.state.players["B"].life)
+                    self.assertEqual(hand, len(game.state.players["B"].zones["hand"]))
+                    self.cast_for(game, "A", damage, [recipient.ref])
+                    self.assertEqual(["B"], self.resolve(game).actors)
+                    declined = game.act("pilot:B", {"action_id": "choose", "choice": "decline_damage"})
+                    self.assertTrue(declined.ok, declined.summary)
+                    self.assertIsNone(self.resolve(game))
+                amount = 1 if accept else 3
+                self.assertEqual(life - amount, game.state.players["B"].life)
+                self.assertEqual(hand + amount, len(game.state.players["B"].zones["hand"]))
+                self.assertEqual(40, game.state.players["A"].life)
+                self.replay(game, load=True)
+
+    def test_requiem_composes_the_exact_tap_grant_and_independently_lowered_trigger(self):
+        original = self.db.lookup("Requiem Monolith", fuzzy=False)
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        ir = compile_oracle_card(original, **options)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        grant, child = ir.faces[0].nodes
+        self.assertEqual(("activated_ability", "granted_triggered_ability"), (grant.kind, child.kind))
+        self.assertIn(OPTIONAL_GRANTED_CREATURE_DAMAGE_CAPABILITY, grant.capability_dependencies)
+        self.assertEqual(["draw", "lose_life"], [effect["op"] for effect in child.effects])
+        self.assertEqual(child.text, original.oracle_text[child.span.start:child.span.end])
+        for changed in (
+            original.oracle_text.replace("Activate only as a sorcery.", ""),
+            original.oracle_text.replace("That creature's controller", "An opponent"),
+        ):
+            self.assertNotEqual("exact", compile_oracle_card(replace(original, oracle_text=changed), **options).status)
+        with patch("quorune.compiler.temporary_quoted_ability_nodes._paid_grant_parts", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(original, **options).status)
 
     def test_actual_molten_offers_the_original_stack_controller_its_exact_damage_or_counter(self):
         record = self.db.lookup("Molten Influence", fuzzy=False)
@@ -334,3 +397,179 @@ class OptionalSourceDamageTests(InheritedNativeFixture, unittest.TestCase):
         with patch("quorune.compiler.optional_source_damage_templates.targeted_destruction_effect_template",
                    return_value=None):
             self.assertNotEqual("exact", compile_card(card).status)
+
+class CombustibleGearhulkTests(InheritedNativeFixture, unittest.TestCase):
+    gearhulk = "Combustible Gearhulk"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        folder = Path(cls.temporary.name)
+        fixtures = ROOT / "tests" / "fixtures"
+        support = {
+            "bound-effect-program-cards.json": {"Generic Bound Plains", "Generic Bound Commander", "Unsummon"},
+            "enchanted-player-static-cards.json": {"Walking Ballista"},
+            "graveyard-exile-replacement-cards.json": {"Rest in Peace"},
+        }
+        paths = [fixtures / "combustible-gearhulk-cards.json"]
+        for filename, names in support.items():
+            rows = json.loads((fixtures / filename).read_bytes())
+            rows["cards"] = [row for row in rows["cards"] if row["name"] in names]
+            assert {row["name"] for row in rows["cards"]} == names, (filename, names)
+            ids = {row["oracle_id"] for row in rows["cards"]}
+            rows["rulings"] = [row for row in rows.get("rulings", ()) if row["oracle_id"] in ids]
+            subset = folder / filename
+            subset.write_text(json.dumps(rows), encoding="utf-8")
+            paths.append(subset)
+        database = folder / "gearhulk.sqlite3"
+        build_fixture_database(paths, database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        commander = "Generic Bound Commander"
+        cls.deck = DeckDefinition("Combustible Gearhulk", [
+            DeckEntry(commander, 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], [commander])
+
+    def reject(self, game, seat, command):
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + seat, command)
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def scene(self, seed, *, short=False, exile=False):
+        from quorune.zone_transitions import ZoneTransitionOwner
+
+        game = self.session(seed)
+        source = self.add(game.engine, self.gearhulk, zone="hand", ref="GEARHULK-SOURCE")
+        response = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        self.assert_closed(game, source)
+        self.assert_closed(game, response)
+        if exile:
+            replacement = self.add(game.engine, "Rest in Peace", seat="D")
+            self.assert_closed(game, replacement)
+        if short:
+            library = tuple(game.state.players["A"].zones["library"])
+            ZoneTransitionOwner(game.engine).move_cards_simultaneously(
+                [(object_id, "exile") for object_id in library], reason="Prepare a two-card test library", log=False,
+            )
+            for name, ref in ((self.gearhulk, "LIBRARY-SIX"), ("Walking Ballista", "LIBRARY-X")):
+                hidden = self.add(game.engine, name, zone="library", ref=ref)
+                hidden.known_to.clear()
+                hidden.revealed_to.clear()
+        game.state.config.semantic_policy = "trusted_only"
+        self.prepare(game, mana={"C": 4, "R": 2})
+        game.state.players["B"].mana_pool["U"] = 1
+        self.checkpoint(game)
+        self.cast(game, "A", source)
+        pending = self.resolve(game)
+        self.assertEqual(("semantic.target", ["A"]), (pending.kind, pending.actors))
+        for seat in ("A", "D"):
+            self.reject(game, seat, {"action_id": "choose", "targets": ["A" if seat == "A" else "C"]})
+        target = game.act("pilot:A", {"action_id": "choose", "targets": ["C"]})
+        self.assertTrue(target.ok, target.summary)
+        return game, source, response
+
+    def choose_branch(self, game, option):
+        pending = self.resolve(game)
+        self.assertEqual(("semantic.choice", ["C"]), (pending.kind, pending.actors))
+        values = pending.payload_by_actor["C"]["legal_actions"][0]["choice_schema"]["legal_values"]
+        self.assertEqual(["allow_draw", "mill_then_damage"], list(values))
+        for seat, command in (
+            ("A", {"action_id": "choose", "choice": option}),
+            ("D", {"action_id": "choose", "choice": option}),
+            ("C", {"action_id": "choose", "choice": "change_target"}),
+            ("C", {"action_id": "pass"}),
+        ):
+            self.reject(game, seat, command)
+        game = self.replay(game, load=True)
+        result = game.act("pilot:C", {"action_id": "choose", "choice": option})
+        self.assertTrue(result.ok, result.summary)
+        return game
+
+    def test_actual_gearhulk_draws_three_privately_for_its_controller_and_replays(self):
+        game, source, _ = self.scene(701_170_341)
+        before = tuple(game.state.players["A"].zones["library"])
+        hand = tuple(game.state.players["A"].zones["hand"])
+        lives = {seat: game.state.players[seat].life for seat in "ABCD"}
+        chosen = self.choose_branch(game, "allow_draw")
+        self.assertEqual(before[:-3], tuple(chosen.state.players["A"].zones["library"]))
+        self.assertEqual(hand + tuple(reversed(before[-3:])), tuple(chosen.state.players["A"].zones["hand"]))
+        self.assertEqual(lives, {seat: chosen.state.players[seat].life for seat in "ABCD"})
+        self.assertEqual("battlefield", chosen.state.cards[source.object_id].zone)
+        for seat in "BCD":
+            packet = json.dumps(chosen.packet("pilot:" + seat, full=True))
+            for object_id in before[-3:]:
+                self.assertNotIn(chosen.state.cards[object_id].ref, packet)
+        self.replay(chosen, load=True)
+
+    def test_actual_gearhulk_damages_only_its_target_after_short_replaced_mill_and_source_departure(self):
+        game, source, response = self.scene(701_170_342, short=True, exile=True)
+        before = tuple(game.state.players["A"].zones["library"])
+        self.assertEqual(2, len(before))
+        self.cast(game, "B", response, [source.ref])
+        self.resolve_top(game)
+        self.assertEqual("hand", game.state.cards[source.object_id].zone)
+        lives = {seat: game.state.players[seat].life for seat in "ABCD"}
+        hand = tuple(game.state.players["A"].zones["hand"])
+        chosen = self.choose_branch(game, "mill_then_damage")
+        self.assertEqual([], chosen.state.players["A"].zones["library"])
+        self.assertEqual(hand, tuple(chosen.state.players["A"].zones["hand"]))
+        self.assertEqual(["exile", "exile"], [chosen.state.cards[object_id].zone for object_id in before])
+        self.assertEqual({**lives, "C": lives["C"] - 6},
+                         {seat: chosen.state.players[seat].life for seat in "ABCD"})
+        self.assertIn("A", chosen.engine.active_seats)
+        self.replay(chosen, load=True)
+
+    def test_actual_gearhulk_still_offers_short_draw_and_loses_its_only_departed_target(self):
+        for departure in (False, True):
+            with self.subTest(departure=departure):
+                game, _, _ = self.scene(701_170_343 + departure, short=True)
+                before = tuple(game.state.players["A"].zones["library"])
+                if departure:
+                    self.priority(game, "C")
+                    result = game.act("pilot:C", {"action_id": "concede", "choices": {"confirm_concede": True}})
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertNotIn("C", game.engine.active_seats)
+                    self.assertIsNone(self.resolve(game))
+                    self.assertFalse(game.state.stack)
+                    self.assertIn("A", game.engine.active_seats)
+                    self.assertEqual(before, tuple(game.state.players["A"].zones["library"]))
+                else:
+                    game = self.choose_branch(game, "allow_draw")
+                    self.assertNotIn("A", game.engine.active_seats)
+                    self.assertIn("C", game.engine.active_seats)
+                self.replay(game, load=True)
+
+    def test_gearhulk_choice_requires_exact_self_entry_and_paired_public_owners(self):
+        from quorune.replacement.immutable import thaw_value
+        from quorune.rules.committed_mill_cards import PUBLIC_MILLED_CARDS_CAPABILITY
+        from quorune.rules.optional_source_damage import MILLED_MANA_CHOICE_VERSION, OPTIONAL_SOURCE_DAMAGE_FIELD
+
+        card = self.db.lookup(self.gearhulk, fuzzy=False)
+        report, semantics = register_card(self.db, self.registry, self.gearhulk)
+        self.assertTrue(report["strict_capability_ready"], report["blockers"])
+        program, = (program for program in semantics.programs_for_oracle(card.oracle_id)
+                    if program.event == "permanent.enter.self")
+        trigger = thaw_value(program.effects[0])
+        self.assertEqual(MILLED_MANA_CHOICE_VERSION, trigger[OPTIONAL_SOURCE_DAMAGE_FIELD])
+        self.assertIn(PUBLIC_MILLED_CARDS_CAPABILITY, program.capability_dependencies)
+        self.assertEqual("opponent", program.target_schema["player_relation"])
+        branches = trigger["then_by_choice"]
+        self.assertEqual(3, branches["allow_draw"][0]["count"])
+        self.assertEqual(3, branches["mill_then_damage"][0]["count"])
+        for malformed in (
+            replace(program, event="permanent.leave.self"),
+            replace(program, target_schema={**program.target_schema, "player_relation": "any"}),
+            replace(program, effects=tuple(branches["mill_then_damage"])),
+        ):
+            self.assertFalse(bind_semantic_program_runtime(
+                malformed, capability_registry=self.registry, profile="commander_review",
+            )["strict"])
+        for altered in (
+            card.oracle_text.replace("target opponent", "target player"),
+            card.oracle_text.replace("this creature deals", "another creature deals"),
+            card.oracle_text.replace("those cards.", "those cards and you gain that much life."),
+        ):
+            result = compile_oracle_card(replace(card, oracle_text=altered), capability_registry=self.registry,
+                                         capability_profile="commander_review")
+            self.assertNotEqual("exact", result.status)

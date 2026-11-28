@@ -11,13 +11,78 @@ from ..entry_state_conditions import (
     FixedEntryConditionError,
 )
 from ..landwalk import BASIC_LAND_TYPES
-from ..replacement import AddAmount, ReplacementClass, ReplacementEffect, SetField
+from ..rad_counter_model import (
+    ENTRY_RAD_CHOICE_DEPENDENCIES, ENTRY_RAD_CHOICE_FIELD, ENTRY_RAD_CHOICE_HANDLER,
+    ENTRY_RAD_COUNTER_CHILD, RAD_COUNTER, entry_rad_choice_descriptor,
+)
+from ..replacement import AddAmount, CreateNestedEvent, ReplacementClass, ReplacementEffect, SetField
+from ..replacement.entry_counter_types import BATTLEFIELD_ENTRY_COUNTER_CHILD
+from ..replacement.immutable import FrozenMap
 from .component_registry import exact_fields
 from .context import SemanticNodeError
 
 
 ENTRY_STATE_HANDLER_ID = "replacement.zone.entry-state.v1"
 _SOURCE_RELATIONS = frozenset({"affected_object", "controller"})
+
+
+@dataclass(frozen=True, slots=True)
+class EntryRadChoiceHandler:
+    handler_id: str = ENTRY_RAD_CHOICE_HANDLER
+    schema_version: int = 1
+    family: str = "replacement.zone.entry_tapped_rad_choice"
+    event: str = "zone.change"
+    rule_references: tuple[str, ...] = ("614.1c", "614.12", "616.1", "728.1")
+    capability_dependencies: tuple[str, ...] = ENTRY_RAD_CHOICE_DEPENDENCIES
+
+    def validate(self, descriptor):
+        if (FrozenMap(descriptor) != FrozenMap(entry_rad_choice_descriptor())
+                or type(descriptor.get("schema_version")) is not int
+                or type(descriptor.get("amount")) is not int):
+            raise SemanticNodeError("An optional tapped entry requires its exact land and rad counters")
+
+    def lower(self, descriptor, context):
+        self.validate(descriptor)
+        return ()
+
+    def subject_replacement_effects(self, descriptor, *, subject, component_id, host, simultaneous_departures=()):
+        self.validate(descriptor)
+        if subject.destination != "battlefield" or "land" not in subject.object_types:
+            return ()
+        return tuple(
+            _entry_rad_alternative(subject, component_id, seat, accept=accept)
+            for seat in host.active_seats
+            for accept in (True, False)
+        )
+
+
+def _entry_rad_alternative(subject, component_id, seat, *, accept):
+    operations = (SetField(ENTRY_RAD_CHOICE_FIELD, accept),)
+    if accept:
+        from .counter_replacements import CounterPlacementEventSpec
+
+        counters = CounterPlacementEventSpec(
+            event_id=f"entry-rad:{subject.logical_object_id}:{component_id}:{seat}",
+            subject_kind="player", subject_id=seat, placing_player=seat,
+            counter_name=RAD_COUNTER, amount=2, source_ref=subject.object_ref, effect_generated=True,
+        ).event()
+        operations += (
+            SetField("tapped", True),
+            CreateNestedEvent({
+                "kind": counters.kind, "affected_player": seat,
+                "payload": {**counters.payload, ENTRY_RAD_COUNTER_CHILD: True, BATTLEFIELD_ENTRY_COUNTER_CHILD: True},
+            }),
+        )
+    return ReplacementEffect(
+        effect_id=f"{ENTRY_RAD_CHOICE_HANDLER}:{component_id}:{subject.object_ref}:{seat}:{int(accept)}",
+        source_id=subject.object_ref, event_kind="zone.change", replacement_class=ReplacementClass.OTHER,
+        conditions={
+            "destination": {"eq": "battlefield"}, "object_ref": {"eq": subject.object_ref},
+            "destination_controller": {"eq": seat}, ENTRY_RAD_CHOICE_FIELD: {"eq": None},
+        },
+        operations=operations,
+        label="Enter tapped and get two rad counters" if accept else "Enter without getting rad counters",
+    )
 
 
 @dataclass(frozen=True, slots=True)

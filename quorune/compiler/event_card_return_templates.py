@@ -8,6 +8,8 @@ from ..event_card_return import (EVENT_CARD_RETURN_MECHANIC, event_card_return_e
     EVENT_BATTLEFIELD_RETURN_MECHANIC, event_battlefield_return_effect,
     EVENT_LIBRARY_MOVE_CAPABILITY, GRAVEYARD_SOURCE_ARRIVAL_CAPABILITY, GRAVEYARD_SOURCE_ARRIVAL_EVENT,
     GRAVEYARD_SOURCE_SHUFFLE_TEMPLATE, graveyard_source_arrival_condition,
+    CONTROLLED_CREATURE_DEATH_LIBRARY_TEMPLATE, CONTROLLED_CREATURE_DEATH_LIBRARY_VARIANT,
+    controlled_creature_death_library_condition,
     event_library_departure_condition, event_library_move_effect,
     EVENT_HAND_RETURN_CAPABILITY, EVENT_HAND_RETURN_MECHANIC, event_hand_return_effect,
     OTHER_LEGENDARY_HAND_RETURN_VARIANT, OTHER_LEGENDARY_HAND_RETURN_CAPABILITY,
@@ -95,6 +97,17 @@ def source_departure_hand_return_binding(material_line: str, *, card_name: str |
 def source_departure_library_binding(material_line: str, *, card_name: str | None):
     from .fixed_public_event_trigger_bindings import _source_subject, _spec
 
+    controlled_death = re.fullmatch(
+        r"Whenever a creature you control dies, (?P<body>put it on the bottom of its owner['’]s library[.]?)",
+        material_line, re.I,
+    )
+    if controlled_death is not None:
+        return _spec(
+            "creature.dies", CONTROLLED_CREATURE_DEATH_LIBRARY_VARIANT, controlled_death["body"],
+            CONTROLLED_CREATURE_DEATH_LIBRARY_TEMPLATE, "trigger-event-normalized-zone-change",
+            condition=controlled_creature_death_library_condition(),
+            capabilities=(EVENT_LIBRARY_MOVE_CAPABILITY,),
+        )
     arrival = _ARRIVAL_LIBRARY_TRIGGER.fullmatch(material_line)
     if arrival is not None and card_name and _source_subject(arrival["source"], card_name=card_name):
         return _spec(
@@ -285,7 +298,30 @@ def entry_creature_pump_binding(material_line, *, card_name=None):
                  capabilities=(NONHAND_ENTRY_PUMP_CAPABILITY, "trigger.condition.source_entry_cast"))
 
 
+def _paid_death_equipment_return(binding, body):
+    from ..replacement.immutable import FrozenMap
+    from ..rules.death_battlefield_return import (
+        DEATH_EQUIPMENT_RETURN_MECHANIC,
+        death_equipment_return_effect,
+        own_nontoken_death_condition,
+    )
+
+    result = r"return that card to the battlefield and attach this Equipment to it[.]?"
+    if (
+        (binding.event.value, binding.variant, binding.active_zone)
+        != ("creature.dies", "creature_graveyard_owner", "battlefield")
+        or FrozenMap(binding.event_condition or {}) != FrozenMap(own_nontoken_death_condition())
+        or re.fullmatch(result, body, re.I) is None
+        or re.fullmatch(r"You may pay [{]4[}]\. If you do, " + result, binding.body, re.I) is None
+    ):
+        return None
+    return ("fixed-paid-death-equipment-return-v1", (death_equipment_return_effect(),),
+            None, (DEATH_EQUIPMENT_RETURN_MECHANIC,))
+
+
 def event_card_return_template(binding, body: str, *, card_name: str, effect_template):
+    if paid_return := _paid_death_equipment_return(binding, body):
+        return paid_return
     from .discarded_card_exile_templates import discarded_card_exile_template
     from ..rules.entry_and_death_characteristics import (
         CREATURE_ENTRY_PUMP_VARIANT, NONHAND_ENTRY_PUMP_VARIANT, CREATURE_ENTRY_PUMP_MECHANIC, creature_entry_pump_effect,
@@ -333,6 +369,11 @@ def event_card_return_template(binding, body: str, *, card_name: str, effect_tem
             return ('attachment-source-return-v1', (spec.effect(),), None, (MECHANIC,))
     if binding.variant in {"source_departure_hand_return", OTHER_LEGENDARY_HAND_RETURN_VARIANT} and body == binding.body:
         return (binding.template_id, (event_hand_return_effect(),), None, (EVENT_HAND_RETURN_MECHANIC,))
+    if binding.variant == CONTROLLED_CREATURE_DEATH_LIBRARY_VARIANT:
+        if body != binding.body:
+            return None
+        return (binding.template_id, (event_library_move_effect(position="bottom", shuffle=False),),
+                None, (FIXED_OWNER_ZONE_MOVE_MECHANIC,))
     if binding.variant == "source_library_departure":
         return event_library_move_template(binding, body, card_name=card_name, effect_template=effect_template)
     attached_graveyard = (binding.event.value == 'permanent.graveyard'

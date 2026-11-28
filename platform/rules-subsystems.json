@@ -11023,7 +11023,7 @@
     },
     "semantic_transition_declaration": {
       "transition_id": "oracle-ir-v1234-local-tailnet-card-intake",
-      "compiler_version": "oracle-ir-v1235",
+      "compiler_version": "oracle-ir-v1237",
       "bundle_id": "bundle:commander-playtest-support-pr576",
       "candidate_ids": [
         "bundle:commander-playtest-support-pr576"

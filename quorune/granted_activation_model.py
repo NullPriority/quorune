@@ -146,6 +146,8 @@ GRANTED_UNEARTH_VERSION = 8
 GRAVEYARD_UNEARTH_GRANT_CAPABILITY = "continuous.ability.graveyard_unearth_grant"
 GRANTED_NINJUTSU_VERSION = 9
 HAND_NINJUTSU_GRANT_CAPABILITY = "continuous.ability.hand_ninjutsu_grant"
+GRANTOR_REDIRECTION_VERSION = 10
+GRANTOR_REDIRECTION_CAPABILITY = "activation.grantor_only.finite_damage_redirect"
 _INCARNATION_BOUND_GRANT_VERSIONS = (GRANTED_UNEARTH_VERSION, GRANTED_NINJUTSU_VERSION)
 
 
@@ -173,9 +175,10 @@ class GrantedActivatedAbilitySpec:
     source_counter_removal_cost: Mapping[str, Any] | None = None
     announced_x_symbols: int | None = None
     grant_incarnation: str | None = None
+    activation_grantor: str | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6, 7, *_INCARNATION_BOUND_GRANT_VERSIONS}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6, 7, *_INCARNATION_BOUND_GRANT_VERSIONS, GRANTOR_REDIRECTION_VERSION}:
             raise AbilityFragmentError(
                 "Unsupported granted activated-ability schema version"
             )
@@ -281,6 +284,23 @@ class GrantedActivatedAbilitySpec:
         elif self.grant_incarnation is not None:
             raise AbilityFragmentError("A source incarnation requires a versioned off-battlefield grant")
 
+        self._validate_grantor_contract()
+
+    def _validate_grantor_contract(self) -> None:
+        if self.schema_version != GRANTOR_REDIRECTION_VERSION:
+            if self.activation_grantor is not None:
+                raise AbilityFragmentError("Only the versioned grantor activation carries an activating player")
+            return
+        if (
+            type(self.activation_grantor) is not str or not self.activation_grantor.strip()
+            or self.activation_grantor.strip() != self.activation_grantor
+            or self.cost_text != "{0}" or any((self.mana, self.tap_source, self.untap_source,
+                self.sacrifice_source, self.life_payment, self.choices, self.mana_ability,
+                self.sorcery_speed, self.mana_spend_restriction, self.fixed_mana_outputs))
+            or not self.ability_id.startswith("ability:granted:") or not self.semantic_key.endswith(":" + self.ability_id)
+        ):
+            raise AbilityFragmentError("Grantor-only redirection requires a closed free battlefield activation")
+
     def _validate_off_battlefield_grant(self) -> None:
         sorcery_speed = self.schema_version == GRANTED_UNEARTH_VERSION
         if (
@@ -313,6 +333,8 @@ class GrantedActivatedAbilitySpec:
 
     @property
     def capability_id(self) -> str | None:
+        if self.schema_version == GRANTOR_REDIRECTION_VERSION:
+            return GRANTOR_REDIRECTION_CAPABILITY
         if self.schema_version == GRANTED_UNEARTH_VERSION:
             return GRAVEYARD_UNEARTH_GRANT_CAPABILITY
         if self.schema_version == GRANTED_NINJUTSU_VERSION:
@@ -363,6 +385,8 @@ class GrantedActivatedAbilitySpec:
             result["announced_x_symbols"] = self.announced_x_symbols
         if self.schema_version in _INCARNATION_BOUND_GRANT_VERSIONS:
             result["grant_incarnation"] = self.grant_incarnation
+        if self.activation_grantor is not None:
+            result["activation_grantor"] = self.activation_grantor
         return result
 
     @classmethod
@@ -394,12 +418,13 @@ class GrantedActivatedAbilitySpec:
         source_counter_fields = {*expected, "source_counter_removal_cost"}
         announced_x_fields = {*expected, "announced_x_symbols"}
         incarnation_bound_fields = {*expected, "grant_incarnation"}
+        grantor_bound_fields = {*expected, "activation_grantor"}
         if (
             not isinstance(value, Mapping)
             or type(value.get("schema_version")) is not int
             or set(value) not in {frozenset(expected), frozenset(extended), frozenset(crew_extended),
                                   frozenset(attachment_extended), frozenset(source_counter_fields), frozenset(announced_x_fields),
-                                  frozenset(incarnation_bound_fields)}
+                                  frozenset(incarnation_bound_fields), frozenset(grantor_bound_fields)}
             or (value.get("schema_version") == 1 and set(value) != expected)
             or (value.get("schema_version") == 2 and set(value) != extended)
             or (value.get("schema_version") == 3 and set(value) != crew_extended)
@@ -409,6 +434,7 @@ class GrantedActivatedAbilitySpec:
             or (value.get("schema_version") == 7 and set(value) != announced_x_fields)
             or (value.get("schema_version") in _INCARNATION_BOUND_GRANT_VERSIONS
                 and set(value) != incarnation_bound_fields)
+            or (value.get("schema_version") == GRANTOR_REDIRECTION_VERSION and set(value) != grantor_bound_fields)
         ):
             raise AbilityFragmentError(
                 "Granted activated-ability fragments have a closed schema"
@@ -452,6 +478,7 @@ class GrantedActivatedAbilitySpec:
             source_counter_removal_cost=value.get("source_counter_removal_cost"),
             announced_x_symbols=value.get("announced_x_symbols"),
             grant_incarnation=value.get("grant_incarnation"),
+            activation_grantor=value.get("activation_grantor"),
         )
 
 

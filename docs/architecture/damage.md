@@ -13,6 +13,8 @@ All represented combat and noncombat damage uses one prepare-and-commit
 transaction. Producers submit immutable source, recipient, amount, and event
 identity values. `damage.py` coordinates preparation, delegating modifier and
 immediate prevention-result preparation to `damage_aftermath_preparation.py`.
+The transaction boundary in `damage_transaction.py` validates both replacement
+journals against their prepared snapshots before commit.
 Fixed-remainder prevention reads the damaged player's or permanent's current
 scope and prevents the excess in each damage event. The existing replacement
 order determines the result when other effects modify the amount.
@@ -30,6 +32,27 @@ players when the trigger is placed. Combat steps and separately committed
 noncombat damage produce separate occurrences. Ordinary per-recipient
 triggers continue to receive each positive damage result.
 
+A receiving trigger can have the damaged permanent deal the actual amount it
+received. A single recipient gets one occurrence for simultaneous damage from
+multiple sources, after redirection and prevention. A fully prevented
+assignment creates no occurrence. The effect uses the damaged object's
+current or last-known source information, and its chosen target is checked
+again on resolution. A source-relative restriction excludes the original
+incarnation. A controlled-subtype subscription reads the recipient's subtype
+and controller from the occurrence, while a target subtype exclusion reads
+current characteristics. A controlled-permanent receiving trigger can also
+assign the outgoing damage to the ability's own source. Each damaged
+permanent retains its own amount, including a planeswalker or battle, and
+the outgoing source retains its normal current or last-known information.
+
+A received-damage result can prohibit life gain for its final player
+recipients after dealing damage. The follow-up takes only positive player
+rows from the committed primary damage batch. A redirected player can
+receive the prohibition. Damage redirected to a permanent, fully prevented
+damage, and separate prevention aftermath create no player prohibition.
+The existing life permission owner records the affected seats until the
+end of the game and applies the normal rule to future gains.
+
 `rules/damage_snapshots.py` seals public source and recipient facts before
 replacement. Closed prevention facts include creature token status, attacking
 and unblocked roles, enchantment, absence of +1/+1 counters and logical combat
@@ -38,6 +61,17 @@ replaces these facts with the destination snapshot; it recomputes block-pair
 and shared-color relations instead of inheriting the former recipient's scope.
 Empty source and redirection extensions preserve their legacy serialized form.
 
+A paid target-creature activation can choose a damage source during
+resolution. Its replacement uses the first complete damage event from the
+chosen source to the original target this turn. The original activating
+permanent receives the damage. The existing chosen-source snapshot retains
+permanent-spell continuity and rejects a returned incarnation. The
+replacement keeps the amount, source and combat facts and is consumed on
+application or expires at cleanup. The chosen-source scope requires both
+permanents to be phased in when the damage would occur. Replacement
+preparation discovers protection at reachable destinations of this scope
+using the original damage source's qualities.
+
 A one-point redirection keeps the remaining damage on its original recipient.
 The redirected point keeps the same source and combat facts and uses the new
 recipient's current replacement and prevention eligibility. The affected
@@ -45,6 +79,38 @@ controller chooses the order when several simultaneous assignments compete for
 that point. Each effect applies once and expires at cleanup if unused. It
 cannot affect a returned incarnation of either permanent. When damage from one
 occurrence reconverges, result processing deals it together.
+
+A resolved controller-wide redirection matches damage to that player and
+permanents they currently control. It binds a battlefield incarnation chosen
+without targeting or found through the resolving Aura's attachment information.
+The destination must still have a permitted card type and be phased in. It keeps
+that destination if the permanent changes controller, and expires at cleanup.
+An Aura's departure after resolution leaves the created effect in place.
+
+Competing controller-wide redirections use one chosen destination for a
+simultaneous damage occurrence. The replacement journal carries the choice to
+the other assignments for that controller. Subsequent occurrences are
+independent. Redirected damage preserves the original source and combat facts
+and encounters protection and other replacements for the updated recipient.
+
+A targeted variant protects its controller and the creatures they currently
+control. Its spell revalidates the chosen creature through ordinary targeting.
+The resolving spell binds that battlefield incarnation as the damage
+destination and schedules a separate delayed trigger through the zone event
+owner. A committed graveyard departure that turn captures the original
+permanent's last-known counters and puts the trigger into the ordinary APNAP
+batch. Its controller can announce up to one controlled creature. The
+counter placement precedes the draw, and a trigger announced with zero
+targets still draws. Loss of the single announced target counters the trigger
+under the ordinary revalidation rule.
+
+One temporary grant keeps the resolving spell controller as the only player
+who can activate its added redirection ability. The current Layer 6 catalog
+offers and validates the grant even when another player controls the
+permanent. Its zero-cost activation can protect a target player, creature, or
+planeswalker. It redirects one point to the original battlefield creature.
+Losing creature type or phasing out makes that destination unavailable while
+the change lasts. A zone change leaves the original destination unavailable.
 
 The cast-announced greatest-damage amount reads the largest committed
 current-turn result for one source and one recipient. It includes players
@@ -70,7 +136,18 @@ source fact for creature combat damage. The sealed boolean records whether
 that source had a +1/+1 counter when damage was dealt. The resulting triggers
 remain independent per source and occurrence. Counter changes after damage
 leave those triggers in place. Saved registries without the subscriber keep
-the former source and event encodings.
+the former source and event encodings. A bounded Goad chapter watches the
+selected incarnations until the chapter controller’s next turn. Only positive
+committed combat damage to a player creates its private draw trigger. Each
+watch remains independent after its originating Saga leaves the battlefield.
+
+A power-qualified combat damage subscriber captures whether a creature's
+effective power is above its base power. The characteristic evaluator reads
+base power after layers 7a and 7b. The ordinary effective-power query includes
+modifiers, counters and power/toughness switches. A qualifying positive
+combat result to a player can place one draw per observer, recipient and
+simultaneous damage batch. The occurrence keeps its sealed comparison
+through replacement and resolution.
 
 Newly compiled battlefield-static damage components require their own current
 layer-6 ability component. Amount replacements, fixed prevention and
@@ -191,6 +268,12 @@ flowchart LR
     Results --> Plan["Validated atomic commit plan"]
     Plan --> State["Authoritative mutation owners"]
 ```
+
+An admitted turn-scoped creature combat multiplier enters the existing
+replacement ordering with current source and recipient creature facts. The
+accompanying keyword removal locks the resolving set of creature
+incarnations. Later entrants qualify for creature combat damage while
+retaining their own keywords. Cleanup expires both effects.
 
 ## Proposal and preparation
 
@@ -354,6 +437,15 @@ zero and fully prevented damage append nothing. Current target predicates may
 query these public facts, while a zone change invalidates the old incarnation
 without deleting replay history.
 
+An ordered spell can use the sum of final damage received by its controller
+this turn for a life gain and a separate damage instruction to a controlled
+creature. The sum uses the final player recipient and committed amount.
+Direct life loss, damage redirected to another recipient, prevented damage,
+and previous-turn results contribute no amount. The normal targeting owner
+revalidates the sole target before either instruction. The damage transaction
+uses the resolving spell's source and applies its current replacement and
+prevention effects.
+
 Each committed damage transaction also carries one stable batch identity
 derived from its replacement-event identities. Represented “one or more”
 combat-damage triggers aggregate by that simultaneous batch and damaged player:
@@ -370,6 +462,34 @@ one transaction, in canonical recipient order. `damage.received` exposes the
 actual received total; `combat.damage.received` separately exposes the positive
 combat portion. Zero and fully prevented packets produce neither occurrence.
 The same recipient in a later transaction or damage step remains a new event.
+
+A resolving spell can watch one required creature's current incarnation for
+repeated damage receipts through cleanup. Each positive grouped receipt queues
+one independent delayed ability for the spell's controller. The creature's
+current or last-known source facts supply one simultaneous noncombat damage
+batch to the other current creatures and all active players. Control and
+ability changes leave the watch with its original controller. A new
+incarnation ends eligibility for the old watch and can receive damage from
+an already queued result.
+
+Automatic draw adjudication admits a closed reciprocal case under CR 104.4b
+and 732.4. The two exact current watches alternate on passive indestructible
+creatures. One unconditional fixed prevention component per active player
+covers the full amount of each player result without being consumed. Empty
+hands and mana pools, inactive off-board programs, and the ordinary priority
+catalog establish a closed decision surface. Finite shields or a meaningful
+offer keep the regular priority path. Only after those checks can the existing loop
+owner compare recurring positions while excluding the marks and journal
+entries that none of the admitted rules can read.
+
+A combat receiving ability can gain life for its resolving controller and
+then cause the original attacking player to lose life. Each instruction uses
+the same grouped committed combat amount. The ability retains the attacking
+seat from the damage occurrence, including when a defending blocker dealt
+the damage or the receiving creature left the battlefield. The life loss
+still resolves under a gain prohibition. The represented single active seat
+applies to the supported Commander profiles. Two-Headed Giant team turns and
+the choice of a member of the attacking team remain outside this boundary.
 
 New compiler subscriptions require the receiving-event capability independently
 of coverage. Lethal damage still queues receiving abilities before state-based
@@ -394,6 +514,11 @@ original dealer's current controller or its last known controller after
 departure. A combat-to-player trigger may offer that controller a token.
 A general damage trigger can instead use the actual dealt amount for a
 separate life change, including damage dealt to a permanent.
+
+A receiving trigger can match the original source or its current Soulbond
+partner. Each matched recipient supplies its own committed damage amount.
+The outgoing damage uses the source of the triggered ability, with last
+known information when that source has left the battlefield.
 
 ## Replay, privacy, and extension
 
@@ -425,6 +550,12 @@ See [ADR 0012](../adr/0012-damage-transaction-and-static-prevention.md),
 [ADR 0017](../adr/0017-prevention-continuations-and-aftermath.md).
 
 ## Optional source damage
+
+For a sorcery-speed tap activation with a temporary receiving trigger, the
+revalidated creature gains its independently compiled ability first. Its
+controller then chooses whether the source deals damage to that creature.
+Declining preserves the grant. Each damage occurrence supplies the amount
+for the creature's controller to draw and then lose life.
 
 A targeted player may choose to let the resolving source deal printed
 damage to them. The choice resolves the damage branch through the ordinary
@@ -465,3 +596,21 @@ opponent receives the source's effective power in one noncombat damage batch.
 The damage owner keeps the source power and characteristics together when
 the original permanent leaves or phases out. Nonpositive power produces no
 damage.
+
+## Committed excess damage
+
+A resolving spell can request the excess from its direct damage batch. The
+damage owner groups actual post-prevention damage by final recipient and uses
+that permanent's lethal threshold before the damage results commit. Existing
+marked damage, the final source's deathtouch, and current defense or loyalty
+belong to this calculation. Nested aftermath damage resolves separately.
+
+The power and trample follow-up uses the resulting excess for its power-only
+modifier. The creatures controlled by the resolving player still gain trample
+when prevention or the recipient's threshold makes the excess zero.
+
+A fight's red mana follow-up reads the excess dealt to its original opponent
+creature. The separate current-turn red retention instruction applies if the
+spell resolves even when the fight cannot happen. Mana provenance retains only
+red from otherwise expiring lots and preserves each retained spending restriction.
+The ordinary cleanup removes the retention before clearing the pool.

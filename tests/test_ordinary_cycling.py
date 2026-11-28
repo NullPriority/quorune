@@ -7,8 +7,9 @@ import tempfile
 import unittest
 from unittest import mock
 
-from common import keep_all, load_assets, make_session
-from quorune.carddb import CardRecord
+from common import ROOT, keep_all, load_assets, make_session
+from inherited_composition_fixture import InheritedNativeFixture
+from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler import cycling_nodes as cycling_nodes_module
 from quorune.cycling_abilities import (
     CyclingAbilityError,
@@ -523,6 +524,191 @@ class OrdinaryCyclingRuntimeTests(unittest.TestCase):
             session.packet("pilot:D", full=True), sort_keys=True
         )
         self.assertNotIn(drawn_object_id, opposing)
+
+
+class SharkTyphoonCyclingTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        database = Path(cls.temporary.name) / "variable-cycling-shark.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures/variable-cycling-shark-cards.json"], database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        leader = "Isamaru, Hound of Konda"
+        cls.deck = DeckDefinition("Variable Cycling", [
+            DeckEntry(leader, 1, "commander"), DeckEntry("Plains", 30),
+        ], [leader])
+
+    def sharks(self, game):
+        return tuple(card for card in game.state.cards.values()
+                     if card.zone == "battlefield" and card.is_token
+                     and "shark" in game.engine._effective_type_parts(card)[1])
+
+    def register_for_profile(self, game, profile, *cards):
+        records = tuple(self.db.by_oracle_id(card.oracle_id) for card in cards)
+        register_generated_programs(
+            self.db, game.engine.semantics, records, trust_level="provisional",
+            capability_registry=self.registry, capability_profile=profile,
+            promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True, promote_exact_capability_declarations=True,
+        )
+
+    def cycling_scene(self, seed, x, profile, *, redirect=False, blue=True):
+        game = self.session(seed)
+        game.state.config.review_profile = profile
+        original_registration = self.register_fixture_cards_on_add
+        self.register_fixture_cards_on_add = False
+        try:
+            card = self.add(game.engine, "Shark Typhoon", zone="hand", ref="OWN-CYCLING-SOURCE")
+            support = [self.add(game.engine, "Rest in Peace", seat="B")] if redirect else []
+        finally:
+            self.register_fixture_cards_on_add = original_registration
+        self.register_for_profile(game, profile, card, *support)
+        programs = game.engine.semantics.programs_for_oracle(card.oracle_id)
+        self.assertEqual({"activate", "card.cycled.self", "spell.cast"}, {program.event for program in programs})
+        for program in programs:
+            self.assertTrue(game.engine.semantic_program_is_current_trusted(program))
+            self.assertEqual(profile, program.capability_closure["profile"])
+        game.state.config.semantic_policy = "trusted_only"
+        self.prepare(game, mana={"C": 1 + x, **({"U": 1} if blue else {})})
+        self.checkpoint(game)
+        return game, card
+
+    def reject(self, game, seat, payload):
+        previous = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + seat, payload)
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(previous, authoritative_state_hash(game.state))
+
+    def verify_cycling_value(self, seed, x, profile, *, redirect=False):
+        from quorune.rules.cycling_activation_x import PaidCyclingX, RECEIPT_FIELD
+
+        game, card = self.cycling_scene(seed, x, profile, redirect=redirect)
+        action = "activate:" + card.ref + ":ab2"
+        self.assertIn(action, {row["id"] for row in game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]})
+        for invalid in (-1, True, "0", 1 + x):
+            self.reject(game, "A", {"action_id": action, "x": invalid, "pay": "auto"})
+        self.reject(game, "B", {"action_id": action, "x": x, "pay": "auto"})
+        old_library = tuple(game.state.players["A"].zones["library"])
+        old_hand = tuple(game.state.players["A"].zones["hand"])
+        chosen = game.act("pilot:A", {"action_id": action, "x": x, "pay": "manual",
+                                      "payment": {"C": 1 + x, "U": 1}})
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.assertEqual("exile" if redirect else "graveyard", game.state.cards[card.object_id].zone)
+        self.assertEqual(0, game.state.players["A"].mana_pool["C"])
+        self.assertEqual(0, game.state.players["A"].mana_pool["U"])
+        cycling, creating = game.state.stack
+        self.assertEqual(("activated_ability", "triggered_ability"), (cycling.kind, creating.kind))
+        receipt = PaidCyclingX.from_dict(creating.context[RECEIPT_FIELD])
+        self.assertEqual((cycling.stack_id, card.ref, x), (receipt.activation_stack_id, receipt.source_ref, receipt.x))
+        self.assertEqual(x, cycling.x_value)
+
+        game = self.replay(game, load=True)
+        self.resolve_top(game)
+        self.assertEqual([cycling.ref], [item.ref for item in game.state.stack])
+        self.assertEqual(old_library, tuple(game.state.players["A"].zones["library"]))
+        self.assertEqual(tuple(value for value in old_hand if value != card.object_id),
+                         tuple(game.state.players["A"].zones["hand"]))
+        changes = [event for event in game.state.events if event.code == "token.create"]
+        self.assertEqual(1, len(changes))
+        self.assertEqual(1, len(changes[0].details["objects"]))
+        if x:
+            token, = self.sharks(game)
+            self.assertEqual((x, x), (game.engine._numeric_stat(token.object_id, "power"),
+                                     game.engine._numeric_stat(token.object_id, "toughness")))
+            self.assertIn("flying", game.engine._combat_keywords(token))
+            self.assertEqual(["U"], list(game.engine._effective_card_data(token)["colors"]))
+        else:
+            self.assertFalse(self.sharks(game))
+        game = self.replay(game, load=True)
+        self.resolve_top(game)
+        self.assertEqual(old_library[:-1], tuple(game.state.players["A"].zones["library"]))
+        self.assertEqual(old_library[-1], game.state.players["A"].zones["hand"][-1])
+        draw_ref = game.state.cards[old_library[-1]].ref
+        self.assertIn(draw_ref, json.dumps(game.packet("pilot:A", full=True)))
+        for viewer in "BCD":
+            self.assertNotIn(draw_ref, json.dumps(game.packet("pilot:" + viewer, full=True)))
+        self.replay(game, load=True)
+
+    def test_actual_shark_cycling_zero_creates_then_loses_its_token_before_draw(self):
+        self.verify_cycling_value(702_029_301, 0, "commander_review")
+
+    def test_actual_shark_positive_cycling_retains_x_through_discard_redirection(self):
+        self.verify_cycling_value(702_029_302, 2, "traditional", redirect=True)
+
+    def test_actual_shark_cycling_zero_still_requires_the_printed_blue_cost(self):
+        game, card = self.cycling_scene(702_029_303, 0, "commander_review", blue=False)
+        action = "activate:" + card.ref + ":ab2"
+        offers = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertNotIn(action, {row["id"] for row in offers})
+        self.reject(game, "A", {"action_id": action, "x": 0, "pay": "auto"})
+        self.assertEqual("hand", game.state.cards[card.object_id].zone)
+        self.assertFalse(game.state.stack)
+        self.replay(game, load=True)
+
+    def test_actual_shark_noncreature_cast_uses_spell_mana_value_and_replays(self):
+        game = self.session(702_029_304)
+        self.add(game.engine, "Shark Typhoon")
+        ring = self.add(game.engine, "Sol Ring", zone="hand")
+        bear = self.add(game.engine, "Grizzly Bears", zone="hand")
+        game.state.config.semantic_policy = "trusted_only"
+        self.prepare(game, mana={"C": 2, "G": 1})
+        self.checkpoint(game)
+        self.cast_for(game, "A", ring, reserve={"C": 1, "G": 1})
+        self.assertEqual(2, len(game.state.stack))
+        self.resolve_top(game)
+        shark, = self.sharks(game)
+        self.assertEqual((1, 1), (game.engine._numeric_stat(shark.object_id, "power"),
+                                 game.engine._numeric_stat(shark.object_id, "toughness")))
+        self.resolve_top(game)
+        self.cast(game, "A", bear)
+        self.assertEqual(1, len(game.state.stack))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(1, len(self.sharks(game)))
+        self.replay(game, load=True)
+
+    def test_shark_variable_price_codec_and_own_trigger_minimum_are_closed(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.cycling_abilities import VARIABLE_CYCLING_CAPABILITY, ordinary_cycling_handler_descriptor
+        from test_controller_creature_keyword_absence import register_card
+
+        card = self.db.lookup("Shark Typhoon", fuzzy=False)
+        cost = compile_ordinary_cycling_ability(
+            material_line="Cycling {X}{1}{U}", oracle_line="Cycling {X}{1}{U}", line_index=1,
+        )
+        descriptor = ordinary_cycling_handler_descriptor(cost)
+        self.assertEqual(2, descriptor["schema_version"])
+        self.assertEqual((cost,), ordinary_cycling_specs_from_descriptors([descriptor]))
+        for bad in (True, 0, 2, None):
+            malformed = {**descriptor["ability"], "announced_x_symbols": bad}
+            with self.assertRaises(CyclingAbilityError):
+                OrdinaryCyclingAbilitySpec.from_dict(malformed)
+        with self.assertRaises(ValueError):
+            ordinary_cycling_specs_from_descriptors([{**descriptor, "schema_version": 1}])
+        report, registry = register_card(self.db, self.registry, card.name)
+        self.assertTrue(report["strict_capability_ready"], report["blockers"])
+        with mock.patch("quorune.compiler.cycling_nodes.cycling_x_token_node", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(card, capability_registry=self.registry,
+                                                            capability_profile="commander_review").status)
+        for program in registry.programs_for_oracle(card.oracle_id):
+            if program.event not in {"activate", "card.cycled.self"}:
+                continue
+            deps = tuple(value for value in program.capability_dependencies if value != VARIABLE_CYCLING_CAPABILITY)
+            changed = replace(program, capability_dependencies=deps,
+                              capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+            result = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(result["strict"], result["blockers"])
+        for altered in (
+            card.oracle_text.replace("Cycling {X}{1}{U}", "Cycling {2}{U}"),
+            card.oracle_text.replace("When you cycle this card", "Whenever you cycle a card"),
+        ):
+            self.assertNotEqual("exact", compile_oracle_card(
+                replace(card, oracle_text=altered), capability_registry=self.registry,
+                capability_profile="commander_review",
+            ).status)
 
 
 if __name__ == "__main__":

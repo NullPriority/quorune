@@ -162,7 +162,8 @@ class DomainEffectHandler:
             from ..attachment_source_return_model import validate_attachment_source_return
             try:validate_attachment_source_return(effect)
             except (TypeError, ValueError, KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
-        if operation == 'reanimate' and effect.get('schema_version') == 2:
+        from ..event_card_return import EVENT_ENCHANTMENT_RETURN_VERSION
+        if operation == 'reanimate' and effect.get('schema_version') in (2, EVENT_ENCHANTMENT_RETURN_VERSION):
             from ..event_card_return import event_battlefield_return_intent
             try:
                 intent = event_battlefield_return_intent(effect, actor=context.actor, reason=context.default_reason)
@@ -297,10 +298,34 @@ def effect_descriptor_capability_dependencies(effect, registered):
             return (*registered["capability_dependencies"], DAMAGED_PLAYER_PRIVATE_TOP_CAPABILITY)
     if registered["operation"] == OPPONENT_LIBRARY_EXILE_PLAY_OPERATION:
         validate_opponent_library_exile_play(effect)
+    if registered["operation"] in {"exile_opponents_graveyards_for_turn_cast", "return_opponents_graveyard_exile_pool"}:
+        from ..rules.opponents_graveyards_exile_cast import (
+            EXILE_OPERATION, validate_exile_pool_instruction, validate_graveyard_exile_pool_return,
+        )
+        validator = validate_exile_pool_instruction if registered["operation"] == EXILE_OPERATION else validate_graveyard_exile_pool_return
+        validator(effect)
+    if registered["operation"] == "grant_owned_graveyard_turn_play":
+        from ..rules.owned_graveyard_turn_play import validate_graveyard_turn_instruction
+
+        validate_graveyard_turn_instruction(effect)
+    if registered["operation"] == "grant_owned_graveyard_turn_play":
+        from ..rules.owned_graveyard_turn_play import validate_graveyard_turn_instruction
+
+        validate_graveyard_turn_instruction(effect)
+    if registered["operation"] in {"exile_opponents_graveyards_for_turn_cast", "return_opponents_graveyard_exile_pool"}:
+        from ..rules.opponents_graveyards_exile_cast import (
+            EXILE_OPERATION, validate_exile_pool_instruction, validate_graveyard_exile_pool_return,
+        )
+        validator = validate_exile_pool_instruction if registered["operation"] == EXILE_OPERATION else validate_graveyard_exile_pool_return
+        validator(effect)
     if registered["operation"] == "grant_target_graveyard_escape":
         from ..rules.target_graveyard_escape import validate_target_graveyard_escape_effect
 
         validate_target_graveyard_escape_effect(effect)
+    if registered["operation"] == "grant_target_graveyard_flashback":
+        from ..rules.target_graveyard_flashback import validate_target_graveyard_flashback_effect
+
+        validate_target_graveyard_flashback_effect(effect)
 
     if registered["operation"] == "protection_from_everything_until_next_turn":
         from ..rules.next_personal_turn_protection import next_personal_turn_protection_dependencies
@@ -331,10 +356,14 @@ def effect_descriptor_capability_dependencies(effect, registered):
         if is_forced_block_status_effect(effect):
             return FORCED_BLOCK_STATUS_CAPABILITIES
     if registered["operation"] in {"schedule_fixed_object_action", "resolve_fixed_object_action"}:
-        from ..delayed_object_model import TARGET_DEATH_RETURN_CAPABILITY, is_target_death_return_effect
+        from ..delayed_object_model import (
+            TARGET_DEATH_BATTLEFIELD_CAPABILITY, TARGET_DEATH_RETURN_CAPABILITY,
+            is_target_death_battlefield_return, is_target_death_return_effect,
+        )
 
         if is_target_death_return_effect(effect):
-            return (*registered["capability_dependencies"], TARGET_DEATH_RETURN_CAPABILITY)
+            capability = TARGET_DEATH_BATTLEFIELD_CAPABILITY if is_target_death_battlefield_return(effect) else TARGET_DEATH_RETURN_CAPABILITY
+            return (*registered["capability_dependencies"], capability)
     if registered["operation"] == "copy_until_end_of_turn":
         from ..rules.color_retaining_copy import RETAINED_COLOR_COPY_CAPABILITY, is_retained_color_upkeep_copy
         from ..rules.persistent_self_copy_trigger import (
@@ -402,10 +431,30 @@ def _domain_capabilities(operation):
     if operation=='recover_source_result':
         from ..recover_model import RECOVER_RESULT_CAPABILITY
         return (RECOVER_RESULT_CAPABILITY,)
+    if operation in {"exile_opponents_graveyards_for_turn_cast", "return_opponents_graveyard_exile_pool"}:
+        from ..rules.opponents_graveyards_exile_cast import CAPABILITY
+
+        return (CAPABILITY,)
+    if operation == "grant_owned_graveyard_turn_play":
+        from ..rules.owned_graveyard_turn_play import CAPABILITY
+
+        return (CAPABILITY,)
+    if operation == "grant_owned_graveyard_turn_play":
+        from ..rules.owned_graveyard_turn_play import CAPABILITY
+
+        return (CAPABILITY,)
+    if operation in {"exile_opponents_graveyards_for_turn_cast", "return_opponents_graveyard_exile_pool"}:
+        from ..rules.opponents_graveyards_exile_cast import CAPABILITY
+
+        return (CAPABILITY,)
     if operation == "grant_target_graveyard_escape":
         from ..temporary_graveyard_escape import TEMPORARY_ESCAPE_CAPABILITY
 
         return (TEMPORARY_ESCAPE_CAPABILITY,)
+    if operation == "grant_target_graveyard_flashback":
+        from ..rules.target_graveyard_flashback import GRAVEYARD_FLASHBACK_CAPABILITY
+
+        return (GRAVEYARD_FLASHBACK_CAPABILITY,)
     if operation=='grant_next_spell_cost_reduction':
         from ..next_spell_cost_model import CAPABILITY
         return (CAPABILITY,)

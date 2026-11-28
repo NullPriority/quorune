@@ -60,12 +60,34 @@ def mana_type_from_reference(value):
     return validate_mana_type(value['mana_type'])
 
 
+def _untargeted_payment_result(child, mechanics):
+    if child.get("op") in {"lose_life", "lose_life_each_opponent"}:
+        from .per_player_query_life_spec import unbound_per_player_query_life_spec
+
+        try:
+            unbound_per_player_query_life_spec(child)
+        except (TypeError, ValueError, KeyError):
+            return False
+        return True
+    if child.get("op") != "create_damage_prevention_shield":
+        return False
+    source = child.get("source")
+    return (
+        type(source) is str and bool(source)
+        and dict(child) == {"op": "create_damage_prevention_shield", "source": source,
+                           "subject": "*", "mode": "all", "duration": "until_end_of_turn", "damage_kind": "combat"}
+        and "cr-615-prevention-effects" in mechanics
+    )
+
+
 def _paid_result_closed(effects,mechanics,*,same_target,controller):
     from .resolution_conditions import cast_fact_result_is_fixed
     controller_damage=bool(len(effects)==1 and effects[0].get('op')=='damage'
         and isinstance(effects[0].get('target'),Mapping)
         and effects[0]['target'].get('kind')=='target_controller_information')
     if cast_fact_result_is_fixed(effects,mechanics,allow_targeted_damage_source=same_target or controller_damage):return True
+    if not same_target and len(effects) == 1 and _untargeted_payment_result(effects[0], mechanics):
+        return True
     from .query_effect_amount_model import PUBLIC_QUERY_AMOUNT_KIND
     return bool(not same_target and len(effects)==1 and effects[0].get('op')=='life'
         and effects[0].get('player') in {'$controller',controller} and 'public-query-effect-amount' in mechanics

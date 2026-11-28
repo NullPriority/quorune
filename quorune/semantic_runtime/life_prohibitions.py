@@ -88,6 +88,34 @@ def apply_temporary_life_gain_prohibition(host, actor, effect):
     return rule.effect_id
 
 
+def dealt_damage_life_prohibition_source(host, actor):
+    from ..errors import GameRuleError
+
+    item = next((frame for frame in reversed(host.state.stack)
+                 if frame.context.get("currently_resolving") is True), None)
+    if item is None or item.controller != actor or item.kind != "triggered_ability":
+        raise GameRuleError("A dealt-damage life prohibition requires its resolving triggered ability")
+    return item.ref
+
+
+def commit_dealt_damage_life_gain_prohibition(host, actor, *, source, events):
+    from ..continuous_effect_state import commit_continuous_effect
+
+    denied = tuple(sorted({
+        event.target for event in events
+        if event.target_kind == "player" and event.was_dealt and event.target in host.active_seats
+    }))
+    if not denied:
+        return None
+    rule = ResolvedLifeGainProhibition.for_dealt_damage(
+        host._next_ref("LG"), source, host._next_zone_timestamp(), actor, denied,
+    )
+    commit_continuous_effect(host.state, rule)
+    host._log(actor, "life.gain.prohibition.created", "Damaged players cannot gain life for the rest of the game.",
+              {"effect": rule.effect_id, "players": list(denied)}, importance=1)
+    return rule
+
+
 def collect_life_gain_permissions(host: LifeGainPermissionHost, *, sources=None, source_zones=None):
     from .life_replacements import default_life_replacement_registry,LifeReplacementSourceContext
     registry = default_life_replacement_registry()

@@ -191,7 +191,7 @@ def fixed_nonrepeating_modal_branches(
         or len(definitions) not in {2, 3, 4, 5}
         or not 0 <= minimum_modes <= maximum_modes <= len(definitions)
         or ((minimum_modes, maximum_modes)
-            not in {(0, len(definitions)), (1, 1), (1, len(definitions)), (2, 2)}
+            not in {(0, 1), (0, len(definitions)), (1, 1), (1, len(definitions)), (2, 2)}
             and not wizard_cast_mode_limit_matches(target_schema))
     ):
         return None
@@ -219,7 +219,7 @@ def fixed_nonrepeating_modal_branches(
             or not raw_effects
             or any(not isinstance(effect, Mapping) for effect in raw_effects)
             or not isinstance(raw_groups, (list, tuple))
-            or (minimum_modes == 0 and raw_groups)
+            or (minimum_modes == 0 and maximum_modes > 1 and raw_groups)
             or not scoped and len(raw_groups) > 1
             or any(not isinstance(group, Mapping) for group in raw_groups)
             or not isinstance(raw_mechanics, (list, tuple))

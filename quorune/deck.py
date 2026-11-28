@@ -285,6 +285,7 @@ def parse_moxfield_json(data: dict[str, Any], *, source: str | None = None) -> D
         "companions",
         "companion",
         "maybeboard",
+        "stickers",
     ):
         if key in data:
             board_candidates.append((key, data[key]))

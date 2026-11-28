@@ -486,7 +486,8 @@ def resolve_creature_power_damage(
     *,
     actor: str,
     reason: str,
-) -> tuple[int, ...]:
+    collect_excess: bool = False,
+):
     """Resolve one creature-power instruction through the canonical damage batch."""
     from .creature_power_damage_model import (
         uses_source_power_opponent_damage,
@@ -583,7 +584,7 @@ def resolve_creature_power_damage(
         from .rules.fight_excess_damage import prepare_fight_excess_target
 
         excess_target = prepare_fight_excess_target(host, effect, actor, target_card if kind == "fight" else None)
-    return _resolve_power_damage_batch(host, effect, proposals, excess_target=excess_target, actor=actor)
+    return _resolve_power_damage_batch(host, effect, proposals, excess_target=excess_target, actor=actor, collect_excess=collect_excess)
 
 def _fight_proposals(host, *, source_damage, source_power, target_card, target_power, actor, reason, proposal_base):
     if source_damage.ref == target_card.ref:
@@ -621,7 +622,7 @@ def resolve_simultaneous_fights(host, pairs, *, actor, reason, batch_ref, effect
     return _resolve_power_damage_batch(host, effect, proposals)
 
 
-def _resolve_power_damage_batch(host, effect, proposals, *, excess_target=None, actor=None):
+def _resolve_power_damage_batch(host, effect, proposals, *, excess_target=None, actor=None, collect_excess=False):
     if not proposals:
         return ()
     replacement_ids = effect.get("_replacement_event_ids", ())
@@ -642,6 +643,7 @@ def _resolve_power_damage_batch(host, effect, proposals, *, excess_target=None, 
             host,
             tuple(proposals),
             replacement_selections=tuple(selections),
+            collect_excess=collect_excess,
         )
     except DamageError as exc:
         raise CreaturePowerDamageError(str(exc)) from exc
@@ -649,7 +651,8 @@ def _resolve_power_damage_batch(host, effect, proposals, *, excess_target=None, 
         from .rules.fight_excess_damage import settle_fight_excess_red
 
         settle_fight_excess_red(host, result.events, excess_target, actor)
-    return tuple(event.dealt_amount for event in result.events)
+    amounts = tuple(event.dealt_amount for event in result.events)
+    return (amounts, result.excess) if collect_excess else amounts
 
 
 __all__ = [

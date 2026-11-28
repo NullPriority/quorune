@@ -3,7 +3,7 @@ from collections.abc import Mapping
 from ..characteristic_fragments import characteristic_quantity_capabilities
 from ..replacement.immutable import FrozenMap
 from ..per_player_query_life_model import (
-    PerPlayerQueryLifeLossSpec,BoundPerPlayerLifeLoss,PlayerLifeLossRelation,
+    PerPlayerQueryLifeLossSpec,BoundPerPlayerLifeLoss,per_player_query_life_spec,
     PER_PLAYER_QUERY_LIFE_KIND as KIND,BOUND_PER_PLAYER_QUERY_LIFE_KIND as BOUND_KIND,
     PER_PLAYER_QUERY_LIFE_CAPABILITY as CAP,
     OPPONENT_SUBTYPE_ABSENCE_LIFE_VERSION,OPPONENT_POISON_THRESHOLD_LIFE_VERSION,
@@ -14,7 +14,6 @@ from ..query_effect_amount_model import PUBLIC_QUERY_AMOUNT_CAPABILITY
 POISON_THRESHOLD_CAPABILITY = 'life.loss.opponent_poison_counter_threshold'
 OPPONENT_ACTUAL_TURN_LOSS_CAPABILITY = 'life.loss.per_opponent_actual_turn_loss'
 _EACH_END_STEP = FrozenMap({'all': [{'field': 'step', 'op': 'eq', 'value': 'end_step'}]})
-_RUNTIME_FIELDS=frozenset({'reason','source','cause','_runtime_source','_replacement_selections'})
 
 
 def per_player_query_life_value_dependencies(value):
@@ -29,19 +28,6 @@ def per_player_query_life_value_dependencies(value):
         return (CAP, OPPONENT_ACTUAL_TURN_LOSS_CAPABILITY, 'life.change.effect')
     return tuple(sorted({CAP,PUBLIC_QUERY_AMOUNT_CAPABILITY,'life.change.effect',
         *characteristic_quantity_capabilities(spec.amount.quantity)}))
-
-
-def per_player_query_life_spec(effect,*,runtime=False):
-    if not isinstance(effect,Mapping):raise ValueError('Per-player life loss requires a complete instruction')
-    amount=effect.get('amount')
-    spec=BoundPerPlayerLifeLoss.from_dict(amount) if runtime else PerPlayerQueryLifeLossSpec.from_dict(amount)
-    all_players=spec.relation is PlayerLifeLossRelation.ALL
-    required={'op','amount','scope'} if all_players else {'op','amount'}
-    if (set(effect)-(required|_RUNTIME_FIELDS if runtime else required) or not required<=set(effect)
-            or effect.get('op')!=('lose_life' if all_players else 'lose_life_each_opponent')
-            or all_players and effect['scope']!='all_active_players'):
-        raise ValueError('Per-player life loss lost its complete matching affected-player relation')
-    return spec
 
 
 def per_player_query_life_node_capabilities(*,effects,target_schema,mechanic_ids=(),cost_schema=None,**kwargs):
@@ -88,8 +74,17 @@ def per_player_query_life_program_dependencies(program):
     elif not ((program.event=='resolve' and program.active_zone=='stack' and str(program.ability_id).startswith('spell:'))
             or (program.event=='permanent.enter.self' and program.active_zone=='battlefield')):
         raise ValueError('Public per-player life loss requires its ordinary spell or self-entry frame')
-    required=per_player_query_life_node_capabilities(effects=program.effects,target_schema=program.target_schema,
-        cost_schema=getattr(program,'cost_schema',None))
+    if effect is None and all(row.get("op") == "apply_if_public_condition" and row.get("schema_version") == 6
+                              for row in program.effects) and program.event == "resolve":
+        from .resolution_condition_shapes import resolution_condition_node_capabilities
+
+        required = resolution_condition_node_capabilities(
+            effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+            cost_schema=getattr(program, "cost_schema", None),
+        )
+    else:
+        required=per_player_query_life_node_capabilities(effects=program.effects,target_schema=program.target_schema,
+            cost_schema=getattr(program,'cost_schema',None))
     if not required:raise ValueError('Per-player life loss requires one complete independent quantity and result')
     if history:
         return tuple(sorted({*required, 'trigger.placement.apnap'}))

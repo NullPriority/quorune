@@ -72,7 +72,7 @@ The table renders only the current projected state:
 - tapping, counters, attachments, combat assignments, and terminal results
   update only after an authoritative packet. The printed face rotates when a
   card is tapped, and the card’s accessibility description reports its state;
-- an Equipment or Aura attached to a permanent sits below it and opens in the
+- an Equipment or Aura sits beside its attached permanent and opens in the
   card viewer on hover or focus. An attachment to a player stays on its board.
 - your draws and mills appear together when they arrive in the same update.
   Draws animate from your library to your hand, and mills highlight your
@@ -126,8 +126,11 @@ When choosing targets, hover or focus an eligible player or card to see an
 arrow from the source. If a target is in the graveyard or exile, the highlighted
 zone opens a picker for its eligible cards. The arrow stays on the selected
 target while you finish the remaining choices. Target lists group cards under
-their controller’s seat label and color. Card badges show current power and
-toughness at the lower right, with a separate total for +1/+1 counters. Right-click a battlefield card or press
+their controller’s seat label and color. The battlefield gives creatures more
+space than the land and other permanent rows. Current power and toughness and
++1/+1 counters appear below the card face. Counters like lore and wish counters
+appear on the face. During attack and block assignment, creature rows on both
+sides show current power and toughness. Right-click a battlefield card or press
 **I** while it has focus to open the full card view.
 
 Cards with available actions use a visible outline. Mana symbols wrap onto
@@ -175,13 +178,15 @@ identity to the permitted viewer. Exile uses a card back for concealed cards
 and marks a visible face-down card with its status.
 
 When your offered actions include a card in another zone, the hand area shows
-a shortcut marked with its source zone. Those shortcuts are visible to the
-acting player. Hover or focus a card to see its offered cost above its name.
-Select the card to choose an action or inspect its full text. The mana symbols
+a shortcut marked with its source zone. The acting player sees the offered mana
+cost on the shortcut. Select the card to choose an action or inspect its full text. The mana symbols
 are bundled with the browser. [Mana by Andrew Gioia](https://mana.andrewgioia.com/icons.html)
 
-The hand shows full printed faces and readable names by default. Cards
-overlap and open a full-face preview on hover or keyboard focus. Turn on
+The hand shows separate printed faces, names, and mana costs. Cards shrink
+when the row fills, and page controls reach the remaining cards. Hover or focus
+a card for a full-face preview. Drag the handle at the top of the hand to
+resize it, or focus the handle and press the Up or Down arrow. The battlefield
+uses the remaining space. Turn on
 **Art-focused hand** in **Table settings** for the cropped art view.
 On desktop, the zone buttons, action tray and priority controls share the
 column beside the hand. At narrow widths, larger decision forms use the full
@@ -200,7 +205,9 @@ Battlefield lanes group lands by printed mana output where that data is
 available. Matching unmarked lands and tokens use an overlapping stack.
 Choose the count to see and act on individual cards. **Arrange** lets you
 change a permanent's lane or order for your view. Equipment and Auras
-appear beneath their attached permanent.
+appear beside their permanent with a connector. Hover or focus any attachment
+to inspect it. Adjust **Battlefield lane sizes** in table settings to give
+lands, creatures, or other permanents more room.
 
 Click an eligible attacker and its defender, or drag the attacker onto the
 defender. Blockers work the same way. Multiple blockers on one attacker appear
@@ -261,12 +268,15 @@ effects are not locally reversible.
 **Pass priority** or **Resolve** passes once from your seat. **Pass turn** at
 the bottom right keeps passing your priority during the current turn, even
 when a spell or ability is available. Required choices, including attackers
-and blockers, still wait for you. The turn yield ends when the next turn
-begins or you refresh. **Cancel pass turn** holds your next priority.
+and blockers, still wait for you and end the turn yield. The turn yield also
+ends when the next turn begins or you refresh. **Cancel pass turn** holds your
+next priority. **Resolve stack** passes your priority while the current stack
+resolves. A required choice, a new stack item, or a changed response offer
+returns control to you.
 
 Open **Priority stops** beside **Pass turn** to hold at specific steps, for a
-new stack item, or for graveyard activity. Both Auto-pass and Pass turn honor
-these stops, including in fast mode. A manual pass acknowledges the current
+new stack item, or for graveyard activity. Auto-pass honors these stops,
+including in fast mode. A manual pass acknowledges the current
 stack and graveyard activity. Choose **End step before my turn** to hold during
 the end step that precedes your currently scheduled turn. Extra turns and
 whole-turn skips are included in that schedule. Choose a phase on the turn
@@ -278,8 +288,8 @@ main phase, choose **Main 1** and **Advance to first main** to pass your
 priority until that boundary. Required decisions and any selected earlier
 holds can interrupt the advance.
 
-Auto-pass handles routine priority while keeping spell and land offers
-available. After manually passing through a window with only optional
+Auto-pass handles routine priority, including a window with only ordinary
+mana abilities, while keeping meaningful spell and land offers available. After manually passing through a window with only optional
 activations, Auto-pass remembers those unchanged offers for the current turn.
 Use **Auto-pass through optional activations** for all such offers, or choose
 **Skip unchanged this game** for one ability in **Priority stops**. The
@@ -298,7 +308,8 @@ and remaining amounts beside each source and its recipients. Use **Assign
 remaining attackers** beside a defender to set all remaining eligible
 attackers to that defender. The server still validates the complete
 declaration. Concession uses a
-true-only confirmation on an active player decision. A completed game removes
+true-only confirmation on an active player decision. The player stays at the
+table as a spectator while play continues. A completed game removes
 gameplay controls and preserves the result after restart. Choose **Decks and
 games** to open your saved lists or recent matches. The host can choose
 **Play again with these decks** to prepare a fresh table. Players can join
@@ -307,12 +318,20 @@ available in **Recent games**.
 
 ## Inspect, stop, and resume
 
-The card viewer follows hover and focus on the table. Use **Pop out viewer** to
-move the inspection view to a second window. Recent activity scrolls on
-its own beside the stack. It collapses when you open the viewer window.
-Choose **Show recent activity** to reopen it. Your library, graveyard, and exile are next to your hand. Opponents’
+The card viewer follows hover and focus on the table. Press **Alt** to pin the
+current card and select its rules text. Press **Alt** again or choose **Unpin**
+to close it. **Pop out viewer** moves inspection to a second window. Recent
+activity opens by default and includes attack destinations, damage and loss
+reasons. Choose **Enlarge** for more room or **Full log** for earlier events.
+The list collapses when you open the viewer window. Choose **Show recent
+activity** to reopen it. Your library, graveyard, and exile are next to your hand. Opponents’
 hand counts are public. **Revealed hand** opens the cards the current seat is
 allowed to see.
+
+Use **Filter cards by name** to narrow the cards offered in a search. The
+filter keeps your selection. Creature-type choices start with types in your
+deck. Search or choose **Show all types** to find any other legal type.
+**Expand choice** opens a larger panel and preserves your selections.
 
 During resolution, choose **Pay** or **Decline** and confirm in the action tray. If you remember
 a response, the browser uses it only for the matching trigger in this game

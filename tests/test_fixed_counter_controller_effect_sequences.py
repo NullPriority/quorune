@@ -8,12 +8,15 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session
+from inherited_composition_fixture import InheritedNativeFixture
+from quorune.card_programs.binding import bind_semantic_program_runtime
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler.fixed_counter_controller_effect_sequences import (
     fixed_counter_controller_effect_sequence_template,
 )
 from quorune.compiler.fixed_source_effect_sequences import SOURCE_ZONE_OBJECT
-from quorune.deck import DeckLoader
+from quorune.deck import DeckDefinition, DeckEntry, DeckLoader
+from quorune.event_counter_reference import EVENT_ENTRY_OBJECT
 from quorune.model import CardInstance
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
 from quorune.projection import StateProjector
@@ -32,6 +35,8 @@ from scripts.build_test_database import build_fixture_database
 
 REGISTRY_PATH = ROOT / "quorune" / "rules" / "capability-registry.json"
 SEQUENCE_CAPABILITY = "resolution.effect_sequence.fixed_counter_controller"
+ENTRY_COUNTER_CAPABILITY = "counter.producer.fixed_event_object"
+HENGE_ORACLE_ID = "78427103-9543-41fb-b6d4-72963fe87275"
 
 
 def focused_card_database(directory: str) -> CardDatabase:
@@ -270,6 +275,204 @@ class FixedCounterControllerEffectSequenceCompilerTests(unittest.TestCase):
         ):
             with self.assertRaises(AssertionError):
                 assert_exact()
+
+    def test_entry_counter_draw_requires_the_entire_untargeted_nontoken_trigger(self):
+        prefix = "Whenever a nontoken creature you control enters"
+        body = "put a +1/+1 counter on it and draw a card."
+        text = f"{prefix}, {body}"
+        node, = self.compile(self.fixture(text, type_line="Artifact")).faces[0].nodes
+        self.assertTrue(node.exact)
+        self.assertEqual(text, node.text)
+        self.assertEqual("creature.enter", node.event)
+        self.assertIsNone(node.target_schema)
+        self.assertEqual(("place_counters", "draw"), tuple(effect["op"] for effect in node.effects))
+        self.assertEqual(EVENT_ENTRY_OBJECT, node.effects[0]["card"])
+        self.assertLessEqual(
+            {SEQUENCE_CAPABILITY, ENTRY_COUNTER_CAPABILITY, "zone.draw.library_to_hand"},
+            set(node.capability_dependencies),
+        )
+        for variant in (
+            text.replace("nontoken ", ""),
+            text.replace("you control", "an opponent controls"),
+            text.replace("enters", "dies"),
+            text.replace("put", "you may put"),
+            text.replace("and draw", "and if you do, draw"),
+            text.replace("a +1/+1 counter", "two +1/+1 counters"),
+        ):
+            with self.subTest(variant=variant):
+                result = self.compile(self.fixture(variant, type_line="Artifact"))
+                self.assertNotEqual("exact", result.status)
+                self.assertTrue(result.material_residuals)
+
+
+class EntrantCounterDrawRuntimeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "entrant-counter-draw.sqlite3"
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database(
+            [
+                fixtures / "bound-effect-program-cards.json",
+                fixtures / "source-attack-alone-cards.json",
+                fixtures / "aggregated-zone-event-triggers.json",
+                fixtures / "counter-replacement-cards.json",
+                fixtures / "fixed-counter-controller-sequences.json",
+                fixtures / "entrant-counter-draw-cards.json",
+            ],
+            path,
+        )
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Entrant counter and draw",
+            [DeckEntry("Isamaru, Hound of Konda", 1, "commander"), DeckEntry("Generic Bound Plains", 30)],
+            ["Isamaru, Hound of Konda"],
+        )
+
+    def henge(self, session, *, zone="battlefield"):
+        source = self.add(session.engine, "The Great Henge", zone=zone)
+        self.assertEqual(HENGE_ORACLE_ID, source.oracle_id)
+        self.assert_closed(session, source)
+        return source
+
+    def test_actual_henge_discounts_only_generic_and_activates_mana_and_life_immediately(self):
+        for green in (1, 2):
+            with self.subTest(green=green):
+                session = self.session(11270230 + green)
+                source = self.henge(session, zone="hand")
+                self.add(session.engine, "Sphinx of Magosi")
+                self.add(session.engine, "Ancient Brontodon", seat="B")
+                self.prepare(session, mana={"C": 2, "G": green})
+                self.checkpoint(session)
+                if green == 1:
+                    before = authoritative_state_hash(session.state)
+                    result = session.act("pilot:A", {"action_id": f"cast:{source.ref}", "pay": "auto"})
+                    self.assertFalse(result.ok, result.summary)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                    continue
+                self.cast_for(session, "A", source)
+                self.assertEqual(1, session.state.players["A"].mana_pool.get("C", 0))
+                self.assertEqual(0, session.state.players["A"].mana_pool.get("G", 0))
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(0, self.trigger_count(session, source))
+                self.priority(session, "A")
+                actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                mana, = (row for row in actions if row["id"].startswith(f"activate:{source.ref}:"))
+                self.assertTrue(mana["mana_ability"])
+                life = session.state.players["A"].life
+                result = session.act("pilot:A", {"action_id": mana["id"]})
+                self.assertTrue(result.ok, result.summary)
+                self.assertFalse(session.state.stack)
+                self.assertTrue(session.state.cards[source.object_id].tapped)
+                self.assertEqual(2, session.state.players["A"].mana_pool["G"])
+                self.assertEqual(life + 2, session.state.players["A"].life)
+                self.replay(session, load=True)
+
+    def test_actual_henge_ignores_tokens_and_opponents_and_resolves_one_private_draw(self):
+        session = self.session(11270233)
+        source = self.henge(session)
+        entrant = self.add(session.engine, "Grizzly Bears", zone="hand", ref="own-entrant")
+        opponent = self.add(session.engine, "Grizzly Bears", seat="B", zone="hand", ref="other-entrant")
+        token_spell = self.add(session.engine, "Raise the Alarm", zone="hand")
+        self.add(session.engine, "Vedalken Orrery", seat="B")
+        self.prepare(session, mana={"C": 2, "G": 1, "W": 1})
+        session.state.players["B"].mana_pool.update({"C": 1, "G": 1})
+        self.checkpoint(session)
+
+        library_before = tuple(session.state.players["A"].zones["library"])
+        self.cast_for(session, "A", token_spell)
+        self.resolve_top(session)
+        self.assertEqual(0, self.trigger_count(session, source))
+        tokens = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual(2, len(tokens))
+        self.assertTrue(all(card.controller == "A" and not card.counters for card in tokens))
+
+        self.cast_for(session, "B", opponent)
+        self.resolve_top(session)
+        self.assertEqual(0, self.trigger_count(session, source))
+        self.assertFalse(session.state.cards[opponent.object_id].counters)
+        self.assertEqual(library_before, tuple(session.state.players["A"].zones["library"]))
+
+        self.cast_for(session, "A", entrant)
+        self.resolve_top(session)
+        self.assertEqual(1, self.trigger_count(session, source))
+        self.assertFalse(session.state.stack[-1].targets)
+        self.assertFalse(session.state.cards[entrant.object_id].counters)
+        before = len(session.state.players["A"].zones["hand"])
+        drawn = session.state.players["A"].zones["library"][-1]
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({"+1/+1": 1}, session.state.cards[entrant.object_id].counters)
+        self.assertEqual(before + 1, len(session.state.players["A"].zones["hand"]))
+        self.assertIn(drawn, session.state.players["A"].zones["hand"])
+        hidden = session.state.cards[drawn].ref
+        for seat in "BCD":
+            self.assertNotIn(hidden, json.dumps(session.packet(f"pilot:{seat}", full=True)))
+        self.replay(session)
+
+    def test_actual_henge_draws_for_departed_entrant_after_reentry_and_source_removal(self):
+        session = self.session(11270234)
+        source = self.henge(session)
+        entrant = self.add(session.engine, "Grizzly Bears", zone="hand")
+        self.add(session.engine, "Vedalken Orrery")
+        bounce = self.add(session.engine, "Unsummon", seat="B", zone="hand")
+        destroy = self.add(session.engine, "Disenchant", seat="B", zone="hand")
+        self.prepare(session, mana={"C": 2, "G": 2})
+        session.state.players["B"].mana_pool.update({"C": 1, "U": 1, "W": 1})
+        self.checkpoint(session)
+
+        self.cast_for(session, "A", entrant)
+        self.resolve_top(session)
+        self.assertEqual(1, self.trigger_count(session, source))
+        current = session.state.cards[entrant.object_id]
+        original_identity = current.logical_object_id
+        self.cast_for(session, "B", bounce, [current.ref])
+        self.resolve_top(session)
+        self.assertEqual("hand", session.state.cards[entrant.object_id].zone)
+        self.cast_for(session, "A", entrant)
+        self.resolve_top(session)
+        current = session.state.cards[entrant.object_id]
+        self.assertNotEqual(original_identity, current.logical_object_id)
+        self.assertEqual(2, self.trigger_count(session, source))
+
+        self.cast_for(session, "B", destroy, [session.state.cards[source.object_id].ref])
+        self.resolve_top(session)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertEqual(2, self.trigger_count(session, source))
+        before = len(session.state.players["A"].zones["hand"])
+        session = self.replay(session, load=True)
+        self.resolve_top(session)
+        self.assertEqual({"+1/+1": 1}, session.state.cards[entrant.object_id].counters)
+        self.assertEqual(before + 1, len(session.state.players["A"].zones["hand"]))
+        self.resolve_top(session)
+        self.assertEqual({"+1/+1": 1}, session.state.cards[entrant.object_id].counters)
+        self.assertEqual(before + 2, len(session.state.players["A"].zones["hand"]))
+        self.replay(session, load=True)
+
+    def test_entry_counter_draw_binding_rejects_forged_domain_order_and_withdrawn_capability(self):
+        session = self.session(11270235)
+        source = self.henge(session)
+        program, = (program for program in session.engine.semantics.programs_for_oracle(source.oracle_id)
+                    if program.event == "creature.enter")
+        dependencies = tuple(value for value in program.capability_dependencies if value != ENTRY_COUNTER_CAPABILITY)
+        missing_dependency = replace(
+            program,
+            capability_dependencies=dependencies,
+            capability_closure=self.registry.closure(dependencies, profile="commander_review").to_dict(),
+        )
+        domain = {"field": "controller", "op": "eq", "value": "$source.controller"}
+        for changed, expected in (
+            (replace(program, event_condition=domain), "runtime_entry_counter_draw:invalid:"),
+            (replace(program, effects=tuple(reversed(program.effects))), "runtime_entry_counter_draw:invalid:"),
+            (missing_dependency, f"capability:undeclared_runtime_dependency:{ENTRY_COUNTER_CAPABILITY}"),
+        ):
+            with self.subTest(expected=expected):
+                binding = bind_semantic_program_runtime(
+                    changed, capability_registry=self.registry, profile="commander_review",
+                )
+                self.assertFalse(binding["strict"], binding)
+                self.assertTrue(any(blocker.startswith(expected) for blocker in binding["blockers"]), binding)
 
 
 class FixedCounterControllerEffectSequenceRuntimeTests(unittest.TestCase):

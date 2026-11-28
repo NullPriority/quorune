@@ -35,6 +35,8 @@ def paid_mana_resolution_dependencies(program):
             return actual_mana_spent_library_runtime_dependencies(program)
     effects=[e for e in program.effects if e.get('op')=='apply_if_public_condition' and e.get('schema_version') in {6,7}]
     if not effects:return ()
+    if len(effects) > 1 and (program.event, program.active_zone) != ("resolve", "stack"):
+        raise ValueError("Independent actual-mana conditions require one resolving spell")
     from .resolution_condition_shapes import resolution_condition_node_capabilities
     required=resolution_condition_node_capabilities(effects=program.effects,target_schema=program.target_schema,
         mechanic_ids=program.coverage,cost_schema=program.cost_schema)

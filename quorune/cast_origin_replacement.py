@@ -5,6 +5,9 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass
 
+from .graveyard_cast_reanimation_copy import (
+    GRAVEYARD_REANIMATION_COPY_VERSION, validate_graveyard_reanimation_copy_results,
+)
 from .object_predicate import ObjectQuerySpec
 from .library_search_model import FixedCountedLibrarySearchTemplate
 from .replacement.immutable import FrozenMap, thaw_value
@@ -17,6 +20,7 @@ CAST_ORIGIN_BY_VERSION = {
     GRAVEYARD_CAST_REPLACEMENT_VERSION: "graveyard",
     EXILE_CAST_REPLACEMENT_VERSION: "exile",
     GRAVEYARD_CAST_COPY_REPLACEMENT_VERSION: "graveyard",
+    GRAVEYARD_REANIMATION_COPY_VERSION: "graveyard",
 }
 CAST_ORIGIN_REPLACEMENT_VERSIONS = frozenset(CAST_ORIGIN_BY_VERSION)
 CAST_ORIGIN_REFERENCE = "$context.cast_origin"
@@ -201,8 +205,9 @@ def validate_cast_origin_replacement(effect, *, bound=False):
             raise ValueError("Graveyard cast replacement requires a bound controller and casting fact")
     elif actor != "$controller" or fact != CAST_ORIGIN_REFERENCE:
         raise ValueError("Graveyard cast replacement must read the resolving spell's origin")
-    stack_copies = effect["schema_version"] == GRAVEYARD_CAST_COPY_REPLACEMENT_VERSION
-    for key, count in (("effects", 2 if stack_copies else 1), ("otherwise_effects", 1)):
+    version = effect["schema_version"]
+    two_cast_results = version in (GRAVEYARD_CAST_COPY_REPLACEMENT_VERSION, GRAVEYARD_REANIMATION_COPY_VERSION)
+    for key, count in (("effects", 2 if two_cast_results else 1), ("otherwise_effects", 1)):
         children = effect[key]
         if (
             not isinstance(children, (list, tuple)) or len(children) != count
@@ -218,8 +223,10 @@ def validate_cast_origin_replacement(effect, *, bound=False):
     ):
         raise ValueError("Both cast-origin results must use the same concrete owner")
     normal, alternative = (thaw_value(FrozenMap(effect[key][0])) for key in ("otherwise_effects", "effects"))
-    if stack_copies:
+    if version == GRAVEYARD_CAST_COPY_REPLACEMENT_VERSION:
         _validate_cast_stack_copies(normal, effect["effects"], bound=bound)
+    elif version == GRAVEYARD_REANIMATION_COPY_VERSION:
+        validate_graveyard_reanimation_copy_results(normal, effect["effects"], actor, bound=bound)
     elif condition.origin == "exile":
         _validate_exile_damage(normal, alternative, bound=bound)
     else:

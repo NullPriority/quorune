@@ -96,6 +96,109 @@ class SelfExileReturnSpellTests(unittest.TestCase):
         self.assertEqual('graveyard',session.state.cards[foreign.object_id].zone)
         self.private_replay(session,private)
 
+
+    def test_all_suns_dawn_offers_distinct_color_groups_and_returns_two_multicolored_cards(self):
+        payment = {"C": 3, "G": 2}
+        game, source, picks, foreign, private = self.original(
+            "All Suns' Dawn", 7511016, 2, payment, target_kinds=("Lightning Helix",) * 2,
+        )
+        colorless = self.add(game.engine, "Generic Bound Plains", zone="graveyard", ref="per-color-colorless")
+        foreign = self.add(game.engine, "Lightning Helix", seat="B", zone="graveyard", ref="per-color-foreign")
+        self.prepare(game, mana=payment)
+        self.checkpoint(game)
+        offer, = (row for row in self.actions(game) if row["id"] == f"cast:{source.ref}")
+        groups = {row["id"]: row for row in offer["target_schema"]["groups"]}
+        self.assertEqual(("white", "blue", "black", "red", "green"), tuple(groups))
+        for color in groups:
+            refs = set(groups[color]["legal_refs"])
+            self.assertEqual({card.ref for card in picks} if color in ("white", "red") else set(), refs)
+            self.assertNotIn(colorless.ref, refs)
+            self.assertNotIn(foreign.ref, refs)
+        targets = {"white": [picks[0].ref], "red": [picks[1].ref]}
+        command = {"action_id": offer["id"], "targets": targets, "pay": "manual", "payment": payment}
+        before = authoritative_state_hash(game.state)
+        for seat, bad in (
+            ("D", command),
+            ("A", {**command, "targets": {"white": [picks[0].ref], "red": [picks[0].ref]}}),
+            ("A", {**command, "targets": {"blue": [picks[0].ref]}}),
+            ("A", {**command, "targets": {"white": [foreign.ref]}}),
+            ("A", {**command, "targets": {"green": [colorless.ref]}}),
+            ("A", {**command, "targets": {"white": [picks[0].ref, picks[1].ref]}}),
+        ):
+            self.assertFalse(game.act("pilot:" + seat, bad).ok)
+            self.assertEqual(before, authoritative_state_hash(game.state))
+        accepted = game.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(targets["white"], game.state.stack[-1].context["target_groups"]["white"])
+        self.assertEqual(targets["red"], game.state.stack[-1].context["target_groups"]["red"])
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assert_known_returns(game, picks)
+        self.assertEqual("exile", game.state.cards[source.object_id].zone)
+        self.private_replay(game, private)
+
+
+    def test_all_suns_dawn_zero_partial_and_all_illegal_targets_replay(self):
+        payment = {"C": 3, "G": 2}
+        for removed in (0, 1, 2):
+            with self.subTest(removed=removed):
+                game, source, picks, _, private = self.original(
+                    "All Suns' Dawn", 7511020 + removed, 2, payment, target_kinds=("Lightning Helix",) * 2,
+                )
+                removals = [self.add(game.engine, "Cremate", seat="B", zone="hand", ref=f"per-color-cremate-{i}")
+                            for i in range(removed)]
+                for removal in removals:
+                    self.assertTrue(self.binding(game, removal)["strict_capability_ready"])
+                game.state.players["B"].mana_pool["B"] = removed
+                self.prepare(game, mana=payment)
+                self.checkpoint(game)
+                targets = {"white": [picks[0].ref], "red": [picks[1].ref]} if removed else {}
+                cast = game.act("pilot:A", {"action_id": f"cast:{source.ref}", "targets": targets,
+                                          "pay": "manual", "payment": payment})
+                self.assertTrue(cast.ok, cast.summary)
+                for removal, target in zip(removals, picks):
+                    self.cast(game, "B", removal, [target.ref], {"B": 1})
+                    self.top(game)
+                game = self.replay(game, load=True)
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual("graveyard" if removed == 2 else "exile", game.state.cards[source.object_id].zone)
+                if removed:
+                    self.assert_known_returns(game, picks[removed:])
+                    self.assertTrue(all(game.state.cards[target.object_id].zone == "exile" for target in picks[:removed]))
+                else:
+                    self.assertTrue(all(game.state.cards[target.object_id].zone == "graveyard" for target in picks))
+                self.private_replay(game, private)
+
+    def test_all_suns_dawn_color_group_and_terminal_authority_are_independently_closed(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.replacement.immutable import thaw_value
+        from quorune.rules.graveyard_card_targets import PER_COLOR_GRAVEYARD_RETURN_CAPABILITY
+        from quorune.rules.spell_self_exile import SELF_EXILE
+
+        payment = {"C": 3, "G": 2}
+        game, source, _, _, _ = self.original("All Suns' Dawn", 7511024, 0, payment)
+        program, = (program for program in game.engine.semantics.programs_for_oracle(source.oracle_id)
+                    if PER_COLOR_GRAVEYARD_RETURN_CAPABILITY in program.capability_dependencies)
+        self.assertEqual("exile", program.destination)
+        for cap in (PER_COLOR_GRAVEYARD_RETURN_CAPABILITY, SELF_EXILE.capability):
+            kept = tuple(value for value in program.capability_dependencies if value != cap)
+            changed = replace(program, capability_dependencies=kept,
+                              capability_closure=self.registry.closure(kept, profile="commander_review").to_dict())
+            self.assertFalse(bind_semantic_program_runtime(
+                changed, capability_registry=self.registry, profile="commander_review",
+            )["strict"])
+        for value in (True, 2):
+            schema = thaw_value(program.target_schema)
+            schema["groups"][0]["up_to"] = value
+            changed = replace(program, target_schema=schema)
+            self.assertFalse(bind_semantic_program_runtime(
+                changed, capability_registry=self.registry, profile="commander_review",
+            )["strict"])
+        record = self.db.lookup("All Suns' Dawn", fuzzy=False)
+        with patch("quorune.compiler.return_to_hand_templates.per_color_graveyard_return_target_schema", return_value={}):
+            self.assertNotEqual("exact", compile_oracle_card(record, capability_registry=self.registry).status)
+
     def test_actual_treasured_find_returns_its_card_then_exiles_itself(self):
         self.cast_original('Treasured Find',751100,1,{'B':1,'G':1})
 

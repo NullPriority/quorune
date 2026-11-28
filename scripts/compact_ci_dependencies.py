@@ -76,6 +76,7 @@ class WrapperSpec:
     position: int
     kind: str
     default_values: tuple[str, ...] = ()
+    database_parameter: tuple[str, int] | None = None
 
 
 def _canonical_relative_path(value: str, *, field: str) -> str:
@@ -784,6 +785,8 @@ def _wrapper_inventory(
             resolved = _expression_values(default, {})
             if resolved is not None:
                 defaults[parameter.arg] = resolved
+        statements = node.body[1:] if ast.get_docstring(node, clean=False) is not None else node.body
+        first_value = getattr(statements[0], "value", None) if statements else None
         for candidate in walk(node):
             if not isinstance(candidate, ast.Call) or not candidate.args:
                 continue
@@ -811,6 +814,14 @@ def _wrapper_inventory(
                 or argument.id not in parameter_positions
             ):
                 continue
+            database_parameter = None
+            # A direct first lookup receives the caller's database unchanged.
+            if (
+                candidate is first_value
+                and isinstance(receiver, ast.Name)
+                and receiver.id in parameter_positions
+            ):
+                database_parameter = receiver.id, parameter_positions[receiver.id]
             wrappers.add(
                 WrapperSpec(
                     name=node.name,
@@ -818,9 +829,19 @@ def _wrapper_inventory(
                     position=parameter_positions[argument.id],
                     kind=kind,
                     default_values=defaults.get(argument.id, ()),
+                    database_parameter=database_parameter,
                 )
             )
-    return tuple(sorted(wrappers, key=lambda row: (row.name, row.kind, row.position)))
+    return tuple(sorted(wrappers, key=lambda row: (
+        row.name, row.kind, row.position, row.parameter, row.default_values,
+        row.database_parameter or ("", -1),
+    )))
+
+
+def _call_argument(call: ast.Call, parameter: str, position: int) -> ast.AST | None:
+    if 0 <= position < len(call.args):
+        return call.args[position]
+    return next((item.value for item in call.keywords if item.arg == parameter), None)
 
 
 def _local_support_paths(
@@ -928,6 +949,7 @@ def discover_module_requirements(
     *,
     root: Path,
     sources: DependencySourceScope | None = None,
+    declared_sites: frozenset[tuple[str, str]] = frozenset(),
 ) -> tuple[tuple[Requirement, ...], tuple[DynamicSite, ...], tuple[str, ...]]:
     test_path = root / "tests" / f"{module}.py"
     if not test_path.is_file():
@@ -1107,18 +1129,15 @@ def discover_module_requirements(
                             )
 
             for wrapper in wrappers_by_name.get(call_name, ()):
-                argument: ast.AST | None = None
-                if 0 <= wrapper.position < len(call.args):
-                    argument = call.args[wrapper.position]
-                else:
-                    argument = next(
-                        (
-                            keyword.value
-                            for keyword in call.keywords
-                            if keyword.arg == wrapper.parameter
-                        ),
-                        None,
-                    )
+                # A dynamic declaration can intentionally make a fixture-local
+                # card part of the shared catalog. Preserve that checked input.
+                if wrapper.database_parameter is not None and (relative, symbol) not in declared_sites:
+                    receiver = _call_argument(call, *wrapper.database_parameter)
+                    if receiver is not None and _receiver_mode(
+                        receiver, symbol=symbol, class_modes=class_modes, name_modes=name_modes,
+                    ) == "local":
+                        continue
+                argument = _call_argument(call, wrapper.parameter, wrapper.position)
                 values = (
                     wrapper.default_values
                     if argument is None and wrapper.default_values

@@ -40,6 +40,9 @@ SPLIT_SECOND_HANDLER_ID = "rule.stack.split-second.v1"
 SPLIT_SECOND_CAPABILITY = "priority.stack.split_second"
 OPPONENT_EVEN_MANA_VALUE_CAPABILITY = "casting.prohibition.opponent_even_mana_value"
 OPPONENT_EVEN_MANA_VALUE_DEPENDENCIES = ("casting.prohibition.fixed_public", OPPONENT_EVEN_MANA_VALUE_CAPABILITY)
+SPLIT_SECOND_GRANT_HANDLER_ID = "rule.stack.controller-spell-split-second.v1"
+SPLIT_SECOND_GRANT_CAPABILITY = "priority.stack.controller_spell_split_second_grant"
+SPLIT_SECOND_GRANT_QUERY = ObjectQuerySpec(types_any=("instant", "sorcery"), excluded_types=("land",))
 OPPONENT_SORCERY_TIMING_CAPABILITY = "casting.prohibition.opponents_sorcery_timing"
 OPPONENT_SORCERY_TIMING_DEPENDENCIES = ("casting.prohibition.fixed_public", OPPONENT_SORCERY_TIMING_CAPABILITY)
 
@@ -238,6 +241,11 @@ class StaticCastRuleHandler:
                 raise SemanticNodeError(
                     "Only static timing permissions use an Enchant restriction"
                 )
+        if kind is StaticCastRuleKind.SPLIT_SECOND and (
+            scope is not StaticCastPlayerScope.SOURCE_CONTROLLER or condition is not StaticCastCondition.ALWAYS
+            or queries != (SPLIT_SECOND_GRANT_QUERY,) or required_enchant_spec is not None or restriction is not None
+        ):
+            raise SemanticNodeError("A battlefield split-second grant requires the controller's instant and sorcery spells")
         if condition in _MANA_VALUE_CAST_CONDITIONS:
             expected_scope = (
                 StaticCastPlayerScope.SOURCE_OPPONENTS
@@ -329,6 +337,12 @@ def default_static_cast_rule_registry() -> StaticCastRuleRegistry:
     registry = StaticCastRuleRegistry(
         (
             SplitSecondHandler(),
+            StaticCastRuleHandler(
+                SPLIT_SECOND_GRANT_HANDLER_ID,
+                StaticCastRuleKind.SPLIT_SECOND,
+                (SPLIT_SECOND_CAPABILITY, SPLIT_SECOND_GRANT_CAPABILITY),
+                rule_references=("611.3b", "613.1f", "702.61a", "702.61b", "702.61c"),
+            ),
             BattlefieldCascadeGrantHandler(),
             BattlefieldRippleGrantHandler(),
             LinkedExileNameCastHandler(),
@@ -390,11 +404,13 @@ class StaticCastRuleHost(Protocol):
 
 
 def split_second_is_active(host: StaticCastRuleHost) -> bool:
-    """Read only trusted stack-local static declarations on current spells."""
+    """Read intrinsic and currently granted split second on actual stack spells."""
+    spells = []
     for item in host.state.stack:
         if item.kind not in {'spell','spell_copy'}:continue
         card=host.state.cards.get(item.card_object_id or '')
         if card is None or card.zone!='stack':continue
+        spells.append((item.controller, card))
         source=host.state.cards.get(item.source_object_id or '') if item.kind=='spell_copy' else card
         source=source or card
         record=host.card_record(source)
@@ -405,7 +421,29 @@ def split_second_is_active(host: StaticCastRuleHost) -> bool:
                 if descriptor.get('handler_id')==SPLIT_SECOND_HANDLER_ID:
                     SplitSecondHandler().validate(descriptor)
                     return True
-    return False
+    if not spells:
+        return False
+    grants = tuple(rule for rule in active_static_cast_rules(host, handler_id=SPLIT_SECOND_GRANT_HANDLER_ID)
+                   if rule.kind is StaticCastRuleKind.SPLIT_SECOND)
+    if not grants:
+        return False
+    return any(
+        _rule_matches_spell(rule, row, spell_name=row.printed_name)
+        for player, card in spells
+        for rule in grants
+        if _scope_applies(rule, player)
+        for row in (spell_query_result(host, card),)
+    )
+
+
+def controller_spell_split_second_dependencies(program):
+    if not any(row.get("handler_id") == SPLIT_SECOND_GRANT_HANDLER_ID for row in program.handlers):
+        return ()
+    if ((program.event, program.active_zone) != (STATIC_CAST_RULE_EVENT, "battlefield")
+            or len(program.handlers) != 1 or program.effects or program.cost_schema is not None
+            or program.target_schema is not None or CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage):
+        raise ValueError("The grant requires the current battlefield source and its exact static ability")
+    return (SPLIT_SECOND_CAPABILITY, SPLIT_SECOND_GRANT_CAPABILITY)
 
 
 def source_is_attached_to_creature(host: StaticCastRuleHost, source: Any) -> bool:
@@ -418,14 +456,17 @@ def source_is_attached_to_creature(host: StaticCastRuleHost, source: Any) -> boo
     return 'creature' in type_parts(str(host._effective_card_data(target,maximum_layer=Layer.TYPE).get('type_line') or ''))[0]
 
 
-def active_static_cast_rules(host: StaticCastRuleHost) -> tuple[StaticCastRule, ...]:
+def active_static_cast_rules(host: StaticCastRuleHost, *, handler_id: str | None = None) -> tuple[StaticCastRule, ...]:
     """Read the same battlefield cast rules throughout one pure catalog."""
     return memoized_characteristic_read(
-        host, ("active-static-cast-rules",), lambda: _collect_static_cast_rules(host),
+        host, ("active-static-cast-rules", handler_id),
+        lambda: _collect_static_cast_rules(host, handler_id=handler_id),
     )
 
 
-def _collect_static_cast_rules(host: StaticCastRuleHost) -> tuple[StaticCastRule, ...]:
+def _collect_static_cast_rules(
+    host: StaticCastRuleHost, *, handler_id: str | None = None,
+) -> tuple[StaticCastRule, ...]:
     registry = default_static_cast_rule_registry()
     rules: list[StaticCastRule] = []
     for source in host._semantic_event_sources(zones={"battlefield"}):
@@ -440,7 +481,8 @@ def _collect_static_cast_rules(host: StaticCastRuleHost) -> tuple[StaticCastRule
             event=STATIC_CAST_RULE_EVENT,
         ):
             if (
-                not host.semantic_program_is_current_trusted(program)
+                (handler_id is not None and not any(row.get("handler_id") == handler_id for row in program.handlers))
+                or not host.semantic_program_is_current_trusted(program)
                 or not program_matches_face(record, program, source)
                 or (
                     CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage
@@ -462,7 +504,9 @@ def _collect_static_cast_rules(host: StaticCastRuleHost) -> tuple[StaticCastRule
                 source_object_id=source.object_id,
             )
             for descriptor in program.handlers:
-                if descriptor.get('handler_id')!=SPLIT_SECOND_HANDLER_ID and registry.describe(str(descriptor.get("handler_id") or "")):
+                component_id = descriptor.get("handler_id")
+                if ((handler_id is None or component_id == handler_id)
+                        and component_id != SPLIT_SECOND_HANDLER_ID and registry.describe(str(component_id or ""))):
                     rules.extend(registry.lower(descriptor, context))
     return tuple(
         sorted(

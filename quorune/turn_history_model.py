@@ -38,6 +38,7 @@ TurnHistoryEventKind = Literal[
     "permanent_arrived_graveyard",
     "card_arrived_exile",
     "artifact_subtype_sacrificed",
+    "artifact_subtype_entered",
     "card_arrived_graveyard",
     "card_milled_graveyard",
     "permanent_plus_one_counters_placed",
@@ -58,6 +59,7 @@ CONTROLLED_CREATURE_COUNTER_HISTORY_EVENT = "controlled_creature_plus_one_counte
 CREATURE_COUNTER_PLACEMENT_EVENT = "creature_counters_placed"
 TRIGGER_MODE_CHOSEN_EVENT = "trigger_mode_chosen"
 PERMANENT_COUNTER_RECEIVED_EVENT = "permanent_counter_received"
+ARTIFACT_SUBTYPE_ENTRY_EVENT = "artifact_subtype_entered"
 
 
 def _validate_counter_placement_fact(event):
@@ -88,6 +90,7 @@ def _validate_plus_one_placement_history(version, events):
 COMMITTED_OCCURRENCE_HISTORY_KINDS = frozenset({"spell_warped", "card_left_graveyard"})
 PUBLIC_MOVEMENT_HISTORY_KINDS = frozenset({
     "permanent_arrived_hand", "permanent_arrived_graveyard", "card_arrived_exile", "artifact_subtype_sacrificed",
+    ARTIFACT_SUBTYPE_ENTRY_EVENT,
 })
 
 
@@ -233,12 +236,14 @@ class TurnHistoryEvent:
                 or self.target_object_incarnation is not None or self.origin is not None
                 or type(self.amount) is not int or self.amount != 0):
             raise ValueError("Public movement history requires a seat and a committed incarnation")
-        if self.kind == "artifact_subtype_sacrificed":
+        if self.kind in {"artifact_subtype_sacrificed", ARTIFACT_SUBTYPE_ENTRY_EVENT}:
             from .type_subtype_vocabulary import ARTIFACT_SUBTYPES
 
             if (self.target_kind != "artifact_subtype" or type(self.target) is not str
-                    or self.target not in ARTIFACT_SUBTYPES or self.types):
-                raise ValueError("Sacrifice history requires one canonical artifact subtype")
+                    or self.target not in ARTIFACT_SUBTYPES or self.types
+                    or (self.kind == ARTIFACT_SUBTYPE_ENTRY_EVENT and self.target != "food")):
+                label = "Sacrifice" if self.kind == "artifact_subtype_sacrificed" else "Food entry"
+                raise ValueError(f"{label} history requires one canonical artifact subtype")
         elif self.target is not None or self.target_kind is not None:
             raise ValueError("Movement history cannot carry a target")
         elif self.kind == "card_arrived_exile":

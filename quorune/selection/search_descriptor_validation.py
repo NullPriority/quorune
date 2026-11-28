@@ -9,19 +9,20 @@ from ..public_library_piles_model import (
     DISTINCT_PUBLIC_SEARCH_SPLIT_VERSION, is_public_search_split, validate_public_search_split,
 )
 from ..rules.targeted_library_exile import (
-    TARGET_LIBRARY_EXILE_VERSION, validate_bound_target_name_multizone_search,
+    OPPONENT_LIBRARY_EXILE_SEARCH_CAPABILITIES, TARGET_FIXED_LIBRARY_EXILE_VERSIONS,
+    validate_bound_target_name_multizone_search,
 )
 from ..library_search_model import (
-    ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION,
+    ANY_NUMBER_CREATURE_BATTLEFIELD_VERSIONS,
+    CONDITIONAL_UNTAP_SEARCH_VERSION, QUERY_BOUND_SEARCH_VERSION, TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION,
     CAST_X_ZONE_SEARCH_VERSION,
     EXILED_TARGET_SEARCH_VERSION,
     CREATURE_SUBSET_MANA_VALUE_FIELD, CREATURE_SUBSET_MANA_VALUE_SEARCH_VERSION,
     FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_VERSION, COMMITTED_ATTACKING_EXILE_SEARCH_VERSION,
     COMMITTED_LAND_SEARCH_VERSION,
-    RECRUITING_LIBRARY_SEARCH_VERSION, SUBTYPE_GRAVEYARD_SEARCH_VERSION, SubtypeGraveyardSearchSpec, is_subtype_graveyard_search,
+    RECRUITING_LIBRARY_SEARCH_VERSION, ANY_NUMBER_SUBTYPE_BATTLEFIELD_VERSION, SUBTYPE_GRAVEYARD_SEARCH_VERSION, SubtypeGraveyardSearchSpec, is_subtype_graveyard_search,
     SEARCHED_LAND_UNTAP_VERSION, SearchedLandUntapSearch,
     TARGET_NAME_LIBRARY_SEARCH_VERSION, TARGET_NAME_MULTIZONE_EXILE_VERSION,
-    TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION,
     TARGET_PLAYER_BASIC_LAND_SEARCH_VERSION,
     PRIVATE_SEARCH_RANDOM_DISCARD_VERSION,
     DRAGON_GRAVEYARD_COPY_SEARCH_VERSION,
@@ -31,6 +32,7 @@ from ..library_search_model import (
     CreatureSubsetManaValueSearch,
     FixedCountedLibrarySearchTemplate,
     RecruitingLibrarySearchSpec,
+    SACRIFICE_BOUND_CREATURE_SEARCH_VERSION,
     TargetNameLibrarySearchSpec,
     is_counted_library_search, is_ordered_creature_graveyard_search,
     validate_fixed_creature_group_search, validate_committed_attacking_exile_search,
@@ -75,6 +77,13 @@ def semantic_search_actor(
 
 
 def validate_semantic_search_response(effect: Mapping[str, Any], response: Mapping[str, Any]) -> None:
+    from ..rules.searched_library_pairs import is_searched_pair_search
+
+    if is_searched_pair_search(effect) and (
+        set(response) - {"action", "action_id", "choice_schema", "search_cards"}
+        or not isinstance(response.get("search_cards"), (list, tuple))
+    ):
+        raise GameRuleError("A searched pair accepts only its private search cards field")
     if effect.get("schema_version") == SEARCHED_LAND_UNTAP_VERSION and (
         {"entry_pay_life", "pay_life"} & set(response)
     ):
@@ -83,9 +92,9 @@ def validate_semantic_search_response(effect: Mapping[str, Any], response: Mappi
         set(response) - {"action", "choice_schema", "search_cards"} or "search_cards" not in response
     ):
         raise GameRuleError("The public split search accepts only the issued private search choice")
-    from ..rules.affected_library_search_batch import SEARCH_BATCH_VERSION
+    from ..rules.affected_library_search_batch import is_exile_land_search
 
-    if effect.get("schema_version") == SEARCH_BATCH_VERSION and (
+    if is_exile_land_search(effect) and (
         set(response) - {"action", "action_id", "choice_schema", "search_cards"}
         or not isinstance(response.get("search_cards", ()), (list, tuple))
     ):
@@ -96,13 +105,26 @@ def validate_semantic_search_response(effect: Mapping[str, Any], response: Mappi
     ):
         raise GameRuleError("The Dragon search accepts only its offered search_cards field")
     version = effect.get("schema_version")
-    if version in (TARGET_PLAYER_BASIC_LAND_SEARCH_VERSION, TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION) and (
+    if version in {
+        CONDITIONAL_UNTAP_SEARCH_VERSION, TARGET_PLAYER_BASIC_LAND_SEARCH_VERSION,
+        TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION, *OPPONENT_LIBRARY_EXILE_SEARCH_CAPABILITIES,
+    } and (
         set(response) - {"action", "choice_schema", "search_cards"}
         or ("search_cards" in response and response["search_cards"] is None)
     ):
-        if version == TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION:
+        if version in OPPONENT_LIBRARY_EXILE_SEARCH_CAPABILITIES:
             raise GameRuleError("The private opponent search accepts only its offered search_cards field")
+        if version == CONDITIONAL_UNTAP_SEARCH_VERSION:
+            raise GameRuleError("A conditional-untap search accepts only the chosen basic land or an empty selection")
         raise GameRuleError("A targeted basic-land search accepts only the chosen card or an empty selection")
+
+
+def validate_explicit_search_cards(values):
+    if values is not None and (
+        not isinstance(values, Sequence) or isinstance(values, (str, bytes))
+        or any(not isinstance(value, str) for value in values)
+    ):
+        raise GameRuleError("search_cards must be an array of card-ref strings from choice_schema.legal_refs")
 
 
 def semantic_search_destination(effect: Mapping[str, Any]) -> tuple[str, str, str | int]:
@@ -133,6 +155,44 @@ def _validate_search_land_untap(effect: Mapping[str, Any]) -> None:
         raise GameRuleError(str(exc)) from exc
 
 
+def validated_search_completion(effect):
+    from ..conditional_search_model import OPTIONAL_CONDITIONAL_PLACEMENT_FIELD, OPTIONAL_CONDITIONAL_SEARCH_VERSION
+    from .forest_search_entry import FOREST_ENTRY_PAID_REFS
+
+    fields = {"actor", "choice_id", "selected_refs"}
+    raw_completion = effect.get(_SEARCH_COMPLETION_FIELD)
+    if (
+        not isinstance(raw_completion, Mapping)
+        or set(raw_completion) not in (
+            fields,
+            fields | {"entry_pay_life"},
+            fields | {FOREST_ENTRY_PAID_REFS},
+            fields | {OPTIONAL_CONDITIONAL_PLACEMENT_FIELD},
+        )
+    ):
+        raise GameRuleError("Malformed semantic search completion")
+    if ((OPTIONAL_CONDITIONAL_PLACEMENT_FIELD in raw_completion)
+            != (effect.get("schema_version") == OPTIONAL_CONDITIONAL_SEARCH_VERSION)):
+        raise GameRuleError("The optional placement completion requires its matching search version")
+    actor = raw_completion.get("actor")
+    choice_id = raw_completion.get("choice_id")
+    raw_selected = raw_completion.get("selected_refs")
+    if (
+        not isinstance(actor, str)
+        or not actor
+        or not isinstance(choice_id, str)
+        or not choice_id
+        or not isinstance(raw_selected, Sequence)
+        or isinstance(raw_selected, (str, bytes))
+        or any(
+            not isinstance(value, str) or not value
+            for value in raw_selected
+        )
+    ):
+        raise GameRuleError("Malformed semantic search completion identity")
+    return raw_completion, actor, choice_id, raw_selected
+
+
 def _validate_linked_and_paid_search(effect):
     if effect.get("schema_version") == COMMITTED_LAND_SEARCH_VERSION:
         from ..rules.committed_land_sacrifice_search import validate_resolved_land_sacrifice_search
@@ -160,8 +220,18 @@ def _validate_linked_and_paid_search(effect):
         return True
     from ..linked_library_imprint_model import (
         uses_linked_artifact_library_instruction, validate_linked_artifact_library_instruction,
+        uses_linked_saga_library_instruction, linked_saga_library_phase,
     )
 
+    if uses_linked_saga_library_instruction(effect):
+        retained = {key: value for key, value in effect.items()
+                    if key not in {_SEARCH_COMPLETION_FIELD, _REPLACEMENT_SELECTIONS_FIELD}}
+        try:
+            if linked_saga_library_phase(retained) != "search":
+                raise ValueError("Only the original linked Saga search can issue a private selection")
+        except (TypeError, ValueError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        return True
     if uses_linked_artifact_library_instruction(effect):
         retained = {key: value for key, value in effect.items()
                     if key not in {_SEARCH_COMPLETION_FIELD, _REPLACEMENT_SELECTIONS_FIELD}}
@@ -179,11 +249,21 @@ def _validate_linked_and_paid_search(effect):
 
 def materialize_semantic_search_bound(host, item, effect, instruction_pointer, *, saved_options=False, moving=False):
     # Check the stack-owned bound before issuing or applying recorded candidates.
+    from ..rules.searched_library_pairs import is_searched_pair_search, require_resolving_searched_pair
+
+    if is_searched_pair_search(effect):
+        require_resolving_searched_pair(host, item, effect)
+        return effect
     from ..library_search_model import QUERY_BOUND_SEARCH_VERSION
     from ..rules.paid_artifact_library_search import is_paid_artifact_search, materialize_paid_artifact_search
 
     retained = {key: value for key, value in effect.items()
                 if key not in {_SEARCH_COMPLETION_FIELD, _REPLACEMENT_SELECTIONS_FIELD}} if moving else effect
+    from ..linked_library_imprint_model import uses_linked_saga_library_instruction
+    from ..rules.linked_library_imprint import require_linked_artifact_library_search
+
+    if moving and uses_linked_saga_library_instruction(retained):
+        require_linked_artifact_library_search(host, item, retained, actor=semantic_search_actor(item, retained))
     if effect.get("schema_version") == COMMITTED_LAND_SEARCH_VERSION:
         from ..rules.committed_land_sacrifice_search import verify_land_sacrifice_search
 
@@ -208,6 +288,13 @@ def materialize_semantic_search_bound(host, item, effect, instruction_pointer, *
 
     if is_paid_creature_search(effect):
         return materialize_paid_creature_search(host, item, retained, already_materialized=saved_options or moving)
+    if (effect.get("schema_version") == SACRIFICE_BOUND_CREATURE_SEARCH_VERSION
+            and not saved_options and not moving and isinstance(effect.get("zone"), (list, tuple))
+            and "library" in effect["zone"]):
+        from ..rules.library_search_rules import library_search_constraint
+
+        if library_search_constraint(host, item.controller).prohibited:
+            raise GameRuleError("Library search is currently prohibited")
     if effect.get("schema_version") == QUERY_BOUND_SEARCH_VERSION and not saved_options:
         from ..rules.query_bound_library_search import materialize_query_bound_search
 
@@ -239,10 +326,58 @@ def _validate_private_or_cast_x_search(effect: Mapping[str, Any]) -> bool:
     return False
 
 
-def validate_semantic_search_descriptor(effect: Mapping[str, Any]) -> None:
-    from ..rules.affected_library_search_batch import SEARCH_BATCH_VERSION, validate_exile_land_search
+def _validate_search_zone_binding(effect: Mapping[str, Any]) -> None:
+    if effect.get('schema_version') == 8:
+        from ..library_search_model import QueryBoundLibrarySearchSpec
+        try:QueryBoundLibrarySearchSpec.from_effect({k:v for k,v in effect.items() if k not in {_SEARCH_COMPLETION_FIELD,_REPLACEMENT_SELECTIONS_FIELD}},allow_resolved=True)
+        except (ValueError,TypeError,KeyError) as exc:raise GameRuleError('Query-bounded search instruction is malformed') from exc
+        return
+    if effect.get('schema_version') == 7:
+        from ..qualified_library_search_model import QualifiedLibrarySearchSpec
+        try:
+            QualifiedLibrarySearchSpec.from_effect({key:value for key,value in effect.items() if key != _SEARCH_COMPLETION_FIELD})
+        except (ValueError, TypeError, KeyError) as exc:
+            raise GameRuleError("Qualified library search instruction is malformed") from exc
+        return
+    if effect.get('schema_version') == 6:
+        from ..named_search_model import decode_named_zone_selection
+        try:
+            decode_named_zone_selection({key:value for key,value in effect.items() if key != _SEARCH_COMPLETION_FIELD})
+        except (ValueError, TypeError, KeyError) as exc:
+            raise GameRuleError("Named zone search instruction is malformed") from exc
+        return
 
-    if effect.get("schema_version") == SEARCH_BATCH_VERSION:
+
+def _validate_bound_target_library(effect):
+    from ..rules.targeted_library_exile import bound_target_library_exile
+    bound_target_library_exile(effect, effect.get('searching_player'))
+    raw = effect.get('_target_library_identities')
+    if raw is not None:
+        from ..rules.library_selection import LibrarySelectionObjectIdentity
+        if not isinstance(raw, (list, tuple)):
+            raise GameRuleError('Target-library identities must be an array')
+        try:
+            identities = tuple(LibrarySelectionObjectIdentity.from_dict(row) for row in raw)
+        except (ValueError, TypeError, KeyError) as exc:
+            raise GameRuleError('Target-library identity is malformed') from exc
+        if len({row.object_id for row in identities}) != len(identities):
+            raise GameRuleError('Target-library identities must be distinct')
+
+
+def validate_semantic_search_descriptor(effect: Mapping[str, Any]) -> None:
+    if effect.get("schema_version") == SACRIFICE_BOUND_CREATURE_SEARCH_VERSION:
+        from ..rules.named_searches import sacrifice_bound_creature_search_zones
+
+        retained = {key: value for key, value in effect.items()
+                    if key not in {_SEARCH_COMPLETION_FIELD, _REPLACEMENT_SELECTIONS_FIELD}}
+        try:
+            sacrifice_bound_creature_search_zones(retained)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        return
+    from ..rules.affected_library_search_batch import is_exile_land_search, validate_exile_land_search
+
+    if is_exile_land_search(effect):
         validate_exile_land_search(effect)
         return
     if _validate_private_or_cast_x_search(effect):
@@ -252,6 +387,14 @@ def validate_semantic_search_descriptor(effect: Mapping[str, Any]) -> None:
         try:
             validate_public_search_split(effect, resolved=True)
         except (TypeError, ValueError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        return
+    from ..rules.searched_library_pairs import is_searched_pair_search, validate_searched_pair_search
+
+    if is_searched_pair_search(effect):
+        try:
+            validate_searched_pair_search(effect)
+        except (TypeError, ValueError) as exc:
             raise GameRuleError(str(exc)) from exc
         return
     if _validate_linked_and_paid_search(effect):
@@ -296,20 +439,8 @@ def validate_semantic_search_descriptor(effect: Mapping[str, Any]) -> None:
             raise GameRuleError(str(exc)) from exc
         return
     if (type(effect.get("schema_version")) is int and effect["schema_version"]
-            in (TARGET_LIBRARY_EXILE_VERSION, TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION)):
-        from ..rules.targeted_library_exile import bound_target_library_exile
-        bound_target_library_exile(effect, effect.get('searching_player'))
-        raw = effect.get('_target_library_identities')
-        if raw is not None:
-            from ..rules.library_selection import LibrarySelectionObjectIdentity
-            if not isinstance(raw, (list, tuple)):
-                raise GameRuleError('Target-library identities must be an array')
-            try:
-                identities = tuple(LibrarySelectionObjectIdentity.from_dict(row) for row in raw)
-            except (ValueError, TypeError, KeyError) as exc:
-                raise GameRuleError('Target-library identity is malformed') from exc
-            if len({row.object_id for row in identities}) != len(identities):
-                raise GameRuleError('Target-library identities must be distinct')
+            in TARGET_FIXED_LIBRARY_EXILE_VERSIONS):
+        _validate_bound_target_library(effect)
         return
     if {'library_player', '_target_library_identities'} & set(effect):
         raise GameRuleError('Historical search versions cannot carry target-library roles')
@@ -357,7 +488,7 @@ def validate_semantic_search_descriptor(effect: Mapping[str, Any]) -> None:
         except (TypeError, ValueError) as exc:
             raise GameRuleError(str(exc)) from exc
         return
-    if effect.get("schema_version") in (ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION, SUBTYPE_GRAVEYARD_SEARCH_VERSION):
+    if effect.get("schema_version") in (*ANY_NUMBER_CREATURE_BATTLEFIELD_VERSIONS, ANY_NUMBER_SUBTYPE_BATTLEFIELD_VERSION, SUBTYPE_GRAVEYARD_SEARCH_VERSION):
         try:
             (SubtypeGraveyardSearchSpec if is_subtype_graveyard_search(effect) else AnyNumberCreatureSubtypeSearch).from_effect({
                 key: value for key, value in effect.items()
@@ -372,24 +503,8 @@ def validate_semantic_search_descriptor(effect: Mapping[str, Any]) -> None:
         except ValueError as exc:
             raise GameRuleError(str(exc)) from exc
         return
-    if effect.get('schema_version') == 8:
-        from ..library_search_model import QueryBoundLibrarySearchSpec
-        try:QueryBoundLibrarySearchSpec.from_effect({k:v for k,v in effect.items() if k not in {_SEARCH_COMPLETION_FIELD,_REPLACEMENT_SELECTIONS_FIELD}},allow_resolved=True)
-        except (ValueError,TypeError,KeyError) as exc:raise GameRuleError('Query-bounded search instruction is malformed') from exc
-        return
-    if effect.get('schema_version') == 7:
-        from ..qualified_library_search_model import QualifiedLibrarySearchSpec
-        try:
-            QualifiedLibrarySearchSpec.from_effect({key:value for key,value in effect.items() if key != _SEARCH_COMPLETION_FIELD})
-        except (ValueError, TypeError, KeyError) as exc:
-            raise GameRuleError("Qualified library search instruction is malformed") from exc
-        return
-    if effect.get('schema_version') == 6:
-        from ..named_search_model import decode_named_zone_selection
-        try:
-            decode_named_zone_selection({key:value for key,value in effect.items() if key != _SEARCH_COMPLETION_FIELD})
-        except (ValueError, TypeError, KeyError) as exc:
-            raise GameRuleError("Named zone search instruction is malformed") from exc
+    if effect.get("schema_version") in (6, 7, 8):
+        _validate_search_zone_binding(effect)
         return
     if is_counted_library_search(effect):
         try:
@@ -440,6 +555,10 @@ def semantic_search_choice_schema(
         },
     }
     choice_schema.update(shared_land_type_search_choice(host, effect, seat, options))
+    from ..rules.searched_library_pairs import is_searched_pair_search
+
+    if is_searched_pair_search(effect):
+        choice_schema.update(allowed_counts=[0, 2] if maximum == 2 else [0], example={"search_cards": []})
     if is_public_search_split(effect):
         choice_schema["example"]["search_cards"] = [option["id"] for option in options[:minimum]]
         if effect["schema_version"] == DISTINCT_PUBLIC_SEARCH_SPLIT_VERSION:

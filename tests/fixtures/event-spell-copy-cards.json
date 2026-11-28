@@ -44,17 +44,15 @@
       "type_line": "Enchantment"
     },
     {
-      "name": "Ashling, Flame Dancer",
-      "oracle_id": "6fe9fd59-9cac-4572-8f94-bc19bea44f94",
-      "oracle_text": "You don't lose unspent red mana as steps and phases end.\nMagecraft — Whenever you cast or copy an instant or sorcery spell, discard a card, then draw a card. If this is the second time this ability has resolved this turn, Ashling deals 2 damage to each opponent and each creature they control. If it's the third time, add {R}{R}{R}{R}.",
-      "mana_cost": "{2}{R}{R}",
-      "type_line": "Legendary Creature — Elemental Shaman",
       "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
       "colors": [
         "R"
       ],
-      "color_identity": [
-        "R"
+      "keywords": [
+        "Magecraft"
       ],
       "layout": "normal",
       "legalities": {
@@ -82,11 +80,13 @@
         "tlr": "not_legal",
         "vintage": "legal"
       },
-      "keywords": [
-        "Magecraft"
-      ],
+      "mana_cost": "{2}{R}{R}",
+      "name": "Ashling, Flame Dancer",
+      "oracle_id": "6fe9fd59-9cac-4572-8f94-bc19bea44f94",
+      "oracle_text": "You don't lose unspent red mana as steps and phases end.\nMagecraft — Whenever you cast or copy an instant or sorcery spell, discard a card, then draw a card. If this is the second time this ability has resolved this turn, Ashling deals 2 damage to each opponent and each creature they control. If it's the third time, add {R}{R}{R}{R}.",
       "power": "4",
-      "toughness": "4"
+      "toughness": "4",
+      "type_line": "Legendary Creature — Elemental Shaman"
     },
     {
       "cmc": 5.0,
@@ -6874,17 +6874,15 @@
       "type_line": "Enchantment"
     },
     {
-      "name": "Ashling, Flame Dancer",
-      "oracle_id": "6fe9fd59-9cac-4572-8f94-bc19bea44f94",
-      "oracle_text": "You don't lose unspent red mana as steps and phases end.\nMagecraft — Whenever you cast or copy an instant or sorcery spell, discard a card, then draw a card. If this is the second time this ability has resolved this turn, Ashling deals 2 damage to each opponent and each creature they control. If it's the third time, add {R}{R}{R}{R}.",
-      "mana_cost": "{2}{R}{R}",
-      "type_line": "Legendary Creature — Elemental Shaman",
       "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
       "colors": [
         "R"
       ],
-      "color_identity": [
-        "R"
+      "keywords": [
+        "Magecraft"
       ],
       "layout": "normal",
       "legalities": {
@@ -6912,11 +6910,327 @@
         "tlr": "not_legal",
         "vintage": "legal"
       },
-      "keywords": [
-        "Magecraft"
-      ],
+      "mana_cost": "{2}{R}{R}",
+      "name": "Ashling, Flame Dancer",
+      "oracle_id": "6fe9fd59-9cac-4572-8f94-bc19bea44f94",
+      "oracle_text": "You don't lose unspent red mana as steps and phases end.\nMagecraft — Whenever you cast or copy an instant or sorcery spell, discard a card, then draw a card. If this is the second time this ability has resolved this turn, Ashling deals 2 damage to each opponent and each creature they control. If it's the third time, add {R}{R}{R}{R}.",
       "power": "4",
-      "toughness": "4"
+      "toughness": "4",
+      "type_line": "Legendary Creature — Elemental Shaman"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}",
+      "name": "Codie, Vociferous Codex",
+      "oracle_id": "67a9357c-4713-4e01-a60d-532bf0dd80b6",
+      "oracle_text": "You can't cast permanent spells.\n{4}, {T}: Add {W}{U}{B}{R}{G}. When you next cast a spell this turn, exile cards from the top of your library until you exile an instant or sorcery card with lesser mana value. Until end of turn, you may cast that card without paying its mana cost. Put each other card exiled this way on the bottom of your library in a random order.",
+      "power": "1",
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2021-04-23",
+      "toughness": "4",
+      "type_line": "Legendary Artifact Creature — Book Construct"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Strionic Resonator",
+      "oracle_id": "cf751552-156f-4f81-ac94-9814dce099f9",
+      "oracle_text": "{2}, {T}: Copy target triggered ability you control. You may choose new targets for the copy. (A triggered ability uses the words \"when,\" \"whenever,\" or \"at.\")",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-04-21",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Village Rites",
+      "oracle_id": "365548fb-5acc-4a8a-b20b-26d28b7d029f",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nDraw two cards.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-01-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{R}",
+          "name": "Wear",
+          "oracle_text": "Destroy target artifact.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{W}",
+          "name": "Tear",
+          "oracle_text": "Destroy target enchantment.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        }
+      ],
+      "cmc": 3.0,
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Fuse"
+      ],
+      "layout": "split",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R} // {W}",
+      "name": "Wear // Tear",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "oracle_text": "Wear: Destroy target artifact.\nFuse (You may cast one or both halves of this card from your hand.)\n//\nTear: Destroy target enchantment.\nFuse (You may cast one or both halves of this card from your hand.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-04-21",
+      "toughness": null,
+      "type_line": "Instant // Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Night's Whisper",
+      "oracle_id": "7ffae8f8-3006-4969-a339-6d30678f87ea",
+      "oracle_text": "You draw two cards and lose 2 life.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-08-14",
+      "toughness": null,
+      "type_line": "Sorcery"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -6982,34 +7296,34 @@
       "source": "wotc"
     },
     {
+      "comment": "Once Ashling leaves the battlefield, you have until the end of the current step or phase to spend whatever red mana you have before you lose that mana as normal. There is no penalty associated with this other than the loss of the mana.",
       "oracle_id": "6fe9fd59-9cac-4572-8f94-bc19bea44f94",
       "published_at": "2024-06-07",
-      "source": "wotc",
-      "comment": "Once Ashling leaves the battlefield, you have until the end of the current step or phase to spend whatever red mana you have before you lose that mana as normal. There is no penalty associated with this other than the loss of the mana."
+      "source": "wotc"
     },
     {
+      "comment": "If an effect creates multiple copies of an instant or sorcery spell, Ashling's last ability triggers once for each copy created by the effect.",
       "oracle_id": "6fe9fd59-9cac-4572-8f94-bc19bea44f94",
       "published_at": "2024-06-07",
-      "source": "wotc",
-      "comment": "If an effect creates multiple copies of an instant or sorcery spell, Ashling's last ability triggers once for each copy created by the effect."
+      "source": "wotc"
     },
     {
+      "comment": "If a red mana you add has certain restrictions or riders associated with it (for example, if it was produced by the last ability of Arena of Glory), they'll apply to that mana no matter when you spend it.",
       "oracle_id": "6fe9fd59-9cac-4572-8f94-bc19bea44f94",
       "published_at": "2024-06-07",
-      "source": "wotc",
-      "comment": "If a red mana you add has certain restrictions or riders associated with it (for example, if it was produced by the last ability of Arena of Glory), they'll apply to that mana no matter when you spend it."
+      "source": "wotc"
     },
     {
+      "comment": "You can keep unspent red mana indefinitely while Ashling is on the battlefield. That means if you add a red mana during one step or phase, you can spend it during a later step or phase, or even a later turn. You will still lose other types of unspent mana as each step and phase ends.",
       "oracle_id": "6fe9fd59-9cac-4572-8f94-bc19bea44f94",
       "published_at": "2024-06-07",
-      "source": "wotc",
-      "comment": "You can keep unspent red mana indefinitely while Ashling is on the battlefield. That means if you add a red mana during one step or phase, you can spend it during a later step or phase, or even a later turn. You will still lose other types of unspent mana as each step and phase ends."
+      "source": "wotc"
     },
     {
+      "comment": "Some effects instruct you to copy an instant or sorcery card in a zone other than the stack. These copies will not cause Ashling's last ability to trigger. However, most effects that do this also allow you to cast the copy, and casting the copy will cause Ashling's last ability to trigger.",
       "oracle_id": "6fe9fd59-9cac-4572-8f94-bc19bea44f94",
       "published_at": "2024-06-07",
-      "source": "wotc",
-      "comment": "Some effects instruct you to copy an instant or sorcery card in a zone other than the stack. These copies will not cause Ashling's last ability to trigger. However, most effects that do this also allow you to cast the copy, and casting the copy will cause Ashling's last ability to trigger."
+      "source": "wotc"
     },
     {
       "comment": "If the spell being copied has an X whose value was determined as it was cast (like Debt to the Deathless has), the copy has the same value of X.",
@@ -12439,6 +12753,186 @@
       "comment": "Some effects instruct you to copy an instant or sorcery card in a zone other than the stack. These copies will not cause Ashling's last ability to trigger. However, most effects that do this also allow you to cast the copy, and casting the copy will cause Ashling's last ability to trigger.",
       "oracle_id": "6fe9fd59-9cac-4572-8f94-bc19bea44f94",
       "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any choices made when the triggered ability resolves won't have been made yet when it's copied. Any such choices will be made separately when the copy resolves. If the triggered ability asks you to pay a cost (such as that of Frenzied Goblin), you pay that cost for the copy.",
+      "oracle_id": "cf751552-156f-4f81-ac94-9814dce099f9",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a triggered ability is linked to a second ability, copies of that triggered ability are also linked to that second ability. If the second ability refers to \"the exiled card,\" it refers to all cards exiled by the triggered ability and the copy. For example, if Fiend Hunter's enters-the-battlefield ability is copied and two creatures are exiled, they both return when Fiend Hunter leaves the battlefield.",
+      "oracle_id": "cf751552-156f-4f81-ac94-9814dce099f9",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the triggered ability divides damage or distributes counters among a number of targets (for example, the ability of Bogardan Hellkite), the division and number of targets can't be changed. If you choose new targets, you must choose the same number of targets.",
+      "oracle_id": "cf751552-156f-4f81-ac94-9814dce099f9",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the triggered ability is modal (that is, if it says, \"Choose one —\" or similar), the mode is copied and can't be changed.",
+      "oracle_id": "cf751552-156f-4f81-ac94-9814dce099f9",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "In some cases involving linked abilities, an ability requires information about \"the exiled card.\" When this happens, the ability gets multiple answers. If these answers are being used to determine the value of a variable, the sum is used. For example, if Elite Arcanist's enters-the-battlefield ability is copied, two cards are exiled. The value of X in the activation cost of Elite Arcanist's other ability is the sum of the two cards' mana values. As the ability resolves, you create copies of both cards and can cast none, one, or both of the copies in any order.",
+      "oracle_id": "cf751552-156f-4f81-ac94-9814dce099f9",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Strionic Resonator targets a triggered ability that has triggered and is on the stack and creates another instance of that ability on the stack. It doesn't cause any object to gain an ability.",
+      "oracle_id": "cf751552-156f-4f81-ac94-9814dce099f9",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "The source of the copy is the same as the source of the original ability.",
+      "oracle_id": "cf751552-156f-4f81-ac94-9814dce099f9",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Triggered abilities use the word \"when,\" \"whenever,\" or \"at.\" They're often written as \"[Trigger condition], [effect].\"",
+      "oracle_id": "cf751552-156f-4f81-ac94-9814dce099f9",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must sacrifice exactly one creature to cast this spell; you can't cast it without sacrificing a creature, and you can't sacrifice additional creatures.",
+      "oracle_id": "365548fb-5acc-4a8a-b20b-26d28b7d029f",
+      "published_at": "2021-02-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose the same object as the target of each half of a fused split spell, if appropriate.",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you're casting a split card with fuse from any zone other than your hand, you can't cast both halves. You'll only be able to cast one half or the other.",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a player names a card, the player may name either half of a split card, but not both. A split card has the chosen name if one of its two names matches the chosen name.",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "On the stack, a split spell that hasn't been fused has only that half's characteristics and mana value. The other half is treated as though it didn't exist.",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "When resolving a fused split spell with multiple targets, treat it as you would any spell with multiple targets. If all targets are illegal when the spell tries to resolve, the spell doesn't resolve and none of its effects happen. If at least one target is still legal at that time, the spell resolves, but an illegal target can't perform any actions or have any actions performed on it.",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "When a fused split spell resolves, follow the instructions of the left half first, then the instructions on the right half.",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some split cards with fuse have two monocolor halves of different colors. If such a card is cast as a fused split spell, the resulting spell is multicolored. If only one half is cast, the spell is the color of that half. While not on the stack, such a card is multicolored.",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "To cast a fused split spell, pay both of its mana costs. While the spell is on the stack, its mana value is the total amount of mana in both costs.",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a split card with fuse from your hand without paying its mana cost, you can choose to use its fuse ability and cast both halves without paying their mana costs.",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some split cards with fuse have two halves that are both multicolored. That card is multicolored no matter which half is cast, or if both halves are cast. It's also multicolored while not on the stack.",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent spell is an artifact, creature, enchantment, or planeswalker spell. You may still play lands and cast instant and sorcery spells. Other effects can still put permanents onto the battlefield.",
+      "oracle_id": "67a9357c-4713-4e01-a60d-532bf0dd80b6",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Codie’s activated ability is a mana ability. It can’t be countered or responded to, and you can activate it while casting a spell. If you do, that spell is “the next spell” you cast this turn.",
+      "oracle_id": "67a9357c-4713-4e01-a60d-532bf0dd80b6",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost.",
+      "oracle_id": "67a9357c-4713-4e01-a60d-532bf0dd80b6",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell “without paying its mana cost,” you can’t choose to cast it for any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, you must pay those to cast the spell.",
+      "oracle_id": "67a9357c-4713-4e01-a60d-532bf0dd80b6",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you exile your entire library without exiling an instant or sorcery card with a lesser mana value, you will randomize the exiled cards and they again become your library, ending the effect. You will not continue to exile and shuffle your library forever.",
+      "oracle_id": "67a9357c-4713-4e01-a60d-532bf0dd80b6",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "The delayed triggered ability created by Codie’s second ability will resolve before the spell that caused it to trigger. That ability will resolve even if the spell is countered or otherwise doesn’t resolve.",
+      "oracle_id": "67a9357c-4713-4e01-a60d-532bf0dd80b6",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "The last card exiled is not cast immediately. You may cast it until the end of the current turn. If you do not cast it, that card will remain in exile.",
+      "oracle_id": "67a9357c-4713-4e01-a60d-532bf0dd80b6",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of the spell that caused the ability to trigger is determined only by its mana cost, no matter what the total cost to cast the spell was.",
+      "oracle_id": "67a9357c-4713-4e01-a60d-532bf0dd80b6",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "The types and mana value of a double-faced card in exile are determined by the characteristics of its front face. The mana value of a split card is the total mana value of both halves of the split card added together.",
+      "oracle_id": "67a9357c-4713-4e01-a60d-532bf0dd80b6",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "While you control Codie (as much as anyone can really “control” Codie), you may cast any face of a modal double-faced card that’s an instant or sorcery face, even if the other face is a permanent face.",
+      "oracle_id": "67a9357c-4713-4e01-a60d-532bf0dd80b6",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "You exile the cards face up. All players will be able to see them.",
+      "oracle_id": "67a9357c-4713-4e01-a60d-532bf0dd80b6",
+      "published_at": "2021-04-16",
       "source": "wotc"
     }
   ],

@@ -19,13 +19,14 @@ from .modal_selection import (
     COMMANDER_CAST_BOTH_MODES_CAPABILITY,
     COMMANDER_CAST_MODE_LIMIT_FIELD,
     WIZARD_CAST_TWO_MODES_CAPABILITY,
+    OPTIONAL_CAST_TRIGGER_MODAL_CAPABILITY,
     OPTIONAL_COMBAT_TRIGGER_MODAL_CAPABILITY,
     distinct_turn_trigger_context_matches,
     has_distinct_turn_trigger_modes,
-    valid_distinct_turn_trigger_modes,
+    uses_distinct_turn_graveyard_modes, valid_distinct_turn_trigger_modes,
     conditional_cast_mode_capability,
-    has_optional_trigger_modes,
-    optional_combat_trigger_context_matches,
+    optional_trigger_mode_capability,
+    optional_trigger_mode_context_dependencies,
 )
 
 
@@ -93,6 +94,23 @@ def attached_attack_modal_counter_dependencies(program):
     )
 
 
+def _optional_trigger_mode_dependencies(program, schema):
+    capability = optional_trigger_mode_capability(schema)
+    declared = {OPTIONAL_CAST_TRIGGER_MODAL_CAPABILITY, OPTIONAL_COMBAT_TRIGGER_MODAL_CAPABILITY}.intersection(
+        program.capability_dependencies,
+    )
+    if declared - {capability}:
+        raise ValueError("Optional trigger mode authority requires its matching modal bounds")
+    if capability is None:
+        return ()
+    required = optional_trigger_mode_context_dependencies(
+        schema, event=program.event, active_zone=program.active_zone, event_condition=program.event_condition,
+    )
+    if not required or program.effects or program.handlers or program.cost_schema is not None:
+        raise ValueError("Optional modes require their exact modal trigger context")
+    return required
+
+
 def modal_event_runtime_dependencies(program):
     """Retain primitive event authority when current modal coverage is removed."""
     from .conditional_target_preparation import resolution_target_color_program_dependencies
@@ -117,8 +135,14 @@ def modal_event_runtime_dependencies(program):
                 or not valid_distinct_turn_trigger_modes(schema)
                 or not distinct_turn_trigger_context_matches(
                     event=program.event, active_zone=program.active_zone, event_condition=program.event_condition,
+                    schema=schema,
                 )):
-            raise ValueError("Distinct turn modes require the closed controlled creature-entry or controller-discard trigger")
+            raise ValueError("Distinct turn modes require their closed versioned trigger context")
+        if uses_distinct_turn_graveyard_modes(schema):
+            from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+
+            if not {CURRENT_ABILITY_FRAGMENT_COVERAGE, "one_or_more_event_batch"} <= set(program.coverage):
+                raise ValueError("Graveyard departure modes require a current source and one committed batch")
         required.update((DISTINCT_TURN_TRIGGER_MODES_CAPABILITY, "trigger.effect.fixed_event",
                          "trigger.event.normalized_zone_change", "trigger.placement.apnap"))
     elif DISTINCT_TURN_TRIGGER_MODES_CAPABILITY in program.capability_dependencies:
@@ -135,16 +159,7 @@ def modal_event_runtime_dependencies(program):
         required.add(capability)
     elif {COMMANDER_CAST_BOTH_MODES_CAPABILITY, WIZARD_CAST_TWO_MODES_CAPABILITY}.intersection(program.capability_dependencies):
         raise ValueError("Cast-conditioned mode authority requires a cast mode condition")
-    if has_optional_trigger_modes(schema):
-        if (program.effects or program.handlers or program.cost_schema is not None
-                or not optional_combat_trigger_context_matches(
-                    event=program.event, active_zone=program.active_zone, event_condition=program.event_condition,
-                )):
-            raise ValueError("Zero-through-all modes require the original self combat damage to a player trigger")
-        required.update((OPTIONAL_COMBAT_TRIGGER_MODAL_CAPABILITY, "trigger.effect.fixed_event",
-                         "trigger.event.normalized_damage", "trigger.placement.apnap"))
-    elif OPTIONAL_COMBAT_TRIGGER_MODAL_CAPABILITY in program.capability_dependencies:
-        raise ValueError("Optional combat trigger mode authority requires the zero-through-all mode schema")
+    required.update(_optional_trigger_mode_dependencies(program, schema))
     if not isinstance(schema,Mapping) or not isinstance(schema.get('modes'),Mapping):return tuple(sorted(required))
     required.update(_temporary_land_mana_mode_dependencies(program, schema))
     if 'min_modes' not in schema and not any(isinstance(d,Mapping) and 'mechanics' in d for d in schema['modes'].values()):return tuple(sorted(required))
@@ -233,8 +248,8 @@ def fixed_modal_capability_dependencies(
             else FIXED_CHOOSE_ONE_MODAL_CAPABILITY
         )
     }
-    if has_optional_trigger_modes(target_schema):
-        dependencies.add(OPTIONAL_COMBAT_TRIGGER_MODAL_CAPABILITY)
+    if capability := optional_trigger_mode_capability(target_schema):
+        dependencies.add(capability)
     if has_distinct_turn_trigger_modes(target_schema):
         dependencies.add(DISTINCT_TURN_TRIGGER_MODES_CAPABILITY)
 

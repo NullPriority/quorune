@@ -383,12 +383,17 @@ def fixed_optional_mana_payment_node_capabilities(
         return optional_sacrifice_stat_node_capabilities(effects=effects, target_schema=target_schema)
 
     from .life_gain_counted_results import (
-        capped_life_gain_draw_node_capabilities, life_gain_life_draw_node_capabilities,
-        uses_capped_life_gain_draw, uses_life_gain_life_draw,
+        capped_life_gain_draw_node_capabilities,
+        life_gain_life_draw_node_capabilities,
+        uses_capped_life_gain_draw,
+        uses_life_gain_life_draw,
     )
+    from .entrant_x_reflexive import entrant_x_node_capabilities, uses_entrant_x_payment
 
     if any(uses_life_gain_life_draw(effect) for effect in effects):
         return life_gain_life_draw_node_capabilities(effects=effects, target_schema=target_schema)
+    if any(uses_entrant_x_payment(effect) for effect in effects):
+        return entrant_x_node_capabilities(effects=effects, target_schema=target_schema)
     if any(uses_capped_life_gain_draw(effect) for effect in effects):
         return capped_life_gain_draw_node_capabilities(effects=effects, target_schema=target_schema)
     if any('life_gain_counter_result_version' in effect for effect in effects):
@@ -510,6 +515,11 @@ def fixed_optional_effect_node_capabilities(
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if FIXED_OPTIONAL_EFFECT_MECHANIC not in mechanics or len(effects) != 1:
         return ()
+    from .searched_library_pairs import searched_pair_node_capabilities
+
+    pair = searched_pair_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
+    if pair:
+        return pair
     wrapper = effects[0]
     from .optional_draw_discard import is_entry_exempt_draw_discard
     from ..public_history_query_model import PUBLIC_HISTORY_QUERY_CAPABILITY
@@ -754,19 +764,29 @@ def fixed_effect_clause_sequence_node_capabilities(
 def fixed_proliferate_sequence_runtime_dependencies(program) -> tuple[str, ...]:
     from ..compiler.fixed_effect_clause_sequences import FIXED_PROLIFERATE_SEQUENCE_TEMPLATE
     provenance = getattr(program, "provenance", {})
-    if provenance.get("template_id") != FIXED_PROLIFERATE_SEQUENCE_TEMPLATE:
+    triggered = FIXED_PROLIFERATE_SEQUENCE_TEMPLATE in getattr(program, "coverage", ())
+    if not triggered and provenance.get("template_id") != FIXED_PROLIFERATE_SEQUENCE_TEMPLATE:
         return ()
     from ..counter_placement_event_model import has_canonical_proliferate_choice_order
     from ..semantic_runtime.activated_abilities import ACTIVATED_ABILITY_CATALOG_HANDLER_ID
 
-    if (
-        program.event != "activate" or program.cost_schema is None or program.target_schema is not None
-        or len(program.handlers) != 1
-        or program.handlers[0].get("handler_id") != ACTIVATED_ABILITY_CATALOG_HANDLER_ID
-        or len(program.effects) != 2
-        or not all(has_canonical_proliferate_choice_order(effect) for effect in program.effects)
-    ):
-        raise ValueError("Fixed Proliferate sequence needs two ordinary versioned instructions in one activation")
+    if (program.target_schema is not None or len(program.effects) != 2
+            or not all(has_canonical_proliferate_choice_order(effect) for effect in program.effects)):
+        raise ValueError("Fixed Proliferate sequence requires two ordinary, untargeted versioned instructions")
+    if triggered:
+        from .event_subscriptions import FixedEventSubscription, FixedEventSubscriptionSet
+
+        source = {"field": "card", "op": "eq", "value": "$source.ref"}
+        expected = FixedEventSubscriptionSet(tuple(
+            FixedEventSubscription(event, source) for event in ("permanent.enter", "creature.attacks")
+        ))
+        if (program.event != "permanent.enter" or program.active_zone != "battlefield"
+                or program.cost_schema is not None or program.handlers or program.trigger_limit is not None
+                or FixedEventSubscriptionSet.from_condition(program.event_condition) != expected):
+            raise ValueError("Triggered Proliferate twice requires exactly its own entry and attack subscriptions")
+    elif (program.event != "activate" or program.cost_schema is None or len(program.handlers) != 1
+          or program.handlers[0].get("handler_id") != ACTIVATED_ABILITY_CATALOG_HANDLER_ID):
+        raise ValueError("Fixed Proliferate sequence requires its original activation")
     required = fixed_effect_clause_sequence_node_capabilities(
         effects=program.effects, target_schema=None, mechanic_ids=program.coverage,
     )

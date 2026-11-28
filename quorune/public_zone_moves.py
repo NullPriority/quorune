@@ -51,6 +51,7 @@ STACK_SPELL_EXILE_FIELD = "stack_spell_exile"
 
 class StackSpellExileScope(str, Enum):
     SELECTED = "selected_spells"
+    TARGET_PLOT = "target_spell_then_plot"
     OTHER_SPELLS_AND_ABILITIES = "other_spells_then_all_abilities"
 
 
@@ -60,7 +61,9 @@ class StackSpellExileSpec:
     schema_version: int = 1
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version != 1 or not isinstance(self.scope, StackSpellExileScope):
+        expected_version = 2 if self.scope is StackSpellExileScope.TARGET_PLOT else 1
+        if (type(self.schema_version) is not int or self.schema_version != expected_version
+                or not isinstance(self.scope, StackSpellExileScope)):
             raise ValueError("Stack exile requires the exact spell scope")
 
     def to_dict(self):
@@ -74,6 +77,8 @@ class StackSpellExileSpec:
 
     @property
     def target_schema(self):
+        if self.scope is StackSpellExileScope.TARGET_PLOT:
+            return {"zones": ["stack"], "categories": ["spell"], "count": 1}
         if self.scope is not StackSpellExileScope.SELECTED:
             return None
         from .target_cardinality import AnnouncedTargetCardinality
@@ -85,12 +90,17 @@ class StackSpellExileSpec:
 
     def effect(self):
         fields = {"op": "exile", STACK_SPELL_EXILE_FIELD: self.to_dict()}
-        if self.scope is StackSpellExileScope.SELECTED:
+        if self.scope in {StackSpellExileScope.SELECTED, StackSpellExileScope.TARGET_PLOT}:
             fields["stacks"] = "$targets"
         return fields
 
     @property
     def capability_dependencies(self):
+        if self.scope is StackSpellExileScope.TARGET_PLOT:
+            from .cast_lifecycles import FIXED_ZONE_CAST_LIFECYCLE_CAPABILITY_ID
+
+            return ("zone.change.destination_replacement", "target.revalidate_resolution",
+                    "trigger.placement.apnap", FIXED_ZONE_CAST_LIFECYCLE_CAPABILITY_ID)
         if self.scope is StackSpellExileScope.SELECTED:
             from .target_cardinality import ANY_NUMBER_TARGET_CAPABILITY
 
@@ -126,10 +136,17 @@ def stack_spell_exile_runtime_dependencies(program):
     effects = (*program.effects, *getattr(program, "handlers", ()))
     if not any(STACK_SPELL_EXILE_FIELD in effect for effect in nested_effects(effects)):
         return ()
-    if ((program.event, program.active_zone) != ("resolve", "stack")
-            or not program.ability_id.startswith("spell:") or getattr(program, "handlers", ())):
+    spec = _checked_stack_spell_exile(program.effects, program.target_schema)
+    event_zone = program.event, program.active_zone
+    if spec.scope is StackSpellExileScope.TARGET_PLOT:
+        if (event_zone != ("permanent.enter.self", "battlefield") or not program.ability_id.startswith("trigger:")
+                or getattr(program, "handlers", ()) or program.event_condition is not None
+                or program.cost_schema is not None):
+            raise ValueError("Plotting an exiled spell requires the exact source entry trigger")
+    elif (event_zone != ("resolve", "stack") or not program.ability_id.startswith("spell:")
+          or getattr(program, "handlers", ())):
         raise ValueError("Stack exile requires its complete spell resolution")
-    return _checked_stack_spell_exile(program.effects, program.target_schema).capability_dependencies
+    return spec.capability_dependencies
 
 
 def is_closed_stack_spell_exile_program(program):
@@ -255,6 +272,11 @@ class PublicZoneSeatRelation(str, Enum):
     TARGET_PLAYER = "target_player"
 
 
+from .rules.cast_name_graveyard_returns import (
+    CAST_NAME_RETURN_VERSION, CAST_NAMES_FIELD, CAST_NAMES_VALUE, GRAVEYARD_CARDS, checked_spell_names,
+)
+
+
 PUBLIC_AURA_ENTRY_VERSION = 3
 ANNOUNCED_GRAVEYARD_RETURN_VERSION = 5
 SAME_TURN_GRAVEYARD_RETURN_VERSION = 7
@@ -270,7 +292,7 @@ PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSIONS = (
 SAME_TURN_GRAVEYARD_RETURN_VERSIONS = (SAME_TURN_GRAVEYARD_RETURN_VERSION, TARGETED_SAME_TURN_GRAVEYARD_RETURN_VERSION)
 PUBLIC_AURA_ENTRY_VERSIONS = (
     PUBLIC_AURA_ENTRY_VERSION, ANNOUNCED_GRAVEYARD_RETURN_VERSION, *SAME_TURN_GRAVEYARD_RETURN_VERSIONS,
-    *PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSIONS,
+    *PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSIONS, CAST_NAME_RETURN_VERSION,
 )
 ANNOUNCED_GRAVEYARD_RETURN_CAPABILITY = "zone.move.announced_owned_graveyard_return"
 ANNOUNCED_MANA_VALUE_MAX_FIELD = "announced_mana_value_max"
@@ -365,6 +387,7 @@ _SET_FIELDS_ANNOUNCED_RETURN = _SET_FIELDS_V2 | {ANNOUNCED_MANA_VALUE_MAX_FIELD}
 _SET_FIELDS_SAME_NAME = _SET_FIELDS_V1 | {PUBLIC_SAME_NAME_MOVE_TARGET_FIELD}
 _SET_FIELDS_TARGETED_SAME_TURN = _SET_FIELDS_V2 | {"target_refs"}
 _SET_FIELDS_CHOSEN_RETURN = _SET_FIELDS_V2 | {"chosen_cards"}
+_SET_FIELDS_CAST_NAME_RETURN = _SET_FIELDS_V2 | {CAST_NAMES_FIELD}
 _CHOSEN_CREATURE_CARD_QUERY = ObjectQuerySpec(zones=("graveyard",), types_all=("creature",), token=False)
 _CHOSEN_LAND_CARD_QUERY = ObjectQuerySpec(zones=("graveyard",), types_all=("land",), token=False)
 
@@ -394,6 +417,7 @@ class PublicZoneMoveSetSpec:
     same_name_target: str | None = None
     target_refs: tuple[str, ...] | str | None = None
     chosen_cards: tuple[PublicZoneMoveObject, ...] = ()
+    cast_spell_names: tuple[str, ...] | str | None = None
 
     def __post_init__(self) -> None:
         if type(self.schema_version) is not int or self.schema_version not in {
@@ -514,6 +538,19 @@ class PublicZoneMoveSetSpec:
             self._validate_chosen_graveyard_return()
         elif self.chosen_cards:
             raise PublicZoneMoveError("Chosen creature cards require the exact owner-return version")
+        if self.schema_version == CAST_NAME_RETURN_VERSION:
+            self._validate_cast_name_return()
+        elif self.cast_spell_names is not None:
+            raise PublicZoneMoveError("Cast spell names require their explicit return version")
+
+    def _validate_cast_name_return(self):
+        if (self.origin is not PublicZoneOrigin.GRAVEYARD or self.destination is not PublicZoneDestination.BATTLEFIELD
+                or self.relation_axis is not PublicZoneRelationAxis.OWNER or self.seat_relation is not PublicZoneSeatRelation.ANY
+                or self.battlefield_controller is not PublicBattlefieldController.OWNER or self.battlefield_tapped
+                or self.query != GRAVEYARD_CARDS):
+            raise PublicZoneMoveError("A cast-name return requires every current graveyard and owner entry")
+        if self.cast_spell_names != CAST_NAMES_VALUE:
+            object.__setattr__(self, "cast_spell_names", checked_spell_names(self.cast_spell_names))
 
     def _validate_chosen_graveyard_return(self):
         cards = self.chosen_cards
@@ -663,6 +700,8 @@ class PublicZoneMoveSetSpec:
             value["target_refs"] = list(self.target_refs) if isinstance(self.target_refs, tuple) else self.target_refs
         if self.chosen_cards:
             value["chosen_cards"] = [card.to_dict() for card in self.chosen_cards]
+        if self.cast_spell_names is not None:
+            value[CAST_NAMES_FIELD] = list(self.cast_spell_names) if isinstance(self.cast_spell_names, tuple) else self.cast_spell_names
         return value
 
     @classmethod
@@ -675,6 +714,7 @@ class PublicZoneMoveSetSpec:
             _SET_FIELDS_SAME_NAME,
             _SET_FIELDS_TARGETED_SAME_TURN,
             _SET_FIELDS_CHOSEN_RETURN,
+            _SET_FIELDS_CAST_NAME_RETURN,
         } or ("graveyard_power" in value) != (value["schema_version"] == PUBLIC_GRAVEYARD_POWER_RETURN_VERSION) or (
             ANNOUNCED_MANA_VALUE_MAX_FIELD in value
         ) != (value["schema_version"] == ANNOUNCED_GRAVEYARD_RETURN_VERSION) or (
@@ -688,7 +728,7 @@ class PublicZoneMoveSetSpec:
         ) or (
             value["schema_version"] == PUBLIC_NONHISTORIC_NONLAND_RETURN_VERSION
             and frozenset(value) != _SET_FIELDS_V1
-        ):
+        ) or ((CAST_NAMES_FIELD in value) != (value["schema_version"] == CAST_NAME_RETURN_VERSION)):
             raise PublicZoneMoveError(
                 "Public zone-move set fields are incomplete or unknown"
             )
@@ -714,6 +754,7 @@ class PublicZoneMoveSetSpec:
                 same_name_target=value.get(PUBLIC_SAME_NAME_MOVE_TARGET_FIELD),
                 target_refs=value.get("target_refs"),
                 chosen_cards=tuple(PublicZoneMoveObject.from_dict(row) for row in value.get("chosen_cards", ())),
+                cast_spell_names=value.get(CAST_NAMES_FIELD),
             )
         except (
             KeyError,
@@ -988,6 +1029,9 @@ def snapshot_public_zone_move_set(
         from .rules.same_name_zone_moves import select_same_name_zone_rows
 
         selected = select_same_name_zone_rows(query, spec, selected)
+    if spec.cast_spell_names is not None:
+        names = set(checked_spell_names(spec.cast_spell_names))
+        selected = tuple(row for row in selected if not names.isdisjoint(query.public_zone_move_rules_names(row)))
     return PublicZoneMoveSnapshot(
         spec=spec,
         objects=tuple(
@@ -1155,6 +1199,9 @@ def resolve_public_zone_move_set(
         )
         front_faces = (graveyard_front_faces(host, snapshot.objects)
                        if spec.schema_version == PUBLIC_CHOSEN_DIFFERENT_NAME_RETURN_VERSION else {})
+        putters = None if controllers is None else (
+            controllers if spec.cast_spell_names is not None else dict.fromkeys(controllers, actor)
+        )
         moved = ZoneTransitionOwner(host).move_cards_simultaneously(
             tuple(
                 (value.object_id, spec.destination.value)
@@ -1168,7 +1215,7 @@ def resolve_public_zone_move_set(
                 else None
             ),
             destination_controllers=controllers,
-            putting_players={object_id: actor for object_id in controllers} if controllers is not None else None,
+            putting_players=putters,
             **({"aura_target_refs": aura_target_refs} if aura_target_refs is not None else {}),
             **({"entry_faces": front_faces} if front_faces else {}),
             replacement_selections=replacement_selections,

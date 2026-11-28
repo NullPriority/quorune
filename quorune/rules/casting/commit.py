@@ -54,7 +54,6 @@ from ...counter_placement import (
     prepare_counter_placements,
 )
 from ...compiled_morph import compiled_fixed_mana_face_down_method_spec
-from ...compiled_flashback import compiled_fixed_mana_flashback_spec
 from ...compiled_madness import current_fixed_cast_lifecycle_spec
 from ...compiled_cast_lifecycles import compiled_fixed_cast_lifecycle_spec, compiled_mayhem_permission
 from ...printed_mana_cost_model import cast_snow_payment_kwargs
@@ -71,7 +70,7 @@ from .paid_entry_copy_costs import paid_entry_copy_cast_context
 from .multikicker_costs import multikicker_cast_context, validate_multikicker_commit
 from .replicate_costs import replicate_cast_context, validate_replicate_commit
 from .conspire_costs import conspire_cast_context, conspire_tap_cards
-from ...flashback import FLASHBACK_CAST_OPTION_ID
+from .flashback_grants import is_flashback_cast_option, validate_flashback_commit
 from ...evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
 from ...kicker import KICKER_ANNOTATION, KICKER_MECHANIC_ID
 from ...life_state import LifeStateError, pay_life_cost
@@ -210,6 +209,7 @@ class _AdditionalCostCommit:
     paid_sacrifice_mana_value: PaidSacrificeManaValueSnapshot | None = None
     paid_sacrifice_characteristics: PaidSacrificeCharacteristics | None = None
     paid_discard_reveals: set[str] | None = None
+    beheld_linked_exile: tuple[str, Any] | None = None
 
 
 def _commit_tap_costs(
@@ -316,14 +316,17 @@ def _pay_fixed_life_additional_cost(
 
 
 def _pay_cast_choice_life_costs(host, proposal, card, selected_option) -> None:
-    from .library_top_life import mana_value_life_amount
+    from ...targeted_spell_costs import targeted_spell_life_payment
+    from .optional_life_costs import alternate_cast_life_amount
 
-    if alternate_life := mana_value_life_amount(selected_option):
+    if alternate_life := alternate_cast_life_amount(selected_option):
         _pay_fixed_life_additional_cost(host, proposal, card, selected_option, alternate_life)
     if printed_life := printed_phyrexian_life_payment(selected_option):
         _pay_fixed_life_additional_cost(host, proposal, card, selected_option, printed_life)
     if optional_life := optional_life_cost_amount(selected_option):
         _pay_fixed_life_additional_cost(host, proposal, card, selected_option, optional_life)
+    if targeted_life := targeted_spell_life_payment(selected_option):
+        _pay_fixed_life_additional_cost(host, proposal, card, selected_option, targeted_life)
 
 
 def _commit_counter_placement_additional_cost(
@@ -651,7 +654,11 @@ def _commit_additional_costs(
             normalized,selection=ordinary_random_spell_cost_selection(host,proposal,response,selected_option,selected)
             changes.extend(_fixed_zone_change_commit_entries(host,proposal,response,normalized,selection));continue
         if kind==REVEAL_ADDITIONAL_COST_KIND:continue
-        if kind==BEHOLD_ADDITIONAL_COST_KIND:continue
+        if kind == BEHOLD_ADDITIONAL_COST_KIND:
+            from .behold_costs import commit_linked_behold_cost
+
+            commit_linked_behold_cost(host, proposal, card, result, selected, selected_option, response)
+            continue
         if kind == "counter_placement":
             result.paid_refs.append(
                 _commit_counter_placement_additional_cost(
@@ -817,7 +824,7 @@ def _create_spell_item(
     from ...zone_object_state import mark_multikicker_paid
     if existing_item is None:
         mark_multikicker_paid(card, multikicker_cast_context(selected_option))
-        if selected_option.get("id") == FLASHBACK_CAST_OPTION_ID:
+        if is_flashback_cast_option(selected_option):
             mark_card_flashed_back(card)
         from ...harmonize import FINGERPRINT as HARMONIZE_FINGERPRINT
         from ...zone_object_state import mark_card_harmonized
@@ -1238,19 +1245,12 @@ def _revalidate_cast_contracts(
         raise CastProposalError(str(exc), reason='stale_replicate_contract') from exc
     try:validate_kicker_commit(host,card,selected_option,announced_x=response.get("x"))
     except ValueError as exc:raise CastProposalError(str(exc),reason='stale_kicker_contract') from exc
-    if selected_option.get("id") == FLASHBACK_CAST_OPTION_ID:
-        current_flashback = compiled_fixed_mana_flashback_spec(host, card)
-        if (
-            proposal.origin != "graveyard"
-            or current_flashback is None
-            or selected_option.get("flashback_fingerprint")
-            != current_flashback.fingerprint
-            or selected_option.get("source_zone") != "graveyard"
-        ):
-            raise CastProposalError(
-                "The fixed-mana Flashback contract changed before commit",
-                reason="stale_flashback_contract",
-            )
+    try:
+        validate_flashback_commit(
+            host, proposal.seat, card, selected_option, origin=proposal.origin, face=proposal.face, x_value=response.get("x"),
+        )
+    except (TypeError, ValueError, KeyError) as exc:
+        raise CastProposalError(str(exc), reason="stale_flashback_contract") from exc
     from .harmonize_costs import validate_harmonize_cast
 
     try:
@@ -1474,6 +1474,10 @@ def _commit_cast_costs_and_stack(
     item.x_value = selected_option.get("announced_target_x",
         selected_option.get("announced_additional_x", response.get("x")))
     commit_reveal_additional_costs(host,proposal,card,item,selected_option)
+    if costs.beheld_linked_exile is not None:
+        from ...beheld_exile_state import bind_paid_beheld_exile
+
+        bind_paid_beheld_exile(item, card, costs.beheld_linked_exile)
     from .behold_costs import commit_behold_additional_costs
     beheld = commit_behold_additional_costs(host, proposal, card, item, selected_option)
     if beheld is not None:

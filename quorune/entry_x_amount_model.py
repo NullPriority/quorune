@@ -8,6 +8,7 @@ ENTRY_X_AMOUNT_KIND='source_entry_x_amount'
 ENTRY_X_AMOUNT_CAPABILITY='quantity_expression.source_entry_x'
 ENTRY_X_AMOUNT_MECHANIC='source-entry-x-result-amount'
 ENTRY_HALF_X_FOOD_CAPABILITY = 'quantity_expression.source_entry_half_x_food'
+ENTRY_X_COUNTER_HALF_DRAW_CAPABILITY = 'quantity_expression.source_entry_x_counter_half_draw'
 
 
 @dataclass(frozen=True,slots=True)
@@ -16,9 +17,9 @@ class EntryXAmountSpec:
     schema_version: int=1
 
     def __post_init__(self):
-        if (type(self.schema_version) is not int or self.schema_version not in {1, 2}
+        if (type(self.schema_version) is not int or self.schema_version not in {1, 2, 3}
                 or type(self.coefficient) is not int or self.coefficient not in {-3,-2,-1,1,2,3}
-                or (self.schema_version == 2 and self.coefficient != 1)):
+                or (self.schema_version in {2, 3} and self.coefficient != 1)):
             raise PublicQueryAmountError('Entry X amount requires one versioned bounded coefficient')
 
     def to_dict(self):return {'kind':ENTRY_X_AMOUNT_KIND,'schema_version':self.schema_version,'coefficient':self.coefficient}
@@ -34,7 +35,11 @@ def entry_x_amount_dependencies(value):
     if isinstance(value,Mapping):
         if value.get('kind')==ENTRY_X_AMOUNT_KIND:
             spec = EntryXAmountSpec.from_dict(value)
-            return (ENTRY_X_AMOUNT_CAPABILITY, ENTRY_HALF_X_FOOD_CAPABILITY) if spec.schema_version == 2 else (ENTRY_X_AMOUNT_CAPABILITY,)
+            if spec.schema_version == 2:
+                return ENTRY_X_AMOUNT_CAPABILITY, ENTRY_HALF_X_FOOD_CAPABILITY
+            if spec.schema_version == 3:
+                return ENTRY_X_AMOUNT_CAPABILITY, ENTRY_X_COUNTER_HALF_DRAW_CAPABILITY
+            return (ENTRY_X_AMOUNT_CAPABILITY,)
         return tuple(sorted({cap for child in value.values() for cap in entry_x_amount_dependencies(child)}))
     if isinstance(value,(tuple,list)):
         return tuple(sorted({cap for child in value for cap in entry_x_amount_dependencies(child)}))
@@ -45,6 +50,15 @@ def entry_half_x_food_effect():
     from .fixed_token_production import food_token_effect
 
     return {**food_token_effect(2), "quantity": EntryXAmountSpec(schema_version=2).to_dict()}
+
+
+def entry_x_counter_half_draw_effects():
+    return (
+        {"op": "place_counters", "card": "$source.zone_object", "counter": "+1/+1",
+         "amount": EntryXAmountSpec().to_dict(), "source": "$source"},
+        {"op": "draw", "player": "$controller", "count": EntryXAmountSpec(schema_version=3).to_dict(),
+         "private": True},
+    )
 
 
 def uses_entry_x_token_batch(effect):
@@ -94,6 +108,12 @@ def entry_x_amount_runtime_dependencies(program):
         if (thaw_value(program.effects) != [entry_half_x_food_effect()]
                 or program.target_schema is not None or program.event_condition is not None):
             raise PublicQueryAmountError("Rounded half-entry-X requires one exact untargeted Food result")
+    if ENTRY_X_COUNTER_HALF_DRAW_CAPABILITY in required:
+        from .replacement.immutable import thaw_value
+
+        if (thaw_value(program.effects) != list(entry_x_counter_half_draw_effects())
+                or program.target_schema is not None or program.event_condition is not None):
+            raise PublicQueryAmountError("Rounded entry-X draw requires the original counter-then-draw sequence")
     return required
 
 
@@ -109,4 +129,6 @@ def resolve_entry_x_for_occurrence(value, *, source_object_id, context):
         raise PublicQueryAmountError("Entry X result lost its original committed entry identity")
     if spec.schema_version == 2:
         return (info.amount + 1) // 2
+    if spec.schema_version == 3:
+        return info.amount // 2
     return spec.coefficient * info.amount

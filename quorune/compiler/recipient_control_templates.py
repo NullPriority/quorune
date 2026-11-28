@@ -16,7 +16,27 @@ _SOURCE_UPKEEP_HANDOFF = re.compile(
 )
 
 
+_SOURCE_CONTROL_REFLEXIVE = re.compile(
+    r"Target opponent gains control of (?P<subject>[^.]+)\. When they do, "
+    r"you draw two cards and put a quest counter on (?P<counter_subject>[^.]+)\.", re.I,
+)
+
+
+def _source_control_reflexive(text, card_name):
+    match = _SOURCE_CONTROL_REFLEXIVE.fullmatch(" ".join(text.split()))
+    source = SourceReferenceSpec(card_name)
+    if match is None or not all(source.matches(phrase) for phrase in match.groups()):
+        return None
+    from ..rules.source_control_reflexive import source_control_reflexive_effect, source_control_reflexive_target
+
+    return ("original-source-control-reflexive-v1", (source_control_reflexive_effect(),),
+            source_control_reflexive_target(),
+            (RECIPIENT_CONTROL_MECHANIC, "cr-115-targets", "cr-611-continuous-effects"))
+
+
 def recipient_control_effect_template(text,*,card_name,source_is_permanent=None):
+    if source_is_permanent is True and (reflexive := _source_control_reflexive(text, card_name)):
+        return reflexive
     handoff=_target_mana_value_handoff(text) or _chosen_other_player_handoff(text)
     if handoff is not None:return handoff
     match=re.fullmatch(r'(?P<recipient>target (?:player|opponent)|an opponent) gains control of (?P<subject>.+?)\.?',text.strip(),re.I)

@@ -78,6 +78,8 @@ def trigger_participation_rule(name,subtype=None):
         )
     entering, leaving = _ENTERING_EVENTS, _LEAVING_EVENTS
     permanent, creature = _PERMANENT_SOURCE, _CREATURE
+    if name == "borrowed_permanent_source":
+        return TriggerParticipationRule(source_queries=(permanent,), source_relation="controlled_not_owned")
     if name=='permanent_enters':return TriggerParticipationRule(entering,(permanent,))
     if name=='land_enters':return TriggerParticipationRule(entering,(permanent,),(_q(types_any=('land',)),))
     if name=='entering_subtype':return TriggerParticipationRule(entering,(permanent,),(_q(types_any=('creature',),subtypes_any=(subtype,)),),event_relation='you')

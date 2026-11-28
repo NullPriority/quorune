@@ -5,7 +5,11 @@ from __future__ import annotations
 from dataclasses import replace
 from . import regex_working_set as re
 from ..ability_fragments import ability_fragment_from_dict,ability_fragment_to_dict,ProtectionSpec
-from ..protection_attachment_exceptions import CAPABILITY,SOURCE_AURA,CHOSEN_AURA_PROTECTION_CAPABILITY,CHOSEN_AURA_PROTECTION_HANDLER,FIXED_TYPE_AURA_PROTECTION_CAPABILITY
+from ..protection_attachment_exceptions import (
+    CAPABILITY, SOURCE_AURA, CHOSEN_AURA_PROTECTION_CAPABILITY, CHOSEN_AURA_PROTECTION_HANDLER,
+    CONTROLLED_ATTACHMENT_PROTECTION_CAPABILITY, CONTROLLED_ATTACHMENT_PROTECTION_HANDLER,
+    FIXED_TYPE_AURA_PROTECTION_CAPABILITY,
+)
 
 
 def attached_protection_exception_handler(line,*,source_name='source'):
@@ -19,6 +23,17 @@ def attached_protection_exception_handler(line,*,source_name='source'):
 
         return ("continuous-attached-commander-complement-protection-v1", commander_complement_protection_descriptor(),
                 AttachedCommanderProtectionHandler().capability_dependencies)
+    if re.fullmatch(
+        r"Enchanted creature has protection from the chosen color\. "
+        r"This effect doesn['\u2019]t remove Auras and Equipment you control that are already attached to it\.",
+        line.strip(), re.IGNORECASE,
+    ):
+        return (
+            "continuous-attached-source-chosen-color-retention-v2",
+            {"handler_id": CONTROLLED_ATTACHMENT_PROTECTION_HANDLER, "schema_version": 2,
+             "event": "characteristics.evaluate", "subject": "source_attached_creature"},
+            (CONTROLLED_ATTACHMENT_PROTECTION_CAPABILITY,),
+        )
     if line.strip().casefold()=="enchanted creature has protection from the chosen color. this effect doesn't remove this aura.":
         return ('continuous-attached-source-chosen-color-protection-v1',
                 {'handler_id':CHOSEN_AURA_PROTECTION_HANDLER,'schema_version':1,'event':'characteristics.evaluate',

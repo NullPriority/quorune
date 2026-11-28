@@ -108,6 +108,7 @@ def _state_projector(
         ),
         hand_visibility_resolver=lambda owner: hand_is_public(engine, owner),
         stack_effects_resolver=stack_effects,
+        stack_program_resolver=engine.semantics.get,
         goading_players_resolver=lambda card: active_goading_players(engine, card),
         land_play_count_resolver=lambda seat: len(
             land_play_permission_options(engine, seat)

@@ -10,6 +10,7 @@ from .life_change import (
 from .model import StackItem
 from .replacement.immutable import FrozenMap
 from .rules.event_subscriptions import DRAW_EXCEPT_FIRST_OWN_STEP_EVENT
+from .rules.first_own_turn_life_loss import EVENT as FIRST_OWN_TURN_LIFE_LOSS_EVENT, first_own_turn_life_loss_runtime_dependencies
 from .trigger_processing import enqueue_trigger_batch
 from .turn_history import record_first_life_gain
 
@@ -147,6 +148,7 @@ class LifeLossEvent:
 
     player: str
     amount: int
+    first_own_turn_loss: bool = False
 
     def __post_init__(self) -> None:
         if type(self.player) is not str or not self.player or self.player != self.player.strip():
@@ -169,16 +171,21 @@ def dispatch_life_loss_events(
     if not events:
         return
     indexed_programs = getattr(getattr(host, "semantics", None), "programs_for_event", None)
-    if not callable(indexed_programs) or not any(
+    ordinary = callable(indexed_programs) and any(
         LIFE_LOSS_CAPABILITY in program.capability_dependencies
         for program in indexed_programs(LIFE_LOSS_EVENT)
-    ):
+    )
+    if not ordinary and not any(event.first_own_turn_loss for event in events):
         return
     owns_batch = trigger_batch is None
     pending = [] if owns_batch else trigger_batch
     for event in events:
-        host._dispatch_semantic_event(LIFE_LOSS_EVENT, event.semantic_context(),
-            sources=sources, source_zones=source_zones, trigger_batch=pending)
+        if ordinary:
+            host._dispatch_semantic_event(LIFE_LOSS_EVENT, event.semantic_context(),
+                sources=sources, source_zones=source_zones, trigger_batch=pending)
+        if event.first_own_turn_loss:
+            host._dispatch_semantic_event(FIRST_OWN_TURN_LIFE_LOSS_EVENT, event.semantic_context(),
+                sources=sources, source_zones=source_zones, trigger_batch=pending)
     if owns_batch:
         enqueue_trigger_batch(host, pending)
 
@@ -190,9 +197,16 @@ def dispatch_life_loss_records(
     trigger_batch: list[StackItem] | None = None,
     sources: Sequence[Any] | None = None,
     source_zones: Mapping[str, str] | None = None,
+    first_loss_player: str | None = None,
 ) -> None:
-    events = tuple(LifeLossEvent(record.player, record.amount) for record in records
-                   if record.direction == "loss" and record.amount > 0 and record.player is not None)
+    events = []
+    for record in records:
+        if record.direction != "loss" or record.amount <= 0 or record.player is None:
+            continue
+        first = record.player == first_loss_player or getattr(record, "first_own_turn_loss", False)
+        if record.player == first_loss_player:
+            first_loss_player = None
+        events.append(LifeLossEvent(record.player, record.amount, first_own_turn_loss=first))
     dispatch_life_loss_events(host, events, trigger_batch=trigger_batch,
         sources=sources, source_zones=source_zones)
 
@@ -201,8 +215,11 @@ def player_result_runtime_dependencies(program, subscriptions) -> tuple[str, ...
     """Bind the committed draw and life results used by a typed program."""
     from .rules.opponent_off_turn_draw import opponent_off_turn_draw_dependencies
 
-    required = (*first_life_gain_runtime_dependencies(program, subscriptions),
-                *opponent_off_turn_draw_dependencies(program))
+    required = (
+        *first_life_gain_runtime_dependencies(program, subscriptions),
+        *first_own_turn_life_loss_runtime_dependencies(program, subscriptions),
+        *opponent_off_turn_draw_dependencies(program),
+    )
     if subscriptions is not None and subscriptions.subscription_for(DRAW_EXCEPT_FIRST_OWN_STEP_EVENT) is not None:
         return (*required, "trigger.event.normalized_card_draw")
     if program.event == "card.second_draw" and program.provenance.get("template_id") in {

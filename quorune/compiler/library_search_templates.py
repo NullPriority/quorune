@@ -60,6 +60,11 @@ _FIXED_SEARCH = re.compile(
     rf"then shuffle\.$",
     re.IGNORECASE,
 )
+_BASIC_LAND_SEARCH_THEN_UNTAP = re.compile(
+    r"Search your library for a basic land card, put it onto the battlefield tapped, then shuffle\. "
+    rf"Then if you control (?P<minimum>{FIXED_COUNT_PATTERN}) or more lands, untap that land\.",
+    re.IGNORECASE,
+)
 _FIXED_SEARCH_AND_PUT = re.compile(
     r"(?P<search>Search your library for .+? card) and "
     r"(?P<put>put (?:it|that card) onto the battlefield(?: tapped)?)\. Then shuffle\.",
@@ -608,16 +613,30 @@ def fixed_library_search_effect_template(
         "then if you control four or more lands, untap that land."
     ):
         return SearchedLandUntapSearch()
+    if match := _BASIC_LAND_SEARCH_THEN_UNTAP.fullmatch(normalized):
+        minimum = fixed_number(match["minimum"])
+        if not 1 <= minimum <= 10:
+            return None
+        return FixedCountedLibrarySearchTemplate(
+            count=1, optional_count=False, selector=FrozenMap({"types": ["land"], "supertypes": ["basic"]}),
+            destination="battlefield", reveal=False, enters_tapped=True,
+            post_shuffle_untap_minimum_lands=minimum,
+        )
     if literal := _literal_name_battlefield_search_template(normalized):
         return literal
+    if normalized.casefold() == (
+        "search your library for any number of creature cards, put them onto the battlefield, then shuffle."
+    ):
+        return AnyNumberCreatureSubtypeSearch()
     typed_any_number = re.fullmatch(
-        r"Search your library for any number of (?P<subtype>[A-Za-z][A-Za-z '’-]*) "
-        r"creature cards, put them onto the battlefield, then shuffle\.",
+        r"Search your library for any number of (?P<subtype>[A-Za-z][A-Za-z '’-]*?) "
+        r"(?P<creatures_only>creature )?cards, put them onto the battlefield, then shuffle\.",
         normalized, re.IGNORECASE,
     )
     if typed_any_number is not None:
         subtype = canonical_creature_subtype(typed_any_number["subtype"])
-        return AnyNumberCreatureSubtypeSearch(subtype) if subtype is not None else None
+        return (AnyNumberCreatureSubtypeSearch(subtype, creature_only=typed_any_number["creatures_only"] is not None)
+                if subtype is not None else None)
     if re.fullmatch(
         r"Search your library for a permanent card with the same name as target nontoken creature, "
         r"put that card onto the battlefield, then shuffle\.?", normalized, re.I,

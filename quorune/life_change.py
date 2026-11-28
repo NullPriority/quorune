@@ -108,6 +108,7 @@ class LifeChangeRecord:
     source: str | None
     source_controller: str | None
     cause: str
+    first_own_turn_loss: bool = False
 
     @property
     def delta(self) -> int:
@@ -505,7 +506,11 @@ def commit_life_change_batch(
         from .counter_state import validate_counter_changes
 
         validate_counter_changes(host, radiation_counter_plan)
+    from .rules.first_own_turn_life_loss import first_own_turn_loss_player_before_commit, mark_first_own_turn_life_loss
+
+    eligible_player = first_own_turn_loss_player_before_commit(host)
     transitions = apply_life_changes(host, prepared.plan)
+    records = mark_first_own_turn_life_loss(prepared.records, eligible_player)
     if radiation_counter_plan is not None:
         from .rad_counters import commit_rad_removal
 
@@ -541,9 +546,9 @@ def commit_life_change_batch(
     if dispatch_events:
         from .player_result_events import dispatch_life_loss_records
 
-        dispatch_life_loss_records(host, prepared.records)
+        dispatch_life_loss_records(host, records)
     return LifeChangeCommit(
-        records=prepared.records,
+        records=records,
         changed_players=tuple(
             sorted(
                 transition.player

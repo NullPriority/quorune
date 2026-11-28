@@ -71,6 +71,15 @@ def decode_target_characteristics(effect,*,allow_zero_result=False):
     return tuple(keywords)
 
 
+def _controlled_permanent_keyword_grant(effect, singular, keywords):
+    return (
+        singular == {"zones": ["battlefield"], "categories": ["permanent"],
+                     "count": 1, "controller_relation": "you"}
+        and bool(keywords) and effect["power"] == effect["toughness"] == 0
+        and NEXT_TURN_EFFECT_FIELD not in effect and SOURCE_TAP_EFFECT_FIELD not in effect
+    )
+
+
 def target_characteristic_set_capabilities(*,effects:Sequence[Mapping[str,Any]],target_schema:Mapping[str,Any]|None,mechanic_ids):
     mechanics=set(mechanic_ids)
     if not {'cr-115-targets','cr-611-continuous-effects'}<=mechanics or len(effects)!=1:return ()
@@ -93,7 +102,8 @@ def target_characteristic_set_capabilities(*,effects:Sequence[Mapping[str,Any]],
     requires_creature = singular.get('types_any') == ['creature'] or (
         SOURCE_TAP_EFFECT_FIELD in effect and 'creature' in singular.get('types_all', ())
     )
-    if not requires_creature and not exact_optional_creature_vehicle_keyword_grant(effect, target_schema):
+    if not (requires_creature or _controlled_permanent_keyword_grant(effect, singular, keywords)
+            or exact_optional_creature_vehicle_keyword_grant(effect, target_schema)):
         return ()
     if not direct_permanent_target_schema_is_closed(singular):
         return ()

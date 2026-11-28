@@ -1,5 +1,5 @@
-import { useMemo, useRef, useState } from "react";
-import { asList, asRecord, cardName, CardTile } from "./CardSurface";
+import { useId, useMemo, useRef, useState } from "react";
+import { asList, asRecord, cardName, CombatCardFace } from "./CardSurface";
 import { projectedChoiceCards } from "./CardChoiceGrid";
 import { CardPages } from "./CardPages";
 import { list, record, type ChoiceField } from "./choices";
@@ -19,6 +19,7 @@ export function CombatAssignment({
 }) {
   const [source, setSource] = useState("");
   const dragSource = useRef("");
+  const statId = useId();
   const selected = record(value);
   const players = asRecord(view.state.players);
   const cards = useMemo(() => projectedChoiceCards(view), [view]);
@@ -78,11 +79,13 @@ export function CombatAssignment({
         onClick={() => { onValue({}); setSource(""); }}>Clear assignments</button>
     </div>
     <CardPages items={rows} label={isBlock ? "Eligible blockers" : "Eligible attackers"}
-      trackClassName="combat-source-paged" layout="grid" render={(row) => {
+      className="combat-source-bank" trackClassName="combat-source-paged" layout="grid" render={(row) => {
         const card = cards.get(row.ref);
         const assigned = targetsOf(row.ref).length;
+        const statsId = statId + "-source-" + row.ref;
         return <button type="button" key={row.ref} className="combat-source" aria-pressed={source === row.ref}
           data-testid={`combat-source-${row.ref}`} aria-label={`Select ${cardLabel(row.ref)}`}
+          aria-describedby={card ? statsId : undefined}
           draggable={row.options.length > 0}
           onDragStart={(event) => {
             dragSource.current = row.ref;
@@ -92,8 +95,8 @@ export function CombatAssignment({
           }}
           onDragEnd={() => { dragSource.current = ""; }}
           onClick={() => setSource(source === row.ref ? "" : row.ref)}>
-          {card ? <CardTile value={card} view={view} compact /> : <strong>{cardLabel(row.ref)}</strong>}
-          <small>{assigned ? `${assigned} assigned` : row.options.length ? "Unassigned" : "No legal assignment"}</small>
+          {card ? <CombatCardFace value={card} view={view} statsId={statsId} /> : <strong>{cardLabel(row.ref)}</strong>}
+          <small className="combat-source-status">{assigned ? `${assigned} assigned` : row.options.length ? "Unassigned" : "No legal assignment"}</small>
         </button>;
       }} />
     <div className="combat-lanes" aria-label={isBlock ? "Incoming attackers" : "Defenders"}>
@@ -106,6 +109,7 @@ export function CombatAssignment({
         const attached = rows.filter((row) => targetsOf(row.ref).includes(target));
         const canAssignMore = !isBlock && rows.some((row) => !Object.hasOwn(selected, row.ref) && row.options.includes(target));
         const minimum = Number(minimumGroups[target] ?? 0);
+        const statsId = statId + "-destination-" + target;
         const blocked = attached.length > 0 || Object.hasOwn(declaredBlocks, target);
         return <section className={`combat-lane${legal ? " legal-destination" : ""}`} key={target}
           onDragOver={(event) => {
@@ -121,9 +125,9 @@ export function CombatAssignment({
             assign(dragged, target);
           }}>
           <button type="button" className="combat-destination" data-testid={`combat-destination-${target}`}
-            aria-label={`Assign to ${targetLabel(target)}`} aria-disabled={!legal}
+            aria-label={`Assign to ${targetLabel(target)}`} aria-describedby={card ? statsId : undefined} aria-disabled={!legal}
             onClick={() => assign(source, target)}>
-            {card ? <CardTile value={card} view={view} compact /> : <>
+            {card ? <CombatCardFace value={card} view={view} statsId={statsId} /> : <>
               <span className="seat-letter small">{target}</span><strong>{targetLabel(target)}</strong>
             </>}
           </button>

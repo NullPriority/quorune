@@ -2,8 +2,8 @@ from __future__ import annotations
 
 """Closed public occurrence grammar for fixed typed event-effect triggers."""
 
-from dataclasses import dataclass
 from . import regex_working_set as re
+from .public_event_binding_spec import FixedPublicEventBindingSpec, public_event_binding as _spec
 from typing import Any, Callable, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype
@@ -199,38 +199,6 @@ _CREATURE_CARD_LEAVES_GRAVEYARD_TRIGGER = re.compile(
 )
 
 
-@dataclass(frozen=True, slots=True)
-class FixedPublicEventBindingSpec:
-    """One parser-owned public occurrence subscription."""
-
-    event: str
-    variant: str
-    body: str
-    template_id: str
-    mechanic: str
-    condition: Mapping[str, Any] | None = None
-    capabilities: tuple[str, ...] = ()
-    active_zone: str = "battlefield"
-
-    def __post_init__(self) -> None:
-        for field in ("event", "variant", "body", "template_id", "mechanic"):
-            if not isinstance(getattr(self, field), str) or not getattr(
-                self, field
-            ):
-                raise ValueError("Public event binding identities must be nonempty")
-        if self.active_zone not in {"battlefield", "hand", "graveyard"}:
-            raise ValueError("Public event bindings require a closed active zone")
-        if not isinstance(self.capabilities, tuple) or any(
-            type(value) is not str or not value
-            for value in self.capabilities
-        ):
-            raise ValueError(
-                "Public event binding capabilities must be nonempty strings"
-            )
-        if len(set(self.capabilities)) != len(self.capabilities):
-            raise ValueError("Public event binding capabilities must be unique")
-
-
 def _all_conditions(
     *conditions: Mapping[str, Any] | None,
 ) -> Mapping[str, Any] | None:
@@ -305,29 +273,6 @@ def _class_level_spec(
         "class-level-change-trigger-v1",
         CLASS_MECHANIC_ID,
         condition={"field": "level", "op": "eq", "value": level},
-    )
-
-
-def _spec(
-    event: str,
-    variant: str,
-    body: str,
-    template_id: str,
-    mechanic: str,
-    *,
-    condition: Mapping[str, Any] | None = None,
-    capabilities: tuple[str, ...] = (),
-    active_zone: str = "battlefield",
-) -> FixedPublicEventBindingSpec:
-    return FixedPublicEventBindingSpec(
-        event=event,
-        variant=variant,
-        body=body,
-        template_id=template_id,
-        mechanic=mechanic,
-        condition=condition,
-        capabilities=capabilities,
-        active_zone=active_zone,
     )
 
 
@@ -1091,11 +1036,10 @@ def _public_damage_spec(
     card_name: str | None,
 ) -> FixedPublicEventBindingSpec | None:
     from .controlled_subtype_damage_batch import controlled_subtype_damage_binding_parts
-    from ..rules.controlled_subtype_damage_batch import EVENT, MECHANIC, TEMPLATE, VARIANT
 
     if grouped := controlled_subtype_damage_binding_parts(material_line):
-        body, condition = grouped
-        return _spec(EVENT, VARIANT, body, TEMPLATE, MECHANIC, condition=condition)
+        event, variant, body, template, mechanic, condition = grouped
+        return _spec(event, variant, body, template, mechanic, condition=condition)
     from .subtype_damage_controller import subtype_damage_binding_parts
 
     if subtype := subtype_damage_binding_parts(material_line):
@@ -1142,6 +1086,17 @@ def _public_damage_spec(
     )
 
 
+def attack_food_stats_body_matches(body: str) -> bool:
+    normalized = " ".join(body.casefold().split()).replace(
+        "a food entered the battlefield under your control",
+        "a food entered under your control",
+    )
+    return normalized == (
+        "attacking creatures get +1/+1 until end of turn. if a food entered under your control this turn, "
+        "untap those creatures and they get an additional +2/+2 until end of turn."
+    )
+
+
 def _public_attack_spec(material_line: str, *, card_name: str | None = None) -> FixedPublicEventBindingSpec | None:
     from .affected_player_sacrifice_templates import attack_sacrifice_stat_binding_spec
 
@@ -1168,8 +1123,10 @@ def _public_attack_spec(material_line: str, *, card_name: str | None = None) -> 
     if (
         named_source_attack is not None
         and _source_subject(named_source_attack["source"], card_name=card_name)
-        and " ".join(named_source_attack["body"].casefold().split())
-        == _EACH_OPPONENT_TOP_EXILE_ATTACK_BODY
+        and (
+            " ".join(named_source_attack["body"].casefold().split()) == _EACH_OPPONENT_TOP_EXILE_ATTACK_BODY
+            or attack_food_stats_body_matches(named_source_attack["body"])
+        )
     ):
         return _spec(
             "creature.attacks",
@@ -1549,6 +1506,23 @@ def _opponent_life_gain_self_counters_spec(material_line):
     )
 
 
+def _opponent_first_own_turn_life_loss_spec(material_line, *, card_name):
+    from ..rules.first_own_turn_life_loss import CAPABILITY, EVENT, MECHANIC, TEMPLATE, VARIANT, first_own_turn_loss_condition
+
+    match = re.fullmatch(
+        r"Whenever an opponent loses life for the first time during each of their turns, "
+        r"(?P<body>put a \+1/\+1 counter on (?P<source>.+?) and draw a card\.)",
+        material_line, re.I,
+    )
+    if match is None or not _source_subject(match["source"], card_name=card_name):
+        return None
+    return _spec(
+        EVENT, VARIANT, match["body"], TEMPLATE, MECHANIC,
+        condition=first_own_turn_loss_condition(),
+        capabilities=(CAPABILITY, "counter.producer.fixed_effect", "zone.draw.library_to_hand"),
+    )
+
+
 def _opponent_life_loss_spec(material_line):
     from ..life_change import LIFE_LOSS_CAPABILITY, LIFE_LOSS_EVENT
     from ..rules.event_outcome_shapes import opponent_life_loss_condition
@@ -1597,6 +1571,8 @@ def fixed_public_event_binding_spec(
     *,
     card_name: str | None = None,
 ) -> FixedPublicEventBindingSpec | None:
+    from .blight_templates import opponent_blight_entry_spec
+
     from .opposing_owner_entry_life import opposing_owner_entry_binding
 
     owned_entry = opposing_owner_entry_binding(material_line, spec=_spec)
@@ -1612,7 +1588,7 @@ def fixed_public_event_binding_spec(
     designation = designation_event_binding_spec(material_line, card_name=card_name)
     if designation is not None:return designation
     from .received_damage_bindings import received_permanent_binding_spec
-    received = received_permanent_binding_spec(material_line)
+    received = received_permanent_binding_spec(material_line, card_name=card_name)
     if received is not None:return received
     """Parse one bounded public occurrence without compiling its effect body."""
 
@@ -1622,7 +1598,8 @@ def fixed_public_event_binding_spec(
             'fixed-source-exploit-result-v1','fixed-exploit-result',capabilities=('trigger.keyword.exploit.creature_sacrifice',))
 
     return (
-        _first_life_gain_spec(material_line)
+        _opponent_first_own_turn_life_loss_spec(material_line, card_name=card_name)
+        or _first_life_gain_spec(material_line)
         or _opponent_life_gain_paid_graveyard_return_spec(material_line)
         or _opponent_life_gain_self_counters_spec(material_line)
         or _opponent_life_loss_spec(material_line)
@@ -1632,6 +1609,7 @@ def fixed_public_event_binding_spec(
         or _class_level_spec(material_line)
         or _public_spell_action_spec(material_line, card_name=card_name)
         or _attachment_event_spec(material_line)
+        or opponent_blight_entry_spec(material_line, card_name=card_name)
         or _source_or_controlled_toughness_greater_than_power_entry_spec(material_line, card_name=card_name)
         or _constellation_spec(material_line, card_name=card_name)
         or _battalion_spec(material_line, card_name=card_name)

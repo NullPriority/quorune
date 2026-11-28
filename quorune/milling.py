@@ -213,7 +213,11 @@ def commit_mill(
         if object_ids
         else ()
     )
-    return _finish_mill(host, plan, object_ids, moved)
+    result = _finish_mill(host, plan, object_ids, moved)
+    from .rules.committed_nonland_mill import publish_committed_nonland_mill
+
+    publish_committed_nonland_mill(host, (result,))
+    return result
 
 
 def _finish_mill(
@@ -321,7 +325,11 @@ def mill_player_batch(
             if plan.request.count else MillResult(plan.request.player, 0, ())
         )
         offset += len(group)
-    return tuple(results)
+    committed = tuple(results)
+    from .rules.committed_nonland_mill import publish_committed_nonland_mill
+
+    publish_committed_nonland_mill(host, committed)
+    return committed
 
 
 __all__ = [

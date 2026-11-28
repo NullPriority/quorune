@@ -7,9 +7,9 @@ from typing import Any
 from ..model import StackItem
 from ..replacement_effects import ReplacementChoiceRequired
 from ..rules.affected_library_search_batch import (
-    SEARCH_BATCH_VERSION,
     advance_exile_land_search,
     commit_exile_land_search,
+    is_exile_land_search,
     verify_exile_land_search,
 )
 from ..rules.library_search_rules import library_search_constraint
@@ -28,7 +28,7 @@ class SemanticSearchCompletionContext:
 
 
 def begin_exile_land_search(host, item, effect, *, remaining, destination, note, instruction_pointer):
-    if effect.get("schema_version") != SEARCH_BATCH_VERSION:
+    if not is_exile_land_search(effect):
         return False
     batch = verify_exile_land_search(host, item, effect)
     if effect.get("commit") is True:

@@ -193,6 +193,7 @@ def closed_effect_program_runtime_dependencies(program):
     from .death_counter_shuffle import death_counter_shuffle_dependencies
     from .bound_effect_program_shapes import source_target_counter_batch_program_dependencies
     from .qualified_token_creators import qualified_token_creator_program_dependencies
+    from .permanent_resolution_choices import token_then_vigilance_runtime_dependencies
     from .fixed_effect_clause_shapes import (
         equipped_counter_proliferate_runtime_dependencies, fixed_proliferate_sequence_runtime_dependencies,
     )
@@ -211,6 +212,8 @@ def closed_effect_program_runtime_dependencies(program):
         return paired
     if qualified := qualified_token_creator_program_dependencies(program):
         return qualified
+    if counter_choice := token_then_vigilance_runtime_dependencies(program):
+        return counter_choice
     from .prepared_creature_power_damage_shapes import untapped_controller_damage_runtime_dependencies
 
     if counter_proliferate := equipped_counter_proliferate_runtime_dependencies(program):
@@ -268,8 +271,7 @@ def closed_effect_program_runtime_dependencies(program):
         from .optional_source_damage import OPTIONAL_SOURCE_DAMAGE_FIELD, optional_source_damage_runtime_dependencies
 
         if (
-            len(program.effects) == 1
-            and OPTIONAL_SOURCE_DAMAGE_FIELD in program.effects[0]
+            any(OPTIONAL_SOURCE_DAMAGE_FIELD in effect for effect in program.effects)
             and CLOSED_EFFECT_PROGRAM_MECHANIC not in program.coverage
             and program.provenance.get("template_id") != CLOSED_EFFECT_PROGRAM_TEMPLATE_ID
         ):

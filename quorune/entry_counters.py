@@ -388,7 +388,7 @@ def effect_entry_counter_effects(
                 "Effect entry counters require typed instructions"
             )
         conditions = {
-            "destination": {"eq": "battlefield"},
+            "destination": {"eq": counter.destination},
             "object_ref": {"eq": object_ref},
         }
         if counter.required_entry_type is not None:
@@ -412,6 +412,7 @@ def effect_entry_counter_effects(
                         placing_player=counter.placing_player,
                         source_ref=counter.source_ref,
                         sequence=sequence,
+                        exile_only=counter.destination == "exile",
                     ),
                 ),
                 label=(

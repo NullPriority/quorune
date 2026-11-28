@@ -9,8 +9,10 @@ from typing import Any, Mapping, Protocol, Sequence
 
 from .additional_beginning_model import AdditionalBeginningPhases
 from .extra_combat_model import (
-    MAIN_PHASE_COMBAT_GRANT_FIELD, MainPhaseCombatSchedule, MainPhaseInsertion, own_main_phase_for_combat,
+    MAIN_PHASE_COMBAT_GRANT_FIELD, MainPhaseCombatSchedule as LegacyMainPhaseCombatSchedule,
+    MainPhaseInsertion, own_main_phase_for_combat,
 )
+from .rules.main_phase_combat_model import MAIN_PHASES, POSTCOMBAT_MAIN, MainPhaseCombatInstruction, MainPhaseCombatSchedule
 from .errors import GameRuleError, StateInvariantError
 from .continuous_effect_state import (
     expire_end_of_turn_continuous_effects,
@@ -41,7 +43,8 @@ from .turn_priority_model import (
 from .trigger_processing import (
     clear_pending_trigger_batches,
     expire_controlled_combat_token_triggers,
-    expire_next_cast_copy_triggers,
+    expire_turn_attacker_untap_triggers,
+    expire_same_turn_spell_cast_triggers,
     expire_target_death_return_triggers,
     expire_watched_combat_draw_triggers,
     matching_delayed_triggers,
@@ -66,6 +69,7 @@ TURN_STEPS: tuple[tuple[str, str], ...] = (
 
 _COMBAT_START_INDEX = TURN_STEPS.index(("combat", "beginning_combat"))
 _COMBAT_END_INDEX = TURN_STEPS.index(("postcombat_main", "main"))
+_END_STEP_INDEX = TURN_STEPS.index(("ending", "end_step"))
 _END_TURN_CLEANUP_PENDING = "end_turn_cleanup_pending"
 
 
@@ -245,7 +249,7 @@ class TurnStepOwner:
         if queue is None:
             beginning = self.state.additional_beginning_phases if self.state.phase == "postcombat_main" else None
             earlier = (MainPhaseInsertion("beginning"),) * beginning.pending if beginning is not None else ()
-            self.state.main_phase_extra_combats = MainPhaseCombatSchedule(
+            self.state.main_phase_extra_combats = LegacyMainPhaseCombatSchedule(
                 self.state.phase, self.state.turn_sequence, (*staged, *earlier),
             )
         else:
@@ -260,11 +264,41 @@ class TurnStepOwner:
             importance=2,
         )
 
-    def _require_current_main_insertion(self, queue: MainPhaseCombatSchedule) -> None:
+    def _require_current_main_insertion(self, queue: LegacyMainPhaseCombatSchedule) -> None:
         expected = "postcombat_main" if queue.engaged and queue.reached_added_main else queue.after_phase
         if (queue.turn_sequence != self.state.turn_sequence or self.state.phase != expected
                 or queue.engaged and not queue.reached_added_main):
             raise StateInvariantError("The scheduled phases belong to a different main-phase boundary")
+
+    def schedule_fixed_combats_after_main(
+        self, actor: str, *, source: str, instruction: MainPhaseCombatInstruction,
+    ) -> bool:
+        self._host._require_seat(actor, in_game=True)
+        phase = self.state.phase
+        if phase not in MAIN_PHASES or self.state.step != "main" or self.state.current_turn is None:
+            return False
+        current = self.state.main_phase_combat_schedule
+        phases = instruction.phases
+        if current is None:
+            beginning = self.state.additional_beginning_phases
+            existing = ("beginning",) * beginning.pending if beginning is not None else ()
+            staged = MainPhaseCombatSchedule(phase, (*phases, *existing))
+        else:
+            if (current.active_phase or current.main_phase) != phase:
+                raise StateInvariantError("Inserted phases lost their current main phase")
+            staged = current.prepend(*phases)
+        self.state.main_phase_combat_schedule = staged
+        adds_main = instruction is MainPhaseCombatInstruction.COMBAT_THEN_MAIN_IMMEDIATE_UNTAP
+        details = {"source": source, "active_player": self.state.active_player, "main_phase": phase, "count": phases.count("combat")}
+        if adds_main:
+            details["main_phase_count"] = 1
+        self._host._log(
+            actor, "combat.extra.after_main.scheduled",
+            ("An additional combat and main phase will follow this main phase." if adds_main
+             else "Two additional combat phases will follow this main phase."),
+            details, importance=2,
+        )
+        return True
 
     def schedule_additional_beginning(self, player: str, *, source: str) -> None:
         if (
@@ -279,6 +313,8 @@ class TurnStepOwner:
             self.state.main_phase_extra_combats = replace(
                 queue, pending=(MainPhaseInsertion("beginning"), *queue.pending),
             )
+        if self.state.main_phase_combat_schedule is not None:
+            self.state.main_phase_combat_schedule = self.state.main_phase_combat_schedule.prepend("beginning")
         self.state.additional_beginning_phases = (
             self.state.additional_beginning_phases.queue_one()
             if self.state.additional_beginning_phases is not None else AdditionalBeginningPhases(1)
@@ -290,8 +326,35 @@ class TurnStepOwner:
             importance=1,
         )
 
+    def _advance_main_phase_combat_schedule(self, schedule: MainPhaseCombatSchedule) -> int:
+        beginning = self.state.additional_beginning_phases
+        if schedule.pending:
+            advanced = schedule.begin_next()
+            self.state.main_phase_combat_schedule = advanced
+            if advanced.active_phase == "beginning":
+                if beginning is None or not beginning.pending:
+                    raise StateInvariantError("An inserted beginning phase lost its existing owner")
+                self.state.additional_beginning_phases = beginning.begin_next()
+                return TURN_STEPS.index(("beginning", "untap"))
+            if advanced.active_phase == POSTCOMBAT_MAIN:
+                return _COMBAT_END_INDEX
+        else:
+            self.state.main_phase_combat_schedule = None
+        if beginning is not None and beginning.active:
+            self.state.additional_beginning_phases = AdditionalBeginningPhases(beginning.pending) if beginning.pending else None
+        if schedule.pending or schedule.main_phase == "precombat_main":
+            return _COMBAT_START_INDEX
+        return _END_STEP_INDEX
+
     def _next_start_or_end_index(self, phase: str, step: str) -> int:
         queue = self.state.main_phase_extra_combats
+        schedule = self.state.main_phase_combat_schedule
+        if schedule is not None and (
+            (phase, step, schedule.active_phase) == (schedule.main_phase, "main", None)
+            or (phase, step, schedule.active_phase) == ("beginning", "draw", "beginning")
+            or (phase, step, schedule.active_phase) == (POSTCOMBAT_MAIN, "main", POSTCOMBAT_MAIN)
+        ):
+            return self._advance_main_phase_combat_schedule(schedule)
         extra = self.state.additional_beginning_phases
         if queue is not None and (
             (phase, step) == (queue.after_phase, "main")
@@ -360,6 +423,9 @@ class TurnStepOwner:
         if self.state.extra_combat_phases:
             self.state.extra_combat_phases -= 1
             return _COMBAT_START_INDEX
+        schedule = self.state.main_phase_combat_schedule
+        if schedule is not None and schedule.active_phase == "combat":
+            return self._advance_main_phase_combat_schedule(schedule)
         if queue is not None and queue.engaged:
             return self._next_main_phase_insertion()
         return _COMBAT_END_INDEX
@@ -539,7 +605,7 @@ class TurnStepOwner:
         expire_next_turn_continuous_effects(self.state, entry.player)
         self.state.turn_sequence += 1
         expire_controlled_combat_token_triggers(self._host)
-        expire_next_cast_copy_triggers(self._host)
+        expire_same_turn_spell_cast_triggers(self._host)
         expire_target_death_return_triggers(self._host)
         expire_watched_combat_draw_triggers(self._host)
         self._bind_turn_skips(entry.player)
@@ -586,6 +652,8 @@ class TurnStepOwner:
         self._clear_main_phase_combats()
         self.state.inserted_main_phase_count = 0
         self.state.additional_beginning_phases = None
+        self.state.main_phase_combat_schedule = None
+        self.state.inserted_main_phase_count = 0
         self.state.phase_index = 0
         self.state.priority_player = None
         self.state.priority_passes = []
@@ -650,6 +718,9 @@ class TurnStepOwner:
 
         self.state.phase = phase
         self.state.step = step
+        schedule = self.state.main_phase_combat_schedule
+        if (phase, step) == (POSTCOMBAT_MAIN, "main") and schedule is not None and schedule.active_phase == POSTCOMBAT_MAIN:
+            self.state.inserted_main_phase_count += 1
         if step == "untap":
             expire_recipient_controller_untap_effects(self.state, active)
         elif step == "end_step":
@@ -839,38 +910,16 @@ class TurnStepOwner:
             self.state,
             active_player=active,
         )
+        expire_turn_attacker_untap_triggers(self._host)
         expire_opponent_library_exile_play_permissions(self.state, active_player=active)
-        from .entry_results import expire_copy_scope
-        from .replacement.face_status_copy import CopyExpiry
-
-        for card in self.state.cards.values():
-            card.marked_damage = 0
-            card.deathtouch_damage = False
-            card.regeneration_shields = 0
-            card.temporary_keywords.clear()
-            card.attacking = None
-            card.blocking = None
-            until_end = dict(
-                card.annotations.get("until_end_of_turn") or {}
-            )
-            expire_copy_scope(card, CopyExpiry.END_OF_TURN)
-            previous_controller = until_end.get("control_previous")
-            if (
-                previous_controller in self.state.players
-                and card.zone == "battlefield"
-                and card.controller != previous_controller
-            ):
-                self._host.change_control(
-                    card.object_id,
-                    str(previous_controller),
-                    reason="temporary control effect ended",
-                )
-            card.annotations.pop("until_end_of_turn", None)
+        self._expire_card_cleanup_state()
         from .qualified_hexproof import TURN_PLAYER_COLOR_HEXPROOF
+        from .mana_provenance import RETAIN_RED_MANA_UNTIL_CLEANUP
 
         for player in self.state.players.values():
             expire_temporary_cast_ability_grants(player.stats)
             player.stats.pop(TURN_PLAYER_COLOR_HEXPROOF, None)
+            player.stats.pop(RETAIN_RED_MANA_UNTIL_CLEANUP, None)
             player.stats.pop("next_spell_uncounterable", None)
             player.stats.pop(
                 "spells_cant_be_countered_until_end",
@@ -944,6 +993,33 @@ class TurnStepOwner:
             self.remove_cleanup_frames()
         self.begin_turn(self.select_next_turn())
 
+    def _expire_card_cleanup_state(self) -> None:
+        from .entry_results import expire_copy_scope
+        from .replacement.face_status_copy import CopyExpiry
+
+        for card in self.state.cards.values():
+            card.marked_damage = 0
+            card.deathtouch_damage = False
+            card.regeneration_shields = 0
+            card.temporary_keywords.clear()
+            card.attacking = None
+            card.blocking = None
+            until_end = dict(
+                card.annotations.get("until_end_of_turn") or {}
+            )
+            expire_copy_scope(card, CopyExpiry.END_OF_TURN)
+            previous_controller = until_end.get("control_previous")
+            if (
+                previous_controller in self.state.players
+                and card.zone == "battlefield"
+                and card.controller != previous_controller
+            ):
+                self._host.change_control(
+                    card.object_id,
+                    str(previous_controller),
+                    reason="temporary control effect ended",
+                )
+            card.annotations.pop("until_end_of_turn", None)
     def _finish_pending_turn_end(self, pending: dict[str, Any]) -> bool:
         """Resume the pre-cleanup state-based check after a required choice."""
         if (pending != {"kind": _END_TURN_CLEANUP_PENDING, "schema_version": 1, "turn_sequence": self.state.turn_sequence}
@@ -961,6 +1037,7 @@ class TurnStepOwner:
         self.state.extra_combat_phases = 0
         self._clear_main_phase_combats()
         self.state.additional_beginning_phases = None
+        self.state.main_phase_combat_schedule = None
         self.state.phase_index = TURN_STEPS.index(("ending", "cleanup"))
         return True
 
@@ -999,6 +1076,7 @@ class TurnStepOwner:
             self.state.extra_combat_phases = 0
             self._clear_main_phase_combats()
             self.state.additional_beginning_phases = None
+            self.state.main_phase_combat_schedule = None
         self._host._log(
             actor,
             "turn.ended",

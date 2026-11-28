@@ -285,6 +285,36 @@ def current_graveyard_incarnation_qualifies(history, *, turn_sequence, card, qua
         for event in current_turn_history_events(history,turn_sequence=turn_sequence,kind=kind))
 
 
+def record_food_entry_history(
+    host: Any, *, controller: str, incarnation: str, types: Iterable[str], subtypes: Iterable[str],
+) -> None:
+    """Retain the committed effective Food fact for a registered, trusted reader."""
+
+    history = getattr(host.state, "turn_history", None)
+    if (
+        getattr(history, "public_movement_history_version", None) != 1
+        or "artifact" not in types or "food" not in subtypes
+    ):
+        return
+    from .public_history_query_model import ARTIFACT_SUBTYPE_ENTRY_HISTORY_CAPABILITY
+    from .turn_history_model import ARTIFACT_SUBTYPE_ENTRY_EVENT
+
+    semantics = getattr(host, "semantics", None)
+    if semantics is None or not any(
+        ARTIFACT_SUBTYPE_ENTRY_HISTORY_CAPABILITY in program.capability_dependencies
+        and host.semantic_program_is_current_trusted(program)
+        for program in semantics.programs_for_event("creature.attacks")
+    ):
+        return
+    if any(event.kind == ARTIFACT_SUBTYPE_ENTRY_EVENT and event.object_incarnation == incarnation
+           for event in history.events):
+        return
+    host._record_turn_history(
+        ARTIFACT_SUBTYPE_ENTRY_EVENT, actor=controller, object_incarnation=incarnation,
+        target="food", target_kind="artifact_subtype",
+    )
+
+
 def record_creature_attack_history(
     host: Any,
     card: Any,

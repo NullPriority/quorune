@@ -250,6 +250,24 @@ pins the mode from the initial checkpoint. Records that omit it retain the
 historical net life transitions from damage. The mode persists when the
 turn history resets.
 
+The continuous-effect journal can contain a version-five
+`temporary_life_gain_prohibition` record. Its duration is
+`until_end_of_game` and its relation is `damage_recipients`. It retains the
+resolving stack reference and a nonempty, canonically ordered list of the
+players who received positive damage. This rule survives turn history resets
+and departure of its source. Versions one through four keep their existing
+duration, player scope and encoding.
+
+The existing damage-source choice can persist a `redirection` continuation
+for a whole-event replacement. The resolving activation retains the target
+and original source identity. Completion records the selected damage source
+using the existing chosen-source snapshot and the uncapped redirection
+journal form. A rule with `chosen_source_scope_version` set to `1` requires
+current phased-in permanent roles and discovers protection at the new
+destination. Earlier redirection records without this field keep their
+original encoding and scope. Prevention continuations retain their shield
+payload.
+
 The optional `turn_history.permanent_entry_token_history_version` is `1` in
 new games. Each committed `permanent_entered` event then records a Boolean
 token fact with the controller, types, and incarnation observed at entry.
@@ -271,6 +289,12 @@ permanent arrivals in an owner's hand or graveyard, card arrivals in exile,
 and the artifact subtypes of sacrificed permanents. Graveyard arrivals retain
 prior battlefield types. Exile facts carry no characteristics. Earlier
 checkpoints omit the mode and keep their original turn-history hashes.
+
+Food entry history retains the effective artifact subtype, committed entry
+controller and exact entered incarnation using the public movement journal.
+The token and permanent entry paths record this fact when a trusted attack
+program in the frozen registry reads it. A turn reset discards the fact.
+Records with the prior frozen registry retain their original entry events.
 
 The optional `turn_history.crime_history_version` is `1` for complete initial
 action crime recording. Historical absence stays absent and does not add facts
@@ -620,6 +644,12 @@ incarnation. Copies retain that subject and the original reveal-scope identity;
 their current controller owns the resolving cast choice. Saved casting choices
 revalidate the live trigger, complete source and current cost options before
 delegating mutation to the ordinary casting owner.
+
+A mulligan declaration can carry a private hand-redraw offer pinned to the
+current source incarnation and its complete semantic program. A successful
+submission returns to the same declaration cursor. Exile is public and
+replacement draws are private. Records whose frozen semantic registry omits
+the permission retain their original declaration payloads.
 
 An `opening.hand` decision records a versioned private continuation containing
 turn order, remaining final-hand source incarnations and the current chooser.
@@ -1432,9 +1462,11 @@ destination scope when reconstructing the batch. Damage clearing commits only
 after the movement preflight succeeds. An absent version preserves the
 historical selection and commit order.
 
-The version-one `saga_intrinsic_ability_version` binds current chapter-aware
-Saga entry and turn actions to the initial checkpoint. Records without that
-field replay with their historical Saga behavior.
+The `saga_intrinsic_ability_version` binds Saga entry and turn actions to the
+initial checkpoint. Version one uses chapter-aware Saga entry. Version two
+also evaluates granted Read Ahead and checks its chapter timing throughout
+the entry turn. Records without the field retain their historical Saga
+behavior.
 
 The version-one rad trigger marker, `rad_trigger_version`, appears in both
 the initial checkpoint state and the record format. It enables radiation at
@@ -1617,10 +1649,13 @@ The suspended instruction stays bound to the original trigger and the current
 Aura's exile incarnation.
 
 New games carry an internal `mandatory_linked_loop` witness with schema
-version one. It holds one comparison digest and the current trigger cursor.
-Replay rebuilds the witness and terminal draw from accepted target and priority
-commands. Historical checkpoints omit the field and keep their original rule
-behavior. Projection leaves the witness in the authoritative record.
+version two. The witness retains its comparison digest, trigger cursor,
+recurrence progress, and proof family. An empty witness has a null family.
+The linked-exile and reciprocal received-damage proofs share the recurrence
+owner. Replay rebuilds any witness and terminal draw from the native command
+stream. Version-one witnesses retain their linked-exile behavior and field
+set. Historical checkpoints can also omit the witness. Projection keeps all
+versions in the authoritative record.
 
 An ordered mana activation can retain an `input` object with its
 `ability_id`, `cost_option`, and exact colored or colorless `payment`.

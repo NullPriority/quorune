@@ -11,6 +11,10 @@ from ..announced_mana_value_target import (
 from ..announced_artifact_copy import (
     announced_artifact_copy_target_schema, is_announced_artifact_copy_program,
 )
+from ..announced_artifact_sacrifice_return import (
+    announced_artifact_sacrifice_program_dependencies, announced_power_return_schema,
+    has_announced_artifact_sacrifice,
+)
 from ..announced_graveyard_copy import (
     announced_graveyard_copy_target_schema, is_announced_graveyard_copy_program,
 )
@@ -27,6 +31,10 @@ def has_exact_announced_activation_target(program) -> bool:
 def bind_activation_targets(program, ability, schema, response, *, announced_x, target_limit):
     from ...activation_x import bind_activation_target_cardinality
 
+    if has_announced_artifact_sacrifice(ability):
+        if not announced_artifact_sacrifice_program_dependencies(program):
+            raise ValueError("Announced artifacts require their complete owned-graveyard return")
+        return announced_power_return_schema(announced_x)
     if is_announced_graveyard_copy_program(program):
         return announced_graveyard_copy_target_schema(announced_x)
     if is_announced_artifact_copy_program(program):
@@ -38,6 +46,12 @@ def bind_activation_targets(program, ability, schema, response, *, announced_x, 
 
 def activation_public_targets(host, seat, source, ability, program, schema):
     """Narrow public refs to choices the same paid activation can accept."""
+    if has_announced_artifact_sacrifice(ability):
+        if not announced_artifact_sacrifice_program_dependencies(program):
+            return None
+        from .announced_artifact_payment import artifact_sacrifice_x_offer
+
+        return artifact_sacrifice_x_offer(host, seat, source, ability)
     graveyard_bound = has_activation_graveyard_mana_value_limit(schema)
     if has_activation_mana_value_target(schema):
         schema = bind_announced_mana_value_limit(schema, 0, activation=True)

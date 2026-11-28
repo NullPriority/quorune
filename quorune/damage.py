@@ -24,10 +24,12 @@ from .damage_results import (
     prepare_damage_results,
     PreparedDamageResults,
 )
+from .excess_damage import RecipientExcessDamage, committed_recipient_excess
 from .damage_source import (
     DAMAGE_PREVENTION_RESULT_VERSION_FIELD, damage_source_state_from_context, validate_damage_event_source_state,
 )
 from .damage_transaction import (
+    validate_damage_replacement_journals,
     DamageReplacementChoiceRequired,
     DamageTransactionPort,
     DamageTransactionResult,
@@ -90,8 +92,8 @@ from .prevention_triggers import (
     PreventionTriggeredAbility,
     PreventionTriggerError,
     PreventionTriggerOccurrence,
-    prevention_trigger_stack_item,
 )
+from .rules.static_prevention_trigger import materialize_prevention_trigger_stack_item as prevention_trigger_stack_item
 from .protection import (
     ProtectionVerdict,
     protection_verdict_for_damage,
@@ -237,6 +239,7 @@ class DamageEvent:
     source_had_plus_one_counter: bool | None = None
     split_origin: str | None = None
     source_had_any_counter: bool | None = None
+    source_power_above_base: bool | None = None
 
     def __post_init__(self) -> None:
         validate_damage_event_source_state(self)
@@ -283,7 +286,7 @@ class DamageEvent:
 
         return {
             **damage_permanent_state_context(self.source_permanent_state, had_plus_one_counter=self.source_had_plus_one_counter,
-                had_any_counter=self.source_had_any_counter),
+                had_any_counter=self.source_had_any_counter, power_above_base=self.source_power_above_base),
             **({'source_physical_commander_identities':self.source_physical_commander_identities.to_dict()}
                if self.source_physical_commander_identities is not None else {}),
             # ``card`` is the established self-event identity field used by
@@ -399,6 +402,8 @@ class DamageBatchResult:
     ring_trigger_items: tuple[StackItem, ...] = ()
     combat_prevention_draws: tuple[QueuedDraw, ...] = ()
     combat_prevention_tokens: tuple[CombatPreventionTokenRequest, ...] = ()
+    first_own_turn_loss_player: str | None = None
+    excess: tuple[RecipientExcessDamage, ...] = ()
 
     @property
     def dealt_amount(self) -> int:
@@ -424,8 +429,7 @@ class _CanonicalDamageTransactionPort(DamageTransactionPort):
         from .counter_prevention import projected_counter_prevention_host, validate_counter_prevention_snapshot
 
         _materialized_damage_events(self.host, prepared)
-        _validate_damage_replacement_journal(prepared)
-        _validate_result_replacement_journal(prepared)
+        validate_damage_replacement_journals(prepared)
         _validate_damage_result_life_snapshot(self.host, prepared)
         validate_counter_prevention_snapshot(self.host, prepared)
         validate_damage_modifier_plan(self.host, prepared.modifier_plan)
@@ -804,7 +808,14 @@ def prepare_damage_batch(
         *combat_prevention_draw_replacements(host, nonzero),
         *collect_target_combat_damage_multipliers(host),
     )
-    effects = (*effects, *_protection_prevention_effects(host, protection_proposals_for_redirection(host, nonzero, effects)))
+    scoped_redirection_ids = frozenset(
+        redirect.effect_id for redirect in current_modifiers.redirections
+        if redirect.chosen_source_scope_version is not None
+    )
+    protection_proposals = protection_proposals_for_redirection(
+        host, nonzero, effects, scoped_redirection_ids=scoped_redirection_ids,
+    )
+    effects = (*effects, *_protection_prevention_effects(host, protection_proposals))
     events = tuple(proposal.event() for proposal in nonzero)
     if effects:
         damage_progress = advance_replacement_batch(
@@ -1125,41 +1136,13 @@ def _log_replacement_journal(
         )
 
 
-def _validate_damage_replacement_journal(
-    prepared: PreparedDamageBatch,
-) -> None:
-    effects = {effect.effect_id for effect in prepared.effects}
-    events = {event.event_id for event in prepared.events}
-    for selection in prepared.journal:
-        selected_id = str(selection.effect_id or "")
-        if selected_id.startswith("decline:"):
-            continue
-        if selected_id not in effects or selection.event_id not in events:
-            raise DamageError(
-                "Damage replacement journal does not match its snapshot"
-            )
-
-
-def _validate_result_replacement_journal(
-    prepared: PreparedDamageBatch,
-) -> None:
-    effects = {effect.effect_id: effect for effect in prepared.result_effects}
-    events = {event.event_id: event for event in prepared.result_events}
-    for selection in prepared.result_journal:
-        selected_id = str(selection.effect_id or "")
-        if selected_id.startswith("decline:"):
-            continue
-        if selected_id not in effects or selection.event_id not in events:
-            raise DamageError(
-                "Damage-result replacement journal does not match its snapshot"
-            )
-
-
 def _prevention_applied_events(
     host: DamageHost,
     prepared: PreparedDamageBatch,
 ) -> tuple[PreventionAppliedEvent, ...]:
-    sources = {effect.effect_id: effect.source_id for effect in prepared.effects}
+    from .rules.static_prevention_trigger import applied_static_prevention_trigger
+
+    effects = {effect.effect_id: effect for effect in prepared.effects}
     shield_triggers = {
         shield.effect_id: shield.triggered_ability
         for shield in host.state.damage_prevention_shields
@@ -1178,7 +1161,7 @@ def _prevention_applied_events(
             )
         for effect_id, raw_amount in by_effect.items():
             key = str(effect_id)
-            if key not in sources or type(raw_amount) is not int or raw_amount < 0:
+            if key not in effects or type(raw_amount) is not int or raw_amount < 0:
                 raise DamageError(
                     "Resolved damage prevention journal is stale"
                 )
@@ -1207,7 +1190,7 @@ def _prevention_applied_events(
     result = tuple(
         PreventionAppliedEvent(
             effect_id=effect_id,
-            source_id=sources[effect_id],
+            source_id=effects[effect_id].source_id,
             prevented_amount=amounts[effect_id],
             damage_event_ids=tuple(sorted(event_ids[effect_id])),
             prevented_source_controllers=tuple(
@@ -1219,7 +1202,8 @@ def _prevention_applied_events(
             affected_permanents=tuple(
                 sorted(affected_permanents.get(effect_id, set()))
             ),
-            triggered_ability=shield_triggers.get(effect_id),
+            triggered_ability=(shield_triggers.get(effect_id)
+                               or applied_static_prevention_trigger(host, effects[effect_id])),
         )
         for effect_id in sorted(amounts)
     )
@@ -1297,6 +1281,7 @@ def commit_prepared_damage_batch(
     prepared: PreparedDamageBatch,
     *,
     log_replacements: bool = True,
+    collect_excess: bool = False,
 ) -> DamageBatchResult:
     """Atomically validate and commit a choice-complete damage batch."""
 
@@ -1310,12 +1295,15 @@ def commit_prepared_damage_batch(
     from .counter_prevention import projected_counter_prevention_host, commit_immediate_counter_prevention
     result_host = projected_counter_prevention_host(host, prepared.aftermath.counter_removals)
     try:
+        excess = committed_recipient_excess(result_host, final_events) if collect_excess else ()
+    except (TypeError, ValueError) as exc:
+        raise DamageError(str(exc)) from exc
+    try:
         result_plan = _plan_batch_damage_results(result_host, prepared)
     except (DamageResultError, ReplacementEffectError) as exc:
         raise DamageError(str(exc)) from exc
 
-    _validate_damage_replacement_journal(prepared)
-    _validate_result_replacement_journal(prepared)
+    validate_damage_replacement_journals(prepared)
     from .counter_prevention import validate_counter_prevention_snapshot
     validate_counter_prevention_snapshot(host, prepared)
     try:
@@ -1369,7 +1357,10 @@ def commit_prepared_damage_batch(
 
     from .ring_triggers import ring_damage_stack_items
     ring_trigger_items = ring_damage_stack_items(host, final_events)
+    from .rules.first_own_turn_life_loss import first_own_turn_loss_player_before_commit
+
     aftermath_prepared, counter_changed = commit_immediate_counter_prevention(host, prepared.aftermath)
+    first_loss_player = first_own_turn_loss_player_before_commit(host)
     committed = commit_damage_result_plan(host, result_plan)
     try:
         commit_damage_modifier_plan(host, prepared.modifier_plan)
@@ -1433,6 +1424,8 @@ def commit_prepared_damage_batch(
         ring_trigger_items=ring_trigger_items,
         combat_prevention_draws=draw_instructions,
         combat_prevention_tokens=token_instructions,
+        first_own_turn_loss_player=first_loss_player,
+        excess=excess,
     )
 
 
@@ -1468,7 +1461,8 @@ def _collect_damage_result_triggers(
     )
 
     dispatch_life_loss_records(host, result.result_events, trigger_batch=trigger_batch,
-        sources=trigger_sources, source_zones=trigger_source_zones)
+        sources=trigger_sources, source_zones=trigger_source_zones,
+        first_loss_player=result.first_own_turn_loss_player)
 
     for prevention in result.prevention_events:
         occurrence = prevention.trigger_occurrence()
@@ -1492,8 +1486,8 @@ def _collect_damage_result_triggers(
         if host._semantic_pause_annotation() is not None:
             break
     if host._semantic_pause_annotation() is None:
-        from .initiative_runtime import initiative_combat_triggers
-        trigger_batch.extend(initiative_combat_triggers(host, result.events))
+        from .trigger_processing import additional_damage_batch_triggers
+        trigger_batch.extend(additional_damage_batch_triggers(host, result.events))
         for event in result.events:
             if not event.was_dealt:
                 continue
@@ -1599,6 +1593,7 @@ def resolve_damage_batch(
     replacement_selections: Sequence[
         str | None | Mapping[str, Any]
     ] = (),
+    collect_excess: bool = False,
 ) -> DamageBatchResult:
     """Resolve one typed damage batch through results and trigger discovery."""
 
@@ -1621,7 +1616,7 @@ def resolve_damage_batch(
             if waiting_ids != proposal_ids:
                 raise DamageReplacementChoiceRequired(required, proposal_ids) from required
         raise
-    result = commit_prepared_damage_batch(host, prepared)
+    result = commit_prepared_damage_batch(host, prepared, collect_excess=collect_excess)
 
     trigger_batch: list[Any] = []
     _collect_damage_result_triggers(

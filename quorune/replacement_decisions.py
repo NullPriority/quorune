@@ -263,6 +263,8 @@ def _validate_mana_payment_frame(
 
 
 def _quantity_followup_plan(plan: IntentPlan) -> bool:
+    from .excess_damage import EXCESS_TRAMPLE_FIELD
+    from .rules.fight_excess_mana import FIGHT_EXCESS_MANA_FIELD
     from .fixed_damage_set_model import DEALT_LIFE_GAIN_FIELD, TARGETED_DEALT_LIFE_GAIN_VERSION
     from .semantic_runtime.domain_intent import DomainEffectIntent
     from .semantic_runtime.earthbend_intents import EarthbendIntent
@@ -286,6 +288,8 @@ def _quantity_followup_plan(plan: IntentPlan) -> bool:
     from .rules.hand_entry_followup import uses_committed_hand_entry_life
     from .phasing_model import uses_counted_creature_phase_hold
     from .public_zone_moves import FixedMixedZoneExileSpec, MixedZoneExileScope
+    from .rules.excess_damage_treasure import EXCESS_TREASURE_FIELD
+    from .rules.random_graveyard_returns import RandomGraveyardReturnIntent
 
     return any(
         isinstance(intent, DomainEffectIntent) and intent.operation == RESOLVE_OBJECT_ACTION
@@ -296,6 +300,7 @@ def _quantity_followup_plan(plan: IntentPlan) -> bool:
         or isinstance(intent, (TokenMillRepeatIntent, LibraryBottomResultIntent, EarthbendIntent, GraveyardCardCounterLifeIntent, GraveyardExileBranchIntent,
             GraveyardExileTokenIntent, GraveyardExileTypeOutcomeIntent, TargetedGraveyardExileOutcomeIntent,
             CommittedTargetExileIntent, ReturnedCreatureCounterIntent))
+        or isinstance(intent, RandomGraveyardReturnIntent) and intent.selection.exile_for_cast
         or isinstance(intent, FixedSourceSacrificeIntent) and intent.cast_participant is not None
         or isinstance(intent, DealFixedDamageSetIntent) and intent.gain_life_from_dealt
         or isinstance(intent, RemoveCountersIntent) and intent.gain_life_from_removed
@@ -304,7 +309,14 @@ def _quantity_followup_plan(plan: IntentPlan) -> bool:
         or (
             isinstance(intent, DomainEffectIntent)
             and intent.operation == "damage"
-            and intent.effect.get(DEALT_LIFE_GAIN_FIELD) == TARGETED_DEALT_LIFE_GAIN_VERSION
+            and (intent.effect.get(DEALT_LIFE_GAIN_FIELD) == TARGETED_DEALT_LIFE_GAIN_VERSION
+                 or EXCESS_TREASURE_FIELD in intent.effect
+                 or intent.effect.get(EXCESS_TRAMPLE_FIELD) == 1)
+        )
+        or (
+            isinstance(intent, DomainEffectIntent)
+            and intent.operation == "creature_power_damage"
+            and intent.effect.get(FIGHT_EXCESS_MANA_FIELD) == 1
         )
         or (
             isinstance(intent, (DestroyPermanentIntent, DestroyPermanentSetIntent, DestroyPermanentTargetsIntent,
@@ -350,8 +362,13 @@ def apply_effect_with_replacement_choice(
     from .composition_ordering import composition_resolution_actor,issue_composition_order_choice
     from .resolving_library_exile import resolving_library_exile_source
     from .rules.attached_copy_payment import FALLBACK_FIELD, committed_copy_fallback
+    from .rules.linked_death_token_copy import (
+        EXILE as LINKED_DEATH_COPY_EXILE, RETURN as LINKED_DEATH_COPY_RETURN,
+        commit_linked_death_copy, return_linked_death_token_cards,
+    )
 
     committed_followup = False
+    result = None
     try:
         with composition_resolution_actor(item.controller), resolving_library_exile_source(host, item):
             from .rules.announced_token_sweep import TOKEN_SWEEP_FIELD, create_tokens_for_sweep
@@ -371,8 +388,13 @@ def apply_effect_with_replacement_choice(
                 if not created:
                     remaining = (fallback, *remaining)
                     committed_followup = True
+            elif effect.get("op") == LINKED_DEATH_COPY_EXILE:
+                remaining = (*commit_linked_death_copy(host, item, effect), *remaining)
+                committed_followup = True
+            elif effect.get("op") == LINKED_DEATH_COPY_RETURN:
+                return_linked_death_token_cards(host, item, effect)
             elif plan is None:
-                host.apply_effect(effect, actor=item.controller, as_cost=False)
+                result = host.apply_effect(effect, actor=item.controller, as_cost=False)
             elif _quantity_followup_plan(plan):
                 from .conditional_exile_return import return_deferred_source_departures
 
@@ -380,7 +402,7 @@ def apply_effect_with_replacement_choice(
                 committed_followup = True
                 return_deferred_source_departures(host, waiting)
             else:
-                execute_intent_plan(host, plan)
+                result = execute_intent_plan(host, plan)
     except TransformTimestampOrderRequired as required:
         issue_transform_resolution_order(host,item,required,effect,remaining,destination,note,instruction_pointer)
         return False
@@ -425,6 +447,11 @@ def apply_effect_with_replacement_choice(
             required=required,
         )
         return False
+    from .rules.death_battlefield_return import CommittedDeathEquipmentFollowup
+
+    if isinstance(result, CommittedDeathEquipmentFollowup) and result.effects:
+        remaining = (*(thaw_value(value) for value in result.effects), *remaining)
+        committed_followup = True
     can_continue = item in host.state.stack and host._semantic_pause_annotation() is None
     if committed_followup and can_continue:
         host._continue_resolution(

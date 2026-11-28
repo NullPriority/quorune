@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from ..graveyard_cast_reanimation_copy import RESOLVING_SOURCE_COPY_FIELD
 from ..replacement.immutable import FrozenMap
 from ..rules.cast_creature_set_spell_copy import CAST_CREATURE_SET_COPY_FIELD
 from ..rules.announced_ability_copies import COPY_FIELD, REMAINING_FIELD, choice_copy_count
@@ -13,7 +14,9 @@ from ..rules.targeted_return_spell_copy import (
     RETURN_COPY_VERSION, RETURN_TARGET_FIELD, return_copy_control_is_bound, return_copy_instruction,
 )
 from ..stack_spell_copy_model import FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD, PERMANENT_SPELL_COPY_FIELD, PermanentSpellCopySpec
-from ..stack_target_change_model import is_mandatory_single_stack_target_change, is_optional_stack_target_change
+from ..stack_target_change_model import (
+    COPY_AFTER_RETARGET, is_mandatory_single_stack_target_change, is_optional_stack_target_change,
+)
 from ..semantic_runtime.intents import (
     CopyStackItemIntent,
     RetargetStackItemIntent,
@@ -45,6 +48,14 @@ def _expected_resolving_copy_target(effect, target, actor):
     return effect[RESOLVING_COPY_FIELD] == 1 and target.targets == (actor,)
 
 
+def _following_reselection(effect, target_ref):
+    if COPY_AFTER_RETARGET not in effect:
+        return ()
+    if effect[COPY_AFTER_RETARGET] is not True or not is_optional_stack_target_change(effect):
+        raise SemanticChoiceError("The dice result must use ordinary optional target reselection")
+    return (FrozenMap({"op": "copy_stack_item", "stack": target_ref}),)
+
+
 def _prepare_without_target_choices(effect, context, target, *, mode, copies, permanent_copy):
     intents = ()
     if mode == "copy":
@@ -68,7 +79,8 @@ def _prepare_without_target_choices(effect, context, target, *, mode, copies, pe
         continuation_effect=FrozenMap(effect),
         preparation_intents=intents,
         auto_continue=AutoContinue(
-            reason="stack object has no target choice"
+            reason="stack object has no target choice",
+            prepend_effects=_following_reselection(effect, target.ref),
         ),
     )
 
@@ -92,9 +104,11 @@ class StackTargetChoiceHandler:
         "_default_targets",
         "_choice_actor",
         "_validation_actor",
+        COPY_AFTER_RETARGET,
         "_stack_label",
         "copy_source",
         "retain_targets_only",
+        RESOLVING_SOURCE_COPY_FIELD,
         FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD,
         COPY_FIELD, REMAINING_FIELD,
         "_redirect_slots",
@@ -153,11 +167,25 @@ class StackTargetChoiceHandler:
             raise SemanticChoiceError("Three copies require the complete retained-target instruction")
         target_ref = str(effect.get("stack") or "")
         resolving_copy = RESOLVING_COPY_FIELD in effect
+        resolving_source = RESOLVING_SOURCE_COPY_FIELD in effect
+        if resolving_copy and resolving_source:
+            raise SemanticChoiceError("A resolving copy requires one exact instruction")
         if resolving_copy and not _accepted_resolving_copy(effect, context.actor, context.stack_ref):
             raise SemanticChoiceError("Only an accepted affected-player choice may copy the resolving spell")
-        target = context.query.stack_object(target_ref, exclude_ref=None if resolving_copy else context.stack_ref)
+        if resolving_source and (
+            effect[RESOLVING_SOURCE_COPY_FIELD] is not True or self.mode != "copy"
+            or target_ref != context.stack_ref
+        ):
+            raise SemanticChoiceError("A resolving source copy requires its own original spell")
+        target = context.query.stack_object(
+            target_ref, exclude_ref=None if resolving_copy or resolving_source else context.stack_ref,
+        )
         if resolving_copy and not _expected_resolving_copy_target(effect, target, context.actor):
             raise SemanticChoiceError("The resolving spell copy lost the current affected player or spell")
+        if resolving_source and (
+            target is None or not target.resolving_graveyard_original or target.controller != context.actor
+        ):
+            raise SemanticChoiceError("A resolving source copy requires its own original spell")
         if target is None:
             return SemanticChoicePreparation(
                 request=None,
@@ -273,6 +301,12 @@ class StackTargetChoiceHandler:
             return complete_source_directed_redirect(continuation, response, query)
         target_ref = str(effect.get("_target_stack_ref") or "")
         target = query.stack_object(target_ref)
+        if RESOLVING_SOURCE_COPY_FIELD in effect and (
+            effect[RESOLVING_SOURCE_COPY_FIELD] is not True or self.mode != "copy"
+            or target_ref != continuation.stack_ref or target is None or not target.resolving_graveyard_original
+            or target.controller != effect.get("_choice_actor")
+        ):
+            raise SemanticChoiceError("A resolving source copy requires its own original spell")
         if target is None:
             raise SemanticChoiceError(
                 "The stack object selected for the choice no longer exists"
@@ -286,8 +320,9 @@ class StackTargetChoiceHandler:
         submitted = response.get("targets")
         mandatory = is_mandatory_single_stack_target_change(effect)
         optional_reselection = is_optional_stack_target_change(effect)
+        following = _following_reselection(effect, target_ref)
         if submitted is None and optional_reselection:
-            return SemanticChoiceCompletion()
+            return SemanticChoiceCompletion(prepend_effects=following)
         if submitted is None and mandatory:
             raise SemanticChoiceError("Choose one different legal target")
         if submitted is None and self.mode != "copy":
@@ -335,7 +370,7 @@ class StackTargetChoiceHandler:
             if optional_reselection:
                 snapshots = FrozenMap(query.copied_target_snapshots(target_ref, actor=str(effect["_validation_actor"])))
                 if targets == target.targets and groups == target.target_groups and snapshots == target.target_snapshots:
-                    return SemanticChoiceCompletion()
+                    return SemanticChoiceCompletion(prepend_effects=following)
             intent = RetargetStackItemIntent(
                 actor=actor,
                 target_stack_ref=target_ref,
@@ -345,7 +380,6 @@ class StackTargetChoiceHandler:
                 collect_single_target_ward=mandatory,
                 target_snapshots=snapshots,
             )
-        following = ()
         if COPY_FIELD in effect:
             try:
                 copies = choice_copy_count(effect, query=query, producer_ref=continuation.stack_ref,

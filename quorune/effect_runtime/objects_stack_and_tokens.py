@@ -302,7 +302,15 @@ def _apply_delayed_trigger(
 ) -> Any:
     op = operation
     from ..rules.destruction_result_model import NEXT_END_STEP_DESTRUCTION_FIELD, validate_next_end_step_destruction
-    from ..event_spell_copy_model import NEXT_CAST_COPY_FIELD
+    from ..event_spell_copy_model import NEXT_CAST_COPY_FIELD, SAME_TURN_CAST_KEYWORD_FIELD
+
+    if SAME_TURN_CAST_KEYWORD_FIELD in effect:
+        from ..rules.event_spell_copy import schedule_same_turn_cast_keyword
+
+        try:
+            return schedule_same_turn_cast_keyword(host, effect, actor=actor)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
     from ..rules.watched_combat_draw import WATCHED_COMBAT_DRAW_FIELD, validate_bound_watched_combat_draw
 
     condition = effect.get("condition")
@@ -319,6 +327,14 @@ def _apply_delayed_trigger(
             validate_bound_controlled_combat_token(host, effect, actor)
         except (TypeError, ValueError) as exc:
             raise GameRuleError(str(exc)) from exc
+    from ..rules.main_phase_combat_model import MAIN_COMBAT_FIELD
+
+    if MAIN_COMBAT_FIELD in effect:
+        from ..rules.main_phase_combat_runtime import schedule_main_phase_combats_and_untap
+
+        return schedule_main_phase_combats_and_untap(host, effect, actor=actor)
+    from ..received_damage_model import RECEIVED_DAMAGE_WATCH_FIELD
+    from ..turn_creature_cast_draw_model import TURN_CREATURE_CAST_DRAW_FIELD
 
     if NEXT_END_STEP_DESTRUCTION_FIELD in effect:
         try:
@@ -330,6 +346,20 @@ def _apply_delayed_trigger(
 
         try:
             return schedule_next_cast_copy(host, effect, actor=actor)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+    if RECEIVED_DAMAGE_WATCH_FIELD in effect:
+        from ..rules.received_damage_watch import schedule_watched_damage
+
+        try:
+            return schedule_watched_damage(host, effect, actor=actor)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+    if TURN_CREATURE_CAST_DRAW_FIELD in effect:
+        from ..delayed_triggers import schedule_turn_creature_cast_draw
+
+        try:
+            return schedule_turn_creature_cast_draw(host, effect, actor=actor)
         except (TypeError, ValueError) as exc:
             raise GameRuleError(str(exc)) from exc
     source = effect.get("source")
@@ -420,6 +450,12 @@ def _apply_create_token(
 
     if COMMITTED_DEATH_COPY_FIELD in effect:
         return apply_committed_death_copy(host, effect, actor=actor, reason=reason)
+    from ..rules.owner_departure_tokens import OWNER_DEPARTURE_TOKEN_FIELD, owner_departure_token_payload
+
+    if OWNER_DEPARTURE_TOKEN_FIELD in effect:
+        effect = owner_departure_token_payload(host, effect, actor=actor)
+        if effect is None:
+            return ()
     if CREATED_TOKEN_HASTE_FIELD in effect and "token_cleanup" not in effect:
         return _apply_created_token_haste(host, effect, actor=actor, reason=reason)
     controller = str(effect.get("controller") or actor)

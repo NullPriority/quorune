@@ -343,7 +343,7 @@
       "produced_mana": [],
       "released_at": "2014-12-05",
       "toughness": "3",
-      "type_line": "Creature — Elf Warrior"
+      "type_line": "Creature \u2014 Elf Warrior"
     },
     {
       "cmc": 0.0,
@@ -482,7 +482,50 @@
       "produced_mana": [],
       "released_at": "1997-02-03",
       "toughness": "3",
-      "type_line": "Artifact Creature — Phyrexian Construct"
+      "type_line": "Artifact Creature \u2014 Phyrexian Construct"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Indestructible"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Cascading Cataracts",
+      "oracle_id": "d98b4250-3492-4864-9c4c-42db09b3ccd4",
+      "oracle_text": "Indestructible\n{T}: Add {C}.\n{5}, {T}: Add five mana in any combination of colors.",
+      "power": null,
+      "toughness": null,
+      "type_line": "Land"
     }
   ],
   "rulings": [
@@ -515,5 +558,6 @@
       "oracle_id": "5f2a3797-28aa-4c7a-ba2b-fd243a1747fd",
       "published_at": "2017-02-09",
       "source": "wotc"
-    }]
+    }
+  ]
 }

@@ -155,10 +155,10 @@ class ExternalEntryTappedRuntimeTests(unittest.TestCase):
                     capability_registry=self.registry,capability_profile='commander_review')
                 binding=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
                 # Complete siblings also use copy, graveyard entry, announced-X
-                # destruction, or draw and optional land entry.
+                # destruction, draw and optional land entry, or turn-based entry.
                 expected_closed = row['name'] in CLOSED or row['name'] in {
-                    'Echoing Deeps', 'Vesuva', 'Open the Vaults',
-                    'Dauntless Dismantler', 'Spelunking'}
+                    'Echoing Deeps', 'Vesuva', 'Open the Vaults', 'Living Death',
+                    'Dauntless Dismantler', 'Spelunking', 'Starting Town'}
                 self.assertEqual(expected_closed,binding['strict_capability_ready'],binding['blockers'])
 
     def test_dauntless_dismantler_admits_external_entry_and_announced_destruction(self):

@@ -20,6 +20,10 @@ OPTIONAL_CHOSEN_CONTROLLED_CREATURES = "optional_chosen_controlled_creatures"
 OPTIONAL_ALL_SOURCE_TO_CREATURE = "optional_all_source_to_creature"
 OPTIONAL_COMBAT_ALL_COUNTER_MOVEMENT_CAPABILITY = "counter.producer.optional_combat_all_movement"
 SOURCE_HAS_COUNTERS = "source_has_counters_for_movement"
+SOURCE_RECEIVES_MISSING_KINDS = "source_receives_missing_counter_kinds"
+SOURCE_GIVES_COUNTERS_THEN_DRAW = "source_gives_counters_then_draw"
+SOURCE_COUNTER_MOVEMENT_CAPABILITY = "counter.producer.source_bound_movement"
+SOURCE_BOUND_COUNTER_MOVEMENT_VERSION = 6
 _FIELDS = {"op", "schema_version", "form", "player", "from_ref", "to_ref"}
 
 
@@ -35,7 +39,9 @@ class FixedCounterMovementSpec:
             3: (OPTIONAL_CHOSEN_CONTROLLED_CREATURES,),
             4: (CHOSEN_CONTROLLED_PERMANENT_QUANTITIES,),
             5: (CHOSEN_OPPONENT_CREATURE_TO_CONTROLLED,),
-            6: (OPTIONAL_ALL_SOURCE_TO_CREATURE,),
+            SOURCE_BOUND_COUNTER_MOVEMENT_VERSION: (
+                OPTIONAL_ALL_SOURCE_TO_CREATURE, SOURCE_RECEIVES_MISSING_KINDS, SOURCE_GIVES_COUNTERS_THEN_DRAW,
+            ),
         }
         if type(self.schema_version) is not int or self.form not in valid_forms.get(self.schema_version, ()):
             raise ValueError("Unsupported fixed counter movement")
@@ -55,7 +61,11 @@ class FixedCounterMovementSpec:
 
     @property
     def chooses_counter_quantities(self):
-        return self.form == CHOSEN_CONTROLLED_PERMANENT_QUANTITIES
+        return self.form in (CHOSEN_CONTROLLED_PERMANENT_QUANTITIES, SOURCE_GIVES_COUNTERS_THEN_DRAW)
+
+    @property
+    def is_source_bound(self):
+        return self.form in (SOURCE_RECEIVES_MISSING_KINDS, SOURCE_GIVES_COUNTERS_THEN_DRAW)
 
     @property
     def receiver_is_ability_source(self):
@@ -70,9 +80,15 @@ class FixedCounterMovementSpec:
             }
         return {
             "op": FIXED_COUNTER_MOVEMENT_OPERATION, "schema_version": self.schema_version, "form": self.form,
-            "player": "$controller", "from_ref": "$target.0",
-            "to_ref": "$source" if self.receiver_is_ability_source else "$target.1",
+            "player": "$controller",
+            "from_ref": "$source" if self.form == SOURCE_GIVES_COUNTERS_THEN_DRAW else "$target.0",
+            "to_ref": self._recipient_ref(),
         }
+
+    def _recipient_ref(self):
+        if self.receiver_is_ability_source:
+            return "$source"
+        return "$target.0" if self.form == SOURCE_GIVES_COUNTERS_THEN_DRAW else "$target.1"
 
     @classmethod
     def from_effect(cls, value, *, bound=False):

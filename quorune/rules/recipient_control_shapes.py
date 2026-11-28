@@ -65,6 +65,13 @@ def recipient_control_node_capabilities(*,effects,target_schema,mechanic_ids):
         expected={'op':CHOOSE_CONTROL_RECIPIENT_OPERATION,'schema_version':1,'player':'$controller','card':'$source.zone_object','opponent_only':True}
         if dict(effect)!=expected or type(effect.get('schema_version')) is not int or effect.get('opponent_only') is not True or target_schema is not None:return ()
         return (RECIPIENT_CONTROL_CAPABILITY,'continuous.control.fixed_resolution')
+    if effect.get("schema_version") == 5:
+        from .source_control_reflexive import source_control_reflexive_dependencies
+
+        try:
+            return source_control_reflexive_dependencies(effect, target_schema)
+        except (TypeError, ValueError, KeyError):
+            return ()
     try:validate_recipient_control_effect(effect)
     except (ValueError,TypeError):return ()
     if effect["schema_version"] == 4:
@@ -94,13 +101,21 @@ def recipient_control_node_capabilities(*,effects,target_schema,mechanic_ids):
 
 def recipient_control_runtime_dependencies(program):
     """Retain recipient authority from payloads even without coverage labels."""
+    from ..unblocked_attacker_model import UNBLOCKED_ATTACKER_PLAYER
+    from .event_player_result_shapes import unblocked_source_control_program_capabilities
+
     required=set()
     def visit(value,schema):
         if isinstance(value,Mapping):
             if 'target_schema' in value:schema=value['target_schema']
             if value.get('op')==GIVE_CONTROL_OPERATION:
-                validate_recipient_control_effect(value)
-                if value["schema_version"] == 4:
+                if value.get("schema_version") != 5:
+                    validate_recipient_control_effect(value)
+                if value["schema_version"] == 5:
+                    from .source_control_reflexive import validate_source_control_reflexive_program
+
+                    required.update(validate_source_control_reflexive_program(program))
+                elif value["schema_version"] == 4:
                     required.update(_damage_dealer_control_program_dependencies(program, value))
                 elif value["schema_version"] == 3:
                     from .player_maximum_shapes import player_maximum_control_dependencies
@@ -112,6 +127,11 @@ def recipient_control_runtime_dependencies(program):
                     if value['source']!='$source' or value['card']!='$source.zone_object':
                         raise ValueError('Target-controller control requires its original source subject')
                     required.add(TARGET_CONTROLLER_INFORMATION_CAPABILITY)
+                elif value["controller"] == UNBLOCKED_ATTACKER_PLAYER:
+                    unblocked_control = unblocked_source_control_program_capabilities(program)
+                    if not unblocked_control:
+                        raise ValueError("Unblocked attacker control requires its original direct-player event result")
+                    required.update(unblocked_control)
                 elif value['source']!='$source' or value['controller']!='$target.0' or value['card'] not in {'$target.1','$source.zone_object'}:
                     raise ValueError('Recipient control payload lost its subject or recipient role')
                 required.add(RECIPIENT_CONTROL_CAPABILITY)

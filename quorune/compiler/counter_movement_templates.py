@@ -3,7 +3,13 @@
 from ..fixed_counter_movement_model import (
     CHOSEN_CONTROLLED_PERMANENT_QUANTITIES, CHOSEN_OPPONENT_CREATURE_TO_CONTROLLED,
     CHOSEN_PERMANENT_TARGETS, CONTROLLED_TARGET_TO_SOURCE, OPTIONAL_TARGET_TO_SOURCE,
-    OPTIONAL_ALL_SOURCE_TO_CREATURE, OPTIONAL_CHOSEN_CONTROLLED_CREATURES, TWO_DISTINCT_TARGETS, FixedCounterMovementSpec,
+    OPTIONAL_ALL_SOURCE_TO_CREATURE,
+    OPTIONAL_CHOSEN_CONTROLLED_CREATURES,
+    SOURCE_BOUND_COUNTER_MOVEMENT_VERSION,
+    SOURCE_GIVES_COUNTERS_THEN_DRAW,
+    SOURCE_RECEIVES_MISSING_KINDS,
+    TWO_DISTINCT_TARGETS,
+    FixedCounterMovementSpec,
 )
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..rules.departure_counter_copy import (
@@ -17,10 +23,12 @@ from ..rules.departure_counter_transfer import (
     DEPARTURE_COUNTER_TRANSFER_COVERAGE, departure_counter_condition, departure_counter_effect,
     departure_counter_target_schema,
 )
+from ..rules.source_references import SourceReferenceSpec
 from .fixed_public_event_trigger_bindings import FixedPublicEventBindingSpec
 from ..rules.fixed_counter_movement import (
     CONTROLLER_BEGINNING_COMBAT, FIXED_COUNTER_MOVEMENT_MECHANICS, SOURCE_COUNTERS_BEGINNING_COMBAT,
     chosen_counter_movement_price_is_closed, fixed_counter_movement_target_schema,
+    source_counter_movement_price_is_closed,
 )
 
 
@@ -93,11 +101,15 @@ def _compiled(form):
     versions = {
         CHOSEN_PERMANENT_TARGETS: 2, OPTIONAL_CHOSEN_CONTROLLED_CREATURES: 3,
         CHOSEN_CONTROLLED_PERMANENT_QUANTITIES: 4, CHOSEN_OPPONENT_CREATURE_TO_CONTROLLED: 5,
+        SOURCE_RECEIVES_MISSING_KINDS: SOURCE_BOUND_COUNTER_MOVEMENT_VERSION,
+        SOURCE_GIVES_COUNTERS_THEN_DRAW: SOURCE_BOUND_COUNTER_MOVEMENT_VERSION,
     }
     spec = FixedCounterMovementSpec(form, schema_version=versions.get(form, 1))
     template = f"chosen-one-counter-movement-v{spec.schema_version}" if spec.chooses_counter_kind else "fixed-one-counter-movement-v1"
     if spec.chooses_counter_quantities:
         template = "chosen-controlled-counter-quantities-v1"
+    if spec.is_source_bound:
+        template = "source-bound-counter-movement-v1"
     return (template, (spec.effect(),), fixed_counter_movement_target_schema(spec), FIXED_COUNTER_MOVEMENT_MECHANICS)
 
 
@@ -148,8 +160,22 @@ def fixed_counter_movement_trigger_result(binding, body):
     return None
 
 
-def fixed_counter_movement_activation_result(ability, text):
+def _source_bound_movement_form(body, source_name):
+    if not body.startswith(("move a counter of each kind not on ", "move one or more counters from ")):
+        return None
+    for label in ("this creature", "this permanent", *SourceReferenceSpec(source_name).display_names):
+        source = label.casefold()
+        if body == f"move a counter of each kind not on {source} from another target permanent you control onto {source}.":
+            return SOURCE_RECEIVES_MISSING_KINDS
+        if body == f"move one or more counters from {source} onto another target permanent you control. if you do, draw a card.":
+            return SOURCE_GIVES_COUNTERS_THEN_DRAW
+    return None
+
+
+def fixed_counter_movement_activation_result(ability, text, *, source_name):
     body = " ".join(text.split()).casefold()
+    if form := _source_bound_movement_form(body, source_name):
+        return _compiled(form) if source_counter_movement_price_is_closed(ability, form) else None
     if body == _CHOSEN_QUANTITIES_BODY and chosen_counter_movement_price_is_closed(ability, quantities=True):
         return _compiled(CHOSEN_CONTROLLED_PERMANENT_QUANTITIES)
     chosen = {

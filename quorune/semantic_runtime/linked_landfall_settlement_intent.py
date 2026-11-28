@@ -1,4 +1,5 @@
 """Typed physical return and the locked damage source it settles."""
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..graveyard_arrival_order_model import GraveyardArrivalOrders
@@ -34,3 +35,13 @@ class LinkedLandfallSettlementIntent(MoveObjectsSimultaneouslyIntent):
         if source.ref!=bound["source"] or not source.object_id or not source.logical_object_id:
             raise ValueError("Linked settlement requires its original damage source snapshot")
         object.__setattr__(self,"damage_source",bound)
+
+
+def linked_landfall_intent_fields(value):
+    if "linked_landfall_settlement" not in value:
+        return MoveObjectsSimultaneouslyIntent, {}
+    data=value["linked_landfall_settlement"]
+    if not isinstance(data,Mapping) or set(data) not in ({"damage_source","orders"}, {"spawn_receipt","orders"}):
+        raise ValueError("Malformed linked settlement identity")
+    return LinkedLandfallSettlementIntent, {**{key: value for key, value in data.items() if key != "orders"},
+        "orders":GraveyardArrivalOrders.from_dict(data["orders"]) if data["orders"] is not None else None}

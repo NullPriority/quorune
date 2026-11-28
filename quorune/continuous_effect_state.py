@@ -32,6 +32,7 @@ from .target_combat_damage_multiplier_model import ResolvedTargetCombatDamageMul
 from .next_draw_replacement_model import ResolvedNextDrawReplacement
 from .next_spell_cost_model import ResolvedNextSpellCostReduction
 from .protected_attack_payment_model import ResolvedProtectedAttackPayment
+from .chosen_attack_turn_model import ResolvedChosenAttackTurn
 from .next_turn_attack_restriction_model import ResolvedNextTurnAttackRestriction
 from .counter_bound_attack_model import ResolvedCounterBoundAttackRestriction
 from .source_block_pair_model import ResolvedSourceBlockPair
@@ -215,7 +216,7 @@ def commit_continuous_effect(
          ResolvedActivationProhibition, ResolvedNextDrawReplacement, ResolvedTurnMatchOutcomeProtection,
          ResolvedAllPlayerTurnRule, ResolvedTurnLandManaTrigger, ResolvedSacrificeProhibition, ResolvedNoMaximumHandSize,
          ResolvedNextTurnSorceryTiming, ResolvedNextTurnAttackRestriction, ResolvedTargetCombatDamageMultiplier,
-         ResolvedCounterBoundAttackRestriction),
+         ResolvedCounterBoundAttackRestriction, ResolvedChosenAttackTurn),
     ):
         raise ContinuousEffectStateError(
             "Continuous-effect commits require a typed effect"
@@ -237,6 +238,10 @@ def commit_continuous_effect(
         card = state.cards.get(effect.subject.object_id)
         if card is None or not effect.applies(card):
             raise ContinuousEffectStateError("A counter-bound rule must begin on its original marked creature")
+    if isinstance(effect, ResolvedChosenAttackTurn) and (
+        effect.turn.player not in state.players or not state.players[effect.turn.player].in_game
+    ):
+        raise ContinuousEffectStateError("A chosen attack turn requires its live targeted player")
     if any(current.effect_id == effect.effect_id for current in journal):
         raise ContinuousEffectStateError(
             "Continuous-effect identity is already committed"
@@ -351,7 +356,10 @@ def apply_fixed_resolution_characteristics(
     """Commit a versioned fixed result through the existing multi-layer owner."""
     from .resolution_characteristic_model import (
         DerivedResolutionCharacteristicsSpec, RECIPIENT_MANA_VALUE, fixed_resolution_characteristic_instruction,
-        FixedResolutionCardTypeAdditionSpec, IndefiniteTargetLandAnimationSpec, NEXT_TURN_TARGET_LAND_ANIMATION_VERSION,
+        FixedResolutionCardTypeAdditionSpec,
+        IndefiniteTargetLandAnimationSpec,
+        NEXT_TURN_TARGET_LAND_ANIMATION_VERSION,
+        CountedTargetLandAnimationSpec,
     )
     from .target_land_type_model import FixedTargetLandTypeSpec
     from .errors import GameRuleError
@@ -379,7 +387,7 @@ def apply_fixed_resolution_characteristics(
                 affected = (host._resolve_object(actor,selection,zones={'battlefield'}),)
             except GameRuleError:
                 return []
-        if isinstance(spec,IndefiniteTargetLandAnimationSpec):
+        if isinstance(spec, (IndefiniteTargetLandAnimationSpec, CountedTargetLandAnimationSpec)):
             land=affected[0]
             if (land.phased_out or land.controller!=actor
                     or 'land' not in host._type_parts(str(host._effective_card_data(land).get('type_line') or ''))[0]):
@@ -427,6 +435,10 @@ def apply_fixed_resolution_characteristics(
             amount = (public_mana_value(host._effective_card_data(affected[0], maximum_layer=Layer.COPY))
                       if spec.quantity == RECIPIENT_MANA_VALUE else spec.quantity)
             spec = spec.materialize(amount)
+        if isinstance(spec, CountedTargetLandAnimationSpec):
+            from .live_battlefield_quantities import current_live_battlefield_count
+
+            spec = spec.materialize(current_live_battlefield_count(host, actor, spec.quantity))
         components = tuple(ResolutionContinuousComponent(*value) for value in spec.layer_operations())
         create_resolution_continuous_effect_components(
             host, source=source, targets=affected, components=components, duration=duration,
@@ -694,6 +706,7 @@ def create_resolution_declaration_rule_effect(
     expires_on_next_turn_of: str | None = None,
     forbid_activations: bool = False,
     block_opponents_of: str | None = None,
+    controlled_source=None,
 ) -> ResolutionDeclarationRuleEffect | None:
     """Commit a declaration rule with locked recipients or one live query."""
 
@@ -720,7 +733,7 @@ def create_resolution_declaration_rule_effect(
         live_query=live_query,
         expires_on_next_turn_of=expires_on_next_turn_of,
         forbid_activations=forbid_activations,
-        block_opponents_of=block_opponents_of,
+        block_opponents_of=block_opponents_of, controlled_source=controlled_source,
     )
     committed = commit_continuous_effect(host.state, effect)
     if not isinstance(committed, ResolutionDeclarationRuleEffect):
@@ -810,6 +823,7 @@ def active_resolution_declaration_rule_effects(
     query_row: ObjectQueryResult | None = None,
 ) -> tuple[ResolutionDeclarationRuleEffect, ...]:
     """Return rules matching this incarnation or its current public query row."""
+    from .control_effects import controlled_declaration_source_is_current
 
     journal = state.continuous_effects
     if not journal:
@@ -822,6 +836,7 @@ def active_resolution_declaration_rule_effects(
         effect
         for effect in journal
         if isinstance(effect, ResolutionDeclarationRuleEffect)
+        and controlled_declaration_source_is_current(state, effect.controlled_source)
         and (
             identity in effect.locked_objects
             or effect.live_query is not None
@@ -841,6 +856,8 @@ def expire_zone_departure_effects(state: Any, card: Any) -> None:
     journal[:] = [effect for effect in journal if not (
         isinstance(effect, (ResolvedLinkedDepartureExile, ResolvedCounterBoundAttackRestriction))
         and effect.subject == identity
+        or isinstance(effect, ResolutionDeclarationRuleEffect) and effect.controlled_source is not None
+        and (effect.controlled_source.identity == identity or identity in effect.locked_objects)
         or isinstance(effect, ContinuousEffect)
         and effect.duration is ContinuousEffectDuration.UNTIL_SOURCE_BATTLEFIELD_EXIT
         and (effect.duration_source == identity or identity in effect.locked_objects)
@@ -875,7 +892,7 @@ def expire_end_of_turn_continuous_effects(state: Any) -> int:
     retained = [
         effect
         for effect in journal
-        if (not effect.expires_at_cleanup(state) if isinstance(effect, (ContinuousEffect, ResolvedNextTurnAttackRestriction))
+        if (not effect.expires_at_cleanup(state) if isinstance(effect, (ContinuousEffect, ResolvedNextTurnAttackRestriction, ResolvedChosenAttackTurn))
             else effect.duration is not ContinuousEffectDuration.UNTIL_END_OF_TURN)
     ]
     expired = len(journal) - len(retained)

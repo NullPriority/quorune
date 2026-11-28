@@ -8,7 +8,7 @@ from . import regex_working_set as re
 from ..activation_cost_modifiers import (FixedActivationCostModifierSpec, ACTIVATION_GENERIC_COST_EVENT,
     PUBLIC_QUANTITY_ACTIVATION_COST_HANDLER, PUBLIC_QUANTITY_ACTIVATION_COST_CAPABILITY,
     ConditionalActivationReduction, OpponentControlledActivationReduction,
-    AbilityLocalPublicManaAdjustment, ability_local_reduction_origin_is_supported,
+    AbilityLocalPublicManaAdjustment, AbilityLocalRadReduction, ability_local_reduction_origin_is_supported,
     validate_ability_local_mana_reduction)
 from ..characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantitySpec
 from ..continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec
@@ -53,6 +53,8 @@ def _activation_discount_operand(match, *, source_name):
             return TargetActivationReduction('power')
         if match['count'] and match['count'].casefold() == 'color of the creature it targets' and amount and amount.isdigit():
             return TargetActivationReduction('color_count', int(amount))
+        if (match['count'] or '').casefold() == 'rad counter you have' and amount == '1':
+            return AbilityLocalRadReduction()
         threshold = re.fullmatch(r'it targets a creature with power (-?[0-9]+) or less', match['condition'] or '', re.I)
         if threshold is not None and amount and amount.isdigit():
             return TargetActivationReduction('power_at_most', int(amount), int(threshold[1]))

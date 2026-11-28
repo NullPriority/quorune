@@ -466,6 +466,7 @@ class CreateAffectedObjectCounter:
     source_ref: str
     sequence: int = 0
     schema_version: int = OPERATION_SCHEMA_VERSION
+    exile_only: bool = False
 
     def __post_init__(self) -> None:
         if type(self.counter_name) is not str:
@@ -486,6 +487,8 @@ class CreateAffectedObjectCounter:
                     f"Affected-object counters require string {field_name}"
                 )
         _integer(self.sequence, field="affected-object counter sequence", minimum=0)
+        if type(self.exile_only) is not bool or self.exile_only and (normalized != "silver" or self.amount != 1):
+            raise ReplacementOperationError("An exile-only placement requires one silver counter")
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -495,6 +498,7 @@ class CreateAffectedObjectCounter:
             "placing_player": self.placing_player,
             "source_ref": self.source_ref,
             "sequence": self.sequence,
+            **({"exile_only": True} if self.exile_only else {}),
         }
 
 
@@ -920,10 +924,16 @@ class ApplyEntryCounterReplacement:
 
     event_id: str
     effect: Any
+    member_event_ids: tuple[str, ...] = ()
 
     def __post_init__(self):
         if type(self.event_id) is not str or not self.event_id:
             raise ReplacementOperationError('Entry counter adapter requires an event identity')
+        if (not isinstance(self.member_event_ids, tuple)
+                or any(type(value) is not str or not value for value in self.member_event_ids)
+                or len(set(self.member_event_ids)) != len(self.member_event_ids)
+                or self.event_id in self.member_event_ids):
+            raise ReplacementOperationError("Entry counter adapter members require distinct current event identities")
         from .model import ReplacementEffect
         if not isinstance(self.effect, ReplacementEffect) or self.effect.event_kind != 'counter.place':
             raise ReplacementOperationError('Entry counter adapter requires a typed counter effect')
@@ -1067,18 +1077,10 @@ def _affected_object_counter_from_dict(
     *,
     operation: str,
 ) -> CreateAffectedObjectCounter:
-    _exact_fields(
-        value,
-        {
-            "op",
-            "counter_name",
-            "amount",
-            "placing_player",
-            "source_ref",
-            "sequence",
-        },
-        operation=operation,
-    )
+    fields = {"op", "counter_name", "amount", "placing_player", "source_ref", "sequence"}
+    if operation == "create_affected_object_counter" and value.get("exile_only") is True:
+        fields.add("exile_only")
+    _exact_fields(value, fields, operation=operation)
     return CreateAffectedObjectCounter(
         counter_name=value["counter_name"],
         amount=_integer(
@@ -1093,6 +1095,7 @@ def _affected_object_counter_from_dict(
             field="affected-object counter sequence",
             minimum=0,
         ),
+        exile_only=value.get("exile_only", False),
     )
 
 

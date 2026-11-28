@@ -7,6 +7,7 @@ from .captured_hand import CaptureDrawnHandCard
 from ..rules.faction_trigger_model import CountFactionDraw, FACTION_AFTER_DRAW_ACTION
 from ..replacement.operations import EXILE_TURN_PLAY_DRAW_RESULT, WIN_INSTEAD_OF_EMPTY_DRAW
 from ..rules.opponent_draw_result import ObserveOpponentDraw, OPPONENT_DRAW_OBSERVER_ACTION
+from ..rules.opponent_draw_followup import CountDistinctOpponentDraw, DISTINCT_DRAW_ACTION
 
 from ..replacement import (
     ReplaceableEvent,
@@ -115,6 +116,7 @@ DrawnCardAction = (
     | CaptureDrawnHandCard
     | CountFactionDraw
     | ObserveOpponentDraw
+    | CountDistinctOpponentDraw
 )
 
 
@@ -124,9 +126,10 @@ def drawn_card_action_from_dict(
     if not isinstance(value, Mapping):
         raise DrawError("Drawn-card actions must be objects")
     action = value.get("action")
-    if action == FACTION_AFTER_DRAW_ACTION:
+    if action in (FACTION_AFTER_DRAW_ACTION, DISTINCT_DRAW_ACTION):
+        observer = CountFactionDraw if action == FACTION_AFTER_DRAW_ACTION else CountDistinctOpponentDraw
         try:
-            return CountFactionDraw.from_dict(value)
+            return observer.from_dict(value)
         except ValueError as exc:
             raise DrawError(str(exc)) from exc
     if action == OPPONENT_DRAW_OBSERVER_ACTION:
@@ -194,7 +197,8 @@ class DrawCardsIntent:
     def __post_init__(self) -> None:
         actions = tuple(self.post_draw_actions)
         if any(not isinstance(action, (
-            RevealDrawnCard, DiscardDrawnCardUnlessType, CaptureDrawnHandCard, CountFactionDraw, ObserveOpponentDraw,
+            RevealDrawnCard, DiscardDrawnCardUnlessType, CaptureDrawnHandCard,
+            CountFactionDraw, ObserveOpponentDraw, CountDistinctOpponentDraw,
         )) for action in actions):
             raise TypeError("Draw intents require typed post-draw actions")
         object.__setattr__(self, "post_draw_actions", actions)

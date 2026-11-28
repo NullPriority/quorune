@@ -79,11 +79,11 @@ class ResolvedGraveyardEscape:
                    ContinuousObjectIdentity.from_dict(value["target"]), value["program_key"], value["turn_sequence"])
 
 
-def temporary_escape_sources(state, seat, card):
+def current_temporary_graveyard_grants(state, seat, card, *, field):
     player = state.players.get(seat)
     if player is None or not player.in_game:
         return ()
-    raw_grants = player.stats.get(TEMPORARY_ESCAPE_STATS_FIELD, ())
+    raw_grants = player.stats.get(field, ())
     if not isinstance(raw_grants, (list, tuple)):
         return ()
     active = []
@@ -94,5 +94,12 @@ def temporary_escape_sources(state, seat, card):
             continue
         if (grant.turn_sequence == state.turn_sequence
                 and grant.target.object_id == card.object_id and grant.target.logical_object_id == card.logical_object_id):
-            active.append((grant.source, grant.option_key, PRINTED_PRICE))
+            active.append(grant)
     return tuple(active)
+
+
+def temporary_escape_sources(state, seat, card):
+    return tuple(
+        (grant.source, grant.option_key, PRINTED_PRICE)
+        for grant in current_temporary_graveyard_grants(state, seat, card, field=TEMPORARY_ESCAPE_STATS_FIELD)
+    )

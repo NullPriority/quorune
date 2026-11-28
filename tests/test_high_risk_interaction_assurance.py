@@ -211,6 +211,9 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
                 "capability.zone.change.destination_replacement",
                 "capability.zone.permission.opponent_void_counter_card_play",
             }),
+            (self.db.lookup("Parallel Lives", fuzzy=False), {
+                "capability.token.creation.quantity_replacement",
+            }),
             (self.db.lookup("Sphinx's Insight", fuzzy=False), {
                 "capability.zone.draw.library_to_hand",
                 "capability.resolution.effect.fixed_public_self_replacement",
@@ -1090,6 +1093,7 @@ class HighRiskPromotionSentinelTests(unittest.TestCase):
                 fixtures / 'self-graveyard-reveal-and-owner-shuffle-cards.json',
                 fixtures / 'void-counter-play-cards.json',
                 fixtures / 'fixed-main-phase-addendum-results-cards.json',
+                fixtures / 'fixed-basic-land-token-cards.json',
             ],
             path,
         )

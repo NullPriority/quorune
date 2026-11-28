@@ -763,6 +763,9 @@ class PlaceCountersPreventionAftermath:
         }
 
 
+PREVENTED_SOURCE_REFLECTION = "prevented_source_creature_or_controller"
+
+
 @dataclass(frozen=True, slots=True)
 class DamageAftermathRecipient:
     """Closed recipient vocabulary for a CR 615.5 damage result."""
@@ -777,7 +780,7 @@ class DamageAftermathRecipient:
                     "A fixed prevention-damage recipient requires a player or permanent"
                 )
             return
-        if self.kind == "prevented_source_controller" and self.subject is None:
+        if self.kind in {"prevented_source_controller", PREVENTED_SOURCE_REFLECTION} and self.subject is None:
             return
         raise DamageModifierError(
             "Prevention-damage recipient kind is unsupported or malformed"
@@ -830,19 +833,20 @@ class DealDamagePreventionAftermath:
             raise DamageModifierError(
                 "Prevention damage aftermath requires typed source and recipient"
             )
-        if self.schema_version != 1:
-            raise DamageModifierError(
-                "Unsupported prevention aftermath schema version"
-            )
+        reflected = self.recipient.kind == PREVENTED_SOURCE_REFLECTION
+        expected_version = 2 if reflected else 1
+        if type(self.schema_version) is not int or self.schema_version != expected_version:
+            raise DamageModifierError("Unsupported prevention aftermath schema version")
         if (
             type(self.per_prevented) is not int
             or self.per_prevented < 0
             or type(self.fixed_amount) is not int
             or self.fixed_amount < 0
             or not (self.per_prevented or self.fixed_amount)
+            or reflected and (self.per_prevented != 1 or self.fixed_amount != 0)
         ):
             raise DamageModifierError(
-                "Prevention damage requires a positive fixed or scaled amount"
+                "Prevention damage requires a valid fixed or actual-prevented amount"
             )
 
     def amount(self, prevented: int) -> int:
@@ -981,6 +985,15 @@ def prevention_aftermath_from_dict(
     raise DamageModifierError("Unknown prevention aftermath kind")
 
 
+SOURCE_NEXT_INSTANCE_BATCH_FIELD = "source_next_instance_batch_version"
+
+
+def validate_source_next_instance_batch_version(value):
+    if type(value) is not int or value != 1:
+        raise DamageModifierError("Unsupported source next-instance batch version")
+    return value
+
+
 @dataclass(frozen=True, slots=True)
 class DamagePreventionShield:
     shield_id: str
@@ -999,6 +1012,7 @@ class DamagePreventionShield:
     application_group_id: str | None = None
     aftermath: tuple[PreventionAftermath, ...] = ()
     triggered_ability: PreventionTriggeredAbility | None = None
+    source_next_instance_batch_version: int | None = None
 
     def __post_init__(self) -> None:
         if not all((self.shield_id, self.source_id, self.controller)):
@@ -1053,6 +1067,20 @@ class DamagePreventionShield:
             raise DamageModifierError(
                 "A prevention shield chosen source must be typed"
             )
+        if self.source_next_instance_batch_version is not None:
+            validate_source_next_instance_batch_version(self.source_next_instance_batch_version)
+            if (
+                self.mode != PreventionMode.NEXT_INSTANCE
+                or self.subject != DamageSubject("*", "any", self.controller)
+                or self.duration != DamageModifierDuration.UNTIL_END_OF_TURN
+                or self.damage_kind != PreventionDamageKind.ANY or self.recipient_kind != PreventionRecipientKind.ANY
+                or self.scope != DamagePreventionScope() or self.application_group_id is not None
+                or self.triggered_ability is not None or self.chosen_source is None
+                or self.chosen_source.zone != "battlefield" or not self.chosen_source.logical_object_id
+                or "creature" not in self.chosen_source.types
+                or tuple(self.aftermath) != (GainLifePreventionAftermath(player=self.controller, per_prevented=1),)
+            ):
+                raise DamageModifierError("Source next-instance batch requires its pinned creature and life aftermath")
         if self.application_group_id is not None and (
             type(self.application_group_id) is not str
             or not self.application_group_id
@@ -1085,6 +1113,11 @@ class DamagePreventionShield:
         ):
             raise DamageModifierError("Token aftermath requires the original combat-player shield")
         object.__setattr__(self, "aftermath", aftermath)
+        if any(isinstance(value, DealDamagePreventionAftermath) and value.schema_version == 2 for value in aftermath):
+            if (len(aftermath) != 1 or self.application_group_id is None or self.mode != PreventionMode.ALL
+                    or self.triggered_ability is not None or self.scope.source_controller_relation != "opponent"
+                    or aftermath[0].source.controller != self.controller):
+                raise DamageModifierError("Source reflection requires its grouped all-damage shield")
         if self.tracks_unpreventable_amount and (
             len(aftermath) != 1 or self.mode != PreventionMode.ALL
             or self.duration != DamageModifierDuration.UNTIL_END_OF_TURN
@@ -1139,6 +1172,8 @@ class DamagePreventionShield:
             result["aftermath"] = [value.to_dict() for value in self.aftermath]
         if self.triggered_ability is not None:
             result["triggered_ability"] = self.triggered_ability.to_dict()
+        if self.source_next_instance_batch_version is not None:
+            result[SOURCE_NEXT_INSTANCE_BATCH_FIELD] = self.source_next_instance_batch_version
         return result
 
     @classmethod
@@ -1166,6 +1201,7 @@ class DamagePreventionShield:
                 "recipient_kind",
                 "triggered_ability",
                 "scope",
+                SOURCE_NEXT_INSTANCE_BATCH_FIELD,
             )
             if field in value
         }
@@ -1241,7 +1277,21 @@ class DamagePreventionShield:
                 for item in value.get("aftermath", ())
             ),
             triggered_ability=triggered_ability,
+            source_next_instance_batch_version=(
+                validate_source_next_instance_batch_version(value[SOURCE_NEXT_INSTANCE_BATCH_FIELD])
+                if SOURCE_NEXT_INSTANCE_BATCH_FIELD in value else None
+            ),
         )
+
+
+CHOSEN_REDIRECTION_DESTINATION = "chosen_creature_or_planeswalker"
+ENCHANTED_REDIRECTION_DESTINATION = "enchanted_creature"
+TARGETED_CREATURE_REDIRECTION_DESTINATION = "targeted_creature"
+CONTROLLER_REDIRECTION_DESTINATION_TYPES = {
+    CHOSEN_REDIRECTION_DESTINATION: frozenset({"creature", "planeswalker"}),
+    ENCHANTED_REDIRECTION_DESTINATION: frozenset({"creature"}),
+    TARGETED_CREATURE_REDIRECTION_DESTINATION: frozenset({"battle", "creature", "planeswalker"}),
+}
 
 
 @dataclass(frozen=True, slots=True)
@@ -1257,6 +1307,9 @@ class DamageRedirectionEffect:
     consume_on_application: bool = True
     label: str = ""
     maximum_damage: int | None = None
+    controller_scope: str | None = None
+    creature_destination_only: bool = False
+    chosen_source_scope_version: int | None = None
 
     def __post_init__(self) -> None:
         if not all((self.redirection_id, self.source_id, self.controller)):
@@ -1281,12 +1334,36 @@ class DamageRedirectionEffect:
             raise DamageModifierError(
                 "Redirection consumption policy must be a boolean"
             )
+        if type(self.creature_destination_only) is not bool or (
+            self.creature_destination_only and self.maximum_damage is None
+        ):
+            raise DamageModifierError("A creature-only destination requires finite redirection")
+        allowed_subjects = {"permanent", "player"} if self.creature_destination_only else {"permanent"}
         if self.maximum_damage is not None and (
             type(self.maximum_damage) is not int or self.maximum_damage != 1
             or not self.consume_on_application or self.duration is not DamageModifierDuration.UNTIL_END_OF_TURN
-            or self.chosen_source is not None or self.subject.kind != "permanent" or self.destination.kind != "permanent"
+            or self.chosen_source is not None or self.subject.kind not in allowed_subjects
+            or self.destination.kind != "permanent"
         ):
-            raise DamageModifierError("One-point redirection requires two permanent occurrences and cleanup expiry")
+            raise DamageModifierError("One-point redirection requires a valid original recipient and permanent destination")
+        if self.controller_scope is not None:
+            if (
+                type(self.controller_scope) is not str
+                or self.controller_scope not in CONTROLLER_REDIRECTION_DESTINATION_TYPES
+                or self.subject != DamageSubject(self.controller, "any", self.controller)
+                or self.destination.kind != "permanent" or self.maximum_damage is not None
+                or self.consume_on_application or self.duration is not DamageModifierDuration.UNTIL_END_OF_TURN
+                or self.chosen_source is not None
+            ):
+                raise DamageModifierError("Controller-scope redirection requires one permanent and cleanup expiry")
+        if self.chosen_source_scope_version is not None and (
+            type(self.chosen_source_scope_version) is not int or self.chosen_source_scope_version != 1
+            or not isinstance(self.chosen_source, ChosenDamageSource) or self.chosen_source.snapshot_version != 3
+            or self.maximum_damage is not None or not self.consume_on_application
+            or self.duration is not DamageModifierDuration.UNTIL_END_OF_TURN
+            or self.subject.kind != "permanent" or self.destination.kind != "permanent"
+        ):
+            raise DamageModifierError("A scoped chosen-source redirection requires one whole event and two current permanent roles")
         if (
             type(self.created_turn_sequence) is not int
             or self.created_turn_sequence < 0
@@ -1316,6 +1393,10 @@ class DamageRedirectionEffect:
             "consume_on_application": self.consume_on_application,
             "label": self.label,
             **({"maximum_damage": self.maximum_damage} if self.maximum_damage is not None else {}),
+            **({"controller_scope": self.controller_scope} if self.controller_scope is not None else {}),
+            **({"creature_destination_only": True} if self.creature_destination_only else {}),
+            **({"chosen_source_scope_version": self.chosen_source_scope_version}
+               if self.chosen_source_scope_version is not None else {}),
         }
 
     @classmethod
@@ -1324,6 +1405,12 @@ class DamageRedirectionEffect:
     ) -> "DamageRedirectionEffect":
         if "maximum_damage" in value and type(value["maximum_damage"]) is not int:
             raise DamageModifierError("A persisted redirection limit must be an integer")
+        if "controller_scope" in value and type(value["controller_scope"]) is not str:
+            raise DamageModifierError("A persisted redirection scope must be a string")
+        if "creature_destination_only" in value and value["creature_destination_only"] is not True:
+            raise DamageModifierError("A persisted creature-only destination marker must be true")
+        if "chosen_source_scope_version" in value and type(value["chosen_source_scope_version"]) is not int:
+            raise DamageModifierError("A persisted chosen-source scope version must be an integer")
         _exact_fields(
             value,
             {
@@ -1337,7 +1424,8 @@ class DamageRedirectionEffect:
                 "chosen_source",
                 "consume_on_application",
                 "label",
-            } | ({"maximum_damage"} if "maximum_damage" in value else set()),
+            } | ({"maximum_damage", "controller_scope", "creature_destination_only", "chosen_source_scope_version"}
+                 & value.keys()),
             label="Damage redirection",
         )
         subject = value["subject"]
@@ -1373,4 +1461,7 @@ class DamageRedirectionEffect:
             consume_on_application=value["consume_on_application"],
             label=str(value["label"] or ""),
             maximum_damage=value.get("maximum_damage"),
+            controller_scope=value.get("controller_scope"),
+            creature_destination_only=value.get("creature_destination_only", False),
+            chosen_source_scope_version=value.get("chosen_source_scope_version"),
         )

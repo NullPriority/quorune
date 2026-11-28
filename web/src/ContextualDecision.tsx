@@ -36,7 +36,20 @@ export function ContextualDecision({
 }) {
   const decision = view.decision!;
   const form = action.form!;
-  const [values, setValues] = useState(() => initialChoices(form));
+  const [values, setValues] = useState(() => {
+    const defaults = initialChoices(form);
+    if (decision.ctx.entry_creature_types) delete defaults.replacement;
+    return defaults;
+  });
+  const [expanded, setExpanded] = useState(false);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    if (!expanded) return;
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    dialog.showModal();
+    return () => dialog.close();
+  }, [expanded]);
   const [errors, setErrors] = useState<string[]>([]);
   const [minimized, setMinimized] = useState(false);
   const [remember, setRemember] = useState(false);
@@ -117,7 +130,7 @@ export function ContextualDecision({
     commit(values);
   }
 
-  return <form className={`contextual-decision${isCombat ? " combat-decision" : ""}${binary || isOptional ? " compact-decision" : ""}${checkingLandEntry && !minimized ? " land-entry-decision" : ""}${decision.kind === "trigger.order" ? " trigger-order-decision" : ""}`}
+  const content = <form className={`contextual-decision${isCombat ? " combat-decision" : ""}${binary || isOptional ? " compact-decision" : ""}${checkingLandEntry && !minimized ? " land-entry-decision" : ""}${decision.kind === "trigger.order" ? " trigger-order-decision" : ""}`}
     data-testid="contextual-decision" aria-label={title}
     onSubmit={(event) => { event.preventDefault(); if (!checkingLandEntry) submitCurrentChoice(); }}>
     <header>
@@ -176,7 +189,11 @@ export function ContextualDecision({
             : isSearchWithoutSelection ? "Find no card"
               : decision.kind === "trigger.order" ? "Confirm order" : String(context.accept ?? form.submit_label ?? "Confirm selection")}
       </button>}
-      {!isCombat && <button type="button" className="secondary-button minimize-decision" aria-expanded={!minimized}
+      {!minimized && !checkingLandEntry && !singleScry && !isOptional && !binary && <button type="button"
+        className="secondary-button expand-decision" onClick={() => setExpanded(!expanded)}>
+        {expanded ? "Return to table" : "Expand choice"}
+      </button>}
+      {!expanded && !isCombat && <button type="button" className="secondary-button minimize-decision" aria-expanded={!minimized}
         disabled={submitting} onClick={() => setMinimized(!minimized)}>
         {minimized ? "Show choice" : "Minimize choice"}
       </button>}
@@ -187,4 +204,9 @@ export function ContextualDecision({
       </label>}
     </footer>
   </form>;
+
+  return expanded ? <dialog className="expanded-table-choice" aria-label={title} ref={dialogRef}
+    onCancel={(event) => { event.preventDefault(); setExpanded(false); }}>
+    {content}
+  </dialog> : content;
 }

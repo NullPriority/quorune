@@ -6,6 +6,7 @@ from ...errors import GameRuleError
 from ...replacement.immutable import FrozenMap
 from ...rules.event_subscriptions import GRAVEYARD_DEPARTURE_LOOKBACK_EVENT
 from ...rules.grouped_graveyard_departure import COVERAGE
+from ...rules.modal_selection import uses_distinct_turn_graveyard_modes
 from ...trigger_discovery import dispatch_semantic_event
 from ...zone_trigger_events import ZoneChangeOccurrence, normalized_zone_trigger_events, sealed_public_characteristic_facts
 from ...zone_trigger_processing import DepartureTriggerSnapshot, capture_departure_trigger_sources
@@ -23,11 +24,12 @@ class GraveyardCastDeparture:
 def capture_graveyard_cast_departure(host, card):
     if card.zone != "graveyard" or not card.is_card_object or card.is_token:
         return None
-    if not any(COVERAGE in program.coverage
-               for program in host.semantics.programs_for_event(GRAVEYARD_DEPARTURE_LOOKBACK_EVENT)):
+    programs = host.semantics.programs_for_event(GRAVEYARD_DEPARTURE_LOOKBACK_EVENT)
+    any_card = any(uses_distinct_turn_graveyard_modes(program.target_schema) for program in programs)
+    if not any_card and not any(COVERAGE in program.coverage for program in programs):
         return None
     characteristics = FrozenMap(host._effective_card_data(card))
-    if "creature" not in sealed_public_characteristic_facts(characteristics)["types"]:
+    if not any_card and "creature" not in sealed_public_characteristic_facts(characteristics)["types"]:
         return None
     return GraveyardCastDeparture(
         card.logical_object_id, card.zone_change_counter, card.controller, characteristics,

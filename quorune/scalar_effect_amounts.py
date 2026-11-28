@@ -65,10 +65,12 @@ def scalar_source_context(host, source, effects, *, characteristics=None):
         include_mutations=any(spec.reads_source_mutation_count for spec in specs))}}
 
 
-def _entry_mana_value_reference(spec, item):
+def _public_event_mana_value_reference(spec, item):
+    from .saga_lifecycle import FINAL_SAGA_CHAPTER_RESOLVED_EVENT
+
     return (
         spec.origin is ScalarAmountOrigin.EVENT_OBJECT and spec.characteristic == "mana_value"
-        and item.context.get("event") == "permanent.enter"
+        and item.context.get("event") in {"permanent.enter", FINAL_SAGA_CHAPTER_RESOLVED_EVENT}
     )
 
 
@@ -133,12 +135,12 @@ def _reference(host, item, spec, *, use_phased_source_lki=False):
     card = host.state.cards.get(initial["object_id"])
     if card is not None and card.logical_object_id == initial["logical_object_id"] and card.zone == initial["zone"]:
         if card.phased_out:
-            if (use_phased_source_lki and spec.origin is ScalarAmountOrigin.SOURCE) or _entry_mana_value_reference(spec, item):
+            if (use_phased_source_lki and spec.origin is ScalarAmountOrigin.SOURCE) or _public_event_mana_value_reference(spec, item):
                 return initial
             raise PublicQueryAmountError("Scalar characteristic object is phased out")
         return _snapshot(host, card, include_counters="counters" in initial or spec.reads_source_counters,
             include_mutations="mutation_count" in initial or spec.reads_source_mutation_count,
-            requested_characteristic=spec.characteristic if _entry_mana_value_reference(spec, item)
+            requested_characteristic=spec.characteristic if _public_event_mana_value_reference(spec, item)
             or spec.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE else None)
     return initial
 
@@ -224,7 +226,7 @@ def pin_scalar_characteristic_departures(host, cards: Sequence[Any], *, error_ty
             if program is None:
                 continue
             specs = scalar_amount_specs(program.effects)
-            phased_source_lki = (any(spec.reads_source_mutation_count for spec in specs)
+            phased_source_lki = (any(spec.reads_source_mutation_count or spec.reads_source_counters for spec in specs)
                 or library_bottom_uses_source_power(program.effects)
                 or _shared_counter_result_amount(program.effects) is not None
                 or any(SOURCE_COUNTER_MILL_OFFER in effect for effect in program.effects)
@@ -237,7 +239,7 @@ def pin_scalar_characteristic_departures(host, cards: Sequence[Any], *, error_ty
                 ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE, ScalarAmountOrigin.TARGET_CREATURE_POWER}]
             for spec in selected:
                 if phase_out and not (
-                    phased_source_lki and spec.origin is ScalarAmountOrigin.SOURCE or _entry_mana_value_reference(spec, item)
+                    phased_source_lki and spec.origin is ScalarAmountOrigin.SOURCE or _public_event_mana_value_reference(spec, item)
                 ):
                     continue
                 identity = _reference_identity(host, item, spec)
@@ -266,6 +268,14 @@ def library_bottom_source_power(host, item):
 
 
 def _history_amount(host, item, fact):
+    from .damage_turn_history import committed_damage_to_player_this_turn
+    from .scalar_effect_amount_model import CONTROLLER_DAMAGE_RECEIVED_FACT
+
+    if fact == CONTROLLER_DAMAGE_RECEIVED_FACT:
+        amount = committed_damage_to_player_this_turn(host.state, item.controller)
+        if amount is None:
+            raise PublicQueryAmountError("Scalar damage history is unavailable")
+        return amount
     history = host.state.turn_history
     if history is None or history.schema_version != 1 or history.turn_sequence != host.state.turn_sequence:
         raise PublicQueryAmountError("Scalar turn history is unavailable")
@@ -341,6 +351,16 @@ def resolve_paid_sacrifice_condition(value: Mapping, item) -> bool:
 
 
 def _paid_sacrifice_mana_value(item):
+    if item.kind == "activated_ability":
+        from .rules.activation.paid_characteristic_price import PAID_ENCHANTMENT_MANA_VALUE_CONTEXT
+
+        fact = item.context.get(PAID_ENCHANTMENT_MANA_VALUE_CONTEXT)
+        objects = item.context.get("cost_object_snapshots", ())
+        if (not isinstance(fact, Mapping) or set(fact) != {"program", "source_logical", "paid_object_id", "snapshot"}
+                or fact["program"] != item.semantic_key or fact["source_logical"] != item.context.get("source_logical_object_id")
+                or len(objects) != 1 or objects[0].get("object_id") != fact["paid_object_id"]):
+            raise PublicQueryAmountError("Paid enchantment mana value requires the verified activation and sacrifice")
+        return PaidSacrificeManaValueSnapshot.from_dict(fact["snapshot"]).mana_value
     snapshot = PaidSacrificeManaValueSnapshot.from_dict(item.context.get(PAID_SACRIFICE_MANA_VALUE_CONTEXT))
     _validate_paid_incarnation(item, snapshot.logical_object_id, 'Paid sacrifice mana-value facts')
     return snapshot.mana_value
@@ -384,6 +404,10 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
     if spec.origin is ScalarAmountOrigin.PAID_ACTIVATION_CREATURE:
         from .activation_paid_characteristic_model import resolve_activation_paid_creature_stat
         amount = resolve_activation_paid_creature_stat(item, spec.characteristic)
+    elif spec.origin is ScalarAmountOrigin.PAID_ACTIVATION_DAMAGE_MANA_VALUE:
+        from .rules.activation.paid_mana_value_damage import resolve_paid_damage_mana_value
+
+        return resolve_paid_damage_mana_value(item) + spec.offset
     elif spec.origin is ScalarAmountOrigin.PAID_SACRIFICE_CREATURE:
         amount = _paid_creature_stat_amount(item, spec.characteristic)
     elif spec.origin is ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE:
@@ -411,7 +435,15 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
     elif spec.origin is ScalarAmountOrigin.PUBLIC_AGGREGATE:
         from .public_characteristic_aggregates import current_public_characteristic_aggregate
         try:
-            amount = current_public_characteristic_aggregate(host, item.controller, spec.aggregate)
+            excluded_source = None
+            if spec.aggregate.schema_version == 3:
+                from .continuous_effect_model import ContinuousObjectIdentity
+
+                excluded_source = ContinuousObjectIdentity(
+                    item.source_object_id, item.context.get("source_logical_object_id"),
+                )
+            amount = current_public_characteristic_aggregate(host, item.controller, spec.aggregate,
+                                                             excluded_source=excluded_source)
         except ValueError as exc:
             raise PublicQueryAmountError(str(exc)) from exc
     elif spec.origin is ScalarAmountOrigin.CONTROLLER_COMMANDER_CAST_COUNT:
@@ -433,7 +465,9 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
             program = host.semantics.get(item.semantic_key) if item.semantic_key else None
             if program is not None and _shared_counter_result_amount(program.effects) == value:
                 use_phased_source_lki = True
-        reference = _reference(host, item, spec, use_phased_source_lki=use_phased_source_lki or count_kinds)
+        reference = _reference(
+            host, item, spec, use_phased_source_lki=use_phased_source_lki or spec.reads_source_counters,
+        )
         if spec.reads_source_counters:
             counters=reference.get('counters')
             if not isinstance(counters,Mapping) or any(type(v) is not int or v<0 for v in counters.values()):

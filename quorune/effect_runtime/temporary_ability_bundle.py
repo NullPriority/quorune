@@ -99,7 +99,7 @@ def apply_temporary_ability_bundle(host,effect,*,actor,reason):
             item=next((i for i in host.state.stack if i.ref==source.stack_ref),None)
             if item is None or type(item.context.get(BACKUP_CONTEXT)) is not bool:raise GameRuleError('Printed ability grant requires its locked source origin')
             if not item.context[BACKUP_CONTEXT]:return []
-        _verify_child_programs(host, fragments)
+        _verify_child_programs(host, fragments, grantor_context=(actor, source, card, instruction))
         if fragments and fragments[0]["kind"] == "granted_triggered":
             stack_item = next((item for item in host.state.stack if item.ref == source.stack_ref), None)
             activation = host.semantics.get(stack_item.semantic_key) if stack_item is not None else None
@@ -116,8 +116,13 @@ def apply_temporary_ability_bundle(host,effect,*,actor,reason):
     return [card.ref]
 
 
-def _verify_child_programs(host, fragments):
+def _verify_child_programs(host, fragments, *, grantor_context=None):
+    from ..rules.grantor_damage_redirection import is_grantor_redirect_fragment
+    from .grantor_damage_redirection import verify_resolving_grantor_redirect
+
     for fragment in fragments:
+        if is_grantor_redirect_fragment(fragment):
+            verify_resolving_grantor_redirect(host, fragment, grantor_context)
         if fragment['kind'] in {'granted_activated', 'granted_triggered'}:
             program = host.semantics.get(fragment['value']['semantic_key'])
             if program is None or not host.semantic_program_is_current_trusted(program):

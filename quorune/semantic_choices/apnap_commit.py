@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..library_order_model import HAND_TOP_APNAP_EVENT
+from ..rules.opponent_blight import OPPONENT_BLIGHT_BATCH_KIND, OpponentBlightBatchIntent
 from ..replacement.immutable import FrozenMap
 from ..apnap_object_payment import DECLINED_LIFE_LOSS, ORDER_GRAVEYARD_ARRIVALS
 from ..rules.counted_sacrifice_tokens import COUNTED_SACRIFICE_TOKEN_FIELD
@@ -203,9 +204,9 @@ class ApnapObjectCommitHandler:
     capability_dependencies: tuple[str, ...] = (
         "zone.change.destination_replacement",
     )
-    continuation_fields: tuple[str, ...] = tuple(sorted(
-        _FIELDS | _LOSS_FIELDS | {GREATEST_POWER_SACRIFICE_LIFE_RESULT, ORDER_GRAVEYARD_ARRIVALS, *_COUNTED_MOVES}
-    ))
+    continuation_fields: tuple[str, ...] = tuple(sorted(_FIELDS | _LOSS_FIELDS | {
+        GREATEST_POWER_SACRIFICE_LIFE_RESULT, ORDER_GRAVEYARD_ARRIVALS, OPPONENT_BLIGHT_BATCH_KIND, *_COUNTED_MOVES,
+    }))
     private_data: tuple[str, ...] = ("object_refs",)
     projected_fields: tuple[str, ...] = ()
     mutation_path: tuple[str, ...] = (
@@ -225,6 +226,20 @@ class ApnapObjectCommitHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        if OPPONENT_BLIGHT_BATCH_KIND in effect:
+            try:
+                if set(effect) != {"op", OPPONENT_BLIGHT_BATCH_KIND} or effect["op"] != self.operation:
+                    raise ValueError("A Blight batch cannot carry APNAP zone-movement fields")
+                intent = OpponentBlightBatchIntent.from_identity(effect[OPPONENT_BLIGHT_BATCH_KIND])
+                if intent.actor != context.stack_controller or intent.source_ref != context.source_ref:
+                    raise ValueError("Opposing-player Blight lost its original controller or source")
+            except (TypeError, ValueError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+            return SemanticChoicePreparation(
+                request=None, continuation_effect=FrozenMap(effect), preparation_intents=(intent,),
+                auto_continue=AutoContinue(reason="Opposing-player Blight choices are complete."),
+            )
+
         intents = _intents(effect, source_ref=context.source_ref,
             discard_effect_origin=getattr(context.query, "discard_effect_origin", None))
         if effect.get("actor") != context.stack_controller:
@@ -234,6 +249,9 @@ class ApnapObjectCommitHandler:
             continuation = AutoContinue(reason="Apply the committed sacrifice quantity.", committed_effects_from_result=0)
         elif COUNTED_SACRIFICE_TOKEN_FIELD in effect:
             continuation = AutoContinue(reason="Create tokens for the committed sacrifices.", committed_effects_from_result=0)
+        elif GREATEST_POWER_SACRIFICE_LIFE_RESULT in effect and intents[0].result.create_treasure:
+            continuation = AutoContinue(reason="Use the committed sacrifice's power to create Treasure.",
+                                        committed_effects_from_result=0)
         elif GREATEST_POWER_SACRIFICE_LIFE_RESULT in effect and intents[0].result.draw_then_lose_life:
             continuation = AutoContinue(
                 reason="Use the committed sacrifice's power and toughness.",

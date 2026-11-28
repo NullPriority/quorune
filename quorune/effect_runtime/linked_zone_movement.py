@@ -44,6 +44,38 @@ def commit_resolved_zone_movement(
     )
 
 
+def apply_shuffle_into_library(
+    host: Any,
+    effect: Mapping[str, Any],
+    *,
+    actor: str,
+    operation: str,
+    reason: str,
+) -> Any:
+    from ..rules.death_counter_shuffle import DEATH_COUNTER_SHUFFLE_FIELD, resolve_departure_shuffle
+
+    if DEATH_COUNTER_SHUFFLE_FIELD in effect:
+        departure = resolve_departure_shuffle(host.state, host.active_seats, effect)
+        if departure is None:
+            return None
+        owner, card = departure
+    else:
+        card = host._resolve_object(actor, str(effect["card"]), zones={"battlefield", "graveyard", "exile", "stack"})
+        owner = card.owner
+
+    moved = None
+    if card is not None:
+        moved = host.move_card(
+            card.object_id,
+            "library",
+            reason=reason,
+            semantic_events=True,
+            replacement_selections=tuple(effect.get("_replacement_selections") or ()),
+        )
+    host.shuffle_library(owner, reason=reason)
+    return moved.ref if moved is not None else None
+
+
 def _apply_discarded_card_play(host, effect, *, actor, operation, reason):
     from ..fixed_top_exile import CHOSEN_IMPULSE_GRANT_FIELD
     from ..impulse_access import apply_chosen_impulse_access

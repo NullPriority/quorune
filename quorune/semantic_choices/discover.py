@@ -48,7 +48,9 @@ def _after_pending(progress,pending,query,actor):
     if progress.name_scan is not None:
         candidate = progress.name_scan.qualified(types=row.types, names=query.public_exile_rules_names(row.ref))
     elif progress.supplier is not None:
-        candidate = 'instant' in row.types or 'sorcery' in row.types
+        candidate = ("instant" in row.types or "sorcery" in row.types) and (
+            progress.exclusive_mana_value is None or row.mana_value < progress.exclusive_mana_value
+        )
     else:
         candidate = 'land' not in row.types and (
             progress.amount is None or discover_spell_qualifies(progress.amount, mana_value=row.mana_value)
@@ -73,7 +75,8 @@ def _scan(effect,context,progress):
     elif progress.supplier is not None:
         reason = 'Continue exiling through the first instant or sorcery card.'
     if progress.candidate_ref is not None:
-        return _automatic(effect, {'op': progress.cast_operation,
+        operation = progress.finish_operation if progress.exclusive_mana_value is not None else progress.cast_operation
+        return _automatic(effect, {'op': operation,
                                    'player': context.actor, 'progress': progress.to_dict()}, reason=reason)
     refs=context.query.library_refs(owner,top_first=True)
     if not refs:
@@ -129,7 +132,9 @@ class DiscoverScanHandler:
                 validate_qualified_scan_effect(effect, resolved=True)
                 if effect['supplier'] not in context.query.active_seats:
                     return _automatic(effect, reason='The supplying player has left the game.')
-                progress = ExileCastProgress(None, (), None, effect['supplier'])
+                progress = ExileCastProgress(
+                    None, (), None, effect["supplier"], exclusive_mana_value=effect.get("exclusive_mana_value"),
+                )
             elif self.operation == NAME_SCAN_OPERATION:
                 progress = ExileCastProgress(None, (), None, name_scan=parse_name_scan_effect(effect))
             elif self.operation in {DISCOVER_STEP_OPERATION, NONLAND_SCAN_STEP_OPERATION,
@@ -140,6 +145,8 @@ class DiscoverScanHandler:
                 progress = ExileCastProgress.from_dict(effect['progress'])
                 if self.operation != progress.step_operation:
                     raise SemanticChoiceError('The exile scan changed its printed search rule')
+                if progress.exclusive_mana_value is not None and progress.supplier != context.actor:
+                    raise SemanticChoiceError("Next-cast access requires the caster's own library")
                 progress = _after_pending(progress, effect['pending'], context.query, context.actor)
             else:raise SemanticChoiceError('Unknown Discover scan operation')
             return _scan(effect,context,progress)

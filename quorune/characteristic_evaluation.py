@@ -799,6 +799,47 @@ def off_battlefield_self_creature_effects(
                  for effect in spec.layer_effects(source, timestamp=card.zone_timestamp, occurrence=index))
 
 
+def _render_layered_evaluation(card, result, evaluated, effects, *, include_base_power):
+    values = evaluated.characteristics
+    applied = set(evaluated.applied_effects)
+    render_type_line = any(
+        effect.effect_id in applied
+        and (
+            effect.layer is Layer.TYPE
+            or any(
+                operation.op == "face_down"
+                or (
+                    operation.op == "copy_values"
+                    and bool(
+                        {"supertypes", "card_types", "subtypes"}.intersection(
+                            operation.value
+                        )
+                    )
+                )
+                for operation in effect.operations
+            )
+        )
+        for effect in effects
+    )
+    characteristics = _render_characteristics(
+        card,
+        result,
+        values,
+        render_type_line=render_type_line,
+    )
+    if "saga" in values["subtypes"] and any(
+        effect.effect_id in applied
+        and any(operation.op in {"set_basic_land_types", "remove_all_abilities"} for operation in effect.operations)
+        for effect in effects
+    ):
+        from .ability_fragment_primitives import INTRINSIC_ABILITIES_REMOVED
+
+        characteristics[INTRINSIC_ABILITIES_REMOVED] = True
+    if include_base_power:
+        characteristics["base_power"] = evaluated.base_power
+    return characteristics
+
+
 def evaluate_card_characteristics(
     card: CardInstance,
     base: Mapping[str, Any],
@@ -810,6 +851,7 @@ def evaluate_card_characteristics(
     ]
     | None = None,
     maximum_layer: Layer | None = None,
+    include_base_power: bool = False,
     enchanted: bool = False,
     equipped: bool = False,
     modified: bool = False,
@@ -846,8 +888,11 @@ def evaluate_card_characteristics(
             ignore_face_down=ignore_face_down,
         )
     )
+    from .rules.name_stickers import PLACEMENTS, characteristic_effects
+
     layered = bool(
         overrides
+        or card.annotations.get(PLACEMENTS)
         or card.permanent_composition is not None
         or added_types
         or added_subtypes
@@ -869,6 +914,8 @@ def evaluate_card_characteristics(
         or query_count_resolver is not None
     )
     if not layered:
+        if include_base_power:
+            result["base_power"] = _numeric(result.get("power"))
         return _normalized_unlayered_characteristics(result)
 
     state = _base_characteristic_state(card,result,resolve_undefined_stats=(
@@ -886,6 +933,8 @@ def evaluate_card_characteristics(
         has_all_nonbasic_land_types_definition=has_all_land_types,
         ignore_face_down=ignore_face_down,
     )
+    if card.annotations.get(PLACEMENTS) and (maximum_layer is None or maximum_layer >= Layer.TEXT):
+        effects.extend(characteristic_effects(card))
     effects.extend((*source_zone_effects, *runtime_effects))
     context = _card_characteristic_query_context(
         card, enchanted=enchanted, equipped=equipped, modified=modified, ignore_face_down=ignore_face_down,
@@ -918,39 +967,4 @@ def evaluate_card_characteristics(
         effects,
         context=context,
     )
-    values = evaluated.characteristics
-    applied = set(evaluated.applied_effects)
-    render_type_line = any(
-        effect.effect_id in applied
-        and (
-            effect.layer is Layer.TYPE
-            or any(
-                operation.op == "face_down"
-                or (
-                    operation.op == "copy_values"
-                    and bool(
-                        {"supertypes", "card_types", "subtypes"}.intersection(
-                            operation.value
-                        )
-                    )
-                )
-                for operation in effect.operations
-            )
-        )
-        for effect in effects
-    )
-    characteristics = _render_characteristics(
-        card,
-        result,
-        values,
-        render_type_line=render_type_line,
-    )
-    if "saga" in values["subtypes"] and any(
-        effect.effect_id in applied
-        and any(operation.op in {"set_basic_land_types", "remove_all_abilities"} for operation in effect.operations)
-        for effect in effects
-    ):
-        from .ability_fragment_primitives import INTRINSIC_ABILITIES_REMOVED
-
-        characteristics[INTRINSIC_ABILITIES_REMOVED] = True
-    return characteristics
+    return _render_layered_evaluation(card, result, evaluated, effects, include_base_power=include_base_power)

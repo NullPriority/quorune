@@ -17,6 +17,16 @@ from ..replacement.immutable import FrozenMap
 FLYING_EVENT_BATTLEFIELD_RETURN_VERSION = 9
 DEATH_BATTLEFIELD_RETURN_CAPABILITY = "zone.return.fixed_controlled_death_battlefield"
 DEATH_BATTLEFIELD_RETURN_MECHANIC = "fixed-controlled-death-battlefield-return"
+DEATH_EQUIPMENT_ARRIVALS = "death_equipment_arrivals"
+DEATH_EQUIPMENT_RETURN_VERSION = "death_equipment_return_version"
+DEATH_EQUIPMENT_RETURN_CAPABILITY = "zone.return.fixed_paid_death_equipment"
+DEATH_EQUIPMENT_RETURN_MECHANIC = "fixed-paid-death-equipment-return"
+ATTACH_RETURNED_WITH_EQUIPMENT = "attach_source_to_death_return"
+DEATH_EQUIPMENT_RETURN_DEPENDENCIES = (
+    DEATH_EQUIPMENT_RETURN_CAPABILITY, "effect.choice.optional_fixed_mana_payment",
+    "trigger.event.normalized_zone_change", "attachment.action.fixed_source",
+    "zone.composition.destination_result", "zone.change.destination_replacement",
+)
 DEATH_BATTLEFIELD_RETURN_DEPENDENCIES = (
     DEATH_BATTLEFIELD_RETURN_CAPABILITY, "trigger.event.qualified_zone_change",
     "counter.characteristic.keyword", "counter.producer.effect_entry", "zone.change.destination_replacement",
@@ -64,6 +74,26 @@ def controlled_nonflying_death_condition() -> dict:
     ]}
 
 
+def own_nontoken_death_condition() -> dict:
+    return {"all": [
+        {"field": "owner", "op": "eq", "value": "$source.controller"},
+        {"field": "token", "op": "eq", "value": False},
+    ]}
+
+
+def death_equipment_return_effect() -> dict:
+    return {
+        "op": "reanimate", DEATH_EQUIPMENT_RETURN_VERSION: 1,
+        DEATH_EQUIPMENT_ARRIVALS: "$context." + DEATH_EQUIPMENT_ARRIVALS,
+        "source": "$stack",
+    }
+
+
+@dataclass(frozen=True, slots=True)
+class CommittedDeathEquipmentFollowup:
+    effects: tuple[FrozenMap, ...] = ()
+
+
 def death_battlefield_return_effect() -> dict:
     return {
         "op": "reanimate", "schema_version": FLYING_EVENT_BATTLEFIELD_RETURN_VERSION,
@@ -72,10 +102,21 @@ def death_battlefield_return_effect() -> dict:
     }
 
 
+def death_battlefield_return_node_capabilities(effects, target_schema, mechanics) -> tuple[str, ...] | None:
+    if DEATH_EQUIPMENT_RETURN_MECHANIC in mechanics:
+        expected, dependencies = death_equipment_return_effect(), DEATH_EQUIPMENT_RETURN_DEPENDENCIES
+    elif DEATH_BATTLEFIELD_RETURN_MECHANIC in mechanics:
+        expected, dependencies = death_battlefield_return_effect(), DEATH_BATTLEFIELD_RETURN_DEPENDENCIES
+    else:
+        return None
+    return dependencies if target_schema is None and tuple(effects) == (expected,) else ()
+
+
 def is_death_battlefield_return(effect) -> bool:
     return effect.get("op") == "reanimate" and (
         effect.get("schema_version") == FLYING_EVENT_BATTLEFIELD_RETURN_VERSION
         or DEATH_BATTLEFIELD_ARRIVALS in effect and "phase" not in effect
+        or DEATH_EQUIPMENT_RETURN_VERSION in effect or DEATH_EQUIPMENT_ARRIVALS in effect
     )
 
 
@@ -95,19 +136,30 @@ def death_battlefield_return_context(host, context, occurrence, parts, *, perman
         or event_has_capability_subscriber(host, SOURCE_DEATH_HAND_EVENT, SOURCE_DEATH_HAND_CAPABILITY)
     ):
         return context
+    from .linked_death_token_copy import CAPABILITY as LINKED_DEATH_TOKEN_COPY_CAPABILITY
+
     watched = (
+        ("creature.dies", LINKED_DEATH_TOKEN_COPY_CAPABILITY),
         ("creature.dies", DEATH_BATTLEFIELD_RETURN_CAPABILITY),
         ("creature.dies", OPPOSING_DEATH_DELAYED_RETURN_CAPABILITY),
         ("creature.dies", LINKED_DEATH_UPKEEP_CAPABILITY),
         ("creature.dies.self", GRANTED_DEATH_ROLE_RETURN_CAPABILITY),
     )
-    if not permanent_graveyard and not revival and not any(
+    fields = []
+    if permanent_graveyard or revival or any(
         event_has_capability_subscriber(host, event, capability) for event, capability in watched
     ):
+        fields.append(DEATH_BATTLEFIELD_ARRIVALS)
+    if not permanent_graveyard and not occurrence.token and event_has_capability_subscriber(
+        host, "creature.dies", DEATH_EQUIPMENT_RETURN_CAPABILITY,
+    ):
+        fields.append(DEATH_EQUIPMENT_ARRIVALS)
+    if not fields:
         return context
     if revival:
         context = capture_revival_death_count(context, occurrence)
-    return {**context, DEATH_BATTLEFIELD_ARRIVALS: committed_graveyard_arrivals(occurrence, parts)}
+    arrivals = committed_graveyard_arrivals(occurrence, parts)
+    return {**context, **{field: arrivals for field in fields}}
 
 
 def committed_graveyard_arrivals(occurrence, parts):
@@ -138,20 +190,44 @@ def decode_death_battlefield_arrivals(value: object) -> tuple[DeathBattlefieldAr
 
 
 def validate_death_battlefield_return(effect) -> tuple[DeathBattlefieldArrival, ...]:
-    required = set(death_battlefield_return_effect())
+    equipment_return = DEATH_EQUIPMENT_RETURN_VERSION in effect
+    expected = death_equipment_return_effect() if equipment_return else death_battlefield_return_effect()
+    version = DEATH_EQUIPMENT_RETURN_VERSION if equipment_return else "schema_version"
+    required = set(expected)
     allowed = required | {"_replacement_selections", "_runtime_source", "_aura_target_refs"}
     if (not required <= set(effect) <= allowed or not is_death_battlefield_return(effect)
-            or type(effect["schema_version"]) is not int
-            or effect["schema_version"] != FLYING_EVENT_BATTLEFIELD_RETURN_VERSION
+            or type(effect[version]) is not int
+            or effect[version] != expected[version]
             or type(effect["source"]) is not str or not effect["source"] or effect["source"].startswith("$")
             or not isinstance(effect.get("_replacement_selections", ()), (tuple, list))):
         raise ValueError("Death return requires one closed resolving instruction")
-    arrivals = decode_death_battlefield_arrivals(effect[DEATH_BATTLEFIELD_ARRIVALS])
+    arrivals_field = DEATH_EQUIPMENT_ARRIVALS if equipment_return else DEATH_BATTLEFIELD_ARRIVALS
+    arrivals = decode_death_battlefield_arrivals(effect[arrivals_field])
     selections = effect.get("_aura_target_refs", {})
     if (not isinstance(selections, Mapping) or not set(selections) <= {row.object_id for row in arrivals}
             or any(type(ref) is not str or not ref for ref in selections.values())):
         raise ValueError("Death return Aura choices require their original public cards")
     return arrivals
+
+
+def _equipment_death_return_dependencies(program) -> tuple[str, ...]:
+    from ..util import mana_cost_to_vector
+
+    cost, _ = mana_cost_to_vector("{4}")
+    expected = {
+        "op": "offer_optional_mana_payment", "player": "$controller",
+        "cost": cost, "effects": [death_equipment_return_effect()],
+    }
+    if (
+        (program.event, program.active_zone) != ("creature.dies", "battlefield")
+        or program.target_schema is not None or program.cost_schema is not None or program.handlers
+        or DEATH_EQUIPMENT_RETURN_MECHANIC not in program.coverage
+        or "one_or_more_event_batch" in program.coverage
+        or FrozenMap(program.event_condition or {}) != FrozenMap(own_nontoken_death_condition())
+        or len(program.effects) != 1 or FrozenMap(program.effects[0]) != FrozenMap(expected)
+    ):
+        raise ValueError("Equipment return requires one paid own-graveyard nontoken creature death")
+    return DEATH_EQUIPMENT_RETURN_DEPENDENCIES
 
 
 def death_battlefield_return_runtime_dependencies(program) -> tuple[str, ...]:
@@ -177,6 +253,10 @@ def death_battlefield_return_runtime_dependencies(program) -> tuple[str, ...]:
     from .granted_death_role_return import granted_self_death_return_dependencies
 
     effects = tuple(nested_effects((program.effects, program.handlers)))
+    if DEATH_EQUIPMENT_RETURN_MECHANIC in program.coverage or any(
+        DEATH_EQUIPMENT_RETURN_VERSION in effect or DEATH_EQUIPMENT_ARRIVALS in effect for effect in effects
+    ):
+        return _equipment_death_return_dependencies(program)
     required = granted_self_death_return_dependencies(program, effects)
     if required:
         return required
@@ -193,18 +273,45 @@ def death_battlefield_return_runtime_dependencies(program) -> tuple[str, ...]:
     return DEATH_BATTLEFIELD_RETURN_DEPENDENCIES
 
 
+def _death_equipment_followup(host, item, moved):
+    equipment = host.state.cards.get(item.source_object_id)
+    if (
+        equipment is None or equipment.zone != "battlefield" or equipment.phased_out
+        or equipment.logical_object_id != item.context.get("source_logical_object_id")
+        or equipment.controller not in host.active_seats
+    ):
+        return CommittedDeathEquipmentFollowup()
+    cards = tuple(card.ref for card in moved if card.zone == "battlefield")
+    if not cards:
+        return CommittedDeathEquipmentFollowup()
+    followup = FrozenMap({
+        "op": ATTACH_RETURNED_WITH_EQUIPMENT, "player": equipment.controller,
+        "source": equipment.ref, "source_identity": {
+            "ref": equipment.ref, "object_id": equipment.object_id,
+            "incarnation": equipment.logical_object_id,
+        },
+        "cards": cards,
+    })
+    return CommittedDeathEquipmentFollowup((followup,))
+
+
 def apply_death_battlefield_return(host, effect, *, actor, reason):
     """Resolve all eligible arrivals in one battlefield-entry transaction."""
     from ..zone_transitions import ZoneTransitionOwner
 
+    equipment_return = DEATH_EQUIPMENT_RETURN_VERSION in effect
+    arrivals_field = DEATH_EQUIPMENT_ARRIVALS if equipment_return else DEATH_BATTLEFIELD_ARRIVALS
     try:
         arrivals = validate_death_battlefield_return(effect)
         source = ResolutionEffectSource.from_effect(effect)
         item = next((item for item in host.state.stack if item.ref == source.stack_ref), None)
         if (item is None or item.controller != actor or item.context.get("event") != "creature.dies"
                 or item.context.get("currently_resolving") is not True or effect["source"] != item.ref
-                or decode_death_battlefield_arrivals(item.context.get(DEATH_BATTLEFIELD_ARRIVALS)) != arrivals):
+                or decode_death_battlefield_arrivals(item.context.get(arrivals_field)) != arrivals):
             raise ValueError("Death return lost the resolving trigger and its original arrivals")
+        if equipment_return and (item.context.get("token") is not False or item.context.get("owner") != actor
+                                 or any(arrival.owner != actor for arrival in arrivals)):
+            raise ValueError("Equipment return lost its original graveyard owner or nontoken occurrence")
     except (TypeError, ValueError) as exc:
         raise GameRuleError(str(exc)) from exc
     cards = tuple(
@@ -214,7 +321,7 @@ def apply_death_battlefield_return(host, effect, *, actor, reason):
     )
     if not cards:
         return ()
-    counters = {
+    counters = {} if equipment_return else {
         card.object_id: (EffectEntryCounter("flying", 1, card.owner, item.ref, "122.6a"),) for card in cards
     }
     moved = ZoneTransitionOwner(host).move_cards_simultaneously(
@@ -225,4 +332,6 @@ def apply_death_battlefield_return(host, effect, *, actor, reason):
         replacement_selections=tuple(effect.get("_replacement_selections", ())),
         aura_target_refs=effect.get("_aura_target_refs"),
     )
+    if equipment_return:
+        return _death_equipment_followup(host, item, moved)
     return tuple(card.ref for card in moved if card.zone == "battlefield")

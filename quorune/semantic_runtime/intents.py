@@ -1,11 +1,16 @@
 from __future__ import annotations
 
 from ..rules.departing_x_reflexive import PaidDepartureDamageIntent
+
+from ..rules.name_stickers import NameStickerPlacementIntent
 from ..bounded_hand_cast_model import ResolveBoundedHandCastIntent
+from ..continuous_effect_model import ContinuousObjectIdentity
+from ..resolving_cast_budget_model import ResolveBudgetedCastIntent
 from ..stack_spell_copy_model import PermanentSpellCopySpec
 
 from ..city_blessing_model import AscendIntent
 from ..counter_placement_sets import validate_counter_set_recipient_authority
+from ..announced_counter_allocation import validate_bound_counter_shares
 from ..cipher_model import EncodeCipherIntent
 from .soulbond_intent import PairSoulbondIntent
 from .earthbend_intents import EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent
@@ -34,6 +39,7 @@ from ..next_turn_attack_restriction_model import NextTurnAttackRestrictionIntent
 from ..counter_bound_attack_model import CounterBoundAttackRestrictionIntent
 from ..extra_combat_model import ScheduleExtraCombatIntent
 from ..additional_beginning_model import ScheduleAdditionalBeginningIntent
+from ..rules.main_phase_combat_model import UntapTurnAttackersIntent
 from ..rules.token_mill_repeat import TokenMillRepeatIntent
 from ..turn_skip_model import ScheduleTurnSkipIntent
 from ..next_player_untap_model import ProhibitNextPlayerUntapIntent
@@ -81,6 +87,7 @@ from ..impulse_access_model import (
 from ..creature_subtypes import canonical_creature_subtype
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..rules.library_scry import ScryArrangement
+from .library_arrangement_intent_validation import validate_scry_intent, validate_surveil_intent
 from .library_selection_intent import LibrarySelectionIntent
 from ..rules.ripple_resolution_model import ResolveRippleCastIntent,RippleBottomIntent
 from ..rules.library_surveillance import SurveilArrangement
@@ -233,6 +240,7 @@ class DestroyPermanentSetIntent:
     replacement_selections: tuple[str | FrozenMap, ...] = ()
     followup: DestructionFollowup | None = None
     ordered_exclusion: OrderedIncarnationExclusion | None = None
+    excluded_created_tokens: tuple[ContinuousObjectIdentity, ...] = ()
 
     def __post_init__(self) -> None:
         if self.ordered_exclusion is not None and (
@@ -265,6 +273,11 @@ class DestroyPermanentSetIntent:
             raise ValueError(
                 "Destruction-set source must be a nonempty reference"
             )
+        from ..destruction_sets import validate_created_token_exclusions
+
+        validate_created_token_exclusions(self.spec, self.excluded_created_tokens)
+        if self.excluded_created_tokens and (self.regeneration_prohibited or self.followup is not None):
+            raise ValueError('Created-token exemptions require ordinary destruction')
         if self.spec.exclude_source and self.source_ref is None:
             raise ValueError(
                 "Source-excluding destruction sets require a source"
@@ -802,12 +815,7 @@ class ScryLibraryIntent:
     requested_count: int | None = None
 
     def __post_init__(self) -> None:
-        if not isinstance(self.arrangement, ScryArrangement):
-            raise TypeError("Scry intents require an immutable arrangement")
-        if self.requested_count is not None and (
-            type(self.requested_count) is not int or self.requested_count <= 0
-        ):
-            raise ValueError("Scry requested count must be a positive integer")
+        validate_scry_intent(self)
 
 
 @dataclass(frozen=True, slots=True)
@@ -820,27 +828,7 @@ class SurveilLibraryIntent:
     replacement_selections: tuple[str | FrozenMap, ...] = ()
 
     def __post_init__(self) -> None:
-        if any(
-            type(value) is not str or not value
-            for value in (self.actor, self.player, self.reason)
-        ):
-            raise ValueError(
-                "Surveil intents require an actor, player, and reason"
-            )
-        if not isinstance(self.arrangement, SurveilArrangement):
-            raise TypeError("Surveil intents require an immutable arrangement")
-        if type(self.requested_count) is not int or self.requested_count <= 0:
-            raise ValueError(
-                "Surveil intents require a positive fixed count"
-            )
-        object.__setattr__(
-            self,
-            "replacement_selections",
-            _freeze_replacement_selections(
-                tuple(self.replacement_selections),
-                family="Surveil",
-            ),
-        )
+        validate_surveil_intent(self)
 
 
 @dataclass(frozen=True, slots=True)
@@ -1126,6 +1114,7 @@ class PlaceCountersOnTargetsIntent:
     reason: str
     source_ref: str | None = None
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    target_shares: FrozenMap | None = None
 
     def __post_init__(self) -> None:
         refs = tuple(self.object_refs)
@@ -1161,6 +1150,12 @@ class PlaceCountersOnTargetsIntent:
             raise ValueError(
                 "Counter-target intent source must be a nonempty reference"
             )
+        if self.target_shares is not None:
+            shares = validate_bound_counter_shares(
+                self.target_shares, refs=refs, counter_name=normalized,
+                amount=self.amount, maximum_targets=self.maximum_targets,
+            )
+            object.__setattr__(self, "target_shares", shares)
         object.__setattr__(self, "object_refs", refs)
         object.__setattr__(self, "counter_name", normalized)
         object.__setattr__(
@@ -1553,6 +1548,7 @@ SemanticIntent: TypeAlias = (
     | DealFixedDamageSetIntent
     | AddManaIntent
     | PaidDepartureDamageIntent
+    | NameStickerPlacementIntent
     | SetCardDesignationIntent
     | BecomeMonstrousIntent
     | BecomeRenownedIntent
@@ -1577,6 +1573,7 @@ SemanticIntent: TypeAlias = (
     | RevealCapturedDrawsIntent
     | ResolveCapturedDrawCastIntent
     | ResolveBoundedHandCastIntent
+    | ResolveBudgetedCastIntent
     | ResolveRippleCastIntent
     | RippleBottomIntent
     | GraveyardCastIntent
@@ -1633,6 +1630,7 @@ SemanticIntent: TypeAlias = (
     | ScheduleTurnSkipIntent
     | ScheduleExtraCombatIntent
     | ScheduleAdditionalBeginningIntent
+    | UntapTurnAttackersIntent
     | TokenMillRepeatIntent
     | EarthbendIntent
     | FinishEarthbendIntent

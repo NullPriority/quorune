@@ -20,6 +20,7 @@ from ..util import mana_cost_to_vector
 from ..resolution_characteristic_model import CHOSEN_CREATURE_TYPE_MODIFIER_FIELD
 from ..entry_x_amount_model import (
     ENTRY_HALF_X_FOOD_CAPABILITY, ENTRY_X_AMOUNT_CAPABILITY, ENTRY_X_AMOUNT_KIND, ENTRY_X_AMOUNT_MECHANIC,
+    ENTRY_X_COUNTER_HALF_DRAW_CAPABILITY, entry_x_counter_half_draw_effects,
     EntryXAmountSpec, entry_half_x_food_effect, entry_x_amount_dependencies,
     project_entry_x_token_batch, uses_entry_x_token_batch,
 )
@@ -28,6 +29,10 @@ from ..shared_type_doors import ROOM_DOOR_AMOUNT_KIND, RoomDoorQuantity
 from ..fixed_token_production import FIXED_DISTRIBUTED_TOKEN_OPERATION, SEQUENTIAL_INVESTIGATE_OPERATION
 from ..impulse_access_model import IMPULSE_ACCESS_DECLARED_COUNT_VERSION
 from ..library_search_model import counted_search_bound_dependencies, counted_search_mana_value_slot
+from ..bounded_hand_cast_model import (
+    ANNOUNCED_X_HAND_CAST_VERSION, bounded_hand_cast_amount_slot, bounded_hand_cast_payload_dependencies,
+    has_announced_x_hand_cast_amount, with_hand_cast_version,
+)
 
 
 DECLARED_EFFECT_AMOUNT_MECHANIC = "declared-effect-amount"
@@ -80,6 +85,8 @@ def _result_slot(operation: str, path: tuple[str, ...], *, cast_event_counter_ta
         operation == FIXED_DISTRIBUTED_TOKEN_OPERATION and path == ("token", "quantity")
     ) or (
         operation == "search" and counted_search_mana_value_slot(path)
+    ) or (
+        bounded_hand_cast_amount_slot(operation, path)
     ) or (
         operation == "destroy_all" and path == ("set", "mana_value_filter", "value")
     ) or (
@@ -216,6 +223,8 @@ def declared_effect_amount_template(
         if operation == "place_counters_on_set" and (quantity is not None or coefficient != 1):
             raise PublicQueryAmountError("An affected counter set requires its unscaled announced X")
         replaced += 1
+        if bounded_hand_cast_amount_slot(operation, path) and (quantity is not None or coefficient != 1):
+            raise PublicQueryAmountError("The hand cast ceiling requires one unscaled announced X")
         return (
             PublicQueryAmountSpec(quantity=quantity, coefficient=coefficient, schema_version=2, binding_id=binding_id).to_dict()
             if quantity is not None else CastXAmountSpec(
@@ -231,6 +240,10 @@ def declared_effect_amount_template(
     effects = tuple(
         {**effect, "schema_version": IMPULSE_ACCESS_DECLARED_COUNT_VERSION}
         if effect.get("op") == "fixed_impulse_access" and isinstance(effect.get("count"), Mapping) else effect
+        for effect in effects
+    )
+    effects = tuple(
+        with_hand_cast_version(effect, ANNOUNCED_X_HAND_CAST_VERSION) if has_announced_x_hand_cast_amount(effect) else effect
         for effect in effects
     )
     # A self result must already use the existing logical-object-aware owner.
@@ -316,6 +329,13 @@ def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: 
                                    compile_effect: Callable[..., Any], face_name: str | None = None) -> Callable[..., Any]:
     """Compile the effect with the declarations available during casting."""
     from .public_library_pile_templates import public_library_piles_template
+    from .targeted_library_exile_templates import targeted_library_exile_life_spell_template
+
+    if is_spell and targeted_library_exile_life_spell_template(oracle_text) is not None:
+        def compile_target_exile_life(text, **context):
+            return targeted_library_exile_life_spell_template(text) or compile_effect(text, **context)
+
+        return compile_target_exile_life
 
     if is_spell and not record.faces and public_library_piles_template(oracle_text) is not None:
         source = oracle_text.strip().casefold()
@@ -378,6 +398,8 @@ def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: 
         from .bounded_hand_cast_templates import announced_x_damage_hand_cast_spell_compiler
         selected = announced_x_damage_hand_cast_spell_compiler(selected)
         selected = paired_token_spell_compiler(selected)
+        from .created_token_counters import announced_x_token_wipe_spell_compiler
+        selected = announced_x_token_wipe_spell_compiler(selected)
     if is_spell and not record.faces and symbols.count("X") == 1:
         from .announced_mana_value_target import announced_target_spell_compiler
         selected = announced_target_spell_compiler(selected)
@@ -581,6 +603,8 @@ def declared_amount_shape_context(
                 raise PublicQueryAmountError("The graveyard return ceiling requires the spell's announced X")
             if operation == "place_counters_on_set" and spec != CastXAmountSpec():
                 raise PublicQueryAmountError("An affected counter set requires its unscaled announced X")
+            if bounded_hand_cast_amount_slot(operation, path) and spec != CastXAmountSpec():
+                raise PublicQueryAmountError("The hand cast ceiling requires one unscaled announced X")
             count += 1
             result = 2 * spec.coefficient
             return str(result) if path in {("characteristics","power"),("characteristics","toughness")} else result
@@ -630,11 +654,18 @@ def declared_amount_shape_context(
             if independent is None:
                 raise PublicQueryAmountError("Independent instruction amount is malformed")
             return independent[0][0]
+        if has_announced_x_hand_cast_amount(effect):
+            bounded_hand_cast_payload_dependencies(effect)
+            return with_hand_cast_version(project(effect, "choose_objects", ()), 1)
         return project(effect, str(effect.get("op") or ""), ())
 
     try:
         if ENTRY_HALF_X_FOOD_CAPABILITY in entry_x_amount_dependencies(effects) and (
             target_schema is not None or thaw_value(effects) != [entry_half_x_food_effect()]
+        ):
+            return None
+        if ENTRY_X_COUNTER_HALF_DRAW_CAPABILITY in entry_x_amount_dependencies(effects) and (
+            target_schema is not None or thaw_value(effects) != list(entry_x_counter_half_draw_effects())
         ):
             return None
         fixed = tuple(project_instruction(effect) for effect in effects)

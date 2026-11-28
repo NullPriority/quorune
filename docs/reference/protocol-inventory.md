@@ -2,7 +2,7 @@
 title: "Generated protocol inventory"
 status: "generated"
 authoritative_source: "server FastAPI OpenAPI output and versioned schemas/*.json"
-verified: "9fef235aee02349ea9325ae8c42ca9ebb98dd6d56ebfea90fd694469df1657f6"
+verified: "7d47b2b7790a2457fafc9b5d7898775d7f9888a9edf87ed55736ff20795ec257"
 audience: "client, server, and protocol contributors"
 maintenance: "generated"
 generated_source: "coverage/protocol-inventory.json"
@@ -11,13 +11,13 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_protocol_referenc
 
 # Generated protocol inventory
 
-Source fingerprint: `7072509d7ad75443aeac2a24699c1937d779522171f85d94bc9456d89fceb275`
+Source fingerprint: `ad2b2abb275ecb9a8c60cb132eea9269e1d020c7f0b64c64bd849c3d0cf2c7a3`
 
 ## Current top-level state
 
 - API title: `Quorune Server`
 - API version: `0.9.0`
-- HTTP operations: `29`
+- HTTP operations: `30`
 - WebSocket routes: `1`
 - Versioned schemas: `17`
 
@@ -42,6 +42,7 @@ Source fingerprint: `7072509d7ad75443aeac2a24699c1937d779522171f85d94bc9456d89fc
 | `POST` | `/api/v1/guests` | `create_guest_api_v1_guests_post` |
 | `GET` | `/api/v1/health` | `health_api_v1_health_get` |
 | `GET` | `/api/v1/me` | `me_api_v1_me_get` |
+| `GET` | `/api/v1/me/deck-editor/printings` | `deck_editor_printings_api_v1_me_deck_editor_printings_get` |
 | `GET` | `/api/v1/me/decks` | `saved_decks_api_v1_me_decks_get` |
 | `GET` | `/api/v1/me/decks/{deck_id}` | `saved_deck_api_v1_me_decks__deck_id__get` |
 | `GET` | `/api/v1/me/games` | `recent_games_api_v1_me_games_get` |

@@ -74,7 +74,9 @@ def finish_contextual_face(context, leveler, oracle_id, face_id, face_name, orac
     from .enchanted_departure_return_templates import require_enchanted_departure_restriction
     from .leveler_context_nodes import leveler_face_ir
     from .linked_exile_characteristics import paired_linked_exile_characteristics
+    from .linked_exile_owner_tokens import paired_linked_exile_owner_tokens
     from .linked_hand_mana import paired_linked_hand_mana
+    from .linked_graveyard_mana import paired_linked_graveyard_mana
     from .linked_color_cast_exile import paired_linked_color_cast_exile
     from .linked_graveyard_play_templates import paired_linked_graveyard_play
 
@@ -83,6 +85,8 @@ def finish_contextual_face(context, leveler, oracle_id, face_id, face_name, orac
         residuals=residuals, append_residual=append_residual,
     )
     nodes = require_enchanted_departure_restriction(nodes, residuals)
+    nodes = paired_linked_exile_owner_tokens(nodes, residuals, oracle_id=oracle_id, face_id=face_id,
+        registry=capability_registry, profile=capability_profile)
     nodes = paired_linked_exile_characteristics(nodes, residuals, source_name=face_name or oracle_id, face=face_id,
         capability_registry=capability_registry, capability_profile=capability_profile)
     nodes = paired_linked_color_cast_exile(nodes, residuals, source_name=context.source_name, oracle_id=oracle_id,
@@ -93,6 +97,8 @@ def finish_contextual_face(context, leveler, oracle_id, face_id, face_name, orac
         capability_profile=capability_profile)
     nodes = paired_linked_graveyard_play(nodes, residuals, source_name=face_name or oracle_id, oracle_id=oracle_id,
         face_id=face_id, capability_registry=capability_registry, capability_profile=capability_profile)
+    nodes = paired_linked_graveyard_mana(nodes, residuals, oracle_id=oracle_id, face_id=face_id,
+        source_types=context.single_face_types, capability_registry=capability_registry, capability_profile=capability_profile)
     face = leveler_face_ir(leveler, oracle_id, face_id, face_name, oracle_text, material_rows,
         keywords, nodes, residuals, capability_registry, capability_profile)
     return apply_context(face, context, capability_registry=capability_registry, capability_profile=capability_profile)

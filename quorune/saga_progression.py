@@ -20,7 +20,7 @@ from .counter_placement import (
     prepare_counter_placements,
 )
 from .model import StackItem
-from .saga_lifecycle import SagaFinalChapterSnapshot
+from .saga_lifecycle import FINAL_SAGA_CHAPTER_RESOLVED_EVENT, SagaFinalChapterSnapshot
 from .trigger_processing import enqueue_trigger_batch
 from .semantic_runtime.current_ability_components import (
     program_has_current_ability_fragments,
@@ -210,6 +210,48 @@ def _chapter_item_matches_incarnation(
     )
 
 
+def dispatch_resolved_final_saga_chapter(host: SagaProgressionHost, item: StackItem) -> None:
+    """Observe a completed chapter before the next state-action check."""
+    if (item.kind not in {"triggered_ability", "triggered_ability_copy"} or item.semantic_key is None
+            or not host.semantics.programs_for_event(FINAL_SAGA_CHAPTER_RESOLVED_EVENT)):
+        return
+    program = host.semantics.get(item.semantic_key)
+    if program is None:
+        return
+    match = _CHAPTER_EVENT.fullmatch(str(program.event or ""))
+    if match is None or not host.semantic_program_is_current_trusted(program):
+        return
+    saga = host.state.cards.get(item.source_object_id)
+    if (saga is None or item.context.get("source_logical_object_id") != saga.logical_object_id
+            or not _is_current_saga(host, saga)):
+        return
+    chapter = int(match["number"])
+    chapters = represented_chapter_numbers(host, saga)
+    if not chapters or chapter != chapters[-1]:
+        return
+
+    sources = tuple(
+        card for card in (
+            host.state.cards[object_id]
+            for object_id in host.state.players[saga.controller].zones["battlefield"]
+        )
+        if not card.phased_out and any(
+            observer.event == FINAL_SAGA_CHAPTER_RESOLVED_EVENT
+            for observer in host.semantics.programs_for_oracle(copiable_oracle_id(card))
+        )
+    )
+    if sources:
+        from .public_quantity_reductions import public_mana_value
+
+        host._dispatch_semantic_event(FINAL_SAGA_CHAPTER_RESOLVED_EVENT, {
+            "card": saga.ref,
+            "card_object_identity": saga.logical_object_id,
+            "controller": saga.controller,
+            "chapter": chapter,
+            "mana_value": public_mana_value(host._effective_card_data(saga)),
+        })
+
+
 def saga_chapter_trigger_pending(
     host: SagaProgressionHost,
     card: Any,
@@ -374,8 +416,16 @@ def dispatch_saga_chapters(
     represented = set(represented_chapter_numbers(host, card))
     if not represented:
         return
+    from .ability_fragment_primitives import current_saga_read_ahead_grants
+    from .keyword_abilities import normalized_effective_keywords
+
+    read_ahead_entry_turn = (
+        current_saga_read_ahead_grants(host.state)
+        and 0 < card.entered_battlefield_turn_sequence == host.state.turn_sequence
+        and "read ahead" in normalized_effective_keywords(host, card)
+    )
     for chapter in range(previous_lore + 1, current_lore + 1):
-        if chapter not in represented:
+        if chapter not in represented or (read_ahead_entry_turn and chapter != current_lore):
             continue
         host._dispatch_semantic_event(
             f"saga.chapter.{chapter}",

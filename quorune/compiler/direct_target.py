@@ -734,6 +734,7 @@ class DirectPermanentTargetSpec:
     controller_controls_island: bool = False
     power_at_most_controlled_islands: bool = False
     characteristic_forms_any: tuple[TargetCharacteristicForm, ...] = ()
+    has_activated_tap_cost: bool = False
 
     def __post_init__(self) -> None:
         _canonicalize_direct_target_spec(self)
@@ -752,13 +753,16 @@ class DirectPermanentTargetSpec:
         island_flags = (self.controller_controls_island, self.power_at_most_controlled_islands)
         if any(type(flag) is not bool for flag in island_flags) or all(island_flags):
             raise ValueError("A direct creature target can specify at most one Island qualification")
-        if any(island_flags):
+        if type(self.has_activated_tap_cost) is not bool or (self.has_activated_tap_cost and any(island_flags)):
+            raise ValueError("A tap-symbol qualification requires a distinct creature target role")
+        if any(island_flags) or self.has_activated_tap_cost:
             schema = self.to_target_schema()
             del schema["predicate"]
-            if schema not in (
-                DirectPermanentTargetSpec(types_any=("creature",)).to_target_schema(),
-                DirectPermanentTargetSpec(types_all=("creature",)).to_target_schema(),
-            ):
+            creature = DirectPermanentTargetSpec(types_any=("creature",)).to_target_schema()
+            if self.has_activated_tap_cost:
+                if schema != creature:
+                    raise ValueError("A tap-symbol qualification requires the exact creature target role")
+            elif schema not in (creature, DirectPermanentTargetSpec(types_all=("creature",)).to_target_schema()):
                 raise ValueError("An Island qualification requires the exact creature target role")
 
     @property
@@ -864,6 +868,8 @@ class DirectPermanentTargetSpec:
             predicate += "-controller-controls-island"
         if self.power_at_most_controlled_islands:
             predicate += "-power-at-most-controlled-islands"
+        if self.has_activated_tap_cost:
+            predicate += "-with-activated-tap-cost"
         if self.combat_state is not None:
             predicate += "-" + self.combat_state.replace("_", "-")
         if self.damage_history is not None:
@@ -895,6 +901,7 @@ class DirectPermanentTargetSpec:
             or self.mana_value_max is not None
             or self.mana_value_equal is not None
             or self.numeric_characteristic is not None
+            or self.has_activated_tap_cost
         )
 
     @property
@@ -962,6 +969,10 @@ class DirectPermanentTargetSpec:
             schema["predicate"] = (
                 CONTROLLER_ISLAND_TARGET_PREDICATE if self.controller_controls_island else ISLAND_COUNT_POWER_TARGET_PREDICATE
             )
+        if self.has_activated_tap_cost:
+            from ..targets import ACTIVATED_TAP_COST_TARGET_PREDICATE
+
+            schema["predicate"] = ACTIVATED_TAP_COST_TARGET_PREDICATE
         if self.damage_history is not None:
             schema["damage_history"] = self.damage_history.to_dict()
         if self.characteristic_forms_any:
@@ -1011,9 +1022,14 @@ class DirectPermanentTargetSpec:
             "damage_history",
             *(('commander',) if allow_commander else ()),
         }
-        from ..targets import CONTROLLER_ISLAND_TARGET_PREDICATE, ISLAND_COUNT_POWER_TARGET_PREDICATE
+        from ..targets import (
+            ACTIVATED_TAP_COST_TARGET_PREDICATE, CONTROLLER_ISLAND_TARGET_PREDICATE,
+            ISLAND_COUNT_POWER_TARGET_PREDICATE,
+        )
+
         if "predicate" in schema and schema["predicate"] not in (
             CONTROLLER_ISLAND_TARGET_PREDICATE, ISLAND_COUNT_POWER_TARGET_PREDICATE,
+            ACTIVATED_TAP_COST_TARGET_PREDICATE,
         ):
             raise ValueError("Direct permanent target predicate is unsupported")
         if set(schema) - allowed:
@@ -1072,6 +1088,7 @@ class DirectPermanentTargetSpec:
             commander=schema.get("commander"),
             controller_controls_island=schema.get("predicate") == CONTROLLER_ISLAND_TARGET_PREDICATE,
             power_at_most_controlled_islands=schema.get("predicate") == ISLAND_COUNT_POWER_TARGET_PREDICATE,
+            has_activated_tap_cost=schema.get("predicate") == ACTIVATED_TAP_COST_TARGET_PREDICATE,
             combat_state=schema.get("combat_state"),
             damage_history=(
                 TargetDamageHistorySpec.from_mapping(schema["damage_history"])
@@ -1151,6 +1168,8 @@ def direct_permanent_target_spec(
         return DirectPermanentTargetSpec(types_any=("creature",), controller_controls_island=True)
     if phrase == "target creature with power less than or equal to the number of islands you control":
         return DirectPermanentTargetSpec(types_any=("creature",), power_at_most_controlled_islands=True)
+    if phrase == "target creature that has an activated ability with {t} in its cost":
+        return DirectPermanentTargetSpec(types_any=("creature",), has_activated_tap_cost=True)
     exclude_source = phrase.startswith("another target ")
     if exclude_source:
         phrase = phrase[len("another target ") :]

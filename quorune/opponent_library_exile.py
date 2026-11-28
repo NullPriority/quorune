@@ -171,6 +171,8 @@ def current_opponent_library_exile_play_permission(state, seat, card):
     private = current_private_top_exile_permission(state, seat, card)
     if private is not None:
         return private
+    from .rules.opponents_graveyards_exile_cast import current_graveyard_exile_cast_permission
+
     identity = card.annotations.get(INCARNATION_PLAY_FIELD)
     player = state.players.get(seat)
     if (
@@ -180,7 +182,7 @@ def current_opponent_library_exile_play_permission(state, seat, card):
         or tuple(identity) != (seat, card.logical_object_id)
         or player is None or not player.in_game
     ):
-        return None
+        return current_graveyard_exile_cast_permission(state, seat, card)
     return {
         "player": seat, "zone": "exile", "without_mana_cost": False,
         "allow_land": True, "allow_spell": True, "duration": "while_exiled",
@@ -188,10 +190,13 @@ def current_opponent_library_exile_play_permission(state, seat, card):
 
 
 def opponent_library_exile_spend_context(state, seat, card, spend_context):
-    permission = current_opponent_library_exile_play_permission(state, seat, card)
+    from .rules.opponents_graveyards_exile_cast import current_graveyard_exile_cast_permission
     from .combat_damage_library_exile import COMBAT_DAMAGE_COLOR_CAST_INCARNATION_FIELD
     from .impulse_access import current_temporary_play_permission
     from .rules.private_opponent_top_exile import DURATION
+
+    permission = (current_graveyard_exile_cast_permission(state, seat, card)
+                  or current_opponent_library_exile_play_permission(state, seat, card))
 
     if permission is None and card.zone == "exile":
         temporary = current_temporary_play_permission(state, seat, card)
@@ -199,6 +204,8 @@ def opponent_library_exile_spend_context(state, seat, card, spend_context):
             from .mana_restrictions import exile_play_mana_spend_context
 
             return exile_play_mana_spend_context(spend_context, seat, color_only=True)
+
+    permission = current_graveyard_exile_cast_permission(state, seat, card) or current_opponent_library_exile_play_permission(state, seat, card)
 
     if permission is None or (permission["duration"] == DURATION and not permission.get("allow_any_mana_type")):
         return spend_context
@@ -245,7 +252,7 @@ def separately_payable_exile_cast_base_options(
     free = printed_base_options(
         host, seat, card, program, x_value=x_value, hint=hint, cast_without_mana=True,
         alternative_base=None, suppress_source_costs=suppress_source_costs,
-        resolving_exile_authority=False,
+        resolving_paid_zone=None,
     )
     if free is None:
         return ()
@@ -256,7 +263,7 @@ def separately_payable_exile_cast_base_options(
     return zone_base_options(
         host, seat, card, free[0], cast_without_mana=True, force_without_mana_cost=False,
         alternative_base=None, suppress_source_costs=suppress_source_costs,
-        resolving_exile_authority=False,
+        resolving_paid_zone=None,
     )
 
 

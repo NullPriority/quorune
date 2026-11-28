@@ -175,7 +175,8 @@ def _protection_predicate_verdict(
 def protection_verdict(
     protected_characteristics: Mapping[str, Any],
     source: ProtectionSource | None,
-    *, retaining_aura: str | None = None, source_player: str | None = None,
+    *, retaining_aura: str | None = None, retaining_attachment=None, simultaneous_sources=(),
+    source_player: str | None = None,
 ) -> ProtectionVerdict:
     """Evaluate represented DEBT protection qualities without Oracle text.
 
@@ -188,12 +189,19 @@ def protection_verdict(
     if specs is None:
         return ProtectionVerdict.UNRESOLVED
     had_specs=bool(specs)
-    if retaining_aura is not None:
-        from .protection_attachment_exceptions import protection_specs_for_retained_aura
-        try:specs=protection_specs_for_retained_aura(specs,retaining_aura)
-        except ValueError:return ProtectionVerdict.UNRESOLVED
+    if retaining_aura is not None or retaining_attachment is not None or simultaneous_sources:
+        from .protection_attachment_exceptions import protection_specs_for_current_attachment
+
+        try:
+            specs = protection_specs_for_current_attachment(
+                specs, retaining_aura=retaining_aura, retaining_attachment=retaining_attachment,
+                simultaneous_sources=simultaneous_sources,
+            )
+        except ValueError:
+            return ProtectionVerdict.UNRESOLVED
     if not specs:
-        if retaining_aura is not None and had_specs:return ProtectionVerdict.ALLOWED
+        if had_specs:
+            return ProtectionVerdict.ALLOWED
         return (
             ProtectionVerdict.UNRESOLVED
             if _has_untyped_protection_keyword(protected_characteristics)
@@ -266,7 +274,7 @@ def protection_verdict_for_ref(
     host: ProtectionQueryHost,
     protected_characteristics: Mapping[str, Any],
     source_ref: str | None,
-    *, source_player: str | None = None,
+    *, source_player: str | None = None, retaining_attachment=None,
 ) -> ProtectionVerdict:
     """Apply typed protection using one canonical source-reference query."""
 
@@ -274,6 +282,7 @@ def protection_verdict_for_ref(
     source = ProtectionSource.from_characteristics(host._effective_card_data(card)) if card is not None else None
     return protection_verdict(
         protected_characteristics, source, source_player=source_player if source_player is not None else object_player,
+        retaining_attachment=retaining_attachment,
     )
 
 

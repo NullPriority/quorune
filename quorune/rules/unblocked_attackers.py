@@ -1,6 +1,13 @@
 """Read current declaration membership; delegate occurrences to APNAP trigger owners."""
-from ..unblocked_attacker_model import (UNBLOCKED_ATTACKER_EVENT,UNBLOCKED_ATTACKER_CAPABILITY,
-    UnblockedAttackerOccurrence,unblocked_attacker_event_version,unblocked_defender_poison_effect)
+from ..unblocked_attacker_model import (
+    CURRENT_UNBLOCKED_ATTACKER_EVENT_VERSION,
+    UNBLOCKED_ATTACKER_EVENT,
+    UNBLOCKED_ATTACKER_CAPABILITY,
+    UNBLOCKED_PLAYER_ATTACK_EVENT,
+    UnblockedAttackerOccurrence,
+    unblocked_attacker_event_version,
+    unblocked_defender_poison_effect,
+)
 
 
 def unblocked_attacker_occurrences(host):
@@ -19,11 +26,27 @@ def unblocked_attacker_occurrences(host):
     return tuple(sorted(rows,key=lambda r:(r.reference,r.logical_object_id)))
 
 
+def unblocked_player_attack_pairs(rows, attack_targets):
+    """Group unblocked attackers by controller and actual player recipient."""
+    return tuple(sorted({
+        (row.controller, row.defending_player)
+        for row in rows
+        if row.controller != row.defending_player
+        and attack_targets.get(row.object_id) == row.defending_player
+    }))
+
+
 def unblocked_attacker_trigger_items(host,*,rows=None):
     if rows is None:rows=unblocked_attacker_occurrences(host)
     if not rows:return [],()
     sources=tuple(host._semantic_event_sources(zones={'battlefield'}));items=[];refs=[]
     for row in rows:refs.extend(host._dispatch_semantic_event(UNBLOCKED_ATTACKER_EVENT,row.semantic_context(),sources=sources,trigger_batch=items))
+    if host.state.unblocked_attacker_event_version == CURRENT_UNBLOCKED_ATTACKER_EVENT_VERSION:
+        for attacker, defender in unblocked_player_attack_pairs(rows, host.state.combat.attackers):
+            refs.extend(host._dispatch_semantic_event(
+                UNBLOCKED_PLAYER_ATTACK_EVENT, {"attacking_player": attacker, "defender": defender},
+                sources=sources, trigger_batch=items,
+            ))
     return items,tuple(refs)
 
 
@@ -31,6 +54,13 @@ def unblocked_attacker_runtime_dependencies(program):
     from .event_subscriptions import FixedEventSubscriptionSet
     subscriptions=FixedEventSubscriptionSet.from_condition(program.event_condition)
     events={s.event.removesuffix('.self') for s in subscriptions.subscriptions} if subscriptions else {program.event.removesuffix('.self')}
+    if UNBLOCKED_PLAYER_ATTACK_EVENT in events:
+        from .event_player_result_shapes import unblocked_source_control_program_capabilities
+
+        required = unblocked_source_control_program_capabilities(program)
+        if not required:
+            raise ValueError("Unblocked player combat requires its complete player result and original source")
+        return required
     return (UNBLOCKED_ATTACKER_CAPABILITY,) if UNBLOCKED_ATTACKER_EVENT in events else ()
 
 

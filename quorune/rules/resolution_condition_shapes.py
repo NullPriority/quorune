@@ -9,6 +9,10 @@ from ..cast_origin_replacement import (
     MAIN_PHASE_CAST_ADDITIVE_VERSION, MAIN_PHASE_CAST_DISCARD_VERSION, MAIN_PHASE_CAST_UNTAP_VERSION,
     is_main_phase_cast_replacement, validate_cast_origin_replacement, validate_main_phase_cast_replacement,
 )
+from ..graveyard_cast_reanimation_copy import (
+    GRAVEYARD_REANIMATION_COPY_CAPABILITY, GRAVEYARD_REANIMATION_COPY_VERSION,
+    is_graveyard_reanimation_copy_target,
+)
 from ..resolution_conditions import (
     PUBLIC_SELF_REPLACEMENT_CAPABILITY,
     GREATEST_POWER_TARGET_DISCARD_VERSION,
@@ -172,6 +176,19 @@ def _cast_replacement_capabilities(effects, target_schema, mechanics):
         return _main_phase_cast_replacement_capabilities(wrapper, target_schema, mechanics)
     try:
         _condition, alternate = validate_cast_origin_replacement(wrapper)
+        if wrapper["schema_version"] == GRAVEYARD_REANIMATION_COPY_VERSION:
+            if not is_graveyard_reanimation_copy_target(target_schema) or not set(wrapper["mechanic_ids"]) <= set(mechanics):
+                return ()
+            movement = capability_dependencies_for_node(
+                effects=tuple(wrapper["otherwise_effects"]), target_schema=target_schema,
+                mechanic_ids=wrapper["otherwise_mechanic_ids"],
+            )
+            if not movement:
+                return ()
+            return tuple(sorted({
+                RESOLUTION_CONDITION_CAPABILITY, GRAVEYARD_REANIMATION_COPY_CAPABILITY,
+                "target.revalidate_resolution", *movement,
+            }))
         target = CREATURE_TARGET if alternate[0]["op"] == "place_counters" else None
         if wrapper["schema_version"] == GRAVEYARD_CAST_COPY_REPLACEMENT_VERSION:
             from ..stack_spell_copy_model import FixedStackSpellCopySpec
@@ -414,6 +431,29 @@ def _controlled_artifact_tap_exile_capabilities(effects, target_schema, mechanic
     return tuple(sorted(dependencies))
 
 
+def _independent_paid_mana_results(effects, target_schema, mechanics, cost_schema):
+    from ..spell_mana_conditions import PAID_MANA_CONDITION_MECHANIC
+
+    if target_schema is not None or cost_schema is not None or not 2 <= len(effects) <= 5:
+        return ()
+    used_colors, required = set(), set()
+    for wrapper in effects:
+        try:
+            condition, _ = validate_resolution_condition_instruction(wrapper)
+            owned_mechanics = {RESOLUTION_CONDITION_MECHANIC, PAID_MANA_CONDITION_MECHANIC, *wrapper["mechanic_ids"]}
+            color = condition.mana_type
+            if wrapper["prefix_mechanic_ids"] or color in used_colors or not owned_mechanics <= mechanics:
+                return ()
+        except (AttributeError, TypeError, ValueError, KeyError):
+            return ()
+        dependencies = _ordinary_resolution_condition_node_capabilities((wrapper,), None, owned_mechanics, None)
+        if not dependencies:
+            return ()
+        required.update(dependencies)
+        used_colors.add(color)
+    return tuple(sorted(required))
+
+
 def _ordinary_resolution_condition_node_capabilities(effects, target_schema, mechanic_ids, cost_schema):
     from .capabilities import capability_dependencies_for_node
     from .targeted_turn_target_prohibition import uses_targeted_turn_prohibition, targeted_turn_prohibition_node_capabilities
@@ -426,6 +466,9 @@ def _ordinary_resolution_condition_node_capabilities(effects, target_schema, mec
     mechanics = set(mechanic_ids)
     if RESOLUTION_CONDITION_MECHANIC not in mechanics or not effects:
         return ()
+    if len(effects) > 1 and all(effect.get("op") == RESOLUTION_CONDITION_OPERATION
+                                and effect.get("schema_version") == 6 for effect in effects):
+        return _independent_paid_mana_results(effects, target_schema, mechanics, cost_schema)
     wrapper = effects[-1]
     if wrapper.get("schema_version") == CONTROLLED_ARTIFACT_TAP_EXILE_VERSION:
         return _controlled_artifact_tap_exile_capabilities(effects, target_schema, mechanics, cost_schema)

@@ -59,6 +59,31 @@ def current_printed_cast_mana_cost(host,card,record):
     return str(face.get('mana_cost') or '') if face is not None else record.mana_cost
 
 
+def graveyard_printed_cast_price(host, seat, card):
+    physical = host.state.cards.get(card.object_id)
+    if (physical is None or physical.zone != "graveyard" or card.zone != "graveyard"
+            or physical.owner != seat or physical.object_kind != "card"
+            or physical.logical_object_id != card.logical_object_id):
+        return None
+    if card.face_down or card.annotations.get("prospective_cast_prototype") or card.annotations.get("prospective_cast_fuse"):
+        return None
+    record = host.card_record(physical)
+    if record is None:
+        return None
+    face = card.active_face
+    if record.faces:
+        front = str(record.faces[0]["name"])
+        face = face or front
+        if face != front and record.layout not in {"split", "adventure", "modal_dfc"}:
+            return None
+    for view in (physical, card):
+        types, _, _ = host._type_parts(str(host._effective_card_data(view).get("type_line") or ""))
+        if "land" in types:
+            return None
+    mana_cost = current_printed_cast_mana_cost(host, card, record).strip()
+    return (face, mana_cost) if mana_cost else None
+
+
 def printed_phyrexian_cast_options(mana_cost: str, *, x_value: int, commander_tax: int) -> list[dict[str, Any]]:
     """Price printed symbols while retaining the chosen mana and life components."""
     from ...activation_mana_cost import fixed_complex_activation_mana_options
@@ -215,7 +240,7 @@ def build_cast_cost_options(
     alternative_base: Mapping[str, Any] | None = None,
     cast_type_line: str | None = None,
     suppress_source_costs: bool = False,
-    resolving_exile_authority: bool = False,
+    resolving_paid_zone: str | None = None,
     resolving_library_authority: bool = False,
     ignore_timing: bool = False,
 ) -> tuple[CastCostOption, ...]:
@@ -240,7 +265,7 @@ def build_cast_cost_options(
     price = partial(_cast_cost_options_for_submission, host, seat, card, program,
         hint=hint, force_without_mana_cost=force_without_mana_cost, alternative_base=alternative_base,
         cast_type_line=cast_type_line, suppress_source_costs=suppress_source_costs,
-        resolving_exile_authority=resolving_exile_authority,ignore_timing=ignore_timing)
+        resolving_paid_zone=resolving_paid_zone,ignore_timing=ignore_timing)
 
     def build(announcement, **options):
         announced_x = announcement.get("x")

@@ -7,24 +7,35 @@ from collections.abc import Mapping
 from .blight_model import BLIGHT_COUNTER, blight_creature_predicate
 
 SELECTED_PLUS_COUNTER_COST_KIND = "remove_one_plus_one_counter"
+SELECTED_MINUS_COUNTER_COST_KIND = "remove_one_minus_one_counter"
 SELECTED_COUNTER_COST_CAPABILITY = "activation.selected_counter_removal.fixed"
+SELECTED_PERMANENT_COUNTER_COST_KIND = "remove_one_counter_from_permanent"
+SELECTED_PERMANENT_COUNTER_COST_CAPABILITY = "activation.selected_counter_removal.any_kind"
 DISTRIBUTED_PLUS_COUNTER_COST_KIND = "remove_two_distributed_plus_one_counters"
 DISTRIBUTED_PLUS_COUNTER_COST_CAPABILITY = "activation.selected_counter_removal.distributed_two"
 BLIGHT_ACTIVATION_COST_KIND = "blight"
 BLIGHT_ACTIVATION_COST_CAPABILITY = "activation.blight.fixed"
+REMOVAL_COUNTER_NAMES = {
+    SELECTED_PLUS_COUNTER_COST_KIND: "+1/+1",
+    SELECTED_MINUS_COUNTER_COST_KIND: "-1/-1",
+    DISTRIBUTED_PLUS_COUNTER_COST_KIND: "+1/+1",
+}
 SELECTED_COUNTER_COST_CAPABILITIES = {
     SELECTED_PLUS_COUNTER_COST_KIND: SELECTED_COUNTER_COST_CAPABILITY,
+    SELECTED_PERMANENT_COUNTER_COST_KIND: SELECTED_PERMANENT_COUNTER_COST_CAPABILITY,
+    SELECTED_MINUS_COUNTER_COST_KIND: SELECTED_COUNTER_COST_CAPABILITY,
     DISTRIBUTED_PLUS_COUNTER_COST_KIND: DISTRIBUTED_PLUS_COUNTER_COST_CAPABILITY,
     BLIGHT_ACTIVATION_COST_KIND: BLIGHT_ACTIVATION_COST_CAPABILITY,
 }
 
 
 def validate_selected_counter_choice(choice):
+    card_type = "permanent" if choice.kind == SELECTED_PERMANENT_COUNTER_COST_KIND else "creature"
     if (choice.kind not in SELECTED_COUNTER_COST_CAPABILITIES
             or type(choice.count) is not int or choice.count != 1
-            or choice.zone != "battlefield" or choice.card_type != "creature"
+            or choice.zone != "battlefield" or choice.card_type != card_type
             or choice.another is not False or choice.predicate is not None):
-        raise ValueError("Selected counter costs require one controlled creature")
+        raise ValueError(f"Selected counter costs require one controlled {card_type}")
     if choice.kind == BLIGHT_ACTIVATION_COST_KIND:
         if type(choice.counter_amount) is not int or choice.counter_amount <= 0:
             raise ValueError("A Blight cost requires a positive fixed counter amount")
@@ -34,6 +45,13 @@ def validate_selected_counter_choice(choice):
 
 def blight_activation_choice(ability):
     return next((choice for choice in ability.choices if choice.kind == BLIGHT_ACTIVATION_COST_KIND), None)
+
+
+def mana_first_counter_cost_choice(ability):
+    """Use live mana procurement before paying a composed counter cost."""
+    return next((choice for choice in ability.choices if choice.kind in (
+        BLIGHT_ACTIVATION_COST_KIND, SELECTED_MINUS_COUNTER_COST_KIND,
+    )), None)
 
 
 def blight_activation_cost_is_closed(ability):
@@ -56,6 +74,8 @@ def selected_counter_cost_candidates(host, actor, choice):
     )
 
     validate_selected_counter_choice(choice)
+    if choice.kind == SELECTED_PERMANENT_COUNTER_COST_KIND:
+        return tuple(dict.fromkeys(card.ref for card, _payment in selected_permanent_counter_payments(host, actor)))
     blight = choice.kind == BLIGHT_ACTIVATION_COST_KIND
     permissions = collect_counter_permissions(host) if blight else None
     rows = []
@@ -71,7 +91,9 @@ def selected_counter_cost_candidates(host, actor, choice):
             known_to_actor=True, attached_to_ref=None))
     query = blight_creature_predicate(actor) if blight else ObjectQuerySpec(
         zones=("battlefield",), controller=actor, types_all=("creature",),
-        state_predicate=PermanentStatePredicateSpec(counter_name="+1/+1", minimum_counter_count=1),
+        state_predicate=PermanentStatePredicateSpec(
+            counter_name=REMOVAL_COUNTER_NAMES[choice.kind], minimum_counter_count=1,
+        ),
     )
     eligible = tuple(query_objects(rows, query))
     if choice.kind == DISTRIBUTED_PLUS_COUNTER_COST_KIND and len(eligible) == 1:
@@ -89,6 +111,10 @@ def has_distributed_counter_cost(ability):
 
 
 def blight_activation_cost_candidates(host, actor, source, ability, choice):
+    return counter_cost_candidates_with_mana(host, actor, source, ability, choice)
+
+
+def counter_cost_candidates_with_mana(host, actor, source, ability, choice):
     from ..cost_payments import sacrificing_mana_source_ids
     from ..mana_restrictions import ability_mana_spend_context
     from .activation.pricing import payable_activation_mana_options
@@ -145,6 +171,34 @@ def select_counter_cost_creature(host, actor, ability, response):
                 if host.state.cards[object_id].ref == ref)
 
 
+def _mana_first_counter_error(exc, choice):
+    from .activation.model import ActivationProposalError
+
+    reason = "blight_cost_unpayable" if choice.kind == BLIGHT_ACTIVATION_COST_KIND else "selected_counter_cost_unpayable"
+    return ActivationProposalError(str(exc), reason=reason)
+
+
+def reserve_mana_first_counter_payer(host, proposal, ability, choice, response):
+    try:
+        payer = select_counter_cost_creature(host, proposal.seat, ability, response)
+    except ValueError as exc:
+        raise _mana_first_counter_error(exc, choice) from exc
+    return payer.object_id, payer.ref, payer.logical_object_id
+
+
+def pay_mana_first_counter_cost(host, proposal, source, ability, choice, payer_identity, response):
+    from ..replacement.ordering import ReplacementChoiceRequired
+
+    try:
+        if choice.kind == BLIGHT_ACTIVATION_COST_KIND:
+            return pay_blight_activation_cost(host, proposal, choice, payer_identity, response)
+        return pay_selected_counter_cost(host, proposal.seat, source, ability, response)
+    except ReplacementChoiceRequired:
+        raise
+    except ValueError as exc:
+        raise _mana_first_counter_error(exc, choice) from exc
+
+
 def _distributed_counter_selection(host, actor, ability, response):
     if len(ability.choices) != 1 or ability.choices[0].kind != DISTRIBUTED_PLUS_COUNTER_COST_KIND:
         raise ValueError("Distributed payment requires its one isolated counter cost")
@@ -166,15 +220,45 @@ def _distributed_counter_selection(host, actor, ability, response):
     return cards, 2 if len(cards) == 1 else 1
 
 
+def selected_permanent_counter_payments(host, actor):
+    """Offer a public choice identifying the counter and its current controlled permanent."""
+    from .activation.source_counter_choices import source_counter_payment_choices
+    from .activation_counter_cost import SourceCounterRemovalCost
+
+    cost = SourceCounterRemovalCost(None, 1, 2)
+    for object_id in host.state.players[actor].zones["battlefield"]:
+        card = host.state.cards[object_id]
+        if card.controller == actor:
+            for payment in source_counter_payment_choices(card, cost):
+                yield card, payment
+
+
+def _selected_permanent_counter_payment(host, actor, response):
+    from .activation.source_counter_choices import SOURCE_COUNTER_PAYMENT_FIELD
+
+    value = response.get(SOURCE_COUNTER_PAYMENT_FIELD)
+    if type(value) is not str or "cost_cards" in response or "cost_objects" in response:
+        raise ValueError("Choose one counter on a permanent you control")
+    for card, payment in selected_permanent_counter_payments(host, actor):
+        if payment.choice_id == value:
+            (name, amount), = payment.removals
+            return card, name, amount
+    raise ValueError("The selected permanent counter payment is unavailable or stale")
+
+
 def pay_selected_counter_cost(host, actor, source, ability, response):
     from ..counter_removal import CounterRemoval, commit_counter_removals, plan_counter_removals
 
-    if has_distributed_counter_cost(ability):
+    counter_name = REMOVAL_COUNTER_NAMES.get(ability.choices[0].kind, "+1/+1")
+    if ability.choices[0].kind == SELECTED_PERMANENT_COUNTER_COST_KIND:
+        card, counter_name, amount = _selected_permanent_counter_payment(host, actor, response)
+        cards = (card,)
+    elif has_distributed_counter_cost(ability):
         cards, amount = _distributed_counter_selection(host, actor, ability, response)
     else:
         cards, amount = (select_counter_cost_creature(host, actor, ability, response),), 1
     plan = plan_counter_removals(host, tuple(CounterRemoval(object_id=card.object_id,
-        counter_name="+1/+1", amount=amount, expected_zone="battlefield",
+        counter_name=counter_name, amount=amount, expected_zone="battlefield",
         expected_logical_object_id=card.logical_object_id) for card in cards))
     commit_counter_removals(host, plan)
     return [card.object_id for card in cards]
@@ -234,6 +318,18 @@ def selected_counter_cost_choice_schema(ability, hint, *, host=None, actor=None)
     if len(choices) != 1 or len(ability.choices) != 1:
         raise ValueError("Selected counter costs require one isolated public selection")
     choice = choices[0]
+    if choice.kind == SELECTED_PERMANENT_COUNTER_COST_KIND:
+        from .activation.source_counter_choices import SOURCE_COUNTER_PAYMENT_FIELD
+
+        if host is None or actor is None:
+            raise ValueError("A selected permanent counter cost requires its current payer")
+        payments = tuple(selected_permanent_counter_payments(host, actor))
+        return {SOURCE_COUNTER_PAYMENT_FIELD: {
+            "label": "Counter to remove",
+            "legal_values": [payment.choice_id for _card, payment in payments],
+            "option_labels": {payment.choice_id: f"{payment.label} from {host.display_name(card.object_id)}"
+                              for card, payment in payments},
+        }}
     if choice.kind == DISTRIBUTED_PLUS_COUNTER_COST_KIND:
         if host is None or actor is None:
             raise ValueError("Distributed counter choice requires its current payer")
@@ -249,7 +345,7 @@ def selected_counter_cost_choice_schema(ability, hint, *, host=None, actor=None)
             "allowed_counts": counts, "single_creature_refs": single}}
     label = (
         f"Creature to blight {choice.counter_amount}" if choice.kind == BLIGHT_ACTIVATION_COST_KIND
-        else "Creature to remove a +1/+1 counter from"
+        else f"Creature to remove a {REMOVAL_COUNTER_NAMES[choice.kind]} counter from"
     )
     return {"cost_cards": {"type": "array", "label": label,
         "legal_refs": list(hint["choose_cost"][0]["legal_refs"]),
@@ -267,14 +363,19 @@ def _valid_compact_selected_counter_cost(choice):
             return False
     return (
         set(choice) == fields and type(choice["n"]) is int and choice["n"] == 1
-        and choice["z"] == "battlefield" and choice["t"] == "creature"
+        and choice["z"] == "battlefield"
+        and choice["t"] == ("permanent" if kind == SELECTED_PERMANENT_COUNTER_COST_KIND else "creature")
     )
 
 
 def selected_counter_runtime_dependencies(program):
     schema = getattr(program, "cost_schema", None)
-    declared_distributed = DISTRIBUTED_PLUS_COUNTER_COST_CAPABILITY in getattr(program, "capability_dependencies", ())
+    declared = getattr(program, "capability_dependencies", ())
+    declared_distributed = DISTRIBUTED_PLUS_COUNTER_COST_CAPABILITY in declared
+    declared_permanent = SELECTED_PERMANENT_COUNTER_COST_CAPABILITY in declared
     if not isinstance(schema, Mapping):
+        if declared_permanent:
+            raise ValueError("A selected permanent counter payment requires its cost schema")
         if declared_distributed:
             raise ValueError("A distributed counter payment requires its cost schema")
         return ()
@@ -285,9 +386,17 @@ def selected_counter_runtime_dependencies(program):
         and choice["k"] in SELECTED_COUNTER_COST_CAPABILITIES
     ]
     if not selected:
+        if declared_permanent:
+            raise ValueError("A selected permanent counter payment requires its typed cost choice")
         if declared_distributed:
             raise ValueError("A distributed counter payment requires its typed cost choice")
         return ()
+    if declared_permanent and selected[0].get("k") != SELECTED_PERMANENT_COUNTER_COST_KIND:
+        raise ValueError("A selected permanent counter payment cannot silently become a different cost")
+    if (selected[0].get("k") == SELECTED_PERMANENT_COUNTER_COST_KIND
+            and (getattr(program, "active_zone", None) != "battlefield"
+                 or schema.get("tap_source") is not True)):
+        raise ValueError("A selected permanent counter payment requires its battlefield tap activation")
     if declared_distributed and selected[0].get("k") != DISTRIBUTED_PLUS_COUNTER_COST_KIND:
         raise ValueError("A distributed counter payment cannot silently become a different cost")
     if selected[0].get("k") == DISTRIBUTED_PLUS_COUNTER_COST_KIND and getattr(program, "active_zone", None) != "battlefield":
@@ -296,7 +405,20 @@ def selected_counter_runtime_dependencies(program):
             or not _valid_compact_selected_counter_cost(selected[0])
             or getattr(program, "event", None) != "activate"):
         raise ValueError("Selected counter payment requires its complete activation cost owner")
+    if selected[0]["k"] == SELECTED_MINUS_COUNTER_COST_KIND:
+        _validate_hybrid_counter_price(program, schema)
     return (SELECTED_COUNTER_COST_CAPABILITIES[selected[0]["k"]],)
+
+
+def _validate_hybrid_counter_price(program, schema):
+    from ..activation_mana_cost import ActivationManaCostOption, fixed_complex_activation_mana_options
+
+    raw_options = schema.get("mana_cost_options")
+    if getattr(program, "active_zone", None) != "battlefield" or not isinstance(raw_options, (tuple, list)):
+        raise ValueError("Selected -1/-1 counter payment requires the complete battlefield hybrid price")
+    options = tuple(ActivationManaCostOption.from_dict(option) for option in raw_options)
+    if options != fixed_complex_activation_mana_options({}, ("B/G",)):
+        raise ValueError("Selected -1/-1 counter payment requires both black and green mana options")
 
 
 def _offered_blight_cost(response):

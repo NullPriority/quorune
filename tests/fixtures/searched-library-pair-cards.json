@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_searched_library_pair_card_data",
+  "source": "Pinned Scryfall Oracle and ruling subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "d551fae8-6b40-4118-b9db-29d2f5dff405",
+      "name": "Burning-Rune Demon",
+      "mana_cost": "{4}{B}{B}",
+      "type_line": "Creature — Demon Berserker",
+      "oracle_text": "Flying\nWhen this creature enters, you may search your library for exactly two cards not named Burning-Rune Demon that have different names. If you do, reveal those cards. An opponent chooses one of them. Put the chosen card into your hand and the other into your graveyard, then shuffle.",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 6
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "d551fae8-6b40-4118-b9db-29d2f5dff405",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "While in your library, a double-faced card has only the name of its front face. It's not possible to reveal two of the same double-faced card this way."
+    },
+    {
+      "oracle_id": "d551fae8-6b40-4118-b9db-29d2f5dff405",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If you choose not to search your library, no cards are revealed or put anywhere else, and you don't shuffle."
+    }
+  ]
+}

@@ -141,6 +141,16 @@ def place_revealed_library_search_results_on_top(host, owner, seat, top_first, *
             card.revealed_to = [seat]
 
 
+def place_private_library_find_on_top(state, seat, object_id):
+    """Advance private positional knowledge after shuffling around a found card."""
+    card, = validated_library_search_results(
+        state, seat, (object_id,), public=False, expected_zone="library", announce=False,
+    )
+    commit_ordered_library_partition(state.players[seat].zones["library"], top_top_first=(object_id,))
+    card.known_to = [seat]
+    card.revealed_to = []
+
+
 def validate_ordered_library_destination(host, cards_by_id, changes, order: LibraryArrivalOrder) -> str:
     if not isinstance(order, LibraryArrivalOrder) or (
         len(changes) != len(order.members) or set(changes) != {(member, "library") for member in order.members}

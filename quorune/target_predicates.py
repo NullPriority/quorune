@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping, Protocol, Set
 
+from .abilities import ActivatedAbility
 from .attachments import attached_object_identity
 from .continuous_effect_model import Layer
 from .enchant_public_state_model import OTHER_AURA_ATTACHED_PREDICATE
@@ -17,7 +18,10 @@ from .relative_power_target import (
     bound_relative_power_condition,
     current_effective_creature_power,
 )
-from .targets import CONTROLLER_ISLAND_TARGET_PREDICATE, ISLAND_COUNT_POWER_TARGET_PREDICATE, TargetGroup
+from .targets import (
+    ACTIVATED_TAP_COST_TARGET_PREDICATE, CONTROLLER_ISLAND_TARGET_PREDICATE,
+    ISLAND_COUNT_POWER_TARGET_PREDICATE, TargetGroup,
+)
 from .entry_designations import CHOSEN_COLOR_TARGET_PREDICATE, CHOSEN_CREATURE_TYPE_TARGET_PREDICATE
 from .stack_spell_targeting import STACK_SPELL_TARGET_PREDICATES, StackSpellTargetPredicate
 
@@ -34,6 +38,8 @@ class TargetPredicateHost(Protocol):
     state: Any
 
     def _numeric_stat(self, object_id: str, stat: str) -> int: ...
+
+    def _activated_abilities(self, card: CardInstance) -> tuple[ActivatedAbility, ...]: ...
 
     def _effective_card_data(self, card: Any, *, maximum_layer: Layer | None = None) -> Mapping[str, Any]: ...
 
@@ -278,6 +284,33 @@ def _island_qualified_target_matches(host, predicate, row, types, controller):
     return power is not None and power <= _controlled_island_count(host, controller)
 
 
+def _spell_or_ability_target_matches(predicate, row, *, types, supertypes, colors) -> bool | None:
+    """Evaluate predicates that combine stack object kinds with spell characteristics."""
+    if predicate == 'activated_or_triggered_ability':
+        item = row.get('stack_item')
+        return row.get('zone') == 'stack' and isinstance(item, StackItem) and item.kind in {'activated_ability','triggered_ability'}
+    from .stack_spell_copy_model import COPYABLE_STACK_ITEM_PREDICATE
+
+    if predicate in {'triggered_ability_or_colorless_spell','ability_or_noncreature_spell',
+            'ability_or_legendary_spell','blue_instant_spell', COPYABLE_STACK_ITEM_PREDICATE}:
+        item = row.get('stack_item')
+        if row.get('zone') != 'stack' or not isinstance(item, StackItem):
+            return False
+        spell = row.get('category') == 'spell' and item.kind in {'spell','spell_copy'}
+        triggered = row.get('category') == 'ability' and item.kind == 'triggered_ability'
+        ability = row.get('category') == 'ability' and item.kind in {'activated_ability','triggered_ability'}
+        if predicate == 'triggered_ability_or_colorless_spell':
+            return triggered or spell and not colors
+        if predicate == 'ability_or_noncreature_spell':
+            return ability or spell and 'creature' not in types
+        if predicate == 'ability_or_legendary_spell':
+            return ability or spell and 'legendary' in supertypes
+        if predicate == COPYABLE_STACK_ITEM_PREDICATE:
+            return ability or spell and bool(types.intersection({'instant', 'sorcery'}))
+        return spell and 'U' in colors and 'instant' in types
+    return None
+
+
 def target_predicate_matches(
     host: TargetPredicateHost,
     group: TargetGroup,
@@ -323,14 +356,27 @@ def target_predicate_matches(
             host, StackSpellTargetPredicate(predicate), row, types=types,
             controller=controller, source_incarnation=source_incarnation,
         )
-    from .stack_target_change_model import SINGLE_ANNOUNCED_STACK_TARGET, matches_single_announced_stack_target
+    from .stack_target_change_model import (
+        ANNOUNCED_STACK_TARGET, SINGLE_ANNOUNCED_STACK_TARGET,
+        matches_announced_stack_target, matches_single_announced_stack_target,
+    )
 
-    if predicate == SINGLE_ANNOUNCED_STACK_TARGET:
+    if predicate in {ANNOUNCED_STACK_TARGET, SINGLE_ANNOUNCED_STACK_TARGET}:
         item = row.get("stack_item")
-        return row.get("zone") == "stack" and isinstance(item, StackItem) and matches_single_announced_stack_target(item)
+        if row.get("zone") != "stack" or not isinstance(item, StackItem):
+            return False
+        if predicate == ANNOUNCED_STACK_TARGET:
+            return matches_announced_stack_target(item)
+        return matches_single_announced_stack_target(item)
     card = row.get("card")
     if predicate in {CONTROLLER_ISLAND_TARGET_PREDICATE, ISLAND_COUNT_POWER_TARGET_PREDICATE}:
         return _island_qualified_target_matches(host, predicate, row, types, controller)
+    if predicate == ACTIVATED_TAP_COST_TARGET_PREDICATE:
+        return (
+            isinstance(card, CardInstance) and card.zone == "battlefield" and not card.phased_out
+            and row.get("category") == "permanent" and "creature" in types
+            and any(ability.tap_source for ability in host._activated_abilities(card))
+        )
     if predicate == OTHER_AURA_ATTACHED_PREDICATE:
         return bool(
             source_ref and isinstance(card, CardInstance)
@@ -340,28 +386,9 @@ def target_predicate_matches(
     from .ability_source_information import ABILITY_SOURCE_FILTERS
     if predicate in ABILITY_SOURCE_FILTERS:
         return _ability_source_target_matches(predicate, row, source_incarnation)
-    if predicate == 'activated_or_triggered_ability':
-        item = row.get('stack_item')
-        return row.get('zone') == 'stack' and isinstance(item, StackItem) and item.kind in {'activated_ability','triggered_ability'}
-    from .stack_spell_copy_model import COPYABLE_STACK_ITEM_PREDICATE
-
-    if predicate in {'triggered_ability_or_colorless_spell','ability_or_noncreature_spell',
-            'ability_or_legendary_spell','blue_instant_spell', COPYABLE_STACK_ITEM_PREDICATE}:
-        item = row.get('stack_item')
-        if row.get('zone') != 'stack' or not isinstance(item, StackItem):
-            return False
-        spell = row.get('category') == 'spell' and item.kind in {'spell','spell_copy'}
-        triggered = row.get('category') == 'ability' and item.kind == 'triggered_ability'
-        ability = row.get('category') == 'ability' and item.kind in {'activated_ability','triggered_ability'}
-        if predicate == 'triggered_ability_or_colorless_spell':
-            return triggered or spell and not colors
-        if predicate == 'ability_or_noncreature_spell':
-            return ability or spell and 'creature' not in types
-        if predicate == 'ability_or_legendary_spell':
-            return ability or spell and 'legendary' in supertypes
-        if predicate == COPYABLE_STACK_ITEM_PREDICATE:
-            return ability or spell and bool(types.intersection({"instant", "sorcery"}))
-        return spell and 'U' in colors and 'instant' in types
+    stack_match = _spell_or_ability_target_matches(predicate, row, types=types, supertypes=supertypes, colors=colors)
+    if stack_match is not None:
+        return stack_match
     if predicate == "artifact_or_enchantment_or_nonbasic_land":
         return bool(
             derived["artifact"]
@@ -381,15 +408,19 @@ def target_predicate_matches(
                 }
             )
         )
-    if predicate == "damageable":
+    if predicate in {"damageable", "damageable_other_than_source"}:
+        if predicate == "damageable_other_than_source" and (
+            source_incarnation is None
+            or isinstance(card, CardInstance) and card.logical_object_id == source_incarnation
+        ):
+            return False
         return bool(
             row["category"] == "player"
             or types.intersection({"battle", "creature", "planeswalker"})
         )
-    if predicate == "player_or_creature_or_planeswalker":
-        return row["category"] == "player" or bool(types.intersection({"creature", "planeswalker"}))
-    if predicate == "player_or_planeswalker":
-        return row["category"] == "player" or "planeswalker" in types
+    if predicate in {"player_or_planeswalker", "player_or_creature_or_planeswalker"}:
+        return (row["category"] == "player" or "planeswalker" in types
+                or predicate == "player_or_creature_or_planeswalker" and "creature" in types)
     if predicate == "void_counter":
         return bool(
             isinstance(card, CardInstance)

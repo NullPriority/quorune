@@ -135,6 +135,11 @@ compose tapped creature state with a closed subtype disjunction and revalidate
 both restrictions on resolution. Literal source keyword requirements retain
 their ordinary choice-time validation and damage-time property recheck.
 
+A versioned next-instance shield for a targeted creature prevents all matching
+damage in the containing batch, then the modifier commit consumes it once.
+The spell controller gains life from the aggregate actually prevented.
+Finite and unmarked shields keep their existing encodings.
+
 Fixed-amount static prevention shares the
 [current source-ability contract](damage.md) of other static damage components.
 It remains a separate fixed reduction for each applicable event and does not
@@ -179,6 +184,13 @@ transaction. Historical records retain the ordering pinned by their game record.
 Independent instructions and triggered prevention use their existing resolution
 and trigger owners.
 
+Per-source reflection groups the actually prevented amounts by the resolving
+spell and original damage-source occurrence. Each creature source receives
+one noncombat result if its battlefield incarnation is still available. Each
+noncreature source uses the controller retained on its damage occurrence.
+The reflected source is the original preventing spell. Its version-two
+recipient descriptor retains this behavior across save and replay.
+
 Competing prevention effects follow the affected-player ordering rules and are
 rediscovered after each application. Simultaneous events preserve APNAP and
 same-chooser order in replay. Mana-payment and semantic-choice continuations
@@ -198,6 +210,12 @@ toughness, mana-value, secret, chosen, history-relative, linked-result, modal,
 optional-prevention, repeated-decision, and unsupported multiple-target
 predicates remain outside the represented fixed all-damage boundary. So do
 combat-source exceptions and "all but N" quantities.
+
+Static self-prevention can create a targeted trigger from its positive
+application. The trigger carries the actual amount prevented in the
+simultaneous damage batch. Ordinary APNAP placement selects a target other
+than the source's captured incarnation. Resolution revalidates that target
+and submits a separate damage transaction using the original source.
 
 See [ADR 0012](../adr/0012-damage-transaction-and-static-prevention.md),
 [ADR 0015](../adr/0015-durable-damage-modifier-ownership.md), and

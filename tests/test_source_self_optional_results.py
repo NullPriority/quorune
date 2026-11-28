@@ -905,3 +905,219 @@ class SourceSelfOptionalRuntimeTests(unittest.TestCase):
         session=self.replay(session,load=True);self.choose(session,'D',choice='apply');self.resolve(session)
         self.assertEqual(3,session.state.cards[spirit_target.object_id].marked_damage)
         self.replay(session,load=True)
+
+class LegendarySourceEquipmentCompilerTests(unittest.TestCase):
+    def test_legendary_entry_attachment_uses_a_mandatory_typed_target(self):
+        from quorune.rules.attachment_action_capability_shapes import fixed_attachment_action_node_capabilities
+
+        text = 'When this Equipment enters, attach it to target legendary creature you control.'
+        registry = load_default_capability_registry()
+        original = record(text, 'Legendary Artifact — Equipment')
+        ir = compile_oracle_card(original, capability_registry=registry, capability_profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual('permanent.enter.self', node.event)
+        self.assertEqual(text, original.oracle_text[node.span.start:node.span.end])
+        self.assertEqual({
+            'zones': ['battlefield'], 'categories': ['permanent'], 'count': 1,
+            'types_any': ['creature'], 'supertypes_any': ['legendary'], 'controller_relation': 'you',
+        }, node.target_schema)
+        self.assertEqual(({
+            'op': 'attach', 'attachment_kind': 'equipment',
+            'source': '$source.zone_object', 'target': '$target.0',
+        },), node.effects)
+        self.assertTrue({
+            'attachment.action.fixed_source', 'target.permanent.characteristic_predicate',
+            'target.revalidate_resolution',
+        }.issubset(node.capability_dependencies))
+        for replacement in ('target legendary artifact you control', 'target legendary creature an opponent controls',
+                            'target nonlegendary creature you control', 'up to one target legendary creature you control'):
+            with self.subTest(replacement=replacement):
+                neighboring = record(text.replace('target legendary creature you control', replacement),
+                                     'Legendary Artifact — Equipment')
+                result = compile_oracle_card(neighboring, capability_registry=registry,
+                                             capability_profile='commander_review')
+                self.assertNotEqual('exact', result.status)
+        for change in ({'count': True}, {'count': 0}, {'supertypes_any': ['legendary', 'snow']},
+                       {'supertypes_any': ['snow']}, {'controller_relation': 'opponent'}, {'types_any': ['artifact']}):
+            with self.subTest(change=change):
+                self.assertEqual((), fixed_attachment_action_node_capabilities(
+                    effects=node.effects, target_schema={**node.target_schema, **change}, mechanic_ids=node.mechanics))
+
+
+class LegendarySourceEquipmentNativeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    session = actions.BoundEffectProgramRuntimeTests.session
+    add = actions.BoundEffectProgramRuntimeTests.add
+    checkpoint = actions.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = actions.BoundEffectProgramRuntimeTests.resolve
+    replay = actions.BoundEffectProgramRuntimeTests.replay
+    prepare = zone_actions.SelfPublicZoneRuntimeTests.prepare
+    cast = zone_actions.SelfPublicZoneRuntimeTests.cast
+    assert_closed = zone_actions.SelfPublicZoneRuntimeTests.assert_closed
+    choose = SourceSelfOptionalRuntimeTests.choose
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'legendary-attachment.sqlite3'
+        fixtures = ROOT / 'tests/fixtures'
+        build_fixture_database([fixtures / name for name in (
+            'source-self-optional-cards.json', 'bound-effect-program-cards.json',
+            'activation-result-views-cards.json', 'named-zone-search-cards.json',
+            'temporary-copy-subject-cards.json',
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        commander = 'Isamaru, Hound of Konda'
+        cls.deck = DeckDefinition('Legendary Equipment witness', [
+            DeckEntry(commander, 1, 'commander'), DeckEntry('Plains', 30),
+        ], [commander])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def cast_coat(self, session, coat, *, active='A', mana=3):
+        self.assert_closed(session, coat)
+        session.state.config.semantic_policy = 'trusted_only'
+        self.prepare(session, active=active, mana={'C': mana})
+        self.checkpoint(session)
+        self.cast(session, 'A', coat)
+        self.assertEqual([], session.state.stack[-1].targets)
+        return self.resolve(session)
+
+    def priority_for(self, session, seat):
+        for _ in 'ABCD':
+            self.assertEqual('priority', session.state.pending_decision.kind)
+            if session.state.priority_player == seat:
+                return session.packet('pilot:' + seat, full=True)['decision']['ctx']['legal']['actions']
+            passed = session.act(session.pending_principals()[0], {'action_id': 'pass'})
+            self.assertTrue(passed.ok, passed.summary)
+        self.fail('Requested seat did not receive priority')
+
+    def test_mithril_coat_flash_places_a_mandatory_target_before_attachment(self):
+        game = self.session(40223701)
+        add = self.add
+        coat = add(game.engine, 'Mithril Coat', zone='hand')
+        legend = add(game.engine, 'Isamaru, Hound of Konda', ref='controlled-dog')
+        ordinary = add(game.engine, 'Basilica Shepherd')
+        noncreature = add(game.engine, 'Huatli, Radiant Champion')
+        enemy = add(game.engine, 'Isamaru, Hound of Konda', seat='B', ref='opposing-dog')
+        decision = self.cast_coat(game, coat, active='B', mana=6)
+        self.assertEqual(('semantic.target', ['A']), (decision.kind, decision.actors))
+        self.assertEqual('battlefield', game.state.cards[coat.object_id].zone)
+        self.assertIsNone(game.state.cards[coat.object_id].attached_to)
+        row, = [action for action in decision.payload_by_actor['A']['legal_actions'] if action['id'] == 'choose']
+        self.assertEqual([legend.ref], row['target_schema']['legal_refs'])
+        for viewer in 'BCD':
+            self.assertIsNone(game.packet('pilot:' + viewer, full=True)['decision'])
+        for seat, targets in (('A', []), ('A', [ordinary.ref]), ('A', [noncreature.ref]), ('A', [enemy.ref]),
+                              ('A', [legend.ref, legend.ref]), ('B', [legend.ref])):
+            with self.subTest(seat=seat, targets=targets):
+                before = authoritative_state_hash(game.state)
+                self.assertFalse(game.act('pilot:' + seat, {'action_id': 'choose', 'targets': targets}).ok)
+                self.assertEqual(before, authoritative_state_hash(game.state))
+        game = self.replay(game, load=True)
+        self.choose(game, targets=[legend.ref])
+        self.assertIsNone(game.state.cards[coat.object_id].attached_to)
+        self.assertIsNone(self.resolve(game))
+        current = game.state.cards[legend.object_id]
+        self.assertEqual(legend.object_id, game.state.cards[coat.object_id].attached_to)
+        self.assertIn(coat.object_id, current.attachments)
+        self.assertIn('indestructible', game.engine._combat_keywords(current))
+        self.assertEqual(3, game.state.players['A'].mana_pool['C'])
+        actions = self.priority_for(game, 'A')
+        self.assertFalse(any(action['id'].startswith('activate:' + coat.ref + ':') for action in actions))
+        self.replay(game, load=True)
+
+    def test_mithril_coat_without_a_legal_target_enters_unattached(self):
+        game = self.session(40223702)
+        coat = self.add(game.engine, 'Mithril Coat', zone='hand')
+        self.add(game.engine, 'Basilica Shepherd')
+        self.add(game.engine, 'Huatli, Radiant Champion')
+        self.add(game.engine, 'Isamaru, Hound of Konda', seat='B')
+        self.assertIsNone(self.cast_coat(game, coat))
+        self.assertFalse(game.state.stack)
+        self.assertEqual('battlefield', game.state.cards[coat.object_id].zone)
+        self.assertIsNone(game.state.cards[coat.object_id].attached_to)
+        self.replay(game, load=True)
+
+    def test_mithril_coat_revalidates_controller_legendary_status_and_incarnation(self):
+        for index, (response, actor) in enumerate((('Act of Aggression', 'B'), ('Cytoshape', 'B'), ('Cloudshift', 'A'))):
+            with self.subTest(response=response):
+                game = self.session(40223703 + index)
+                coat = self.add(game.engine, 'Mithril Coat', zone='hand')
+                target = self.add(game.engine, 'Isamaru, Hound of Konda')
+                alternate = self.add(game.engine, 'Vishgraz, the Doomhive')
+                ordinary = self.add(game.engine, 'Basilica Shepherd')
+                spell = self.add(game.engine, response, seat=actor, zone='hand')
+                self.assert_closed(game, spell)
+                game.state.players['A'].mana_pool['W'] = 4
+                game.state.players['B'].mana_pool.update({'C': 2, 'R': 3, 'G': 1, 'U': 1})
+                self.assertEqual('semantic.target', self.cast_coat(game, coat).kind)
+                self.choose(game, targets=[target.ref])
+                logical_id = game.state.cards[target.object_id].logical_object_id
+                if response == 'Act of Aggression':
+                    offered, = [action for action in self.priority_for(game, actor)
+                                if action['id'] == 'cast:' + spell.ref]
+                    mana_only, = (option for option in offered['cost_options'] if not option.get('additional_life'))
+                    transfer = game.act('pilot:' + actor, {
+                        'action_id': offered['id'], 'cost_option': mana_only['id'],
+                        'targets': [target.ref], 'pay': 'auto',
+                    })
+                    self.assertTrue(transfer.ok, transfer.summary)
+                else:
+                    self.cast(game, actor, spell, [target.ref])
+                if response == 'Cytoshape':
+                    self.assertEqual('semantic.choice', self.resolve(game).kind)
+                    self.choose(game, actor, card=ordinary.ref)
+                self.assertIsNone(self.resolve(game))
+                current = game.state.cards[target.object_id]
+                if response == 'Act of Aggression':
+                    self.assertEqual(('B', logical_id), (current.controller, current.logical_object_id))
+                elif response == 'Cytoshape':
+                    values = game.engine._effective_card_data(current)
+                    self.assertEqual(('A', logical_id), (current.controller, current.logical_object_id))
+                    self.assertEqual('Basilica Shepherd', values['name'])
+                    self.assertNotIn('Legendary', values['type_line'])
+                else:
+                    self.assertEqual(('A', 'battlefield'), (current.controller, current.zone))
+                    self.assertNotEqual(logical_id, current.logical_object_id)
+                self.assertIsNone(game.state.cards[coat.object_id].attached_to)
+                self.assertNotIn(coat.object_id, current.attachments)
+                self.assertNotIn(coat.object_id, game.state.cards[alternate.object_id].attachments)
+                self.replay(game, load=True)
+
+    def test_mithril_coat_printed_indestructible_and_paid_equip_remain_available(self):
+        game = self.session(40223706)
+        coat = self.add(game.engine, 'Mithril Coat', zone='hand')
+        legend = self.add(game.engine, 'Isamaru, Hound of Konda')
+        ordinary = self.add(game.engine, 'Basilica Shepherd')
+        destroy = self.add(game.engine, 'Disenchant', seat='B', zone='hand')
+        damage = self.add(game.engine, 'Lightning Bolt', seat='B', zone='hand')
+        for spell in (destroy, damage):
+            self.assert_closed(game, spell)
+        game.state.players['B'].mana_pool.update({'W': 1, 'C': 1, 'R': 2})
+        self.assertEqual('semantic.target', self.cast_coat(game, coat, mana=6).kind)
+        self.choose(game, targets=[legend.ref])
+        self.assertIsNone(self.resolve(game))
+        self.cast(game, 'B', destroy, [coat.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual('battlefield', game.state.cards[coat.object_id].zone)
+        self.cast(game, 'B', damage, [legend.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(('battlefield', 3), (game.state.cards[legend.object_id].zone,
+                                            game.state.cards[legend.object_id].marked_damage))
+        offered, = [action for action in self.priority_for(game, 'A')
+                    if action['id'].startswith('activate:' + coat.ref + ':')]
+        self.assertIn(ordinary.ref, offered['target_schema']['legal_refs'])
+        activated = game.act('pilot:A', {'action_id': offered['id'], 'targets': [ordinary.ref], 'pay': 'auto'})
+        self.assertTrue(activated.ok, activated.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(0, game.state.players['A'].mana_pool.get('C', 0))
+        self.assertEqual(ordinary.object_id, game.state.cards[coat.object_id].attached_to)
+        self.assertEqual('graveyard', game.state.cards[legend.object_id].zone)
+        self.assertIn('indestructible', game.engine._combat_keywords(game.state.cards[ordinary.object_id]))
+        self.replay(game, load=True)

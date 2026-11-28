@@ -68,6 +68,21 @@ class GainSpellControlIntent:
 
 
 @dataclass(frozen=True, slots=True)
+class DirectionalControlIntent:
+    actor: str
+    direction: str
+    source: ResolutionEffectSource
+    reason: str
+
+    def __post_init__(self):
+        from ..rules.directional_control import DIRECTIONS
+
+        _validate_control(self.actor, self.actor, ContinuousEffectDuration.ZONE_OBJECT, self.source, self.reason)
+        if self.direction not in DIRECTIONS or self.source.object_id is None:
+            raise ValueError("Directional control requires a chosen direction and the original source incarnation")
+
+
+@dataclass(frozen=True, slots=True)
 class GainControlSetIntent:
     actor: str
     predicate: ObjectQuerySpec
@@ -128,6 +143,15 @@ class GiveControlIntent:
         _validate_control(self.actor,self.actor,self.duration,self.source,self.reason)
         if any(type(value) is not str or not value for value in (self.object_ref,self.controller)):
             raise ValueError('Recipient control requires a permanent and explicit acquiring player')
+
+
+@dataclass(frozen=True, slots=True)
+class ReflexiveSourceControlIntent(GiveControlIntent):
+    def __post_init__(self):
+        GiveControlIntent.__post_init__(self)
+        if (self.object_ref != self.source.card_ref or self.source.object_id is None
+                or self.source.logical_object_id is None or self.actor == self.controller):
+            raise ValueError("Reflexive control requires its original source and opposing recipient")
 
 
 @dataclass(frozen=True, slots=True)

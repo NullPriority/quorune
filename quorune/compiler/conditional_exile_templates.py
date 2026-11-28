@@ -116,6 +116,23 @@ class SelectedConditionalExileTemplate:
         return "selected-source-departure-exile-v1", (effect,), None, (LINKED_EXILE_RETURN_MECHANIC,)
 
 
+def saga_chapter_per_player_nonsaga_exile(text):
+    if re.fullmatch(
+        r"For each player, exile up to one target non-Saga, nonland permanent that player controls "
+        r"until this Saga leaves the battlefield[.]", text, re.I,
+    ) is None:
+        return None
+    from ..rules.linked_exile_return_shapes import announced_nonsaga_exile_target_schema
+    from .any_number_target_sets import ANY_NUMBER_TARGET_MECHANIC
+    from .per_player_target_sets import PER_PLAYER_TARGET_MECHANIC
+
+    schema = announced_nonsaga_exile_target_schema()
+    _template, effects, schema, mechanics = ConditionalSourceExileTemplate(FrozenMap(schema)).compiled()
+    return "conditional-source-per-player-nonsaga-exile-v1", effects, schema, (
+        *mechanics, ANY_NUMBER_TARGET_MECHANIC, PER_PLAYER_TARGET_MECHANIC,
+    )
+
+
 def conditional_source_exile_template(text: str, *, card_name: str,
                                      source_is_permanent: bool) -> ConditionalSourceExileTemplate | SelectedConditionalExileTemplate | None:
     if source_is_permanent is not True:

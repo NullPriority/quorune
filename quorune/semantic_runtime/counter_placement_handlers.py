@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from ..announced_counter_allocation import BOUND_COUNTER_SHARES
+
 """Strict typed lowering for fixed counter-placement effects."""
 
 from dataclasses import dataclass
@@ -517,7 +519,7 @@ class FixedCounterPlacementTargetSetHandler:
             _REASON_FIELD,
             "_replacement_selections",
         }
-        if versioned:allowed.update(('schema_version','announced_target_count'))
+        if versioned:allowed.update(('schema_version','announced_target_count',BOUND_COUNTER_SHARES))
         unknown = sorted(set(effect) - allowed)
         if unknown:
             raise SemanticNodeError(
@@ -602,6 +604,7 @@ class FixedCounterPlacementTargetSetHandler:
                 reason=raw_reason or context.default_reason,
                 source_ref=source_ref,
                 replacement_selections=tuple(raw_selections),
+                target_shares=effect.get(BOUND_COUNTER_SHARES),
             )
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc
@@ -655,8 +658,8 @@ class FixedPlayerCounterPlacementHandler:
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc
         if 'zero_is_noop' in effect:
-            if effect['zero_is_noop'] is not True or subject != 'controller' or effect.get('counter') != 'energy':
-                raise SemanticNodeError('Only counted controller energy permits a zero result')
+            if effect['zero_is_noop'] is not True or subject != 'controller' or effect.get('counter') not in {'energy', 'experience'}:
+                raise SemanticNodeError('Only supported counted controller counters permit a zero result')
             allowed.add('zero_is_noop')
         unknown = sorted(set(effect) - allowed)
         if unknown:
@@ -719,7 +722,7 @@ class FixedPlayerCounterPlacementHandler:
             )
         if amount == 0:
             if raw_selections:
-                raise SemanticNodeError('Zero energy placement cannot select a replacement')
+                raise SemanticNodeError('A zero player-counter result cannot select a replacement')
             return IntentPlan(operation=self.operation, handler_id=self.handler_id, intents=(), result_shape='by_player')
         try:
             intent = PlacePlayerCountersIntent(

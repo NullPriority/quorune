@@ -170,6 +170,32 @@ class FixedZoneChangeAdditionalCostCompilerTests(unittest.TestCase):
                 self.assertEqual(node.cost, programs[0].cost_schema)
                 self.assertFalse(programs[0].requires_arbiter)
 
+    def test_nonland_sacrifice_spell_and_fixed_flashback_lower_separate_source_nodes(self):
+        text = (
+            "As an additional cost to cast this spell, sacrifice a nonland permanent.\n"
+            "Exile target nonland permanent.\n"
+            "Flashback {2}{W}{B}"
+        )
+        ir = self.compile(text)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        spell, flashback = ir.faces[0].nodes
+        self.assertEqual(("spell_ability", "keyword_ability"), (spell.kind, flashback.kind))
+        self.assertEqual(text[:text.rindex("\n")], spell.text)
+        self.assertEqual(text[flashback.span.start:flashback.span.end], flashback.text)
+        self.assertEqual("sacrifice_one", spell.cost["additional_costs"][0]["operation"])
+        self.assertIn("casting.additional_cost.fixed_sacrifice", spell.capability_dependencies)
+        self.assertEqual(["land"], spell.target_schema["types_none"])
+        self.assertTrue(flashback.handlers)
+        self.assertEqual("ordinary-fixed-mana-flashback-v1", flashback.template_id)
+        neighbors = (
+            text.replace("sacrifice a nonland permanent", "sacrifice a modified creature"),
+            text.replace("Flashback {2}{W}{B}", "Flashback {X}{W}{B}"),
+            text.replace("Exile target nonland permanent.", "Exile target nonland permanent.\nDraw a card."),
+        )
+        for neighbor in neighbors:
+            with self.subTest(neighbor=neighbor):
+                self.assertTrue(self.compile(neighbor).material_residuals)
+
     def test_fixed_zone_change_cost_grammar_fails_closed(self):
         unsupported = (
             "discard two cards at random",
@@ -858,3 +884,112 @@ class FixedZoneChangeAdditionalCostRuntimeTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class NonlandSacrificeFlashbackRuntimeTests(unittest.TestCase):
+    from test_bound_effect_programs import BoundEffectProgramRuntimeTests as witnesses
+
+    register_fixture_cards_on_add = True
+    session = witnesses.session
+    add = witnesses.add
+    ready = witnesses.ready
+    checkpoint = witnesses.checkpoint
+    resolve = witnesses.resolve
+    replay = witnesses.replay
+
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "nonland-sacrifice-flashback.sqlite3"
+        build_fixture_database(
+            [ROOT / "tests/fixtures" / name for name in ("bound-effect-program-cards.json", "rite-of-oblivion-cards.json")],
+            path,
+        )
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Nonland sacrifice and Flashback", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def test_rite_of_oblivion_casts_twice_with_its_shared_sacrifice_and_replays(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs.binding import bind_card_program_runtime
+        from quorune.flashback import FLASHBACK_CAST_ANNOTATION, FLASHBACK_CAST_OPTION_ID
+
+        for normal_reuses_price in (False, True):
+            with self.subTest(normal_reuses_price=normal_reuses_price):
+                game = self.session(601_251 + int(normal_reuses_price))
+                engine = game.engine
+                rite = self.add(engine, "Rite of Oblivion", zone="hand")
+                first = self.add(engine, "Sol Ring", ref="rite-normal-price")
+                second = self.add(engine, "Sol Ring", ref="rite-flashback-price")
+                opponent = self.add(engine, "Mind Stone", seat="B", ref="rite-foreign-target")
+                land = self.add(engine, "Generic Bound Plains", ref="rite-land")
+                program = compile_best_available_card_program(
+                    self.db, self.db.lookup("Rite of Oblivion"), semantic_registry=engine.semantics,
+                    capability_registry=self.registry, capability_profile=engine.state.config.review_profile,
+                )
+                binding = bind_card_program_runtime(program, capability_registry=self.registry,
+                                                    profile=engine.state.config.review_profile)
+                self.assertTrue(binding["strict_capability_ready"], binding)
+                engine.state.config.semantic_policy = "trusted_only"
+                action = self.ready(game, rite, {"W": 2, "B": 2, "C": 2})
+                self.checkpoint(game)
+
+                cases = (
+                    ("normal", first, first if normal_reuses_price else opponent, {"W": 1, "B": 1}),
+                    (FLASHBACK_CAST_OPTION_ID, second, opponent if normal_reuses_price else second,
+                     {"W": 1, "B": 1, "C": 2}),
+                )
+                for mode, price, target, mana in cases:
+                    options = {option["id"]: option for option in action["cost_options"]}
+                    self.assertEqual({mode}, set(options))
+                    cost_refs = options[mode]["choice_schema"]["sacrifice_cards"]["legal_refs"]
+                    self.assertIn(price.ref, cost_refs)
+                    self.assertNotIn(land.ref, cost_refs)
+                    self.assertNotIn(opponent.ref, cost_refs)
+                    public_targets = action["target_schema"]["legal_refs"]
+                    self.assertIn(price.ref, public_targets)
+                    self.assertIn(target.ref, public_targets)
+                    self.assertNotIn(land.ref, public_targets)
+
+                    command = {"action_id": action["id"], "cost_option": mode,
+                               "sacrifice_cards": [price.ref], "targets": [target.ref],
+                               "pay": "manual", "payment": mana}
+                    before = authoritative_state_hash(game.state)
+                    commands = len(game.commands)
+                    for rejected in (
+                        {**command, "sacrifice_cards": []},
+                        {**command, "sacrifice_cards": [land.ref]},
+                        {**command, "sacrifice_cards": [opponent.ref]},
+                        {**command, "targets": [land.ref]},
+                    ):
+                        result = game.act("pilot:A", rejected)
+                        self.assertFalse(result.ok)
+                        self.assertEqual(before, authoritative_state_hash(game.state))
+                        self.assertEqual(commands, len(game.commands))
+
+                    cast = game.act("pilot:A", command)
+                    self.assertTrue(cast.ok, cast.summary)
+                    self.assertEqual("graveyard", game.state.cards[price.object_id].zone)
+                    self.assertEqual("stack", game.state.cards[rite.object_id].zone)
+                    self.assertEqual([target.ref], game.state.stack[-1].targets)
+                    if mode == FLASHBACK_CAST_OPTION_ID:
+                        self.assertIs(True, game.state.cards[rite.object_id].annotations[FLASHBACK_CAST_ANNOTATION])
+                        game = self.replay(game, load=True)
+                    self.assertIsNone(self.resolve(game))
+                    self.assertEqual("graveyard" if target is price else "exile", game.state.cards[target.object_id].zone)
+                    self.assertEqual("graveyard" if mode == "normal" else "exile", game.state.cards[rite.object_id].zone)
+                    if mode == "normal":
+                        decision = game.packet("pilot:A", full=True)["decision"]
+                        action, = (row for row in decision["ctx"]["legal"]["actions"] if row.get("card") == rite.ref)
+                self.replay(game, load=True)

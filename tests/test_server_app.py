@@ -1807,6 +1807,64 @@ class ServerApplicationTests(unittest.TestCase):
             database.close()
         self.assertTrue(replay["ok"])
 
+    def test_conceding_pilot_stays_connected_as_a_public_observer(self):
+        game_id, tokens, _ = self.create_ready_game()
+        state_url = f"/api/v1/games/{game_id}/state"
+        command_url = f"/api/v1/games/{game_id}/commands"
+        stream_url = f"/api/v1/games/{game_id}/stream"
+
+        def submit(token, packet, action, command_id, choices):
+            decision = packet["decision"]
+            envelope = {
+                "protocol_version": "3.0", "game_id": game_id,
+                "command_id": command_id, "decision_id": decision["id"],
+                "action_id": action, "capability": decision["cap"],
+                "expected_view_revision": packet["view_revision"], "choices": choices,
+            }
+            response = self.client.post(command_url, headers=self.auth(token), json=envelope)
+            self.assertEqual(200, response.status_code, response.text)
+            return envelope, response.json()["receipt"]
+
+        for index, token in enumerate(tokens):
+            response = self.client.get(state_url, headers=self.auth(token))
+            self.assertEqual(200, response.status_code, response.text)
+            _, receipt = submit(token, response.json()["packet"], "keep", f"keep-{index}", {})
+            self.assertTrue(receipt["ok"], receipt)
+
+        self.set_existing_cookie(COOKIE_NAME, tokens[0])
+        with self.client.websocket_connect(stream_url) as socket:
+            pilot = socket.receive_json()["packet"]
+            self.assertEqual("pilot:A", pilot["principal"])
+            self.assertIn("hand", pilot["state"]["players"]["A"])
+            envelope, receipt = submit(tokens[0], pilot, "concede", "observer-A", {"confirm_concede": True})
+            self.assertTrue(receipt["ok"], receipt)
+            updated = socket.receive_json()
+            self.assertEqual("active", updated["game"]["status"])
+            packet = updated["packet"]
+            self.assertEqual("full", packet["mode"])
+            self.assertEqual("spectator", packet["principal"])
+            self.assertEqual(0, packet["state"]["players"]["A"]["in"])
+            self.assertIsNone(packet["decision"])
+            self.assertTrue(all(event.get("pub") is True for event in packet["events"]))
+            self.assertIn("Conceded the game.", [event["s"] for event in packet["events"]])
+            for player in packet["state"]["players"].values():
+                self.assertNotIn("hand", player)
+
+        http = self.client.get(state_url, headers=self.auth(tokens[0])).json()["packet"]
+        self.assertEqual(("full", "spectator"), (http["mode"], http["principal"]))
+        with self.client.websocket_connect(stream_url) as socket:
+            self.assertEqual("spectator", socket.receive_json()["packet"]["principal"])
+
+        retry = self.client.post(command_url, headers=self.auth(tokens[0]), json=envelope).json()["receipt"]
+        self.assertTrue(retry["replayed"])
+        self.assertEqual(receipt["state_revision"], retry["state_revision"])
+        rejection = self.client.post(
+            command_url, headers=self.auth(tokens[0]),
+            json={**envelope, "command_id": "no-observer-command", "action_id": "pass", "choices": {}},
+        ).json()["receipt"]
+        self.assertEqual("player_not_active", rejection["code"])
+        self.assertEqual(receipt["state_revision"], rejection["state_revision"])
+
     def test_completed_concession_survives_restart_and_exact_replay(self):
         game_id, tokens, _ = self.create_ready_game(player_count=2)
         for index in range(2):

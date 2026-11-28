@@ -98,7 +98,7 @@ _FIXED_CREATURE_TOKEN = re.compile(
     re.IGNORECASE,
 )
 _FIXED_PREDEFINED_TOKEN = re.compile(
-    rf"^Create (?P<count>{FIXED_COUNT_PATTERN}|eleven|twelve|thirteen) "
+    rf"^Create (?P<count>{FIXED_COUNT_PATTERN}|eleven|twelve|thirteen|fourteen) "
     r"(?P<tapped>tapped )?"
     r"(?P<name>Treasure|Gold|Food|Map|Clue|Powerstone|Junk|Vibranium|Blood|Lander|Mutagen|Walker) tokens?\.?$",
     re.IGNORECASE,
@@ -246,6 +246,7 @@ def _positive_fixed_number(value: str) -> int | None:
         "eleven": 11,
         "twelve": 12,
         "thirteen": 13,
+        "fourteen": 14,
     }.get(value.casefold())
     if amount is None:
         amount = fixed_number(value)
@@ -488,7 +489,7 @@ def _fixed_token_batch_creation_effect_template(
 
 def _created_token_haste_template(text):
     match = re.fullmatch(
-        r"(?P<creation>Create .+?)\. (?P<subject>It gains|They gain) haste until end of turn\.",
+        r"(?P<creation>Create .+?)\. (?P<subject>It gains|That token gains|They gain) haste until end of turn\.",
         " ".join(text.split()), re.I,
     )
     if match is None:
@@ -503,7 +504,8 @@ def _created_token_haste_template(text):
         created_token_haste_closure(effect)
     except (TypeError, ValueError):
         return None
-    if (base.effect["quantity"] == 1) != (match["subject"].casefold() == "it gains"):
+    singular_subject = match["subject"].casefold() != "they gain"
+    if (base.effect["quantity"] == 1) != singular_subject:
         return None
     return FixedTokenCreationTemplate(base.template_id + "-then-haste-v1", effect, base.mechanics)
 

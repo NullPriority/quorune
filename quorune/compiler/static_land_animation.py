@@ -80,6 +80,14 @@ def _attached_land_animation(match: re.Match[str]):
 
 
 def static_land_animation_handler(text):
+    if " ".join(text.split()).casefold() == (
+        "as long as you control five or more enchantments, each other non-aura enchantment you control "
+        "is a creature in addition to its other types and has base power and base toughness each equal to its mana value."
+    ):
+        from ..semantic_runtime.fixed_characteristic_settings import ControlledEnchantmentAnimationHandler
+
+        handler = ControlledEnchantmentAnimationHandler()
+        return "static-controlled-enchantment-animation-v1", handler.descriptor(), handler.capability_dependencies
     if attached := _ATTACHED_LAND_ANIMATION.fullmatch(text):
         return _attached_land_animation(attached)
     match = re.fullmatch(

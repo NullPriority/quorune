@@ -34,7 +34,7 @@ def static_trigger_multiplier_handler(
 ) -> tuple[str, Mapping[str, Any], str] | None:
     """Compile the closed represented CR 603.2d static wording families."""
 
-    normalized = " ".join(str(text).strip().split())
+    normalized = " ".join(str(text).strip().replace("’", "'").split())
     if re.match(r"^(?:mardu|jeskai) [—-] ", normalized, re.I):
         return None
     if _PANHARMONICON_PATTERN.fullmatch(normalized):
@@ -97,6 +97,7 @@ def _typed_participation(text,source_name):
             "power_at_most_two_creature_source",
         "If an ability of a creature you control with power 2 or less triggers, that ability triggers an additional time":
             "power_at_most_two_creature_source",
+        "If a triggered ability of a permanent you control but don't own triggers, that ability triggers an additional time": "borrowed_permanent_source",
         "If a triggered ability of a Ninja creature you control triggers, that ability triggers an additional time":'ninja_creature_source',
         "If a triggered ability of a Shaman or another Wizard you control triggers, that ability triggers an additional time":'shaman_or_another_wizard',
         "If a triggered ability of a colorless spell you control or another colorless permanent you control triggers, that ability triggers an additional time":'colorless_spell_or_another_permanent',

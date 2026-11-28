@@ -50,9 +50,17 @@ def commit_colored_hand_reveal(host: Any, intent: Any) -> tuple[str, ...]:
         card=host.state.cards.get(row['object_id'])
         if card is None or not card.is_card_object:
             raise GameRuleError('Colored reveal lost its original hand card')
-        selection={**dict(row),'oracle_id':card.oracle_id}
+        selection={key:value for key,value in row.items() if key != "mana_value"}
+        selection["oracle_id"] = card.oracle_id
         card=validate_entry_hand_reveal(host,selection)
-        if intent.color not in host._effective_card_data(card).get('colors',[]):
+        data = host._effective_card_data(card)
+        if intent.color is None:
+            from ..public_quantity_reductions import public_mana_value
+
+            if ("land" in host._type_parts(data["type_line"])[0]
+                    or public_mana_value(data) != row["mana_value"]):
+                raise GameRuleError("Nonland reveal changed its original card or mana value")
+        elif intent.color not in data.get('colors',[]):
             raise GameRuleError('Colored reveal card no longer matches its color')
         selections.append(selection)
     for selection in selections:

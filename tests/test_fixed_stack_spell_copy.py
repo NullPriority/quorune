@@ -135,6 +135,7 @@ class FixedStackSpellCopyRuntimeTests(unittest.TestCase):
             ROOT / "tests/fixtures/opponent-spell-or-permanent-return-cards.json",
             ROOT / "tests/fixtures/targeted-spell-control-cards.json",
             ROOT / "tests/fixtures/optional-draw-attack-restriction-cards.json",
+            ROOT / "tests/fixtures/storm-cards.json",
             FIXTURE,
         ], path)
         cls.db = CardDatabase(path)
@@ -391,6 +392,80 @@ class FixedStackSpellCopyRuntimeTests(unittest.TestCase):
         self.assertEqual(2, len(session.engine._current_turn_history("spell_cast")))
         self.assertIsNone(self.resolve(session))
         self.assertEqual([38] * 4, [session.state.players[seat].life for seat in "ABCD"])
+        self.replay(session, load=True)
+
+
+    def test_twinning_staff_activation_retains_original_plan_and_retargets_added_copy(self):
+        session = self.session(61470701)
+        staff = self.add(session.engine, "Twinning Staff")
+        other = self.add(session.engine, "Twinning Staff", seat="B", ref="opponent-staff")
+        spell = self.add(session.engine, "Giant Growth", zone="hand")
+        first, second, third = [self.add(session.engine, "Llanowar Elves", ref=f"staff-target-{n}") for n in range(3)]
+        self.assert_closed(session, staff)
+        self.assert_closed(session, other)
+        self.prepare(session, mana={"C": 7, "G": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", spell, [first.ref])
+        target = session.state.stack[-1].ref
+        activation = self.copy_activation(session, "A", staff)
+        result = session.act("pilot:A", {"action_id": activation["id"], "targets": [target], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(session.state.cards[staff.object_id].tapped)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        result = session.act("pilot:A", {"action_id": "choose", "targets": [second.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("semantic.storm", self.resolve(session).kind)
+        session = self.replay(session, load=True)
+        context = session.packet("pilot:A", full=True)["decision"]["ctx"]
+        labels = context["legal_actions"][0]["choice_schema"]["legal_refs"]
+        original, added = labels
+        result = session.act("pilot:A", {"action_id": "choose", "order": [added, original]})
+        self.assertTrue(result.ok, result.summary)
+        session = self.replay(session, load=True)
+        context = session.packet("pilot:A", full=True)["decision"]["ctx"]
+        self.assertEqual([True,False], [copy["may_retarget"] for copy in context["copies"]])
+        self.assertEqual([[first.ref], [second.ref]], [copy["default_targets"] for copy in context["copies"]])
+        self.reject(session, "choose", copy_targets=[None, [third.ref]])
+        result = session.act("pilot:A", {"action_id": "choose", "copy_targets": [[third.ref], None]})
+        self.assertTrue(result.ok, result.summary)
+        copies = [item for item in session.state.stack if item.kind == "spell_copy"]
+        self.assertEqual([[third.ref], [second.ref]], [copy.targets for copy in copies])
+        self.assertEqual(1, len(session.engine._current_turn_history("spell_cast")))
+        self.assertIsNone(self.resolve(session))
+        self.replay(session, load=True)
+
+    def test_twinning_staff_sums_two_replacements_for_one_native_storm_batch(self):
+        session = self.session(61470702)
+        regular = self.add(session.engine, "Twinning Staff")
+        extra = self.add(session.engine, "Twinning Staff", ref="staff-number-two")
+        outside = self.add(session.engine, "Twinning Staff", seat="B", ref="foreign-staff")
+        shocks = [self.add(session.engine, "Shock", zone="hand", ref=f"staff-before-storm-{i}") for i in range(2)]
+        storm = self.add(session.engine, "Grapeshot", zone="hand")
+        for card in (regular, extra, outside, storm):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"R": 3,"C": 1})
+        self.checkpoint(session)
+        for shock in shocks:
+            self.cast(session, "A", shock, ["B"])
+            self.assertIsNone(self.resolve(session))
+        self.cast(session, "A", storm, ["B"])
+        self.assertEqual("semantic.storm", self.resolve(session).kind)
+        context = session.packet("pilot:A", full=True)["decision"]["ctx"]
+        choices = context["legal_actions"][0]["choice_schema"]["legal_values"]
+        self.assertEqual(2,len(choices))
+        result = session.act("pilot:A", {"action_id": "choose", "choice": choices[1]})
+        self.assertTrue(result.ok, result.summary)
+        session = self.replay(session, load=True)
+        context = session.packet("pilot:A", full=True)["decision"]["ctx"]
+        first, second, added_one, added_two = context["legal_actions"][0]["choice_schema"]["legal_refs"]
+        result = session.act("pilot:A", {"action_id": "choose", "order": [first, added_one, second, added_two]})
+        self.assertTrue(result.ok, result.summary)
+        result = session.act("pilot:A", {"action_id": "choose", "copy_targets": [["B"], ["C"], ["D"], ["A"]]})
+        self.assertTrue(result.ok, result.summary)
+        copies = [item for item in session.state.stack if item.kind == "spell_copy"]
+        self.assertEqual([["B"], ["C"], ["D"], ["A"]], [copy.targets for copy in copies])
+        self.assertEqual(3, len(session.engine._current_turn_history("spell_cast")))
+        self.assertIsNone(self.resolve(session))
         self.replay(session, load=True)
 
     def test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay(self):

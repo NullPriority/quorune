@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+from ..card_program_faces import program_matches_face
+from ..entry_state_conditions import FIXED_ENTRY_CONDITION_HANDLER_ID, FixedEntryMetric
+from ..entry_state_metrics import EntryConditionMetricHost, controller_active_turn_number, entry_condition_metrics
+
 """Closed input validation for immutable zone-replacement snapshots."""
 
 from copy import deepcopy
@@ -84,12 +88,23 @@ def zone_change_subject_characteristics(host, card, destination, entry_character
         from ..card_program_faces import prospective_face_view
 
         entrant = prospective_face_view(host.card_record(card), card, characteristics.get("name"))
-        if prospective_entry_loses_intrinsic_abilities(host, entrant, controller):
+        from ..ability_fragment_primitives import current_saga_read_ahead_grants
+        from ..continuous_effects import Layer
+        from ..keyword_abilities import normalized_characteristic_keywords
+        from ..read_ahead import GRANTED_READ_AHEAD_ENTRY
+
+        _, prospective = _entry_layer_characteristics(host, entrant, controller, maximum_layer=Layer.ABILITY)
+        if prospective.get(INTRINSIC_ABILITIES_REMOVED) is True:
             characteristics[INTRINSIC_ABILITIES_REMOVED] = True
+        if (current_saga_read_ahead_grants(host.state)
+                and "read ahead" not in normalized_characteristic_keywords(characteristics)
+                and "read ahead" in normalized_characteristic_keywords(prospective)):
+            characteristics[GRANTED_READ_AHEAD_ENTRY] = True
+            characteristics["keywords"] = (*characteristics.get("keywords", ()), "Read Ahead")
     return characteristics, controller, card_types, subtypes, supertypes
 
 
-def _entry_layer_characteristics(host, card, controller, *, maximum_layer, copy_values=None):
+def _entry_layer_characteristics(host, card, controller, *, maximum_layer, copy_values=None, entry_face=None):
     from ..entry_copy import COPIABLE_FACE_FIELD
     from ..zone_object_state import reset_card_after_zone_change
 
@@ -99,6 +114,8 @@ def _entry_layer_characteristics(host, card, controller, *, maximum_layer, copy_
         preview, zone="battlefield", controller=controller,
         zone_change_counter=preview.zone_change_counter + 1,
     )
+    if entry_face is not None:
+        preview = replace(preview, active_face=entry_face)
     if copy_values is not None:
         preview = replace(
             preview, active_face=copy_values.get(COPIABLE_FACE_FIELD),
@@ -114,15 +131,25 @@ def prospective_entry_loses_intrinsic_abilities(host, card, controller, *, copy_
     _, data = _entry_layer_characteristics(
         host, card, controller, maximum_layer=Layer.ABILITY, copy_values=copy_values,
     )
+    if copy_values is not None:
+        from ..ability_fragment_primitives import current_saga_read_ahead_grants
+        from ..keyword_abilities import normalized_characteristic_keywords
+
+        if (current_saga_read_ahead_grants(host.state)
+                and "read ahead" in normalized_characteristic_keywords(data)
+                and "read ahead" not in normalized_characteristic_keywords(copy_values)):
+            raise SemanticNodeError("Granted Read Ahead on a Saga entry copy requires a represented copy plan")
     return data.get(INTRINSIC_ABILITIES_REMOVED) is True
 
 
-def conditional_counter_entry_types(host, card, controller, *, copy_values=None):
+def conditional_counter_entry_types(host, card, controller, *, copy_values=None, entry_face=None):
     """Read the entrant's type layer without adding it to the battlefield."""
     from ..continuous_effects import Layer
     from .fixed_characteristic_settings import prospective_creature_type_characteristics
 
-    preview, data = _entry_layer_characteristics(host, card, controller, maximum_layer=Layer.TYPE, copy_values=copy_values)
+    preview, data = _entry_layer_characteristics(
+        host, card, controller, maximum_layer=Layer.TYPE, copy_values=copy_values, entry_face=entry_face,
+    )
     data = prospective_creature_type_characteristics(
         host, preview, data, destination_controller=controller, include_controlled_subtypes=False,
     )
@@ -407,11 +434,12 @@ def intrinsic_subject_replacement_effects(
     from .chosen_basic_land_entry import ChosenBasicLandEntryHandler
     from .day_night_entry import DayNightEntryHandler
     from .linked_graveyard_entry import LinkedGraveyardEntryHandler
+    from .entry_state import EntryRadChoiceHandler
     from .self_entry_counters import EntryCounterTransferHandler
 
     if isinstance(handler, (CountedCreatureTypeEntryDesignationHandler, EntryOpponentDesignationHandler,
                             LinkedGraveyardEntryHandler, EntryCounterTransferHandler, DayNightEntryHandler,
-                            ChosenBasicLandEntryHandler)):
+                            ChosenBasicLandEntryHandler, EntryRadChoiceHandler)):
         return handler.subject_replacement_effects(
             descriptor, subject=subject, component_id=component_id, host=host,
             simultaneous_departures=simultaneous_departures,
@@ -440,6 +468,42 @@ def intrinsic_subject_replacement_effects(
     )
     return () if effect is None else (effect,)
 
+def fixed_entry_condition_metrics(
+    host: EntryConditionMetricHost,
+    *,
+    record: Any,
+    card: Any,
+    programs: Sequence[Any],
+    destination_controller: str | None,
+    prospective_name: str,
+    cache: dict[str | None, Mapping[str, int]],
+) -> Mapping[str, int]:
+    conditions = tuple(
+        descriptor.get("condition", {})
+        for program in programs
+        if program_matches_face(
+            record,
+            program,
+            card,
+            prospective_name=prospective_name or None,
+        )
+        for descriptor in program.handlers
+        if descriptor.get("handler_id") == FIXED_ENTRY_CONDITION_HANDLER_ID
+    )
+    if not conditions:
+        return {}
+    if destination_controller not in cache:
+        cache[destination_controller] = entry_condition_metrics(
+            host,
+            destination_controller,
+        )
+    metrics = cache[destination_controller]
+    turn_metric = FixedEntryMetric.CONTROLLER_ACTIVE_TURN_NUMBER.value
+    if any(isinstance(condition, Mapping) and condition.get("metric") == turn_metric for condition in conditions):
+        return {**metrics, turn_metric: controller_active_turn_number(host, destination_controller)}
+    return metrics
+
+
 __all__ = [
     "active_zone_replacement_sources",
     "prospective_destination_controller",
@@ -447,3 +511,139 @@ __all__ = [
     "zone_change_snapshot_event",
     "zone_change_subject_card",
 ]
+
+
+def intrinsic_saga_aware_entry_preview(
+    host, card, record, destination, controller, characteristics, card_types, subtypes, programs_for_record,
+):
+    from ..ability_fragment_primitives import current_saga_read_ahead_grants
+    from ..entry_counters import intrinsic_entry_counters
+
+    if destination != "battlefield" and "saga" in subtypes and current_saga_read_ahead_grants(host.state):
+        return (), ()
+    name = str(characteristics.get("name") or "")
+    try:
+        chapters = granted_read_ahead_entry_chapters(host, record, card, characteristics, name)
+    except ValueError as exc:
+        raise SemanticNodeError(str(exc)) from exc
+    read_ahead_supported = bool(chapters) or printed_read_ahead_entry_is_supported(
+        host, record, card, prospective_name=name, destination_controller=controller,
+        characteristics=characteristics, subtypes=subtypes, programs_for_record=programs_for_record,
+    )
+    counters = intrinsic_entry_counters(
+        characteristics, card_types=tuple(sorted(card_types)), card_subtypes=tuple(sorted(subtypes)),
+        keywords=tuple(characteristics.get("keywords") or ()), read_ahead_supported=read_ahead_supported,
+    )
+    return counters, chapters
+
+
+def granted_read_ahead_entry_chapters(host, record, card, characteristics, prospective_name):
+    from ..read_ahead import GRANTED_READ_AHEAD_ENTRY, read_ahead_entry_handler_descriptor
+
+    if characteristics.get(GRANTED_READ_AHEAD_ENTRY) is not True:
+        return ()
+    from ..card_program_faces import program_matches_face
+
+    if record is None or not card.is_card_object or card.annotations.get("copy_overrides"):
+        raise ValueError("Granted Read Ahead requires a represented physical Saga")
+    chapters = set()
+    for program in host.semantics.programs_for_oracle(record.oracle_id):
+        event = str(program.event or "")
+        if (not event.startswith("saga.chapter.") or not host.semantic_program_is_current_trusted(program)
+                or not program_matches_face(record, program, card, prospective_name=prospective_name or None)):
+            continue
+        number = event.removeprefix("saga.chapter.")
+        if not number.isascii() or not number.isdecimal() or int(number) < 1:
+            raise ValueError("Granted Read Ahead requires trusted numbered chapter programs")
+        chapters.add(int(number))
+    numbers = tuple(sorted(chapters))
+    read_ahead_entry_handler_descriptor(numbers)
+    return numbers
+
+
+def printed_read_ahead_entry_is_supported(
+    host: Any,
+    record: Any | None,
+    card: Any,
+    *,
+    prospective_name: str,
+    destination_controller: str | None,
+    characteristics: Mapping[str, Any],
+    subtypes: set[str],
+    programs_for_record,
+) -> bool:
+    from ..card_program_faces import program_matches_face, prospective_face_view
+    from ..read_ahead import READ_AHEAD_ENTRY_HANDLER_ID
+    from .entry_choices import ReadAheadEntryChoiceHandler
+    from .self_entry_counters import program_static_component_is_applicable
+
+    keywords = {
+        " ".join(str(value).casefold().split())
+        for value in characteristics.get("keywords") or ()
+    }
+    if "read ahead" not in keywords:
+        return False
+    if "saga" not in subtypes:
+        raise SemanticNodeError("Read Ahead entry requires a Saga")
+    if record is None:
+        raise SemanticNodeError(
+            "Read Ahead entry requires a pinned card record"
+        )
+    if not card.is_card_object or card.annotations.get("copy_overrides"):
+        raise SemanticNodeError(
+            "Copied or granted Read Ahead is outside the represented boundary"
+        )
+
+    handler = ReadAheadEntryChoiceHandler()
+    nodes = []
+    for program in programs_for_record(
+        host,
+        record,
+        active_zone="all",
+    ):
+        if not program_matches_face(
+            record,
+            program,
+            card,
+            prospective_name=prospective_name or None,
+        ) or not program_static_component_is_applicable(
+            host,
+            program,
+            prospective_face_view(record, card, prospective_name),
+            prospective_zone="battlefield",
+            prospective_controller=destination_controller,
+        ):
+            continue
+        for descriptor in program.handlers:
+            if descriptor.get("handler_id") == READ_AHEAD_ENTRY_HANDLER_ID:
+                nodes.append(handler.validate(descriptor))
+    if len(nodes) != 1:
+        raise SemanticNodeError(
+            "Read Ahead entry requires one trusted typed handler"
+        )
+
+    import re
+
+    represented: set[int] = set()
+    for program in host.semantics.programs_for_oracle(record.oracle_id):
+        match = re.fullmatch(
+            r"saga\.chapter\.(?P<number>[1-9]\d*)",
+            str(program.event or ""),
+        )
+        if (
+            match is None
+            or not host.semantic_program_is_current_trusted(program)
+            or not program_matches_face(
+                record,
+                program,
+                card,
+                prospective_name=prospective_name or None,
+            )
+        ):
+            continue
+        represented.add(int(match.group("number")))
+    if tuple(sorted(represented)) != nodes[0].chapter_numbers:
+        raise SemanticNodeError(
+            "Read Ahead entry requires matching trusted typed chapter programs"
+        )
+    return True

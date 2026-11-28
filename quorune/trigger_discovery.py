@@ -10,7 +10,6 @@ from .triggered_mana_model import SOURCE_MANA_TAP_EVENT, source_mana_tap_observe
 from .keyword_abilities import normalized_characteristic_keywords
 
 import copy
-import hashlib
 from collections.abc import Mapping, Sequence
 from typing import Any, Protocol
 
@@ -20,6 +19,8 @@ from .ability_fragments import (
     SpellCastKeywordTriggerSpec,
     canonical_ability_fragments,
     granted_triggered_specs,
+    GrantedTriggeredAbilitySpec,
+    GRANTED_TRIGGER_PROVIDER_VERSION,
 )
 from .semantic_runtime.current_ability_components import (
     program_has_current_ability_fragments,
@@ -30,7 +31,7 @@ from .creature_power_damage import (
     occurrence_power_trigger_context,
 )
 from .errors import GameRuleError
-from .granted_activation_model import GRANTING_ATTACHMENT_PAYMENT_FIELD, GrantingAttachmentPayment
+from .granted_activation_model import GRANTING_ATTACHMENT_PAYMENT_FIELD
 from .increment_model import CONDITION_FIELD as INCREMENT_CONDITION_FIELD
 from .rules.increment_condition import current_increment_condition
 from .continuous_conditions import (
@@ -46,6 +47,7 @@ from .rules.event_subscriptions import (
 )
 from .evolve import EVOLVE_EVENT_CONDITION_FIELD
 from .rules.evolve_entrant import evolve_entrant_trigger_context, evolve_event_condition_holds
+from .soulbond_model import SOULBOND_PARTNER_LOGICAL_ID
 from .rules.target_announcements import TARGET_ANNOUNCEMENT_EVENT
 from .rules.trigger_source_information import trigger_attachment_context
 from .echo import (
@@ -87,7 +89,6 @@ from .trigger_participation import (
     TriggerMultiplierPredicate,
     TriggerMultiplierSpec,
 )
-from .util import stable_json
 
 
 from .discard_effect_origin import OPPONENT_SOURCE_DISCARD_EVENT, event_source_zone
@@ -176,6 +177,11 @@ def semantic_event_value(
         if type(identity)is not str or not identity:
             raise GameRuleError('Event source requires its nonempty logical object identity')
         return identity
+    if value == SOULBOND_PARTNER_LOGICAL_ID:
+        from .soulbond_state import paired_object_identity
+
+        partner = paired_object_identity(host.state, source)
+        return partner.logical_object_id if partner is not None else None
     locked_controller = context.get(
         "intervening_condition_controller",
         source.controller,
@@ -253,6 +259,7 @@ def _extended_action_condition_actual(host,condition,*,source,context):
     from .entry_designations import LINKED_OPPONENT_UPKEEP_FIELD, LINKED_PLAYER_CAST_FIELD
     from .rules.cast_target_copy import CAST_TARGET_COPY_CONDITION_FIELD, cast_target_copy_condition_holds
     from .rules.cast_source_spell_copy import SOURCE_CAST_COPY_CONDITION_FIELD, source_cast_copy_condition_holds
+    from .rules.event_spell_copy import ATTACK_CAST_COPY_FIELD, attacking_cast_copy_condition_holds
     from .rules.cast_creature_set_spell_copy import (
         CAST_CREATURE_SET_COPY_CONDITION, cast_creature_set_copy_condition_value,
     )
@@ -279,6 +286,8 @@ def _extended_action_condition_actual(host,condition,*,source,context):
             return True, cast_target_copy_condition_holds(host, condition, context, source)
         if field == SOURCE_CAST_COPY_CONDITION_FIELD:
             return True, source_cast_copy_condition_holds(host, condition, context, source)
+        if field == ATTACK_CAST_COPY_FIELD:
+            return True, attacking_cast_copy_condition_holds(host, condition, context, source)
         if field in {LINKED_OPPONENT_UPKEEP_FIELD, LINKED_PLAYER_CAST_FIELD}:
             from .rules.linked_entry_opponent import current_linked_entry_opponent, current_linked_entry_player
 
@@ -735,7 +744,9 @@ def semantic_event_matches(
     from .rules.event_subscriptions import GRAVEYARD_DEPARTURE_LOOKBACK_EVENT
     if event == GRAVEYARD_DEPARTURE_LOOKBACK_EVENT and context.get("to") == "stack":
         from .rules.grouped_graveyard_departure import COVERAGE
-        if COVERAGE not in program.coverage:
+        from .rules.modal_selection import uses_distinct_turn_graveyard_modes
+
+        if COVERAGE not in program.coverage and not uses_distinct_turn_graveyard_modes(program.target_schema):
             return False
     if self_event and str(context.get("card") or "") != source.ref:
         return False
@@ -945,7 +956,7 @@ def _event_programs_for_source(
     source_characteristics: Mapping[
         str, Mapping[str, Any]
     ] | None,
-) -> tuple[str, Mapping[str, Any], list[tuple[SemanticProgram, GrantingAttachmentPayment | None]]]:
+) -> tuple[str, Mapping[str, Any], list[tuple[SemanticProgram, GrantedTriggeredAbilitySpec | None]]]:
     """Collect printed and individually bound granted abilities from one current source."""
 
     active_zone = source_zones.get(source.object_id, source.zone) if source_zones is not None else source.zone
@@ -1007,7 +1018,13 @@ def _event_programs_for_source(
         payment = granted.granting_attachment_payment
         if payment is not None and payment.granting_object is None:
             raise GameRuleError('A granting Equipment trigger requires its captured incarnation')
-        discovered.append((program, payment))
+        if granted.schema_version == GRANTED_TRIGGER_PROVIDER_VERSION:
+            from .rules.trigger_limits import TriggerLimitSpec
+
+            if (granted.granting_source is None or program.trigger_limit != TriggerLimitSpec().to_dict()
+                    or not program.provenance.get("granted_only")):
+                raise GameRuleError("A limited grant requires its bound provider and original once-per-turn program")
+        discovered.append((program, granted))
     return active_zone, characteristics, discovered
 
 
@@ -1095,35 +1112,8 @@ def _semantic_trigger_context(
     if 'identity_pinned_soulbond_pairing' in program.coverage:
         stack_context['source_logical_object_id'] = source.logical_object_id
         stack_context['intervening_condition_controller'] = source.controller
-    if "one_or_more_event_batch" in program.coverage:
-        from .rules.aggregated_arrival_counters import matching_arrival_member_context
-        try:
-            stack_context.update(matching_arrival_member_context(program, event, context))
-        except ValueError as exc:
-            raise GameRuleError(str(exc)) from exc
-        aggregation_scope = (
-            {"damaged_player": context.get("player")}
-            if event == "damage.dealt"
-            else {}
-        )
-        if event == 'creature.attacks':
-            from .rules.attack_batches import attack_batch_aggregation_scope, declared_attack_counter_context
-            try:
-                aggregation_scope = attack_batch_aggregation_scope(program, context)
-                stack_context.update(declared_attack_counter_context(program, source, context))
-            except (ValueError, TypeError) as exc:
-                raise GameRuleError(str(exc)) from exc
-        stack_context["one_or_more_aggregation_id"] = hashlib.sha256(
-            stable_json(
-                {
-                    "event": event,
-                    "event_id": context.get("event_id"),
-                    **aggregation_scope,
-                    "source_logical_object_id": source.logical_object_id,
-                    "source_ability_id": program.key,
-                }
-            ).encode("utf-8")
-        ).hexdigest()
+    from .rules.aggregated_arrival_counters import capture_trigger_aggregation_context
+    capture_trigger_aggregation_context(stack_context, program, source, event, context)
     if any(
         effect.get("op") == "choose_myriad_token_destinations"
         for effect in program.effects
@@ -1533,7 +1523,7 @@ def dispatch_semantic_event(
                     ability_characteristics=characteristics,active_zone=active_zone,
                 )
             )
-        for program, granting_attachment_payment in programs:
+        for program, grant in programs:
             if _uses_specialized_stack_spell_cast_owner(program):
                 continue
             if program.trust_level == "unresolved":
@@ -1566,14 +1556,14 @@ def dispatch_semantic_event(
                 return [item.ref for item in triggered]
             if program.trigger_limit is not None:
                 from .rules.trigger_limits import trigger_usage_plan
-                try:usage=trigger_usage_plan(host.state,source,program,(*(trigger_batch or ()),*triggered))
+                try:usage=trigger_usage_plan(host.state,source,program,(*(trigger_batch or ()),*triggered),grant=grant)
                 except (ValueError,TypeError) as exc:raise GameRuleError(str(exc)) from exc
                 if usage is None:continue
             item = _new_semantic_trigger_item(
                 host, source=source, program=program, event=event, context=context,
                 active_zone=active_zone, characteristics=characteristics,
                 departure_characteristics=source_characteristics,
-                granting_attachment_payment=granting_attachment_payment,
+                granting_attachment_payment=grant.granting_attachment_payment if grant is not None else None,
             )
             if trigger_batch is not None and "one_or_more_event_batch" in program.coverage:
                 from .rules.aggregated_arrival_counters import coalesce_trigger_aggregation
@@ -1586,7 +1576,7 @@ def dispatch_semantic_event(
             from .control_effects import pin_pending_control_duration
             pin_pending_control_duration(host, item)
             if program.trigger_limit is not None and usage.live_source is not None:
-                commit_trigger_usage(usage.live_source, ability_id=program.ability_id,
+                commit_trigger_usage(usage.live_source, ability_id=usage.ability_id or program.ability_id,
                                      turn_sequence=host.state.turn_sequence)
             triggered.append(item)
             if program.trigger_limit is None or usage.allows_multipliers:

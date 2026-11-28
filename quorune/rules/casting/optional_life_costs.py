@@ -102,14 +102,25 @@ def apply_optional_life_reduction(option):
     option.setdefault('cost_reductions', []).append({'kind': 'optional_life_colored', 'reduction': applied})
 
 
+def alternate_cast_life_amount(option):
+    from .global_alternatives import battlefield_alternative_life_amount
+    from .library_top_life import mana_value_life_amount
+
+    return mana_value_life_amount(option) + battlefield_alternative_life_amount(option)
+
+
 def optional_life_payment_affordable(host, seat, option, response):
     from ...life_state import LifeStateError, prepare_life_payment
     from ...printed_mana_cost_model import printed_phyrexian_life_payment
     from ..casting_additional_cost_groups import fixed_life_payment_additional_cost, announced_x_life_additional_cost
-    from .library_top_life import mana_value_life_amount, mana_value_life_price_field
+    from .library_top_life import mana_value_life_price_field
+
+    from ...targeted_spell_costs import targeted_spell_life_payment
 
     printed = printed_phyrexian_life_payment(option)
-    amount = optional_life_cost_amount(option) + printed + mana_value_life_amount(option)
+    targeted = targeted_spell_life_payment(option)
+    alternate = alternate_cast_life_amount(option)
+    amount = optional_life_cost_amount(option) + printed + alternate + targeted
     if not amount:
         return True
     for raw in option.get('additional_costs', ()):
@@ -121,7 +132,7 @@ def optional_life_payment_affordable(host, seat, option, response):
             amount += declared.amount_for(option.get('announced_additional_x'))
         elif raw.get('kind') == 'life_x':
             amount += int(response.get('x', 0))
-    if printed or mana_value_life_price_field(option) is not None:
+    if printed or alternate or targeted or mana_value_life_price_field(option) is not None:
         try:
             prepare_life_payment(host, seat, amount)
         except LifeStateError:

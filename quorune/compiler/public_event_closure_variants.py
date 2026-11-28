@@ -6,11 +6,14 @@ from ..rules.phase_occurrence_model import PHASE_IN_TOKEN_VARIANT, SPELL_TARGET_
 from ..damage_recipient_model import DAMAGE_PERMANENT_VARIANT
 from ..event_card_return import OTHER_LEGENDARY_HAND_RETURN_VARIANT
 from ..rules.enchanted_departure_events import ENCHANTED_DEPARTURE_VARIANT
+from ..rules.entrant_x_reflexive import ENTRANT_X_VARIANT
 from ..attack_batch_model import DIRECT_PLAYER_ATTACK_VARIANTS
 from ..dungeon_progress import DUNGEON_COMPLETION_TRIGGER_VARIANT
 from ..token_copy_recipient_model import OTHER_NONTOKEN_CREATURE_ENTRY
+from ..rules.opponent_blight import OPPONENT_BLIGHT_ENTRY_VARIANT
 from ..rules.event_subscriptions import COMBAT_PARTICIPANT_DAMAGE_VARIANT, GRAVEYARD_CREATURE_TRANSITIONS_VARIANT
 from ..rules.source_power_opponent_damage import SOURCE_POWER_OPPONENT_DAMAGE_VARIANT
+from ..rules.target_announcements import SOURCE_ATTACK_OR_SPELL_TARGET_VARIANT
 
 """Finite public event variants admitted by the shared result composer."""
 
@@ -47,7 +50,9 @@ PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "another_controlled_colorless_creature_enters",
         OTHER_NONTOKEN_CREATURE_ENTRY,
         "another_controlled_creature_power_at_most",
+        ENTRANT_X_VARIANT,
         "source_or_controlled_toughness_greater_than_power_entry",
+        OPPONENT_BLIGHT_ENTRY_VARIANT,
         "controlled_enchantment_graveyard",
         "opponent_controlled_artifact_graveyard",
         "controller_cycles_another",
@@ -98,6 +103,22 @@ MULTI_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "enchanted_creature_blocks_or_becomes_blocked",
         COMBAT_PARTICIPANT_DAMAGE_VARIANT,
         SOURCE_POWER_OPPONENT_DAMAGE_VARIANT,
+        SOURCE_ATTACK_OR_SPELL_TARGET_VARIANT,
         "source_attacks_or_blocks_with_controlled_dinosaur",
     }
 )
+
+
+def fixed_public_event_allows_counter_placement(binding, effects, target_schema, *, grouped_departure):
+    """Admit only the reviewed counter producers in the typed event result body."""
+    from ..rules.tap_state_capability_shapes import is_source_untap_counter_sequence
+    from ..unblocked_attacker_model import UNBLOCKED_ATTACKER_EVENT, unblocked_defender_poison_effect
+
+    return (
+        grouped_departure
+        or (binding.event.value == UNBLOCKED_ATTACKER_EVENT
+            and tuple(effects) == (unblocked_defender_poison_effect(),))
+        or (binding.variant == "source_public_tap_state_transition"
+            and is_source_untap_counter_sequence(effects, target_schema))
+        or (len(effects) == 1 and effects[0].get("op") == "look_top_shared_type_reveal")
+    )

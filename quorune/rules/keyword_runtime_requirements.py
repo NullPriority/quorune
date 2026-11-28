@@ -185,6 +185,13 @@ def keyword_runtime_dependencies(program):
     from .commander_companion_roles import companion_role_runtime_dependencies
 
     required.update(companion_role_runtime_dependencies(program))
+    from ..read_ahead import read_ahead_grant_descriptor_dependencies
+
+    for descriptor in program.handlers:
+        granted_read_ahead = read_ahead_grant_descriptor_dependencies(descriptor)
+        if granted_read_ahead and (program.event, program.active_zone) != ("characteristics.evaluate", "battlefield"):
+            raise ValueError("Read Ahead grants require a current battlefield static component")
+        required.update(granted_read_ahead)
     required.update(_granted_evolve_dependencies(program))
     from .recover import recover_program_dependencies
     required.update(recover_program_dependencies(program))

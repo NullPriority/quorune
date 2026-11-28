@@ -76,6 +76,23 @@ DeclarationRequirementKind = Literal[
 ]
 
 DECLARATION_COMPONENT_CAPABILITY_ID = "combat.declaration.typed_components"
+PHYREXIAN_DEFENDER_TAX_CAPABILITY = "combat.attack.payment.phyrexian_defender"
+PHYREXIAN_DEFENDER_TAX_TEMPLATE = "source-controller-phyrexian-attack-tax-player-planeswalker-v1"
+
+
+def single_phyrexian_declaration_cost(printed_cost):
+    """Reuse the canonical fixed-symbol options for one colored Phyrexian symbol."""
+    from .printed_mana_cost_model import phyrexian_mana_choices
+
+    if type(printed_cost) is not str or len(printed_cost) != 5 or not printed_cost.startswith('{') or not printed_cost.endswith('}'):
+        return None
+    choices = phyrexian_mana_choices(printed_cost[1:-1])
+    if len(choices) != 2:
+        return None
+    (_, color), (_, life) = choices
+    return ((color, 1),), life
+DEFENDING_PLAYER_RAD_BLOCK_CAPABILITY = "combat.block.defending_player_rad_counter"
+DEFENDING_PLAYER_RAD_BLOCK_TEMPLATE = "intrinsic-defending-player-rad-unblockable-v1"
 DECLARATION_MANA_KEYS = ("GENERIC", "W", "U", "B", "R", "G", "C")
 ENCHANTMENT_COUNT_ATTACK_TAX_ID = "source-controller-enchantment-count-attack-tax-v1"
 ATTACHED_GOAD_CAPABILITY = "combat.goad.attached_creature"
@@ -123,7 +140,7 @@ def _mechanics(values: tuple[DeclarationKind, ...]) -> tuple[str, ...]:
 
 @dataclass(frozen=True, slots=True)
 class DeclarationCostTemplate:
-    """One closed declaration cost compiled from a whole line."""
+    """One typed declaration cost compiled from a complete static ability."""
 
     template_id: str
     declarations: tuple[DeclarationKind, ...]
@@ -133,6 +150,7 @@ class DeclarationCostTemplate:
     source_condition: DeclarationSourceCondition | None = None
     includes_planeswalkers: bool = False
     mana_calculation: DeclarationManaCalculation | None = None
+    phyrexian_life: int | None = None
 
     def __post_init__(self) -> None:
         if type(self.template_id) is not str or not self.template_id:
@@ -169,6 +187,16 @@ class DeclarationCostTemplate:
             raise ValueError(
                 "Declaration cost planeswalker inclusion must be boolean"
             )
+        if self.phyrexian_life is not None or self.template_id == PHYREXIAN_DEFENDER_TAX_TEMPLATE:
+            if (self.template_id != PHYREXIAN_DEFENDER_TAX_TEMPLATE or type(self.phyrexian_life) is not int
+                    or (self.mana, self.phyrexian_life) != single_phyrexian_declaration_cost(self.printed_cost)
+                    or self.scope != 'source_controller' or self.declarations != ('attack',)
+                    or self.source_condition is not None or not self.includes_planeswalkers):
+                raise ValueError('Phyrexian declaration costs require one fixed attack tax protecting player and planeswalkers')
+
+    @property
+    def capability_id(self) -> str | None:
+        return PHYREXIAN_DEFENDER_TAX_CAPABILITY if self.phyrexian_life is not None else None
 
     def _validate_mana_source(self) -> None:
         if self.mana_calculation is None and self.template_id != ENCHANTMENT_COUNT_ATTACK_TAX_ID:
@@ -200,6 +228,7 @@ class DeclarationCostTemplate:
             "printed_cost": self.printed_cost,
             "source_condition": self.source_condition,
             "includes_planeswalkers": self.includes_planeswalkers,
+            **({'phyrexian_life': self.phyrexian_life} if self.phyrexian_life is not None else {}),
         }
         if self.mana_calculation is not None:
             result["mana_calculation"] = self.mana_calculation
@@ -216,7 +245,9 @@ class DeclarationCostTemplate:
             "source_condition",
             "includes_planeswalkers",
         }
-        if not isinstance(value, Mapping) or set(value) not in (expected, expected | {"mana_calculation"}):
+        if (not isinstance(value, Mapping)
+                or set(value) not in (expected, expected | {"mana_calculation"}, expected | {"phyrexian_life"})
+                or ("phyrexian_life" in value and type(value["phyrexian_life"]) is not int)):
             raise ValueError("Declaration cost fragments have a closed schema")
         if "mana_calculation" in value and value["mana_calculation"] != "source_controller_enchantment_count":
             raise ValueError("Unsupported declaration mana calculation")
@@ -250,6 +281,7 @@ class DeclarationCostTemplate:
             source_condition=value["source_condition"],
             includes_planeswalkers=value["includes_planeswalkers"],
             mana_calculation=value.get("mana_calculation"),
+            phyrexian_life=value.get('phyrexian_life'),
         )
 
 
@@ -612,12 +644,14 @@ class DeclarationSharedSubtypeCondition:
 @dataclass(frozen=True, slots=True)
 class DeclarationPlayerStateCondition:
     player: DeclarationConditionPlayer
-    state: Literal["monarch", "poisoned"]
+    state: Literal["monarch", "poisoned", "rad_counter"]
 
     def __post_init__(self) -> None:
         _validate_condition_player(self.player)
-        if self.state not in {"monarch", "poisoned"}:
+        if self.state not in {"monarch", "poisoned", "rad_counter"}:
             raise ValueError("Unknown declaration player state")
+        if self.state == "rad_counter" and self.player != "defending_player":
+            raise ValueError("The rad restriction requires the actual defending player")
 
     def to_dict(self) -> dict[str, object]:
         return {"kind": "player_state", "player": self.player, "state": self.state}
@@ -828,6 +862,13 @@ class DeclarationRestrictionTemplate:
             ),
         ):
             raise ValueError("Declaration restriction condition must be typed")
+        rad = isinstance(self.condition, DeclarationPlayerStateCondition) and self.condition.state == "rad_counter"
+        if rad or self.template_id == DEFENDING_PLAYER_RAD_BLOCK_TEMPLATE:
+            if (not rad or self.template_id != DEFENDING_PLAYER_RAD_BLOCK_TEMPLATE
+                    or (self.declarations, self.scope, self.mode, self.count) != (("block",), "source_option", "prohibit", 0)
+                    or not self.applies_when_condition or self.option_relation is not None or self.includes_planeswalkers
+                    or any(predicate != DeclarationObjectPredicate() for predicate in (self.subject, self.opposing, self.matching))):
+                raise ValueError("Defending-player rad requires the complete intrinsic blocker prohibition")
 
     @property
     def mechanics(self) -> tuple[str, ...]:

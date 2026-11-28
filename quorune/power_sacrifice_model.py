@@ -115,6 +115,9 @@ CONTROLLER_SACRIFICE_LIFE_FIELD = "controller_sacrifice_toughness_life"
 CONTROLLER_SACRIFICE_LIFE_TEMPLATE = "fixed-counter-upkeep-sacrifice-toughness-life-v1"
 ENTRY_SACRIFICE_POWER_DRAW_FIELD = "entry_sacrifice_power_life_draw"
 ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE = "fixed-counter-entry-sacrifice-power-life-draw-v1"
+ENTRY_SACRIFICE_POWER_TREASURE_FIELD = "entry_sacrifice_power_treasure"
+ENTRY_SACRIFICE_POWER_TREASURE_TEMPLATE = "fixed-counter-entry-sacrifice-power-treasure-v1"
+ENTRY_SACRIFICE_POWER_TREASURE_CAPABILITY = "resolution.sacrifice.entry_power_treasure"
 ATTACK_SACRIFICE_STAT_FIELD = "attack_sacrifice_power_draw_toughness_loss"
 ATTACK_SACRIFICE_STAT_TEMPLATE = "fixed-counter-attack-sacrifice-stat-results-v1"
 
@@ -154,6 +157,25 @@ def entry_sacrifice_power_life_draw_effect(
         **_other_creature_sacrifice_effect(optional=optional, actor=actor, excluded=excluded),
         ENTRY_SACRIFICE_POWER_DRAW_FIELD: {"schema_version": 1, "optional": optional},
     }
+
+
+def entry_sacrifice_power_treasure_effect(
+    *, actor: str = "$controller", excluded: str | None = "$source.zone_object",
+) -> dict[str, Any]:
+    return {
+        **_other_creature_sacrifice_effect(optional=True, actor=actor, excluded=excluded),
+        ENTRY_SACRIFICE_POWER_TREASURE_FIELD: {"schema_version": 1},
+    }
+
+
+def validate_entry_sacrifice_power_treasure(
+    effect: Mapping[str, Any], *, actor: str = "$controller", excluded: str | None = "$source.zone_object",
+) -> None:
+    spec = effect.get(ENTRY_SACRIFICE_POWER_TREASURE_FIELD)
+    if (not isinstance(spec, Mapping) or type(spec.get("schema_version")) is not int
+            or type(effect.get("count")) is not int
+            or thaw_value(effect) != entry_sacrifice_power_treasure_effect(actor=actor, excluded=excluded)):
+        raise ValueError("Entry Treasure requires one optional, other controlled creature and its paid power")
 
 
 def attack_sacrifice_stat_effect(*, actor: str = "$controller", excluded: str | None = "$source.zone_object") -> dict[str, Any]:
@@ -205,6 +227,7 @@ class GreatestPowerSacrificeLifeResult:
     draw_after_life: bool = False
     draw_then_lose_life: bool = False
     sacrificing_player: str | None = None
+    create_treasure: bool = False
 
     def __post_init__(self) -> None:
         if any(type(value) is not str or not value or value.startswith("$")
@@ -217,6 +240,10 @@ class GreatestPowerSacrificeLifeResult:
             or ((self.draw_after_life or self.draw_then_lose_life) and self.characteristic != "power")
         ):
             raise ValueError("Sacrifice life requires a represented creature characteristic and result")
+        if (type(self.create_treasure) is not bool or self.create_treasure and (
+                self.characteristic != "power" or self.draw_after_life or self.draw_then_lose_life
+                or self.sacrificing_player is not None)):
+            raise ValueError("Treasure requires the controller's isolated paid power result")
         if self.sacrificing_player is not None and (
             type(self.sacrificing_player) is not str or not self.sacrificing_player or self.sacrificing_player.startswith("$")
             or self.characteristic != "toughness" or self.draw_after_life or self.draw_then_lose_life
@@ -231,10 +258,13 @@ class GreatestPowerSacrificeLifeResult:
         if self.sacrificing_player is not None:
             return self.player in (actor, self.sacrificing_player)
         return (self.characteristic != "toughness" and not self.draw_after_life and not self.draw_then_lose_life
+                and not self.create_treasure
                 or self.player == actor)
 
     def to_dict(self) -> dict[str, Any]:
         fields = {"player": self.player, "incarnation": self.incarnation}
+        if self.create_treasure:
+            return {"schema_version": 6, **fields, "create_treasure": True}
         if self.sacrificing_player is not None:
             return {"schema_version": 5, **fields, "sacrificing_player": self.sacrificing_player}
         if self.draw_then_lose_life:
@@ -261,4 +291,6 @@ class GreatestPowerSacrificeLifeResult:
             if (raw["schema_version"] == 5 and set(raw) == fields | {"sacrificing_player"}
                     and type(raw["sacrificing_player"]) is str):
                 return cls(raw["player"], raw["incarnation"], "toughness", sacrificing_player=raw["sacrificing_player"])
+            if raw["schema_version"] == 6 and set(raw) == fields | {"create_treasure"} and raw["create_treasure"] is True:
+                return cls(raw["player"], raw["incarnation"], create_treasure=True)
         raise ValueError("Sacrifice life requires its exact committed-result descriptor")

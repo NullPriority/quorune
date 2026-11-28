@@ -301,3 +301,197 @@ class StackSpellExileTests(InheritedNativeFixture, unittest.TestCase):
                     self.assertEqual(name in retained, result["strict_capability_ready"], result)
                 unrelated, _ = register_card(self.db, registry, "Sol Ring")
                 self.assertTrue(unrelated["strict_capability_ready"], unrelated["blockers"])
+
+
+class AvenInterrupterTests(InheritedNativeFixture, unittest.TestCase):
+    _spell = StackSpellExileTests._spell
+    _reject = StackSpellExileTests._reject
+    aven_name = "Aven Interrupter"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        path = Path(cls.temporary.name) / "aven-interrupter.sqlite3"
+        build_fixture_database([FIXTURES / name for name in (
+            "bound-effect-program-cards.json", "aven-interrupter-cards.json",
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Aven Interrupter", [
+            DeckEntry("Isamaru, Hound of Konda", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30),
+        ], ["Isamaru, Hound of Konda"])
+
+    def test_aven_external_plot_and_origin_price_are_independently_closed(self):
+        from quorune.cast_lifecycles import (
+            EXTERNAL_PLOT_LIFECYCLE_VERSION, FixedCastLifecycleError, FixedCastLifecycleSpec,
+            externally_plotted_cast_spec,
+        )
+        from quorune.compiler.public_cast_cost_modifiers import public_cast_cost_modifier_v2_template
+
+        card = self.db.lookup(self.aven_name, fuzzy=False)
+        result, semantics = register_card(self.db, self.registry, self.aven_name)
+        self.assertTrue(result["strict_capability_ready"], result)
+        programs = {program.event: program for program in semantics.programs_for_oracle(card.oracle_id)}
+        trigger = programs["permanent.enter.self"]
+        expected = StackSpellExileSpec(StackSpellExileScope.TARGET_PLOT, schema_version=2)
+        self.assertEqual([expected.effect()], thaw_value(trigger.effects))
+        self.assertEqual(expected.target_schema, thaw_value(trigger.target_schema))
+        self.assertEqual(1, StackSpellExileSpec(StackSpellExileScope.SELECTED).schema_version)
+        wrong = replace(trigger, target_schema={**expected.target_schema, "count": 2})
+        self.assertFalse(bind_semantic_program_runtime(wrong, capability_registry=self.registry,
+                                                      profile=PROFILE)["strict"])
+        spec = externally_plotted_cast_spec()
+        self.assertEqual(spec, FixedCastLifecycleSpec.from_dict(spec.to_dict()))
+        self.assertEqual({"kind": "plot", "schema_version": EXTERNAL_PLOT_LIFECYCLE_VERSION}, spec.to_dict())
+        with self.assertRaises(FixedCastLifecycleError):
+            FixedCastLifecycleSpec.from_dict({**spec.to_dict(), "cost_text": "{2}"})
+        modifier = public_cast_cost_modifier_v2_template(card.oracle_text.splitlines()[-1])
+        self.assertEqual(("graveyard", "exile"), modifier.cast_origin_zones)
+        self.assertEqual(("source_opponents", 2), (modifier.affected_controller.value, modifier.generic_adjustment))
+        self.assertIsNone(public_cast_cost_modifier_v2_template(
+            card.oracle_text.splitlines()[-1].replace("more", "less")))
+
+    def aven_target(self, game, aven, target):
+        self.cast(game, "A", aven)
+        pending = self.resolve(game)
+        self.assertEqual(("semantic.target", ["A"]), (pending.kind, list(pending.actors)))
+        self._reject(game, {"action_id": "choose", "targets": [target]}, seat="B")
+        # Loading the pending target proves the selected stack incarnation and source spell survive restore.
+        game = self.replay(game, load=True)
+        answer = game.act("pilot:A", {"action_id": "choose", "targets": [target]})
+        self.assertTrue(answer.ok, answer.summary)
+        return game
+
+    def advance_to_main(self, game, seat, after_turn):
+        for _ in range(5):
+            self.until(game, lambda current: current.state.pending_decision is not None and (
+                current.state.pending_decision.kind == "cleanup.discard"
+                or (current.state.turn_sequence > after_turn and current.state.active_player == seat
+                    and current.state.phase == "precombat_main" and current.state.pending_decision.kind == "priority")
+            ))
+            if game.state.pending_decision.kind != "cleanup.discard":
+                return
+            principal, = game.pending_principals()
+            context = game.packet(principal, full=True)["decision"]["ctx"]
+            result = game.act(principal, {"action_id": "discard",
+                                          "cards": [row["id"] for row in context["hand"][:context["count"]]]})
+            self.assertTrue(result.ok, result.summary)
+        self.fail("The later owner's main phase did not arrive")
+
+    def test_actual_aven_plots_uncounterable_spell_and_taxes_its_later_owner_cast(self):
+        from quorune.cast_lifecycles import FIXED_ZONE_CAST_DESIGNATION_FIELD, fixed_zone_cast_designation
+
+        game = self.session(828401)
+        aven = self.add(game.engine, self.aven_name, zone="hand", ref="aven-plot-source")
+        spell = self.add(game.engine, "Abrupt Decay", seat="B", zone="hand", ref="aven-plot-uncounterable")
+        target = self.add(game.engine, "Sol Ring", ref="aven-decay-target")
+        fuel = self.add(game.engine, "Sol Ring", seat="B", ref="aven-plot-tax-fuel")
+        for card in (aven, spell, target, fuel):
+            self.assert_closed(game, card)
+        game.state.players["B"].mana_pool.update({"B": 1, "G": 1})
+        self.prepare(game, mana={"W": 2, "C": 1})
+        self.checkpoint(game)
+        self.cast(game, "B", spell, [target.ref])
+        old_stack_ref = self._spell(game, spell).ref
+        game = self.aven_target(game, aven, old_stack_ref)
+        self.assertIsNone(self.resolve(game))
+        exiled = game.state.cards[spell.object_id]
+        self.assertEqual(("B", "exile", False), (exiled.owner, exiled.zone, exiled.face_down))
+        marker = exiled.annotations[FIXED_ZONE_CAST_DESIGNATION_FIELD]
+        self.assertEqual(exiled.logical_object_id, marker["logical_object_id"])
+        self.assertEqual("plot", marker["lifecycle"]["kind"])
+        self.assertIsNone(fixed_zone_cast_designation(game.state, exiled, actor="B"))
+        self.assertFalse(any(event.code == "stack.counter" and event.details.get("stack") == old_stack_ref
+                             for event in game.state.events))
+        self.assertEqual("battlefield", game.state.cards[target.object_id].zone)
+        self.advance_to_main(game, "B", marker["created_turn_sequence"])
+        exiled = game.state.cards[spell.object_id]
+        self.assertIsNone(fixed_zone_cast_designation(game.state, exiled, actor="A"))
+        action = self.action(game, "B", spell)
+        plot, = (option for option in action["cost_options"] if option["id"] == "plot")
+        self.assertEqual(2, plot["requirements"]["GENERIC"])
+        self.assertEqual(2, sum(plot["requirements"].values()))
+        paid = game.act("pilot:B", {"action_id": action["id"], "cost_option": "plot",
+                                     "targets": [target.ref], "pay": "auto"})
+        self.assertTrue(paid.ok, paid.summary)
+        self.assertTrue(game.state.cards[fuel.object_id].tapped)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("graveyard", game.state.cards[target.object_id].zone)
+        self.assertEqual("graveyard", game.state.cards[spell.object_id].zone)
+        self.assertNotIn(FIXED_ZONE_CAST_DESIGNATION_FIELD, game.state.cards[spell.object_id].annotations)
+        self.replay(game, load=True)
+
+    def test_actual_aven_exiles_copies_and_ignores_a_new_spell_incarnation(self):
+        from quorune.cast_lifecycles import FIXED_ZONE_CAST_DESIGNATION_FIELD
+
+        for mode in ("copy", "stale"):
+            with self.subTest(mode=mode):
+                game = self.session(828402 if mode == "copy" else 828403)
+                aven = self.add(game.engine, self.aven_name, zone="hand")
+                original = self.add(game.engine, "Think Twice", seat="B", zone="hand", ref="aven-identity-original")
+                interrupt = self.add(
+                    game.engine, "Twincast" if mode == "copy" else "Counterspell",
+                    seat="C", zone="hand", ref="aven-identity-interrupt",
+                )
+                for card in (aven, original, interrupt):
+                    self.assert_closed(game, card)
+                game.state.players["B"].mana_pool.update({"U": 2, "C": 5})
+                game.state.players["C"].mana_pool["U"] = 2
+                self.prepare(game, mana={"W": 2, "C": 1})
+                self.checkpoint(game)
+                self.cast(game, "B", original)
+                original_ref = self._spell(game, original).ref
+                target = original_ref
+                if mode == "copy":
+                    self.cast(game, "C", interrupt, [original_ref])
+                    self.resolve_top(game)
+                    copy, = (item for item in game.state.stack if item.kind == "spell_copy")
+                    target = copy.ref
+                game = self.aven_target(game, aven, target)
+                if mode == "copy":
+                    self.resolve_top(game)
+                    self.assertTrue(any(item.ref == original_ref for item in game.state.stack))
+                    self.assertFalse(any(item.ref == target for item in game.state.stack))
+                    self.assertFalse(any(FIXED_ZONE_CAST_DESIGNATION_FIELD in card.annotations
+                                         for card in game.state.cards.values()))
+                else:
+                    self.cast(game, "C", interrupt, [original_ref])
+                    self.resolve_top(game)
+                    self.assertEqual("graveyard", game.state.cards[original.object_id].zone)
+                    self.priority(game, "B")
+                    action = self.action(game, "B", original)
+                    cast = game.act("pilot:B", {"action_id": action["id"], "cost_option": "flashback", "pay": "auto"})
+                    self.assertTrue(cast.ok, cast.summary)
+                    self.assertNotEqual(original_ref, self._spell(game, original).ref)
+                self.assertIsNone(self.resolve(game))
+                if mode == "stale":
+                    self.assertEqual("exile", game.state.cards[original.object_id].zone)
+                    self.assertNotIn(FIXED_ZONE_CAST_DESIGNATION_FIELD, game.state.cards[original.object_id].annotations)
+                self.replay(game, load=True)
+
+    def test_actual_aven_surcharges_opponent_flashback_and_preserves_other_casts(self):
+        game = self.session(828404)
+        aven = self.add(game.engine, self.aven_name, ref="aven-origin-price")
+        own = self.add(game.engine, "Think Twice", zone="graveyard", ref="aven-own-price")
+        foreign = self.add(game.engine, "Think Twice", seat="B", zone="graveyard", ref="aven-foreign-price")
+        from_hand = self.add(game.engine, "Think Twice", seat="B", zone="hand", ref="aven-hand-price")
+        self.assert_closed(game, aven)
+        game.state.players["B"].mana_pool.update({"C": 4, "U": 1})
+        self.prepare(game, mana={"C": 3, "U": 1})
+        self.checkpoint(game)
+        own_option, = (row for row in self.action(game, "A", own)["cost_options"] if row["id"] == "flashback")
+        self.assertEqual(2, own_option["requirements"]["GENERIC"])
+        self.priority(game, "B")
+        hand_option, = (row for row in self.action(game, "B", from_hand)["cost_options"] if row["id"] == "normal")
+        self.assertEqual(1, hand_option["requirements"]["GENERIC"])
+        action = self.action(game, "B", foreign)
+        flashback, = (row for row in action["cost_options"] if row["id"] == "flashback")
+        self.assertEqual((4, 1), (flashback["requirements"]["GENERIC"], flashback["requirements"]["U"]))
+        command = {"action_id": action["id"], "cost_option": "flashback", "pay": "manual"}
+        self._reject(game, {**command, "payment": {"C": 2, "U": 1}}, seat="B")
+        result = game.act("pilot:B", {**command, "payment": {"C": 4, "U": 1}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("exile", game.state.cards[foreign.object_id].zone)
+        self.replay(game, load=True)

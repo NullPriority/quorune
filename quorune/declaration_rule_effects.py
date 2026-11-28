@@ -17,6 +17,7 @@ from .declaration_fragments import DeclarationRequirementTemplate, DeclarationRe
 from .defender_permission import DefenderAttackPermission
 from .replacement.immutable import immutable_fingerprint
 from .object_predicate import ObjectQuerySpec
+from .source_continuity import SourceContinuitySnapshot
 from .as_unblocked_rule import AS_UNBLOCKED_RULE_KIND,AsUnblockedAssignmentRule
 from .toughness_assignment_rule import TOUGHNESS_RULE_KIND,ResolvedToughnessAssignmentRule
 from .block_capacity_rule_model import BLOCK_CAPACITY_RULE_KIND, ResolvedBlockCapacityRule
@@ -42,6 +43,7 @@ from .all_player_turn_rule_model import (
     ALL_PLAYER_TURN_RULE_KIND, TURN_LAND_MANA_TRIGGER_KIND, ResolvedAllPlayerTurnRule, ResolvedTurnLandManaTrigger,
 )
 from .protected_attack_payment_model import EFFECT_KIND as ATTACK_PAYMENT_KIND, ResolvedProtectedAttackPayment
+from .chosen_attack_turn_model import KIND as CHOSEN_ATTACK_TURN_KIND, ResolvedChosenAttackTurn
 from .next_turn_attack_restriction_model import ATTACK_RESTRICTION_EFFECT_KIND, ResolvedNextTurnAttackRestriction
 from .counter_bound_attack_model import COUNTER_BOUND_ATTACK_KIND, ResolvedCounterBoundAttackRestriction
 
@@ -65,6 +67,18 @@ def live_opponent_attack_query(controller: str) -> ObjectQuerySpec:
     return ObjectQuerySpec(zones=("battlefield",), types_all=("creature",), excluded_controllers=(controller,))
 
 
+def _live_attack_requirement_is_closed(requirement, query, expiry_player):
+    if not isinstance(query, ObjectQuerySpec) or requirement.kind != "attack_each_combat":
+        return False
+    if expiry_player is not None:
+        return query == live_opponent_attack_query(expiry_player)
+    from .temporary_attack_requirement_model import TemporaryAttackRequirementSpec
+
+    excluded = query.excluded_controllers
+    return (len(excluded) == 1 and query == live_opponent_attack_query(excluded[0])
+            and requirement == TemporaryAttackRequirementSpec().to_requirement())
+
+
 def declaration_group_query_is_closed(query: ObjectQuerySpec, *, resolved: bool = False) -> bool:
     """Keep live game-rule recipients on current public creature predicates."""
     return bool(
@@ -79,6 +93,47 @@ def declaration_group_query_is_closed(query: ObjectQuerySpec, *, resolved: bool 
         and query.known_to_actor is None
         and query.exclude_ref is None
     )
+
+
+SOURCE_CONTROLLED_BLOCK_FIELD = "controlled_source_block_version"
+
+
+@dataclass(frozen=True, slots=True)
+class ControlledDeclarationSource:
+    identity: ContinuousObjectIdentity
+    controller: str
+    history: SourceContinuitySnapshot
+
+    def __post_init__(self) -> None:
+        if (not isinstance(self.identity, ContinuousObjectIdentity)
+                or type(self.controller) is not str or not self.controller
+                or self.controller.startswith("$") or not isinstance(self.history, SourceContinuitySnapshot)):
+            raise ContinuousEffectError("A declaration duration requires its exact source and control history")
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"identity": self.identity.to_dict(), "controller": self.controller, "history": self.history.to_dict()}
+
+    @classmethod
+    def from_dict(cls, value):
+        if not isinstance(value, Mapping) or set(value) != {"identity", "controller", "history"}:
+            raise ContinuousEffectError("Controlled declaration source has a closed shape")
+        return cls(ContinuousObjectIdentity.from_dict(value["identity"]), value["controller"],
+                   SourceContinuitySnapshot.from_dict(value["history"]))
+
+
+def _validate_controlled_declaration_duration(effect, duration):
+    if duration is not ContinuousEffectDuration.UNTIL_SOURCE_CONTROL_CHANGES:
+        if effect.controlled_source is not None:
+            raise ContinuousEffectError("Only a source-controlled declaration rule may carry a control interval")
+        return
+    if (not isinstance(effect.controlled_source, ControlledDeclarationSource)
+            or effect.source_id != effect.controlled_source.identity.object_id or effect.live_query is not None
+            or not isinstance(effect.restriction, DeclarationRestrictionTemplate)
+            or effect.restriction.to_dict() != DeclarationRestrictionTemplate(
+                template_id="intrinsic-block-prohibition-v1", declarations=("block",), scope="self",
+            ).to_dict()
+            or len(effect.locked_objects) != 1):
+        raise ContinuousEffectError("A source-controlled duration requires its single locked blocking prohibition")
 
 
 @dataclass(frozen=True, slots=True)
@@ -104,6 +159,7 @@ class ResolutionDeclarationRuleEffect:
     expires_on_next_turn_of: str | None = None
     forbid_activations: bool = False
     block_opponents_of: str | None = None
+    controlled_source: ControlledDeclarationSource | None = None
 
     def __post_init__(self) -> None:
         for name, value in (
@@ -145,11 +201,15 @@ class ResolutionDeclarationRuleEffect:
             raise ContinuousEffectError(
                 "Declaration-rule effect duration is invalid"
             ) from exc
-        if duration not in {ContinuousEffectDuration.UNTIL_END_OF_TURN, ContinuousEffectDuration.UNTIL_NEXT_TURN}:
+        if duration not in {
+            ContinuousEffectDuration.UNTIL_END_OF_TURN, ContinuousEffectDuration.UNTIL_NEXT_TURN,
+            ContinuousEffectDuration.UNTIL_SOURCE_CONTROL_CHANGES,
+        }:
             raise ContinuousEffectError(
                 "Resolution-created declaration rule duration is unsupported"
             )
         validate_turn_expiry(duration, self.expires_on_next_turn_of)
+        _validate_controlled_declaration_duration(self, duration)
         if type(self.forbid_activations) is not bool or self.forbid_activations and (
             self.restriction != ATTACK_BLOCK_PROHIBITION
             or self.live_query is not None
@@ -157,11 +217,8 @@ class ResolutionDeclarationRuleEffect:
         ):
             raise ContinuousEffectError("Detain requires a locked next-turn attack and block prohibition")
         if live_requirement:
-            if (self.restriction.kind != "attack_each_combat"
-                    or duration is not ContinuousEffectDuration.UNTIL_NEXT_TURN
-                    or not self.expires_on_next_turn_of
-                    or self.live_query != live_opponent_attack_query(self.expires_on_next_turn_of)):
-                raise ContinuousEffectError("Live attack requirements need a controller-relative next-turn creature query")
+            if not _live_attack_requirement_is_closed(self.restriction, self.live_query, self.expires_on_next_turn_of):
+                raise ContinuousEffectError("Live attack requirements need an exact opponent-creature query")
         elif requirement and self.expires_on_next_turn_of is not None:
             raise ContinuousEffectError("Resolved declaration requirements expire at end of turn")
         if defender_permission and duration is not ContinuousEffectDuration.UNTIL_END_OF_TURN:
@@ -218,7 +275,8 @@ class ResolutionDeclarationRuleEffect:
         elif isinstance(self.restriction, DeclarationRequirementTemplate):
             value.update(schema_version=3, requirement=self.restriction.to_dict())
             if self.live_query is not None:
-                value.update(schema_version=7, live_query=self.live_query.to_dict())
+                version = 7 if self.expires_on_next_turn_of is not None else 8
+                value.update(schema_version=version, live_query=self.live_query.to_dict())
         else:
             value['restriction'] = self.restriction.to_dict()
             if self.live_query is not None:
@@ -229,6 +287,8 @@ class ResolutionDeclarationRuleEffect:
             value.update(schema_version=4, forbid_activations=True)
         if self.block_opponents_of is not None:
             value.update(schema_version=6, block_opponents_of=self.block_opponents_of)
+        if self.controlled_source is not None:
+            value.update(schema_version=8, controlled_source=self.controlled_source.to_dict())
         return value
 
     @classmethod
@@ -257,7 +317,10 @@ class ResolutionDeclarationRuleEffect:
         permission_fields = (expected - {"restriction"}) | {"schema_version", "permission"}
         permission = fields in (permission_fields, permission_fields | {"live_query"})
         opponent_blocking = fields == expected | {"schema_version", "block_opponents_of"}
-        if fields != expected and not (live or requirement or detain or permission or opponent_blocking):
+        controlled = fields == expected | {"schema_version", "controlled_source"}
+        if controlled and (type(value["schema_version"]) is not int or value["schema_version"] != 8):
+            raise ContinuousEffectError("Controlled declaration rule schema version is malformed")
+        if fields != expected and not (live or requirement or detain or permission or opponent_blocking or controlled):
             raise ContinuousEffectError(
                 "Declaration-rule effect fields are missing or unknown"
             )
@@ -267,8 +330,9 @@ class ResolutionDeclarationRuleEffect:
             )
         if live and (type(value["schema_version"]) is not int or value["schema_version"] != 2 or not isinstance(value["live_query"], Mapping)):
             raise ContinuousEffectError("Live declaration-rule schema version and query are malformed")
+        live_requirement_version = 7 if turn_expiry is not None else 8
         if requirement and (type(value["schema_version"]) is not int
-                            or value["schema_version"] != (7 if live_requirement else 3)
+                            or value["schema_version"] != (live_requirement_version if live_requirement else 3)
                             or live_requirement and not isinstance(value["live_query"], Mapping)):
             raise ContinuousEffectError("Resolved requirement schema version is malformed")
         if detain and (type(value['schema_version']) is not int or value['schema_version'] != 4
@@ -308,6 +372,7 @@ class ResolutionDeclarationRuleEffect:
                 expires_on_next_turn_of=turn_expiry,
                 forbid_activations=detain,
                 block_opponents_of=value.get("block_opponents_of") if opponent_blocking else None,
+                controlled_source=ControlledDeclarationSource.from_dict(value["controlled_source"]) if controlled else None,
             )
         except (TypeError, ValueError) as exc:
             if isinstance(exc, ContinuousEffectError):
@@ -373,6 +438,7 @@ ContinuousJournalEffect: TypeAlias = (
     | ResolvedTurnMatchOutcomeProtection | ResolvedAllPlayerTurnRule | ResolvedTurnLandManaTrigger | ResolvedSacrificeProhibition | ResolvedNoMaximumHandSize
     | ResolvedNextTurnSorceryTiming | ResolvedNextTurnAttackRestriction | ResolvedTargetCombatDamageMultiplier
     | ResolvedCounterBoundAttackRestriction
+    | ResolvedChosenAttackTurn
 )
 
 
@@ -396,6 +462,8 @@ def continuous_journal_effect_from_dict(
             return ResolvedNextTurnAttackRestriction.from_dict(value)
         if value["effect_kind"] == COUNTER_BOUND_ATTACK_KIND:
             return ResolvedCounterBoundAttackRestriction.from_dict(value)
+        if value["effect_kind"] == CHOSEN_ATTACK_TURN_KIND:
+            return ResolvedChosenAttackTurn.from_dict(value)
         if value["effect_kind"] == TEMPORARY_DAMAGE_PROHIBITION_KIND:
             return ResolvedDamagePreventionProhibition.from_dict(value)
         if value["effect_kind"] == ALL_PLAYER_TURN_RULE_KIND:

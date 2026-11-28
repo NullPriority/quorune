@@ -284,7 +284,9 @@ def _validate_distinct_mana_values(host, group, chosen, copy_targets) -> None:
 
 
 def target_controller_matches_snapshot(host,group,ref,snapshot):
-    if not group.retain_controller:return True
+    from ..targets import DEFENDING_CONTROLLER_RELATION
+    if not group.retain_controller and group.controller_relation != DEFENDING_CONTROLLER_RELATION:
+        return True
     controller=snapshot.get('controller')
     return type(controller)is str and bool(controller) and host._target_snapshot(ref).get('controller')==controller
 

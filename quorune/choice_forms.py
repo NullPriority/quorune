@@ -19,6 +19,50 @@ def _rows(value: Any) -> list[Mapping[str, Any]]:
     return [item for item in value if isinstance(item, Mapping)]
 
 
+def present_creature_type_entry_options(context, continuation, *, state, card_db, actor):
+    """Label the legal choices and recommend creature types from the pilot's own cards."""
+    from .characteristic_evaluation import type_parts
+    from .creature_subtypes import canonical_creature_subtype
+    from .entry_designations import EntryDesignationKind
+
+    offered = {row.get("id"): row for row in _rows(context.get("options"))}
+    choices = {}
+    for effect in _rows(continuation.get("replacement_effects")):
+        option_id = effect.get("effect_id")
+        if option_id not in offered or effect.get("event_kind") != "zone.change":
+            continue
+        for operation in _rows(effect.get("operations")):
+            if operation.get("op") != "set" or operation.get("field") != EntryDesignationKind.CREATURE_TYPE.event_field:
+                continue
+            subtype = canonical_creature_subtype(operation.get("value"))
+            if subtype is not None:
+                choices[option_id] = subtype
+
+    if not choices:
+        return
+    deck_types = set()
+    for oracle_id in {
+        card.oracle_id for card in state.cards.values()
+        if card.owner == actor and card.is_card_object
+    }:
+        try:
+            record = card_db.by_oracle_id(oracle_id)
+        except KeyError:
+            continue
+        type_lines = [str(face.get("type_line", "")) for face in record.faces] or [record.type_line]
+        for type_line in type_lines:
+            card_types, subtypes, _ = type_parts(type_line)
+            if card_types.intersection({"creature", "kindred", "tribal"}):
+                deck_types.update(subtypes)
+
+    if len(choices) == len(offered) and not context.get("event_order_options"):
+        context["prompt"] = "Choose a creature type."
+    context["entry_creature_types"] = {
+        option_id: {"label": subtype.title(), "preferred": subtype in deck_types}
+        for option_id, subtype in choices.items()
+    }
+
+
 def _labels(context: Mapping[str, Any]) -> dict[str, str]:
     result: dict[str, str] = {}
     for key in (
@@ -412,6 +456,20 @@ def _variant_form(
     }
 
 
+def _phyrexian_declaration_payment_field(context):
+    rows = []
+    for cost in _rows(context.get('declaration_costs')):
+        if cost.get('kind') != 'phyrexian':
+            continue
+        color, = cost['mana']
+        labels = {'mana': f'Pay {{{color}}}', 'life': f"Pay {cost['life']} life"}
+        rows.append({'value': cost['id'], 'label': f"{cost['label']} Defender: {cost['option']}.",
+                     'options': [{'value': key, 'label': labels[key]} for key in cost['methods']]})
+    return ({'name': 'phyrexian_payments', 'control': 'assignment_map', 'required': False,
+             'allow_none': True, 'label': 'Payment for selected Phyrexian attack costs', 'rows': rows}
+            if rows else None)
+
+
 def _ref_field(
     name: str,
     values: Sequence[Any],
@@ -545,6 +603,8 @@ def _special_fields(
                 "rows": rows,
             }
         ]
+        if phyrexian := _phyrexian_declaration_payment_field(context):
+            fields.append(phyrexian)
         if context.get('enlist'):
             fields.append({'name':'enlist','label':'Enlist creatures','control':'assignment_map','required':False,'allow_none':True,'rows':copy.deepcopy(context['enlist']),'source_assignment':'attackers','exclude_assigned':True,'distinct_options':True})
         if context.get('exert'):
@@ -781,6 +841,7 @@ def delegated_choice_fields(
     decision_kind: str,
     context: Mapping[str, Any],
 ) -> set[str]:
+    from .announced_counter_allocation import COUNTER_ALLOCATION_FIELD
     from .announced_damage import DAMAGE_ALLOCATION_FIELD
 
     form = build_action_form(
@@ -799,8 +860,7 @@ def delegated_choice_fields(
                 result.add(name)
             if field.get("control") == "targets":
                 result.add("modes")
-                if DAMAGE_ALLOCATION_FIELD in (field.get("schema") or {}):
-                    result.add(DAMAGE_ALLOCATION_FIELD)
+                result.update({DAMAGE_ALLOCATION_FIELD, COUNTER_ALLOCATION_FIELD}.intersection(field.get("schema") or {}))
 
     add_fields(list(form.get("fields") or []))
     variants = form.get("variants")

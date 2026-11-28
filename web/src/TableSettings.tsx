@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+  BATTLEFIELD_LANES,
   CARD_SIZE_ZONES,
   DEFAULT_TABLE_COLORS,
   MAX_CARD_SIZE,
@@ -59,6 +60,16 @@ export function TableSettings({
         <div className="compact-table-size">
           <CardSizeSlider label="Table card size" value={value.cardScale} onChange={(next) => onChange("cardScale", next)} />
         </div>
+        <fieldset className="battlefield-size-settings">
+          <legend>Battlefield lane sizes</legend>
+          {BATTLEFIELD_LANES.map(([lane, label]) => <CardSizeSlider key={lane}
+            label={label} value={value.battlefieldLaneScale[lane] ?? 1}
+            onChange={(next) => onChange("battlefieldLaneScale", { ...value.battlefieldLaneScale, [lane]: next })} />)}
+          <small>Larger lanes make space by compacting neighboring lanes.</small>
+          <button type="button" className="link-button" onClick={() => onChange("battlefieldLaneScale", {})}>
+            Reset lane sizes
+          </button>
+        </fieldset>
         <label>Hand height <output>{value.handPanelHeight} px</output><input aria-label="Hand panel height"
           aria-valuetext={`${value.handPanelHeight} pixels`} type="range"
           min={MIN_HAND_PANEL_HEIGHT} max={MAX_HAND_PANEL_HEIGHT} step={10} value={value.handPanelHeight}

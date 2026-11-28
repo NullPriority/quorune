@@ -18,12 +18,28 @@ PAID_ARTIFACT_SEARCH_TEMPLATE = "paid-artifact-mana-value-library-search-v1"
 PAID_ARTIFACT_SEARCH_CONTEXT = "paid_artifact_search"
 _SEARCH_WORDING = (
     "search your library for an artifact card with mana value equal to 1 plus the sacrificed "
-    "artifact's mana value, put that card onto the battlefield, then shuffle."
+    "artifact's mana value, put {object_pronoun} onto the battlefield, then shuffle."
 )
 _REQUIRED = (PAID_ARTIFACT_SEARCH_CAPABILITY, "library.search.fixed_counted", "activation.selected_zone_change.fixed")
-_ARTIFACT_COST = CostChoice("sacrifice_one", 1, "battlefield", another=True, predicate=FrozenMap(
+_ARTIFACT_QUERY = FrozenMap(
     ObjectQuerySpec(zones=("battlefield",), controller="$actor", types_any=("artifact",), known_to_actor=True).to_dict()
-))
+)
+
+
+@dataclass(frozen=True, slots=True)
+class _PaidArtifactSearchPrice:
+    mana_symbol: str
+    mana_quantity: int
+    choice: CostChoice
+    wording: str
+
+
+_PAID_ARTIFACT_SEARCH_PRICES = (
+    _PaidArtifactSearchPrice("GENERIC", 2, CostChoice("sacrifice_one", another=True, predicate=_ARTIFACT_QUERY),
+                             _SEARCH_WORDING.format(object_pronoun="that card")),
+    _PaidArtifactSearchPrice("W", 1, CostChoice("sacrifice_one", predicate=_ARTIFACT_QUERY),
+                             _SEARCH_WORDING.format(object_pronoun="it")),
+)
 
 
 def is_paid_artifact_search(effect):
@@ -54,36 +70,49 @@ def validate_paid_artifact_search_effect(effect, *, materialized=False):
         raise ValueError("Artifact search requires its fixed private library and battlefield result")
 
 
-def _fixed_artifact_price(cost):
+def _fixed_artifact_price(cost) -> _PaidArtifactSearchPrice | None:
     if not isinstance(cost, Mapping):
-        return False
+        return None
     fixed = {
         "tap_source": True, "untap_source": False, "sacrifice_source": False,
         "discard_source": False, "exile_source": False, "loyalty_delta": None, "source_counter_removal_cost": None,
         "life_payment": 0, "energy_payment": 0, "complex_symbols": [], "uncompiled_costs": [],
-        "choices": [_ARTIFACT_COST.compact()],
     }
-    if set(cost) != set(fixed) | {"text", "mana"} or not isinstance(cost["mana"], Mapping):
-        return False
-    if any(type(value) is not int or value < 0 for value in cost["mana"].values()):
-        return False
-    return (set(cost["mana"]) == {"GENERIC", *"WUBRGC"}
-            and {key: value for key, value in cost["mana"].items() if value} == {"GENERIC": 2}
-            and all(type(cost[key]) is type(value) for key, value in fixed.items() if type(value) in (bool, int))
-            and all(thaw_value(cost[key]) == thaw_value(value) for key, value in fixed.items()))
+    if set(cost) != set(fixed) | {"text", "mana", "choices"} or not isinstance(cost["mana"], Mapping):
+        return None
+    mana = cost["mana"]
+    if (set(mana) != {"GENERIC", *"WUBRGC"}
+            or any(type(value) is not int or value < 0 for value in mana.values())
+            or any(type(cost[key]) is not type(value) for key, value in fixed.items() if type(value) in (bool, int))
+            or any(thaw_value(cost[key]) != value for key, value in fixed.items())):
+        return None
+    quantity = {key: value for key, value in mana.items() if value}
+    choices = thaw_value(cost["choices"])
+    return next((price for price in _PAID_ARTIFACT_SEARCH_PRICES
+                 if quantity == {price.mana_symbol: price.mana_quantity} and choices == [price.choice.compact()]), None)
 
 
-def _ability_matches_paid_artifact_search(ability):
+def _ability_matches_paid_artifact_search(ability, price):
     return (
         ability.zones == ("battlefield",) and ability.sorcery_speed and not ability.mana_ability
-        and ability.choices == (_ARTIFACT_COST,) and ability.target_schema is None
+        and ability.tap_source and {key: value for key, value in ability.mana.items() if value}
+            == {price.mana_symbol: price.mana_quantity}
+        and ability.choices == (price.choice,) and ability.target_schema is None
         and ability.activation_limit is None and not ability.activation_conditions
+        and not any((ability.untap_source, ability.sacrifice_source, ability.discard_source, ability.exile_source,
+                     ability.complex_symbols, ability.uncompiled_costs, ability.mana_cost_options,
+                     ability.life_payment, ability.energy_payment, ability.source_counter_removal_cost,
+                     ability.source_counter_placement_cost, ability.ability_local_mana_reduction,
+                     ability.waterbend, ability.variable_colored_reveal_price, ability.mill_library_cost,
+                     ability.generic_reduction_per_legendary_creature))
+        and ability.loyalty_delta is None and ability.announced_x_symbols is None
     )
 
 
 def paid_artifact_library_search_template(ability, text, *, public_timing, cost):
-    if (public_timing is not None or text.casefold().replace("’", "'") != _SEARCH_WORDING
-            or not _ability_matches_paid_artifact_search(ability) or not _fixed_artifact_price(cost)):
+    price = _fixed_artifact_price(cost)
+    if (public_timing is not None or price is None or text.casefold().replace("’", "'") != price.wording
+            or not _ability_matches_paid_artifact_search(ability, price)):
         return None
     return PAID_ARTIFACT_SEARCH_TEMPLATE, (paid_artifact_search_effect(),), None, (PAID_ARTIFACT_SEARCH_MECHANIC,)
 
@@ -113,7 +142,9 @@ def paid_artifact_search_runtime_dependencies(program):
     from ..semantic_runtime.activated_abilities import ActivatedAbilityCatalogHandler
 
     ability = ActivatedAbilityCatalogHandler().validate(program.handlers[0])
-    if ability.builtin_semantic_key != program.key or not _ability_matches_paid_artifact_search(ability):
+    price = _fixed_artifact_price(program.cost_schema)
+    if (price is None or ability.builtin_semantic_key != program.key
+            or not _ability_matches_paid_artifact_search(ability, price)):
         raise ValueError("Paid artifact search requires its original activation catalog")
     return required
 
@@ -153,12 +184,14 @@ def capture_paid_artifact_search_receipt(host, proposal, source, ability, respon
     required = paid_artifact_search_runtime_dependencies(program)
     if not required or not set(required) <= set(program.capability_dependencies):
         raise ValueError("Artifact search lacks its trusted payment and result owner")
-    if not _ability_matches_paid_artifact_search(ability) or "cost_cards" in response and "cost_objects" in response:
+    price = _fixed_artifact_price(program.cost_schema)
+    if (price is None or not _ability_matches_paid_artifact_search(ability, price)
+            or "cost_cards" in response and "cost_objects" in response):
         raise ValueError("Paid artifact activation selection is unavailable or ambiguous")
     refs = response.get("cost_cards", response.get("cost_objects", ()))
     if (not isinstance(refs, (list, tuple)) or len(refs) != 1 or type(refs[0]) is not str
-            or refs[0] not in activation_choice_candidates(host, proposal.seat, source, _ARTIFACT_COST, ability=ability)):
-        raise ValueError("Pay with exactly one other legal artifact you control")
+            or refs[0] not in activation_choice_candidates(host, proposal.seat, source, price.choice, ability=ability)):
+        raise ValueError("Pay with exactly one legal artifact you control for this price")
     card = host._resolve_object(proposal.seat, refs[0], zones={"battlefield"})
     snapshot = PaidSacrificeManaValueSnapshot(card.logical_object_id, public_mana_value(host._effective_card_data(card)))
     receipt = PaidArtifactSearchReceipt(program.key, source.logical_object_id, proposal.seat, card.object_id, snapshot)

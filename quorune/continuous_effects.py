@@ -116,6 +116,7 @@ class ContinuousEvaluation:
     applied_effects: tuple[str, ...]
     dependency_cycles: tuple[tuple[str, ...], ...]
     inapplicable_effects: tuple[str, ...]
+    base_power: int | None
 
 
 def _live_query_keywords(condition: ObjectQuerySpec, state: CharacteristicState) -> tuple[str, ...]:
@@ -475,6 +476,11 @@ def _apply_operation(
     if op == "set_controller":
         state.controller = str(value)
         return
+    if op == "insert_name_sticker":
+        from .rules.name_stickers import name_with_sticker
+
+        state.name = name_with_sticker(state.name, value["text"], value["position"])
+        return
     if op == "replace_text":
         if not isinstance(value, Mapping):
             raise ContinuousEffectError(
@@ -527,6 +533,9 @@ def _apply_operation(
             apply_stat_operation(state, ContinuousOperation("set_power_toughness", values), context)
         elif values is not None:
             _apply_creature_subtype_change(state, "set_creature_subtypes", values)
+        return
+    if op == "add_creature_for_enchantment_threshold":
+        state.card_types.add("Creature")
         return
     if op in {"set_creature_subtype", "set_creature_subtypes", "set_creature_subtype_set"}:
         _apply_creature_subtype_change(state, op, value)
@@ -641,7 +650,12 @@ def evaluate_continuous_effects(
             inapplicable.append(effect.effect_id)
             continue
         present.append(effect)
-    from .continuous_type_dependencies import bind_type_applicability_dependencies, effects_with_live_type_recipient_scopes
+    from .continuous_type_dependencies import (
+        bind_type_applicability_dependencies, effects_with_live_type_recipient_scopes,
+        retain_active_type_recipient_scopes,
+    )
+    order = type_order if type_order is not None else context.get("type_order")
+    present = list(retain_active_type_recipient_scopes(present, order))
     ordered, cycles = order_continuous_effects(
         bind_type_applicability_dependencies(present, base, context),
         dependency_order_version=context.get(CONTINUOUS_DEPENDENCY_ORDER_FIELD, CONTINUOUS_DEPENDENCY_ORDER_VERSION),
@@ -650,7 +664,8 @@ def evaluate_continuous_effects(
     memberships: dict[str, bool] = {}
     applied: list[str] = []
     intrinsic_ready=False
-    order = type_order if type_order is not None else context.get("type_order")
+    before_power_modifiers = True
+    base_power = None
     for effect in effects_with_live_type_recipient_scopes(ordered, present, base, context, cycles, order):
         if not intrinsic_ready and effect.layer>Layer.TYPE:
             _materialize_intrinsic_mana(base)
@@ -692,6 +707,9 @@ def evaluate_continuous_effects(
             if identity not in effect.locked_objects:
                 inapplicable.append(effect.effect_id)
                 continue
+        if before_power_modifiers and effect.sublayer in {"7c", "7d"}:
+            base_power = base.power
+            before_power_modifiers = False
         # Applicability is evaluated against the characteristics produced by
         # earlier layers, not the object's unmodified starting values.
         if not _matches_effect_recipient(effect, base, context, memberships):
@@ -714,4 +732,5 @@ def evaluate_continuous_effects(
         applied_effects=tuple(applied),
         dependency_cycles=tuple(cycles),
         inapplicable_effects=tuple(inapplicable),
+        base_power=base.power if before_power_modifiers else base_power,
     )

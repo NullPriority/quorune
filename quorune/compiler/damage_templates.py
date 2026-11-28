@@ -48,6 +48,29 @@ def fixed_damage_dealt_life_template(text, *, source_name, source_is_permanent):
     return "damage-fixed-set-dealt-life-v1", (effect,), None, ("cr-120-damage", "cr-119-life")
 
 
+def excess_damage_tapped_treasure_template(text, *, source_name):
+    from ..rules.excess_damage_treasure import (
+        EXCESS_TREASURE_MECHANIC, excess_treasure_effect, excess_treasure_target_schema,
+    )
+    from .declared_effect_amounts import DECLARED_EFFECT_AMOUNT_MECHANIC
+    from .token_templates import fixed_token_creation_effect_template
+
+    match = re.fullmatch(
+        r"(?P<source>.+?) deals X damage to target creature\. Create a number of tapped Treasure tokens "
+        r"equal to the amount of excess damage dealt to that creature this way\.",
+        " ".join(text.split()), re.I,
+    )
+    if match is None or not SourceReferenceSpec(source_name).matches(match["source"]):
+        return None
+    token = fixed_token_creation_effect_template("Create a tapped Treasure token.")
+    if token is None:
+        return None
+    return ("announced-damage-excess-tapped-treasure-v1", (excess_treasure_effect(token.effect),),
+            excess_treasure_target_schema(), (
+                "cr-120-damage", "cr-115-targets", DECLARED_EFFECT_AMOUNT_MECHANIC, EXCESS_TREASURE_MECHANIC,
+            ))
+
+
 def upkeep_other_controlled_creatures_damage_template(text):
     match = re.fullmatch(
         r"This creature deals (?P<amount>[1-9][0-9]*) damage to each other creature you control\.", text, re.I,
@@ -80,6 +103,29 @@ def targeted_dealt_life_gain_template(text, *, compile_damage):
     if targeted_dealt_life_gain_amount(effect, schema) is None:
         return None
     return f"{template}-dealt-life-v2", (effect,), schema, (*mechanics, "cr-119-life")
+
+
+def targeted_excess_trample_template(text, *, compile_damage):
+    from ..excess_damage import EXCESS_TRAMPLE_FIELD, EXCESS_TRAMPLE_MECHANIC, EXCESS_TRAMPLE_TEMPLATE
+    from ..rules.damage_capability_shapes import excess_trample_damage_capabilities
+
+    match = re.fullmatch(
+        r"(?P<damage>.+\.) Each creature you control gains trample and gets \+X/\+0 until end of turn, "
+        r"where X is the amount of excess damage dealt this way\.",
+        " ".join(text.split()), re.I,
+    )
+    if match is None:
+        return None
+    compiled = compile_damage(match["damage"])
+    if compiled is None:
+        return None
+    template, effects, schema, mechanics = compiled
+    if template is None or len(effects) != 1:
+        return None
+    damage = {**effects[0], EXCESS_TRAMPLE_FIELD: 1}
+    if not excess_trample_damage_capabilities(damage, schema):
+        return None
+    return EXCESS_TRAMPLE_TEMPLATE, (damage,), schema, (*mechanics, EXCESS_TRAMPLE_MECHANIC)
 
 
 _ABILITY_WORD = re.compile(
@@ -1056,45 +1102,7 @@ def linked_player_damage_quantity_template(text):
     return LINKED_PLAYER_DAMAGE_TEMPLATE, linked_player_damage_descriptor(), LINKED_PLAYER_DAMAGE_CAPABILITIES
 
 
-def static_damage_handler(
-    text: str,
-    *,
-    card_name: str = "",
-) -> tuple[str, dict[str, Any], str | tuple[str, ...]] | None:
-    """Lower a closed static damage/prevention wording family."""
-
-    ability_word = _ABILITY_WORD.match(text)
-    if text.casefold().startswith('max speed'):return None
-    normalized = ability_word.group("body") if ability_word else text
-    from .fixed_remainder_prevention import fixed_remainder_prevention_template
-    special_prevention = (
-        _noncombat_prevention_life_gain_template(normalized)
-        or controller_damage_result_life_floor_template(normalized)
-        or linked_player_damage_quantity_template(normalized)
-        or fixed_remainder_prevention_template(normalized)
-    )
-    if special_prevention is not None:
-        return special_prevention
-    untapped = _UNTAPPED_FIXED_COMBAT_PREVENTION.fullmatch(normalized)
-    if untapped is not None:
-        return (
-            "damage-prevention-fixed-while-untapped-v3",
-            {
-                "handler_id": "prevention.damage.fixed.untapped.v3",
-                "schema_version": 3,
-                "event": "damage",
-                "condition": {
-                    "source_controller_relation": "any",
-                    "target_controller_relation": "source_controller",
-                    "target_kinds": ["player"],
-                    "source_types_all": ["creature"],
-                    "target_types_all": [],
-                    "combat": True,
-                },
-                "modification": {"amount": int(untapped["amount"])},
-            },
-            "damage.prevention.static_fixed",
-        )
+def _static_redirect_to_source_handler(normalized):
     redirection = _REDIRECT_TO_SOURCE.fullmatch(normalized)
     if redirection is not None:
         target_kinds = ["player"]
@@ -1118,6 +1126,63 @@ def static_damage_handler(
             },
             "damage.redirection.static_to_source",
         )
+
+
+def _special_static_prevention_handler(normalized):
+    """Lower static prevention with an independent remainder or result."""
+    if re.fullmatch(
+        r"If damage would be dealt to this creature, prevent that damage\. "
+        r"When damage is prevented this way, this creature deals that much damage to any other target\.",
+        normalized, re.I,
+    ):
+        from ..rules.static_prevention_trigger import DEPENDENCIES, static_prevention_trigger_descriptor
+
+        return ("damage-prevention-static-reflexive-other-target-v1",
+                static_prevention_trigger_descriptor(), DEPENDENCIES)
+    from .fixed_remainder_prevention import fixed_remainder_prevention_template
+    return (
+        _noncombat_prevention_life_gain_template(normalized)
+        or controller_damage_result_life_floor_template(normalized)
+        or linked_player_damage_quantity_template(normalized)
+        or fixed_remainder_prevention_template(normalized)
+    )
+
+
+def static_damage_handler(
+    text: str,
+    *,
+    card_name: str = "",
+) -> tuple[str, dict[str, Any], str | tuple[str, ...]] | None:
+    """Lower a closed static damage/prevention wording family."""
+
+    ability_word = _ABILITY_WORD.match(text)
+    if text.casefold().startswith('max speed'):return None
+    normalized = ability_word.group("body") if ability_word else text
+    special_prevention = _special_static_prevention_handler(normalized)
+    if special_prevention is not None:
+        return special_prevention
+    untapped = _UNTAPPED_FIXED_COMBAT_PREVENTION.fullmatch(normalized)
+    if untapped is not None:
+        return (
+            "damage-prevention-fixed-while-untapped-v3",
+            {
+                "handler_id": "prevention.damage.fixed.untapped.v3",
+                "schema_version": 3,
+                "event": "damage",
+                "condition": {
+                    "source_controller_relation": "any",
+                    "target_controller_relation": "source_controller",
+                    "target_kinds": ["player"],
+                    "source_types_all": ["creature"],
+                    "target_types_all": [],
+                    "combat": True,
+                },
+                "modification": {"amount": int(untapped["amount"])},
+            },
+            "damage.prevention.static_fixed",
+        )
+    if redirected := _static_redirect_to_source_handler(normalized):
+        return redirected
     all_prevention = fixed_all_damage_prevention_specs(
         normalized,
         card_name=card_name,

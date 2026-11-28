@@ -1,0 +1,74 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "saga",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}{B}",
+      "name": "The Creation of Avacyn",
+      "oracle_id": "7f32344f-06d8-4862-bfeb-f90a3e1d7fc2",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Search your library for a card, exile it face down, then shuffle.\nII — Turn the exiled card face up. If it's a creature card, you lose life equal to its mana value.\nIII — You may put the exiled card onto the battlefield if it's a creature card. If you don't put it onto the battlefield, put it into its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-06-14",
+      "toughness": null,
+      "type_line": "Enchantment — Saga"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Each The Creation of Avacyn you control has its own set of face-down exiled cards. (In most cases, this set of cards will contain just one card.) The Creation of Avacyn's second and third chapter abilities refer only to those cards, not those of any other The Creation of Avacyn.",
+      "oracle_id": "7f32344f-06d8-4862-bfeb-f90a3e1d7fc2",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "In the unusual case where two or more cards are exiled face down with The Creation of Avacyn's first ability when the third chapter ability resolves, if at least one of the exiled cards is a creature card, you may choose to put all or none of the exiled cards that are permanent cards onto the battlefield. Regardless of what you choose, any remaining exiled cards will be put into their owners' hands.",
+      "oracle_id": "7f32344f-06d8-4862-bfeb-f90a3e1d7fc2",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "In the unusual case where two or more cards are exiled face down with The Creation of Avacyn's first chapter ability (likely because the triggered ability was copied or the ability triggered a second time), the second chapter ability will turn all of the exiled cards face up. If at least one of them is a creature card, you'll lose life equal to the combined mana value of all the exiled cards.",
+      "oracle_id": "7f32344f-06d8-4862-bfeb-f90a3e1d7fc2",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

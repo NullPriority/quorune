@@ -14,6 +14,7 @@ from ..public_library_piles_model import (
     PublicLibraryPileSpec,
     PublicLibraryPileState,
     RevealedPileCard,
+    PILE_SILVER_VERSION,
     SEARCHED_PILE_VERSIONS,
     SearchedLibraryPileState,
     searched_pile_effect,
@@ -87,7 +88,19 @@ def _bind(effect, spec, query, controller, stack_ref):
         or (state.stage == "order_graveyard") != (_ORDER in effect)
     ):
         raise SemanticChoiceError("The public pile decision has left its original stack frame or player scope")
-    if spec.player == controller and state.looked != _capture(query, controller, spec.look_count):
+    if spec.searched_pair:
+        from ..rules.searched_library_pairs import searched_pair_pile_state_is_closed
+
+        if not searched_pair_pile_state_is_closed(state):
+            raise SemanticChoiceError("A revealed search result requires its two original singleton piles")
+        if spec.player == controller:
+            for selected in state.looked:
+                identity = selected.identity
+                row = query.object(identity.ref, zones=("library",))
+                if (row is None or row.owner != controller or row.token or row.printed_name != selected.name
+                        or (row.object_id, row.logical_object_id) != (identity.object_id, identity.logical_object_id)):
+                    raise SemanticChoiceError("The original publicly searched library cards changed")
+    elif spec.player == controller and state.looked != _capture(query, controller, spec.look_count):
         raise SemanticChoiceError("The publicly revealed library incarnations changed")
     return state
 
@@ -125,13 +138,13 @@ def _retained_order(effect, state):
     return orders, tuple(thaw_value(retained["replacement_selections"]))
 
 
-def _request(state, query, orders=None):
+def _request(state, query, orders=None, *, spec=None):
     context = {"stack": state.stack_ref, "operation": PILE_OPERATION, "stage": state.stage,
                "objects": _public_cards(state)}
     if state.groups is not None:
         context["piles"] = _public_groups(state)
     if state.stage == "choose_opponent":
-        prompt = "Choose an opponent for the revealed library piles."
+        prompt = "Choose an opponent for the revealed library cards." if spec and spec.silver_split else "Choose an opponent for the revealed library piles."
         choice = ScalarChoice("opponent", _opponents(query, state.controller))
     elif state.stage == "divide":
         prompt = "Divide every revealed card between the two piles. Either pile may be empty."
@@ -142,13 +155,20 @@ def _request(state, query, orders=None):
                 "second": {"label": "Second pile", "order": "selection_order"},
             }), legacy_destination=None,
         )
+    elif state.stage == "choose_pile" and spec and spec.silver_split:
+        from .model import ObjectChoice
+
+        prompt = "Choose one revealed card to put into its owner's hand."
+        choice = ObjectChoice(field_name="objects", legal_refs=state.refs, zones=("library",))
     elif state.stage == "choose_pile":
         names = {row.identity.ref: row.name for row in state.looked}
         first, second = (
             ", ".join(names[ref] for ref in _public_groups(state)[group]) or "empty"
             for group in PILE_NAMES
         )
-        prompt = f"Choose a pile to put into hand. First pile — {first}. Second pile — {second}."
+        prompt = (f"Choose one revealed card to put into hand. First card — {first}. Second card — {second}."
+                  if spec and spec.searched_pair else
+                  f"Choose a pile to put into hand. First pile — {first}. Second pile — {second}.")
         choice = ScalarChoice("pile", PILE_NAMES)
     elif state.stage == "order_graveyard" and orders is not None and orders.current_group is not None:
         prompt = "Order the cards entering your graveyard from top to bottom."
@@ -161,17 +181,20 @@ def _request(state, query, orders=None):
     return SemanticChoiceRequest(prompt, choice, FrozenMap(context))
 
 
-def _commit(state):
+def _commit(state, spec=None):
+    marked = bool(spec and spec.silver_split)
+    searched_pair = bool(spec and spec.searched_pair)
     return LibrarySelectionIntent(
         actor=state.controller, player=state.controller,
         arrangement=LibrarySelectionArrangement(
             looked=tuple(row.identity for row in state.looked),
             selected_refs=state.hand_refs(), remainder_refs=state.graveyard_refs(),
-            remainder_destination="graveyard", remainder_order="chosen",
+            remainder_destination="exile" if marked else "graveyard", remainder_order="chosen",
+            silver_exile=marked, searched_pair=searched_pair,
         ),
         reason=state.label, source_stack_ref=state.stack_ref,
         looked_are_public=True, selected_are_public=True,
-        require_graveyard_order=True,
+        require_graveyard_order=not (marked or searched_pair),
     )
 
 
@@ -185,8 +208,15 @@ def _searched_state(effect):
     return state
 
 
+def _uses_public_search_split_continuation(effect):
+    version = effect.get("schema_version")
+    return version in SEARCHED_PILE_VERSIONS and (
+        version != PILE_SILVER_VERSION or effect.get("opponent_role") != "chooser"
+    )
+
+
 def scoped_searched_pile_refs(host, item, actor, effect):
-    if effect.get("op") != PILE_OPERATION or effect.get("schema_version") not in SEARCHED_PILE_VERSIONS:
+    if effect.get("op") != PILE_OPERATION or not _uses_public_search_split_continuation(effect):
         return ()
     state = _searched_state(effect)
     if (item is None or item.context.get("currently_resolving") is not True
@@ -344,7 +374,7 @@ def _prepare_searched_graveyard_order(continuation, intent, required, *, index, 
 
 def prepare_public_pile_graveyard_order(_host, continuation, intent, required, *, index, count):
     effect = continuation.effect
-    if effect.get("schema_version") in SEARCHED_PILE_VERSIONS:
+    if _uses_public_search_split_continuation(effect):
         return _prepare_searched_graveyard_order(continuation, intent, required, index=index, count=count)
     spec = _spec(effect)
     state = PublicLibraryPileState.from_dict(effect[_STATE])
@@ -388,7 +418,7 @@ class PublicLibraryPilesHandler:
             raise SemanticChoiceError(str(exc)) from exc
 
     def _prepare(self, effect, context):
-        if effect.get("schema_version") in SEARCHED_PILE_VERSIONS:
+        if _uses_public_search_split_continuation(effect):
             return _prepare_searched_pile(effect, context)
         spec = _spec(effect)
         if spec.player != context.actor:
@@ -398,12 +428,14 @@ class PublicLibraryPilesHandler:
             saved = FrozenMap(effect)
             if state.stage == "commit":
                 return SemanticChoicePreparation(
-                    None, saved, preparation_intents=(_commit(state),),
+                    None, saved, preparation_intents=(_commit(state, spec),),
                     auto_continue=AutoContinue(reason="Move the exact public piles"),
                 )
             orders = _retained_order(effect, state)[0] if state.stage == "order_graveyard" else None
-            return SemanticChoicePreparation(_request(state, context.query, orders), saved)
+            return SemanticChoicePreparation(_request(state, context.query, orders, spec=spec), saved)
 
+        if spec.searched_pair:
+            raise SemanticChoiceError("Searched piles require a completed private search and public reveal")
         if context.actor != context.stack_controller:
             raise SemanticChoiceError("Only the resolving controller can reveal their library for piles")
         looked = _capture(context.query, context.actor, spec.look_count)
@@ -433,14 +465,27 @@ class PublicLibraryPilesHandler:
                 None, FrozenMap(effect), preparation_intents=prepared,
                 auto_continue=AutoContinue(reason="No active opponent can make a pile choice"),
             )
+        if spec.silver_split and len(looked) == 1:
+            hand = LibrarySelectionIntent(actor=context.actor, player=context.actor,
+                arrangement=LibrarySelectionArrangement((looked[0].identity,), state.refs, (), "graveyard", "chosen"),
+                reason=context.stack_label, source_stack_ref=context.stack_ref,
+                looked_are_public=True, selected_are_public=True)
+            return SemanticChoicePreparation(None, FrozenMap(effect), preparation_intents=(*prepared, hand),
+                auto_continue=AutoContinue(reason="The sole revealed card goes to hand."))
+        if spec.silver_split:
+            groups = state.split({"first": state.refs[:1], "second": state.refs[1:]})
+            state = replace(state, groups=groups,
+                stage="choose_pile" if len(opponents) == 1 else "choose_opponent",
+                opponent=opponents[0] if len(opponents) == 1 else None)
         saved = _effect(effect, spec, state)
         if state.actor(spec) != context.actor:
             return SemanticChoicePreparation(
                 None, FrozenMap(effect), preparation_intents=prepared,
-                auto_continue=AutoContinue(reason="The sole opponent divides the revealed cards",
+                auto_continue=AutoContinue(reason="The sole opponent chooses a revealed card" if spec.silver_split
+                                           else "The sole opponent divides the revealed cards",
                                            prepend_effects=(saved,)),
             )
-        return SemanticChoicePreparation(_request(state, context.query), saved, preparation_intents=prepared)
+        return SemanticChoicePreparation(_request(state, context.query, spec=spec), saved, preparation_intents=prepared)
 
     def complete(self, continuation, response, query):
         try:
@@ -450,11 +495,11 @@ class PublicLibraryPilesHandler:
 
     def _complete(self, continuation, response, query):
         effect = continuation.effect
-        if effect.get("schema_version") in SEARCHED_PILE_VERSIONS:
+        if _uses_public_search_split_continuation(effect):
             return _complete_searched_pile(continuation, response, query)
         spec = _spec(effect)
         state = _bind(effect, spec, query, continuation.semantic_frame.controller, continuation.stack_ref)
-        field = _RESPONSE_FIELD[state.stage]
+        field = "objects" if spec.silver_split and state.stage == "choose_pile" else _RESPONSE_FIELD[state.stage]
         if (
             set(response) - {"action", "action_id", "choice_schema"} != {field}
             or response.get("action", "choose") != "choose"
@@ -486,6 +531,10 @@ class PublicLibraryPilesHandler:
                     opponent=opponents[0] if len(opponents) == 1 else None,
                 )
         elif state.stage == "choose_pile":
+            if spec.silver_split:
+                if not isinstance(value, (list, tuple)) or len(value) != 1 or value[0] not in state.refs:
+                    raise SemanticChoiceError("Choose exactly one publicly revealed card")
+                value = PILE_NAMES[state.refs.index(value[0])]
             if value not in PILE_NAMES:
                 raise SemanticChoiceError("Choose the first or second pile")
             next_state = replace(state, chosen=value, stage="commit")

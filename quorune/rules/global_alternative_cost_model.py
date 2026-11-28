@@ -23,6 +23,7 @@ class TurnLimitedAlternativeScope(str, Enum):
     EXILED_SPELL = "exiled_spell"
     COLORLESS_FROM_HAND = "colorless_from_hand"
     NONOWNED_MANA_VALUE_THREE = "nonowned_mana_value_three"
+    OWN_TURN_ENCHANTMENT_LIFE = "own_turn_enchantment_life"
 
     def selection(self) -> tuple[str, ObjectQuerySpec]:
         if self is TurnLimitedAlternativeScope.EXILED_CREATURE:
@@ -31,6 +32,8 @@ class TurnLimitedAlternativeScope(str, Enum):
             return "exile", ObjectQuerySpec()
         if self is TurnLimitedAlternativeScope.COLORLESS_FROM_HAND:
             return "hand", ObjectQuerySpec(colorless=True)
+        if self is TurnLimitedAlternativeScope.OWN_TURN_ENCHANTMENT_LIFE:
+            return "any", ObjectQuerySpec(types_all=("enchantment",))
         return "any", ObjectQuerySpec()
 
     def permits_value_and_owner(self, *, mana_value: int | float, actor: str, owner: str, time_counters: int) -> bool:
@@ -77,6 +80,10 @@ class GlobalAlternativeCostSpec:
             )
         ):
             raise ValueError("Fixed global alternative requires the original type and origin scope")
+
+    @property
+    def life_from_mana_value(self) -> bool:
+        return self.turn_limited_scope is TurnLimitedAlternativeScope.OWN_TURN_ENCHANTMENT_LIFE
 
     def to_dict(self):
         value = {"schema_version": 1, "mana": thaw_value(self.mana), "predicate": self.predicate.to_dict(),

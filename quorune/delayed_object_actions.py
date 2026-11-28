@@ -6,7 +6,8 @@ from .continuous_effect_model import ContinuousObjectIdentity
 from .delayed_object_model import (
     CONTROLLED_ATTACKER_PHASE_OUT_VERSION, DELAYED_SOURCE_CONVERT_VERSION, GRAVEYARD_COUNTER_RETURN_VERSION, GRAVEYARD_RETURN_VERSION,
     OBJECT_TIMINGS, RESOLVE_OBJECT_ACTION, SCHEDULE_OBJECT_ACTION,
-    TARGET_DEATH_RETURN_CONDITION, TARGET_DEATH_RETURN_EVENT, is_target_death_return_effect,
+    TARGET_DEATH_RETURN_CONDITION, TARGET_DEATH_RETURN_EVENT, TARGET_DEATH_RETURN_GRAVEYARD_OWNER,
+    is_target_death_battlefield_return, is_target_death_return_effect,
     target_death_return_arrivals, target_death_return_resolution_effect, uses_source_death_hand_return,
     validate_delayed_object_instruction,
 )
@@ -52,19 +53,35 @@ def _schedule_target_death_return(host, effect, instruction, actor):
     from .replacement.immutable import FrozenMap
 
     item = _target_death_return_item(host, effect, actor)
-    compiled = target_death_return_effect()
+    battlefield = is_target_death_battlefield_return(instruction)
+    compiled = target_death_return_effect(battlefield=battlefield)
     program = host.semantics.get(item.semantic_key)
     if (item.kind != "activated_ability" or program is None or tuple(program.effects) != (compiled,)
             or FrozenMap(instruction) != FrozenMap(_bind_target_death_return(host, compiled, item))):
         raise GameRuleError("Death return requires its original live activation target")
     target = ContinuousObjectIdentity.from_dict(instruction["object"])
     source = ContinuousObjectIdentity(item.source_object_id, item.context.get("source_logical_object_id"))
+    condition = {TARGET_DEATH_RETURN_CONDITION: target.to_dict()}
+    label = _TARGET_DEATH_RETURN_LABEL
+    if battlefield:
+        condition[TARGET_DEATH_RETURN_GRAVEYARD_OWNER] = actor
+        label = "Return the card to the battlefield"
     return schedule_delayed_trigger(
-        host, controller=actor, label=_TARGET_DEATH_RETURN_LABEL, event_kind=TARGET_DEATH_RETURN_EVENT,
-        condition={TARGET_DEATH_RETURN_CONDITION: target.to_dict()}, stack_template={},
+        host, controller=actor, label=label, event_kind=TARGET_DEATH_RETURN_EVENT,
+        condition=condition, stack_template={},
         source_object_id=source.object_id, source_logical_object_id=source.logical_object_id,
         referred_object_ids=(target.object_id,), once=True, expires_turn_sequence=host.state.turn_sequence,
     ).ref
+
+
+def collect_target_graveyard_triggers(host, occurrence, composition_departures, pending) -> None:
+    """Collect delayed results that watch the departing object incarnation."""
+    if not getattr(getattr(host, "state", None), "delayed_triggers", ()):
+        return
+    from .rules.watched_death_counter_draw import collect_watched_death_counter_draw
+
+    collect_target_death_return(host, occurrence, composition_departures, pending)
+    collect_watched_death_counter_draw(host, occurrence, pending)
 
 
 def collect_target_death_return(host, occurrence, composition_departures, pending) -> None:
@@ -74,7 +91,8 @@ def collect_target_death_return(host, occurrence, composition_departures, pendin
     binding = ContinuousObjectIdentity(occurrence.object_id, occurrence.previous_logical_object_id)
     owner = TriggerProcessingOwner(host)
     matches = owner.matching_delayed_triggers(
-        TARGET_DEATH_RETURN_EVENT, {TARGET_DEATH_RETURN_CONDITION: binding.to_dict()},
+        TARGET_DEATH_RETURN_EVENT, {TARGET_DEATH_RETURN_CONDITION: binding.to_dict(),
+                                    TARGET_DEATH_RETURN_GRAVEYARD_OWNER: occurrence.owner},
     )
     if not matches:
         return
@@ -85,12 +103,14 @@ def collect_target_death_return(host, occurrence, composition_departures, pendin
             or any(part.composition is None or not part.composition.physical_arrival
                    or part.composition.parent != composition.parent for part in departures)):
         raise GameRuleError("Death return requires the original physical departure facts")
-    arrivals = tuple(
-        ContinuousObjectIdentity(part.object_id, part.current_logical_object_id)
-        for part in departures if part.destination == "graveyard" and part.card_object and not part.token
-    )
-    effect = target_death_return_resolution_effect(arrivals)
     for trigger in matches:
+        battlefield = TARGET_DEATH_RETURN_GRAVEYARD_OWNER in trigger.condition
+        arrivals = tuple(
+            ContinuousObjectIdentity(part.object_id, part.current_logical_object_id)
+            for part in departures if part.destination == "graveyard" and part.card_object and not part.token
+            and (not battlefield or part.owner == trigger.controller)
+        )
+        effect = target_death_return_resolution_effect(arrivals, battlefield=battlefield)
         pending.append(owner.materialize_delayed_trigger(replace(
             trigger, stack_template={"context": {"dynamic_effects": [effect]}},
             referred_object_ids=[arrival.object_id for arrival in arrivals],
@@ -98,13 +118,15 @@ def collect_target_death_return(host, occurrence, composition_departures, pendin
 
 
 def _resolve_target_death_return(host, effect, instruction, actor, reason):
+    from .public_zone_moves import PublicBattlefieldController
     from .replacement.immutable import FrozenMap
     from .semantic_runtime.intents import MoveObjectsSimultaneouslyIntent
 
     item = _target_death_return_item(host, effect, actor)
     original = item.context.get("dynamic_effects", ())
     arrivals = target_death_return_arrivals(instruction["object"])
-    expected = target_death_return_resolution_effect(arrivals)
+    battlefield = is_target_death_battlefield_return(instruction)
+    expected = target_death_return_resolution_effect(arrivals, battlefield=battlefield)
     if (item.kind != "triggered_ability" or item.context.get("event") != TARGET_DEATH_RETURN_EVENT
             or not item.context.get("delayed_trigger_ref")
             or not isinstance(original, (list, tuple)) or len(original) != 1
@@ -115,13 +137,15 @@ def _resolve_target_death_return(host, effect, instruction, actor, reason):
     for arrival in arrivals:
         card = host.state.cards.get(arrival.object_id)
         if (card is not None and card.zone == "graveyard" and card.logical_object_id == arrival.logical_object_id
-                and card.is_card_object and not card.is_token):
+                and card.is_card_object and not card.is_token and (not battlefield or card.owner == actor)):
             references.append(card.ref)
     if not references:
         return ()
     return host.move_objects_simultaneously_intent(MoveObjectsSimultaneouslyIntent(
         actor=actor, object_refs=tuple(references), expected_zones=("graveyard",),
-        destination="hand", reason=reason, replacement_selections=tuple(instruction.get("_replacement_selections", ())),
+        destination="battlefield" if battlefield else "hand",
+        battlefield_controller=PublicBattlefieldController.OWNER if battlefield else None,
+        reason=reason, replacement_selections=tuple(instruction.get("_replacement_selections", ())),
     ))
 
 
@@ -291,15 +315,28 @@ def capture_artifact_graveyard_composition(host, context, occurrence, parts):
 
 def filter_graveyard_receipt_context(event, context, program):
     if event == "creature.dies":
-        from .event_card_return import DEATH_EXILE_ARRIVALS, DEATH_EXILE_ARRIVAL_CAPABILITIES
+        from .event_card_return import (
+            DEATH_EXILE_ARRIVALS,
+            DEATH_EXILE_ARRIVAL_CAPABILITIES,
+            EVENT_LIBRARY_COMPONENTS,
+            EVENT_LIBRARY_COMPOSITION_CAPABILITY,
+        )
 
         if DEATH_EXILE_ARRIVAL_CAPABILITIES.isdisjoint(program.capability_dependencies):
             context.pop(DEATH_EXILE_ARRIVALS, None)
+        if EVENT_LIBRARY_COMPOSITION_CAPABILITY not in program.capability_dependencies:
+            context.pop(EVENT_LIBRARY_COMPONENTS, None)
     elif event == "artifact.graveyard":
         from .delayed_object_model import ARTIFACT_GRAVEYARD_COMPOSITION_FIELD, is_artifact_graveyard_return
 
         if not any(is_artifact_graveyard_return(effect) for effect in program.effects):
             context.pop(ARTIFACT_GRAVEYARD_COMPOSITION_FIELD, None)
+
+    if event == "creature.dies":
+        from .rules.death_battlefield_return import DEATH_EQUIPMENT_ARRIVALS, DEATH_EQUIPMENT_RETURN_CAPABILITY
+
+        if DEATH_EQUIPMENT_RETURN_CAPABILITY not in program.capability_dependencies:
+            context.pop(DEATH_EQUIPMENT_ARRIVALS, None)
 
 
 def _bind_artifact_graveyard_return(host, effect, item):

@@ -2,7 +2,7 @@
 
 from . import regex_working_set as re
 from ..cast_x_search_model import (
-    CAST_X_ZONE_SEARCH_MECHANIC, cast_x_zone_search_effect, cast_x_zone_search_pump,
+    CAST_X_ZONE_SEARCH_MECHANIC, ENTRY_X_ZONE_SEARCH_MECHANIC, cast_x_zone_search_effect, cast_x_zone_search_pump,
 )
 
 
@@ -11,6 +11,17 @@ _SEARCH_AND_PUMP = re.compile(
     r"the battlefield\. If you search(?:ed)? your library this way, shuffle\. If X is (?P<threshold>[1-9][0-9]*) "
     r"or more, creatures you control get \+X/\+X and gain haste until end of turn\.", re.I,
 )
+_NONHUMAN_ENTRY_SEARCH = re.compile(
+    r"Search your library and/or graveyard for a non-Human creature card with mana value X or less "
+    r"and put it onto the battlefield\. If you search(?:ed)? your library this way, shuffle\.", re.I,
+)
+
+
+def entry_x_zone_search_template(body):
+    if not _NONHUMAN_ENTRY_SEARCH.fullmatch(" ".join(body.split())):
+        return None
+    return ("entry-x-nonhuman-library-graveyard-search-v1", (cast_x_zone_search_effect(from_entry=True),),
+            None, (ENTRY_X_ZONE_SEARCH_MECHANIC,))
 
 
 def cast_x_zone_search_template(text, *, cast_x_available):

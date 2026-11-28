@@ -6,7 +6,9 @@ from ..linked_library_imprint_model import (
     library_imprint_phase, uses_library_imprint_death, uses_library_imprint_selection,
     validate_library_imprint_selection, library_imprint_source, linked_artifact_library_choice,
     uses_linked_artifact_library_choice, uses_linked_artifact_library_instruction,
-    validate_linked_artifact_library_instruction,
+    validate_linked_artifact_library_instruction, LINKED_SAGA_LIBRARY_CAPABILITY, LINKED_SAGA_LIBRARY_MECHANIC,
+    LINKED_SAGA_LIBRARY_PAIR, linked_saga_library_chapter_effects, linked_saga_library_phase,
+    uses_linked_saga_library_instruction,
 )
 from ..replacement.immutable import thaw_value
 from .effect_shape_walkers import nested_effects
@@ -23,6 +25,10 @@ def uses_library_imprint(effect):
 
 
 def linked_library_imprint_shape_capabilities(effects, target_schema, mechanics):
+    if LINKED_SAGA_LIBRARY_MECHANIC in mechanics or any(
+        uses_linked_saga_library_instruction(effect) for effect in nested_effects(effects)
+    ):
+        return _linked_saga_library_capabilities(effects, target_schema)
     if any(uses_linked_artifact_library_choice(effect) for effect in effects):
         return linked_artifact_library_node_capabilities(effects=effects, target_schema=target_schema)
     if LIBRARY_IMPRINT_MECHANIC in mechanics or any(uses_library_imprint(effect) for effect in effects):
@@ -45,6 +51,10 @@ def library_imprint_node_capabilities(*, effects, target_schema):
 
 
 def library_imprint_program_dependencies(program):
+    if LINKED_SAGA_LIBRARY_CAPABILITY in program.capability_dependencies or any(
+        uses_linked_saga_library_instruction(effect) for effect in nested_effects((program.effects, program.handlers))
+    ):
+        return linked_saga_library_program_dependencies(program)
     if any(uses_linked_artifact_library_instruction(effect)
            for effect in nested_effects((program.effects, program.handlers))):
         return linked_artifact_library_program_dependencies(program)
@@ -100,11 +110,67 @@ def linked_artifact_library_source(host, item, effect, *, actor):
 
 
 def require_linked_artifact_library_search(host, item, effect, *, actor):
-    if not uses_linked_artifact_library_instruction(effect):
+    if not (uses_linked_artifact_library_instruction(effect) or uses_linked_saga_library_instruction(effect)):
         return
     from ..errors import GameRuleError
 
     try:
-        linked_artifact_library_source(host, item, effect, actor=actor)
+        validator = (linked_saga_library_source if uses_linked_saga_library_instruction(effect)
+                     else linked_artifact_library_source)
+        validator(host, item, effect, actor=actor)
     except (TypeError, ValueError, KeyError) as exc:
         raise GameRuleError(str(exc)) from exc
+
+
+def _linked_saga_library_chapter(effects):
+    normal = thaw_value(effects)
+    for chapter in (1, 2, 3):
+        if normal == list(linked_saga_library_chapter_effects(chapter)):
+            for instruction in nested_effects(effects):
+                if uses_linked_saga_library_instruction(instruction):
+                    linked_saga_library_phase(instruction)
+            return chapter
+    return None
+
+
+def _linked_saga_library_capabilities(effects, target_schema):
+    if target_schema is not None:
+        return ()
+    try:
+        chapter = _linked_saga_library_chapter(effects)
+    except (TypeError, ValueError, KeyError):
+        return ()
+    if chapter is None:
+        return ()
+    return (
+        LINKED_SAGA_LIBRARY_CAPABILITY, LINKED_ABILITY_EXILE_CAPABILITY,
+        "trigger.placement.apnap", "zone.change.destination_replacement",
+        *{1: ("library.search.fixed_counted",), 2: ("life.change.effect", "zone.linked_exile_return.fixed"),
+          3: ("effect.choice.optional_fixed", "zone.linked_exile_return.fixed")}[chapter],
+    )
+
+
+def linked_saga_library_program_dependencies(program):
+    chapter = _linked_saga_library_chapter(program.effects)
+    required = _linked_saga_library_capabilities(program.effects, program.target_schema)
+    if (not required or chapter is None or program.event != f"saga.chapter.{chapter}"
+            or program.active_zone != "battlefield" or program.handlers or program.cost_schema is not None
+            or program.event_condition is not None or not program.ability_id.startswith("trigger:")):
+        raise ValueError("Linked Saga library result requires its original whole chapter")
+    return required
+
+
+def linked_saga_library_source(host, item, instruction, *, actor):
+    from ..continuous_effect_model import ContinuousObjectIdentity
+
+    phase = linked_saga_library_phase(instruction)
+    if (item is None or item.kind not in {"triggered_ability", "triggered_ability_copy"}
+            or item.controller != actor or item.context.get("currently_resolving") is not True):
+        raise ValueError("Linked Saga library result requires its original resolving controller")
+    program = host.semantics.get(item.semantic_key)
+    if (program is None or not host.semantic_program_is_current_trusted(program)
+            or not set(linked_saga_library_program_dependencies(program)) <= set(program.capability_dependencies)
+            or not any(uses_linked_saga_library_instruction(effect) and linked_saga_library_phase(effect) == phase
+                       for effect in nested_effects(program.effects))):
+        raise ValueError("Linked Saga library result lost its original trusted chapter")
+    return ContinuousObjectIdentity(item.source_object_id, item.context.get("source_logical_object_id"))

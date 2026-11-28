@@ -9,6 +9,52 @@ from ..selection.target_query import target_identity_matches_snapshot
 
 TARGET_ANNOUNCEMENT_CAPABILITY = 'trigger.event.normalized_target_announcement'
 TARGET_ANNOUNCEMENT_EVENT = 'object.became_target'
+SOURCE_ATTACK_OR_SPELL_TARGET_VARIANT = 'source_attacks_or_spell_target'
+SOURCE_ATTACK_OR_SPELL_TARGET_TEMPLATE = 'fixed-counter-source-attack-or-spell-target-v1'
+SOURCE_ATTACK_OR_SPELL_TARGET_CAPABILITIES = (
+    'trigger.event.normalized_public_action', TARGET_ANNOUNCEMENT_CAPABILITY,
+    'trigger.subscription.fixed_multi_event',
+)
+
+
+def source_targeted_by_spell_condition():
+    return {'all': [
+        {'field': 'card', 'op': 'eq', 'value': '$source.ref'},
+        {'field': 'stack_kind', 'op': 'in', 'value': ['spell', 'spell_copy']},
+    ]}
+
+
+def source_attack_or_spell_target_condition():
+    from .event_subscriptions import FixedEventSubscription, fixed_event_subscription_condition
+
+    return fixed_event_subscription_condition((
+        FixedEventSubscription('creature.attacks', {'field': 'card', 'op': 'eq', 'value': '$source.ref'}),
+        FixedEventSubscription(TARGET_ANNOUNCEMENT_EVENT, source_targeted_by_spell_condition()),
+    ))
+
+
+def source_attack_or_spell_target_runtime_dependencies(program):
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from ..replacement.immutable import FrozenMap
+    from .token_creation_capability_shapes import _fixed_token_effect_closure
+
+    template = SOURCE_ATTACK_OR_SPELL_TARGET_TEMPLATE.replace('fixed-counter-', 'fixed-typed-effect-', 1)
+    marked = template in str(program.provenance.get('template_id') or '').split('+')
+    condition = program.event_condition or {}
+    if not marked and (program.event != 'creature.attacks' or 'event_subscriptions' not in condition):
+        return ()
+    matched = FrozenMap(condition) == FrozenMap(source_attack_or_spell_target_condition())
+    if not marked and not matched:
+        return ()
+    if (not matched or (program.event, program.active_zone) != ('creature.attacks', 'battlefield')
+            or program.target_schema is not None or program.cost_schema is not None or program.handlers
+            or not {CURRENT_ABILITY_FRAGMENT_COVERAGE, 'fixed_multi_event_subscription'} <= set(program.coverage)
+            or len(program.effects) != 1 or program.effects[0].get('op') != 'create_token'):
+        raise ValueError('Fixed token creation requires the complete source attack and spell-target subscriptions')
+    token = _fixed_token_effect_closure(program.effects[0])
+    if token is None:
+        raise ValueError('Source attack and spell-target subscriptions require one fixed token definition')
+    return (*SOURCE_ATTACK_OR_SPELL_TARGET_CAPABILITIES, *token[0])
 
 
 @dataclass(frozen=True, slots=True)

@@ -171,6 +171,12 @@ quantities remain residual. Fixed affected-player
 discard registration separately verifies its closed choice shape and declared
 dependencies before promoting a generated program.
 
+The source combat-damage discard cast places its ordinary counter and draws
+before asking the trigger controller to discard. The continuation reads the
+original source's current or last-known chorus counters after the discard.
+It offers only the exact card's current face-up graveyard or exile incarnation
+through the ordinary resolution-scoped cast and cost owners.
+
 A controller-discard exile trigger uses the committed discard occurrence and
 its exact graveyard incarnation. It has no target selection. When a fixed-mana
 Madness choice declines and commits a graveyard arrival, the existing trigger
@@ -252,10 +258,21 @@ when it commits to face-up exile. Manual activation and automatic payment
 use the same current linked colors, with no productive mode for an empty or
 colorless link.
 
+The linked graveyard color reader shares that current-exile owner. Its
+entry trigger links the actual members of the revalidated public exile
+batch to the original land incarnation. The activation adds one mana in
+a current linked card color. An empty or colorless group still permits the
+ordinary tap activation, with zero output and no automatic payment mode.
+
 A priced tap-and-exert mana ability applies exert to the acting player's next
 untap before adding its mana. The existing spend rider grants temporary haste
 to each creature spell that uses that mana. Those units may also pay other
 costs without granting haste.
+
+A fixed four-mana tap ability produces WUBRG immediately and then arms one
+same-turn delayed cast trigger. The ordinary priced mana mode can pay during
+another spell's announcement. The delayed trigger listens to the committed
+cast event, including when that cast paid for the mana activation.
 
 A tap-and-forage mana activation presents the ordinary Forage resource
 choice and the two-unit color bundle in the same explicit activation.
@@ -328,6 +345,12 @@ its attack or usage history. Countering an accepted ability does not refund
 usage. Returning to the battlefield creates an incarnation that has not
 attacked. Frequency-changing effects and independently unsupported costs or
 results remain residual.
+
+The paid damage form of Boast sacrifices another controlled artifact or
+creature and seals that permanent's effective mana value before it moves.
+Resolution adds two and deals one damage event to the original legal target.
+The ordinary damage owner retains the source's current or last-known
+information if the source leaves before resolution.
 
 Fixed random-discard activation costs use an optional typed scalar that is
 omitted from older ability payloads. The activating player must hold the full
@@ -1275,6 +1298,11 @@ fixed generic ward and protection keep their established consumers. Conditional
 combat and spell-cast keyword triggers use the current recipient's fragments.
 The earlier characteristic-only descriptor continues to reject fragment fields.
 An already created trigger retains its consequence when the live grant ends.
+
+An unconditional grant of fixed life-payment Ward to the source controller's
+other creatures retains the payment as a typed Ward fragment. The recipient's
+current ability generates the ordinary Ward trigger when an opponent targets
+it. The source's own Ward remains an independent printed ability.
 
 `modification.cast-cost.public-state.v1` wraps the existing public cast-cost
 modifier with one typed live public-state predicate. The cast-cost collector

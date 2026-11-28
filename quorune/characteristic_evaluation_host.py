@@ -227,6 +227,7 @@ class CharacteristicEvaluationHostMixin:
         runtime_effects: Sequence[ContinuousEffect] = (),
         ignore_face_down: bool = False,
         maximum_layer: Layer | None = None,
+        include_base_power: bool = False,
         enchanted: bool = False,
         equipped: bool = False,
         modified: bool = False,
@@ -270,6 +271,7 @@ class CharacteristicEvaluationHostMixin:
                 ignore_face_down=ignore_face_down,
                 query_count_resolver=resolver,
                 maximum_layer=maximum_layer,
+                include_base_power=include_base_power,
                 enchanted=enchanted,
                 equipped=equipped,
                 modified=modified,
@@ -778,14 +780,15 @@ class CharacteristicEvaluationHostMixin:
         printed_entry_characteristics: bool = False,
         ignore_face_down: bool = False,
         maximum_layer: Layer | None = None,
+        include_base_power: bool = False,
         _enforce_static_component_applicability: bool = True,
     ) -> dict[str, Any]:
         card = value if isinstance(value, CardInstance) else self.state.cards[value]
         key = ('card', id(card), printed_entry_characteristics, ignore_face_down,
-            maximum_layer, _enforce_static_component_applicability)
+            maximum_layer, include_base_power, _enforce_static_component_applicability)
         return memoized_characteristic_read(self, key, lambda: self._read_effective_card_data(
             card, printed_entry_characteristics=printed_entry_characteristics,
-            ignore_face_down=ignore_face_down, maximum_layer=maximum_layer,
+            ignore_face_down=ignore_face_down, maximum_layer=maximum_layer, include_base_power=include_base_power,
             _enforce_static_component_applicability=_enforce_static_component_applicability), identity=card)
 
     def _battlefield_program_characteristic_effects(
@@ -842,7 +845,7 @@ class CharacteristicEvaluationHostMixin:
     def _read_effective_card_data(
         self, value: str | CardInstance, *, printed_entry_characteristics: bool = False,
         ignore_face_down: bool = False, maximum_layer: Layer | None = None,
-        _enforce_static_component_applicability: bool = True,
+        include_base_power: bool = False, _enforce_static_component_applicability: bool = True,
     ) -> dict[str, Any]:
         card = value if isinstance(value, CardInstance) else self.state.cards[value]
         record = self.card_record(card)
@@ -916,6 +919,7 @@ class CharacteristicEvaluationHostMixin:
             runtime_effects=runtime_effects,
             ignore_face_down=ignore_face_down,
             maximum_layer=maximum_layer,
+            include_base_power=include_base_power,
             enchanted=enchanted,
             equipped=equipped,
             modified=modified,

@@ -6,6 +6,7 @@ import {
   effectiveCardScale,
   parseTablePreferences,
   priorityStopsForTurn,
+  tablePreferenceStyle,
 } from "../src/tablePreferences.ts";
 
 test("table preferences default to automatic mana and automatic empty passes", () => {
@@ -66,4 +67,24 @@ test("bounded version-two layout preferences survive parsing", () => {
   assert.equal(value.boardDensity, "compact");
   assert.equal(value.compactPhaseRail, true);
   assert.equal(value.activityVisible, false);
+});
+
+test("battlefield lanes default to equal multipliers and preserve saved sizes", () => {
+  const variables = (raw: string | null) => tablePreferenceStyle(parseTablePreferences(raw)) as Record<string, string | number>;
+  assert.deepEqual(parseTablePreferences(null).battlefieldLaneScale, {});
+  assert.equal(variables(null)["--creatures-lane-scale"], 1);
+  assert.equal(variables(null)["--lands-lane-scale"], 1);
+  assert.equal(variables(null)["--support-lane-scale"], 1);
+
+  const saved = parseTablePreferences(JSON.stringify({
+    cardScale: 1.2,
+    zoneCardScale: { battlefield: 0.8 },
+    battlefieldLaneScale: { creatures: 1.25, lands: 0, support: 3, other: 1.2 },
+  }));
+  assert.deepEqual(saved.battlefieldLaneScale, { creatures: 1.25, lands: 0.6, support: 1.6 });
+  const serialized = JSON.stringify(saved);
+  assert.deepEqual(parseTablePreferences(serialized).battlefieldLaneScale, saved.battlefieldLaneScale);
+  assert.equal(variables(serialized)["--creatures-lane-scale"], 1.25);
+  assert.equal(variables(serialized)["--battlefield-card-scale"], 0.96);
+  assert.deepEqual(parseTablePreferences('{"battlefieldLaneScale":{"lands":"1.5"}}').battlefieldLaneScale, {});
 });

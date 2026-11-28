@@ -10,13 +10,16 @@ from ..affected_permanents import (
     DEFENDING_PLAYER_UNTAP_SET_FIELD,
     TARGET_UNSPENT_MANA_FIELD,
     TARGET_PLAYER_CREATURE_UNTAP_SNAPSHOT_FIELD,
+    TARGET_OPPONENT_NONLAND_UNTAP_SNAPSHOT_FIELD,
     decode_target_player_creature_untap_snapshot,
+    decode_target_opponent_nonland_untap_snapshot,
     PermanentControllerRelation,
     decode_combat_player_land_tap,
     decode_defending_player_creature_untap,
     decode_target_unspent_mana_tap,
 )
 from ..public_tap_state_sets import SetPublicPermanentsTappedIntent
+from ..rules.main_phase_combat_model import ATTACK_UNTAP_FIELD, UntapTurnAttackersIntent, validate_combat_instruction
 from ..tap_state import (
     ATTACKING_CREATURES_NEXT_UNTAP_FIELD, CONTROLLER_UNTAP_STEP_COUNT, ProhibitAttackingCreaturesNextUntapIntent,
     validate_attacking_creatures_next_untap,
@@ -85,6 +88,32 @@ def _require_fields(
         raise SemanticNodeError(
             "Tap-state effect has unknown fields: " + ", ".join(unknown)
         )
+
+
+def bind_optional_equipped_tap_state(state, raw_effect, effect):
+    from ..rules.tap_state_capability_shapes import (
+        OPTIONAL_EQUIPPED_TAP_STATE_FIELD,
+        is_optional_equipped_creature_tap_state_effect,
+    )
+
+    if OPTIONAL_EQUIPPED_TAP_STATE_FIELD not in raw_effect:
+        return effect
+    if not is_optional_equipped_creature_tap_state_effect(raw_effect):
+        raise SemanticNodeError("Optional equipped tap state has an invalid shape")
+    ref = effect["then_by_choice"]["tap"][0]["card"]
+    if ref is None:
+        return None
+    card = next((candidate for candidate in state.cards.values() if candidate.ref == ref), None)
+    if card is None or card.zone != "battlefield" or card.phased_out:
+        return None
+    change = "untap" if card.tapped else "tap"
+    legal = {change, "decline"}
+    prepared = {key: value for key, value in effect.items() if key != OPTIONAL_EQUIPPED_TAP_STATE_FIELD}
+    return {
+        **prepared,
+        "options": [option for option in effect["options"] if option["id"] in legal],
+        "then_by_choice": {key: result for key, result in effect["then_by_choice"].items() if key in legal},
+    }
 
 
 @dataclass(frozen=True, slots=True)
@@ -246,10 +275,26 @@ class SetPublicTapStateSetHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
+        if ATTACK_UNTAP_FIELD in effect:
+            try:
+                validate_combat_instruction(effect, delayed_result=True)
+                if context.source is None:
+                    raise ValueError("Turn-attacker untap requires a resolving delayed occurrence")
+                intent = UntapTurnAttackersIntent(
+                    context.query.require_active_seat(context.actor), context.source.stack_ref, context.default_reason,
+                )
+            except (TypeError, ValueError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            return IntentPlan(self.operation, self.handler_id, (intent,))
         lose_unspent_mana = TARGET_UNSPENT_MANA_FIELD in effect
         restrain_snapshot = TARGET_PLAYER_CREATURE_UNTAP_SNAPSHOT_FIELD in effect
-        if lose_unspent_mana or restrain_snapshot:
-            decode = decode_target_unspent_mana_tap if lose_unspent_mana else decode_target_player_creature_untap_snapshot
+        restrain_controller_snapshot = TARGET_OPPONENT_NONLAND_UNTAP_SNAPSHOT_FIELD in effect
+        if lose_unspent_mana or restrain_snapshot or restrain_controller_snapshot:
+            decode = decode_target_player_creature_untap_snapshot
+            if lose_unspent_mana:
+                decode = decode_target_unspent_mana_tap
+            elif restrain_controller_snapshot:
+                decode = decode_target_opponent_nonland_untap_snapshot
             try:
                 spec = decode(effect, resolved=True)
             except AffectedPermanentSetError as exc:
@@ -301,6 +346,7 @@ class SetPublicTapStateSetHandler:
                     untap_restraint=restraint,
                     lose_unspent_mana=lose_unspent_mana,
                     restrain_snapshot_on_player_untap=restrain_snapshot,
+                    restrain_snapshot_on_controller_untap=restrain_controller_snapshot,
                 ),
             ),
         )

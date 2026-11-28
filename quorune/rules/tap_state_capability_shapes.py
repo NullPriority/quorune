@@ -5,7 +5,9 @@ from __future__ import annotations
 from typing import Iterable, Mapping, Sequence
 
 from ..attachment_references import (
+    ATTACHMENT_INFORMATION_CAPABILITY,
     AttachmentReferenceError,
+    AttachmentReferenceKind,
     AttachmentReferenceSpec,
 )
 from ..compiler.fixed_source_effect_sequences import SOURCE_ZONE_OBJECT
@@ -28,6 +30,45 @@ from .effect_shape_walkers import nested_effects
 from .permanent_predicate_capability_shapes import (
     direct_permanent_target_schema_is_closed,
     direct_target_predicate_capabilities,
+)
+
+
+OPTIONAL_EQUIPPED_TAP_STATE_FIELD = "optional_equipped_tap_state"
+
+
+def optional_equipped_creature_tap_state_effect() -> dict[str, object]:
+    reference = AttachmentReferenceSpec(AttachmentReferenceKind.EQUIPPED, "creature", schema_version=2)
+    return {
+        "op": "choose_option",
+        OPTIONAL_EQUIPPED_TAP_STATE_FIELD: 1,
+        "player": "$controller",
+        "prompt": "Change the equipped creature's tap state?",
+        "options": [
+            {"id": "tap", "label": "Tap"},
+            {"id": "untap", "label": "Untap"},
+            {"id": "decline", "label": "Leave unchanged"},
+        ],
+        "then_by_choice": {
+            "tap": [{"op": "tap", "card": reference.to_dict()}],
+            "untap": [{"op": "untap", "card": reference.to_dict()}],
+            "decline": [],
+        },
+    }
+
+
+def is_optional_equipped_creature_tap_state_effect(effect: Mapping[str, object]) -> bool:
+    return (
+        type(effect.get(OPTIONAL_EQUIPPED_TAP_STATE_FIELD)) is int
+        and FrozenMap(effect) == FrozenMap(optional_equipped_creature_tap_state_effect())
+    )
+
+
+_OPTIONAL_EQUIPPED_TAP_STATE_CAPABILITIES = (
+    "attachment.reference.current_or_lki",
+    ATTACHMENT_INFORMATION_CAPABILITY,
+    "permanent.tap.effect",
+    "permanent.tap_state.optional_choice",
+    "permanent.untap.effect",
 )
 
 
@@ -239,6 +280,19 @@ def _optional_pirate_entry_is_closed(program):
     return thaw_value(FrozenMap(program.event_condition)) == subject.event_condition
 
 
+def is_source_untap_counter_sequence(effects, target_schema):
+    if target_schema is not None or len(effects) != 2:
+        return False
+    untap, counter = effects
+    return (
+        untap == {"op": "untap", "card": SOURCE_ZONE_OBJECT}
+        and set(counter) == {"op", "card", "counter", "amount", "source"}
+        and counter["op"] == "place_counters" and counter["card"] == SOURCE_ZONE_OBJECT
+        and counter["source"] == "$source" and type(counter["counter"]) is str
+        and bool(counter["counter"].strip()) and type(counter["amount"]) is int and counter["amount"] > 0
+    )
+
+
 SOURCE_ATTACK_CONDITION = {"field": "card", "op": "eq", "value": "$source.ref"}
 
 
@@ -266,6 +320,15 @@ def untap_runtime_dependencies(program):
 
     if any(_uses_combat_player_land_tap(effect) for effect in nested_effects((program.effects, program.handlers))):
         return _combat_recipient_land_tap_untap_dependencies(program)
+    if any(OPTIONAL_EQUIPPED_TAP_STATE_FIELD in effect
+           for effect in nested_effects((program.effects, program.handlers))):
+        if ((program.event, program.active_zone) != ("activate", "battlefield")
+                or program.target_schema is not None or program.event_condition is not None
+                or any(handler.get("handler_id") != "activation.catalog.pinned.v1" for handler in program.handlers)
+                or len(program.effects) != 1
+                or not is_optional_equipped_creature_tap_state_effect(program.effects[0])):
+            raise ValueError("Optional equipped tap state requires the original untargeted activation")
+        return _OPTIONAL_EQUIPPED_TAP_STATE_CAPABILITIES
     required = target_set_next_untap_dependencies(program.effects)
     if any(CONTROLLER_UNTAP_STEP_COUNT in effect for effect in nested_effects((program.effects, program.handlers))):
         result = _target_combat_prevention_two_untaps_capabilities(
@@ -286,6 +349,8 @@ def untap_runtime_dependencies(program):
         if not attacker_result:
             raise ValueError("Attacking-creature untap requires the ordered combat prevention and current attacking set")
         return attacker_result
+    if nonland_untap := opponent_nonland_untap_runtime_dependencies(program):
+        return nonland_untap
     rider_fields = {TARGET_UNSPENT_MANA_FIELD, TARGET_PLAYER_CREATURE_UNTAP_SNAPSHOT_FIELD}
     if any(rider_fields.intersection(effect) for effect in nested_effects((program.effects, program.handlers))):
         from .public_zone_move_capability_shapes import fixed_public_tap_state_set_node_capabilities
@@ -326,6 +391,44 @@ def untap_runtime_dependencies(program):
     if not next_step or (program.event, program.active_zone) != ("resolve", "stack"):
         raise ValueError("A next-player untap restriction requires the exact resolving spell and player scope")
     return tuple(sorted({*required, *next_step}))
+
+
+def opponent_nonland_tap_capabilities(effect, target_schema, mechanics):
+    from ..affected_permanents import (
+        TARGET_OPPONENT_NONLAND_UNTAP_CAPABILITY, AffectedPermanentSetError,
+        decode_target_opponent_nonland_untap_snapshot, target_opponent_nonland_snapshot_target_schema,
+    )
+    from ..object_predicate import object_query_capabilities
+
+    if ("cr-115-targets" not in mechanics or type((target_schema or {}).get("count")) is not int
+            or target_schema != target_opponent_nonland_snapshot_target_schema()):
+        return ()
+    try:
+        spec = decode_target_opponent_nonland_untap_snapshot(effect)
+    except (TypeError, AffectedPermanentSetError):
+        return ()
+    return (
+        TARGET_OPPONENT_NONLAND_UNTAP_CAPABILITY, "permanent.tap_state.fixed_set", "target.revalidate_resolution",
+        "untap.step.prohibit_next_controller", *object_query_capabilities(spec.query),
+    )
+
+
+def opponent_nonland_untap_runtime_dependencies(program):
+    from ..affected_permanents import TARGET_OPPONENT_NONLAND_UNTAP_SNAPSHOT_FIELD
+    from .effect_shape_walkers import nested_effects
+
+    field = TARGET_OPPONENT_NONLAND_UNTAP_SNAPSHOT_FIELD
+    if not any(field in effect for effect in nested_effects((program.effects, program.handlers))):
+        return ()
+    if ((program.event, program.active_zone) != ("saga.chapter.2", "battlefield")
+            or "saga_chapter_dispatch" not in program.coverage or program.handlers
+            or program.cost_schema is not None or program.event_condition is not None
+            or len(program.effects) != 1 or field not in program.effects[0]):
+        raise ValueError("The nonland untap restriction requires its exact original Saga chapter")
+    required = opponent_nonland_tap_capabilities(program.effects[0], program.target_schema, program.coverage)
+    if not required:
+        raise ValueError("The nonland untap restriction requires its announced opponent and complete snapshot")
+    return required
 
 
 def _controlled_source_untap_target_is_closed(target_schema, *, optional):
@@ -388,6 +491,8 @@ def targeted_tap_state_node_capabilities(
     operation = effect.get("op")
 
     if target_schema is None:
+        if is_optional_equipped_creature_tap_state_effect(effect):
+            return _OPTIONAL_EQUIPPED_TAP_STATE_CAPABILITIES
         capability = _operation_capability(operation)
         if capability is None or set(effect) != {"op", "card"}:
             return ()

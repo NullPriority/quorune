@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from . import regex_working_set as re
 from typing import Any, Mapping
+from ..turn_creature_cast_draw_model import turn_creature_cast_draw_effect
 
 
 def watched_combat_damage_draw_template(text):
@@ -45,6 +46,20 @@ _FIXED_NEXT_TURN_DRAW = re.compile(
     r"Draw a card at the beginning of the next turn's upkeep\.?",
     re.IGNORECASE,
 )
+_SAME_TURN_CREATURE_CAST_DRAW = re.compile(
+    r"Whenever you cast a creature spell this turn, draw a card\.", re.IGNORECASE,
+)
+
+
+def turn_creature_cast_draw_template(text):
+    if _SAME_TURN_CREATURE_CAST_DRAW.fullmatch(" ".join(text.split())) is None:
+        return None
+    return (
+        "same-turn-creature-cast-draw-v1",
+        (turn_creature_cast_draw_effect(),),
+        None,
+        ("cr-121-drawing-a-card", "cr-603-handling-triggered-abilities"),
+    )
 
 
 def fixed_next_turn_upkeep_draw_effect() -> dict[str, Any]:

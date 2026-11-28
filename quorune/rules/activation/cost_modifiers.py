@@ -8,7 +8,7 @@ from ...ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ...activation_cost_modifiers import (ACTIVATION_GENERIC_COST_EVENT, ACTIVATION_GENERIC_COST_HANDLER,
     TARGETED_ACTIVATION_COST_HANDLER, PUBLIC_QUANTITY_ACTIVATION_COST_HANDLER, ActivationCostModifierSource,
     ConditionalActivationReduction, OpponentControlledActivationReduction,
-    AbilityLocalPublicManaAdjustment, ActivationManaReduction, FixedActivationCostModifierSpec,
+    AbilityLocalPublicManaAdjustment, AbilityLocalRadReduction, ActivationManaReduction, FixedActivationCostModifierSpec,
     OTHER_EQUIPMENT_ACTIVATION_SUBJECT)
 from ...card_program_faces import program_matches_face
 from ...object_query import object_matches_query
@@ -35,7 +35,12 @@ def _ability_local_mana_modifiers(host, seat, source, ability):
         from ...dynamic_characteristics import query_characteristic_count
         count = query_characteristic_count(host, provider, reduction.quantity)
         return [FixedActivationCostModifierSpec(reduction.mana['GENERIC'] * count, subject_relation='any')] if count else []
-    if isinstance(reduction, ConditionalActivationReduction):
+    if isinstance(reduction, AbilityLocalRadReduction):
+        from ...counter_state import player_counter_snapshot
+        from ...rad_counter_model import RAD_COUNTER
+
+        count = player_counter_snapshot(host.state.players[seat]).get(RAD_COUNTER, 0)
+    elif isinstance(reduction, ConditionalActivationReduction):
         from .public_state_conditions import current_activation_public_state_matches
 
         count = reduction.generic if current_activation_public_state_matches(host, provider, reduction.condition) else 0

@@ -82,7 +82,7 @@ def semantic_choice_token_creation_preview(
 
 
 def attached_token_candidate_refs(
-    host, effect: Mapping[str, Any], *, attachment_kind: str = "equipment"
+    host, effect: Mapping[str, Any], *, attachment_kind: str = "equipment", token_result: bool = True,
 ) -> tuple[str, ...]:
     """Materialize exact current legal recipients from the committed result."""
     from ..effect_runtime.zones_and_attachments import _attachment_target_is_legal
@@ -99,7 +99,7 @@ def attached_token_candidate_refs(
         return ()
     return tuple(
         ref for ref in refs
-        if ref in battlefield and battlefield[ref].is_token
+        if ref in battlefield and battlefield[ref].is_token == token_result
         and _attachment_target_is_legal(host, source, battlefield[ref], attachment_kind=attachment_kind)
     )
 

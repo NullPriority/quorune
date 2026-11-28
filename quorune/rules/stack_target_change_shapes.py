@@ -6,7 +6,10 @@ from collections.abc import Mapping
 
 from ..replacement.immutable import thaw_value
 from ..stack_target_change_model import (
+    ANNOUNCED_STACK_TARGET,
+    COPY_AFTER_RETARGET,
     MANDATORY_STACK_TARGET_CHANGE_FIELD,
+    POWER_ADJUSTED_RETARGET_ROLL,
     OPTIONAL_STACK_TARGET_CHANGE_FIELD,
     SINGLE_ANNOUNCED_STACK_TARGET,
     STACK_TARGET_CHANGE_FIELDS,
@@ -18,6 +21,8 @@ from ..stack_target_change_model import (
     is_stack_target_change_payment,
     stack_target_change_with_mana_value_loss_effects,
     stack_target_spell_mana_value_loss_amount,
+    power_adjusted_retarget_roll,
+    power_adjusted_retarget_target_schema,
     validate_stack_spell_control_effect,
     validate_stack_target_change_payment_effect,
 )
@@ -83,6 +88,13 @@ def single_stack_target_change_capabilities(*, effects, target_schema, mechanic_
             return (STACK_TARGET_CHANGE_MANA_VALUE_LOSS_CAPABILITY, "target.revalidate_resolution",
                     "trigger.event.normalized_target_announcement", "life.change.effect")
         return ()
+
+    if len(effects) == 1 and POWER_ADJUSTED_RETARGET_ROLL in effects[0]:
+        if (type(effects[0][POWER_ADJUSTED_RETARGET_ROLL]) is int
+                and thaw_value(effects[0]) == power_adjusted_retarget_roll()
+                and thaw_value(target_schema) == power_adjusted_retarget_target_schema()):
+            return ("random.die.power_adjusted_stack_targets", "target.revalidate_resolution")
+        return ()
     if len(effects) == 1 and is_stack_target_change_payment(effects[0]):
         return _stack_target_change_payment_capabilities(effects[0], target_schema)
     if len(effects) == 2 and STACK_SPELL_CONTROL_FIELD in effects[0]:
@@ -116,10 +128,12 @@ def single_stack_target_change_runtime_dependencies(program):
         return source_redirect
     schema = program.target_schema
     effects = (*program.effects, *getattr(program, "handlers", ()))
-    marked = any(STACK_SPELL_CONTROL_FIELD in effect or STACK_TARGET_CHANGE_FIELDS.intersection(effect)
-                 or is_stack_target_change_payment(effect) or _uses_stack_target_mana_value_loss(effect)
+    markers = STACK_TARGET_CHANGE_FIELDS | {STACK_SPELL_CONTROL_FIELD, POWER_ADJUSTED_RETARGET_ROLL, COPY_AFTER_RETARGET}
+    marked = any(markers.intersection(effect) or is_stack_target_change_payment(effect)
+                 or _uses_stack_target_mana_value_loss(effect)
                  for effect in nested_effects(effects))
-    if not marked and (not isinstance(schema, Mapping) or schema.get("predicate") != SINGLE_ANNOUNCED_STACK_TARGET):
+    if not marked and (not isinstance(schema, Mapping)
+                       or schema.get("predicate") not in {SINGLE_ANNOUNCED_STACK_TARGET, ANNOUNCED_STACK_TARGET}):
         return ()
     if (program.event, program.active_zone) != ("resolve", "stack") or getattr(program, "handlers", ()):
         raise ValueError("Stack target change requires one complete resolving spell")

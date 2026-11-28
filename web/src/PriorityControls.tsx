@@ -56,7 +56,16 @@ export function PriorityControls({ priority, preferences, activations, onToggleS
     {priority.held ? <small role="status">Priority held · {priority.held}</small>
       : priority.armed && <small role="status">{priority.waitingOnRequiredChoice ? "A decision is required" : "Passing priority for this turn"}</small>}
     {priority.advancingToFirstMain && <small role="status">{priority.waitingOnRequiredChoice ? "A decision is required" : "Passing to first main"}</small>}
+    {(priority.canYieldSource || priority.sourceYieldEnabled) && <button type="button" className="table-control-toggle"
+      aria-pressed={priority.sourceYieldEnabled} onClick={priority.toggleSourceYield}
+      title="Yield to this source's same ability when it is on top and no response is available.">
+      {priority.sourceYieldEnabled ? "Cancel source yield" : "Yield to this source"}</button>}
+    {(priority.canResolveStack || priority.resolvingStack) && <button type="button" className="table-control-toggle"
+      aria-pressed={priority.resolvingStack} onClick={priority.toggleStackResolve}
+      title="Pass your priority on the current stack. Stop for a new response or required choice.">
+      {priority.resolvingStack ? "Cancel resolve stack" : "Resolve stack"}</button>}
     {priority.turnNumber > 0 && <button type="button" className="table-control-toggle" aria-pressed={priority.armed}
+      disabled={!priority.armed && !priority.canArmPassTurn}
       onClick={priority.toggleTurnYield}>{priority.armed ? "Cancel pass turn" : priority.advancingToFirstMain ? "Cancel advance" : "Pass turn"}</button>}
   </div>;
 }

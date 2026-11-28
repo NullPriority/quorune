@@ -16,6 +16,7 @@ from ..replacement_effects import (
     advance_replacement_batch,
 )
 from ..replacement.applicability import COUNTER_RECIPIENT_TYPES_FIELD
+from ..replacement.model import COUNTER_INSTRUCTION_ORDER_FIELD
 from ..replacement.operations import HalveCounterPlacementAmount
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import (
@@ -82,6 +83,7 @@ class CounterQuantityReplacementV2Node:
     target_types_any: tuple[str, ...]
     multiplier: int
     additional: int
+    counter_instruction_order_version: int | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -574,17 +576,10 @@ class CounterQuantityReplacementV2Handler:
     def validate(
         self, descriptor: Mapping[str, Any]
     ) -> CounterQuantityReplacementV2Node:
-        exact_fields(
-            descriptor,
-            {
-                "handler_id",
-                "schema_version",
-                "event",
-                "condition",
-                "modification",
-            },
-            field="runtime handler",
-        )
+        required_fields = {"handler_id", "schema_version", "event", "condition", "modification"}
+        if COUNTER_INSTRUCTION_ORDER_FIELD in descriptor:
+            required_fields.add(COUNTER_INSTRUCTION_ORDER_FIELD)
+        exact_fields(descriptor, required_fields, field="runtime handler")
         if descriptor["handler_id"] != self.handler_id:
             raise SemanticNodeError(
                 "Runtime handler ID does not match registry"
@@ -609,6 +604,14 @@ class CounterQuantityReplacementV2Handler:
         multiplier, additional = _validated_v2_modification(
             descriptor["modification"]
         )
+        version = descriptor.get(COUNTER_INSTRUCTION_ORDER_FIELD)
+        if COUNTER_INSTRUCTION_ORDER_FIELD in descriptor and (
+            type(version) is not int or version != 1
+            or (effect_scope, placing_relation, target_relation) != ("any", "any", "source_controller")
+            or target_kinds != ("permanent",) or counter_names or target_types_all or target_types_any
+            or (multiplier, additional) != (1, 1)
+        ):
+            raise SemanticNodeError("Instruction-wide order requires the exact controlled-permanent counter increment")
         return CounterQuantityReplacementV2Node(
             effect_scope=effect_scope,
             placing_player_relation=placing_relation,
@@ -619,6 +622,7 @@ class CounterQuantityReplacementV2Handler:
             target_types_any=target_types_any,
             multiplier=multiplier,
             additional=additional,
+            counter_instruction_order_version=version,
         )
 
     @staticmethod
@@ -690,6 +694,7 @@ class CounterQuantityReplacementV2Handler:
             conditions=conditions,
             operations=tuple(operations),
             label=f"{context.source_ref}: change the number of counters placed",
+            counter_instruction_order_version=node.counter_instruction_order_version,
         )
 
     def lower(

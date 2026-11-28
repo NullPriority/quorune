@@ -74,7 +74,9 @@ def fixed_complex_activation_mana_cost(
     if not ability.complex_symbols or ability.generic_reduction_per_legendary_creature:
         return ability
     if ability.uncompiled_costs or ability.choices:
-        composed = _phyrexian_selected_zone_change_price(ability)
+        from .activated_counter_costs import fixed_hybrid_selected_counter_activation
+
+        composed = fixed_hybrid_selected_counter_activation(ability) or _phyrexian_selected_zone_change_price(ability)
         if composed is None:
             return ability
         ability = composed

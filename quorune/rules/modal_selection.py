@@ -61,8 +61,14 @@ def controls_wizard(host, seat: str) -> bool:
 
 
 OPTIONAL_COMBAT_TRIGGER_MODAL_CAPABILITY = "choice.modal.optional_combat_trigger"
+OPTIONAL_CAST_TRIGGER_MODAL_CAPABILITY = "choice.modal.optional_single_cast_trigger"
+_CONTROLLER_CAST_CONDITION = FrozenMap({
+    "field": "controller", "op": "eq", "value": "$source.controller",
+})
 DISTINCT_TURN_TRIGGER_MODES_CAPABILITY = "choice.modal.distinct_trigger_modes_this_turn"
 DISTINCT_TURN_TRIGGER_MODES_FIELD = "distinct_trigger_modes_this_turn_version"
+DISTINCT_TURN_GRAVEYARD_MODES_VERSION = 2
+_OWNER_GRAVEYARD_DEPARTURE = FrozenMap({"field": "owner", "op": "eq", "value": "$source.controller"})
 _OTHER_CONTROLLED_CREATURE_ENTRY = FrozenMap({"all": [
     {"field": "controller", "op": "eq", "value": "$source.controller"},
     {"field": "card", "op": "ne", "value": "$source.ref"},
@@ -84,6 +90,32 @@ def has_optional_trigger_modes(schema):
             and type(schema.get("min_modes")) is int and schema["min_modes"] == 0)
 
 
+def optional_trigger_mode_capability(schema):
+    if not has_optional_trigger_modes(schema):
+        return None
+    if type(schema.get("max_modes")) is int and schema["max_modes"] == 1:
+        return OPTIONAL_CAST_TRIGGER_MODAL_CAPABILITY
+    return OPTIONAL_COMBAT_TRIGGER_MODAL_CAPABILITY
+
+
+def optional_cast_trigger_context_matches(*, event, active_zone, event_condition):
+    return ((event, active_zone) == ("spell.cast", "battlefield")
+            and isinstance(event_condition, Mapping)
+            and FrozenMap(event_condition) == _CONTROLLER_CAST_CONDITION)
+
+
+def optional_trigger_mode_context_dependencies(schema, *, event, active_zone, event_condition):
+    context = {"event": event, "active_zone": active_zone, "event_condition": event_condition}
+    capability = optional_trigger_mode_capability(schema)
+    if capability == OPTIONAL_CAST_TRIGGER_MODAL_CAPABILITY and optional_cast_trigger_context_matches(**context):
+        event_capability = "trigger.event.normalized_spell_cast"
+    elif capability == OPTIONAL_COMBAT_TRIGGER_MODAL_CAPABILITY and optional_combat_trigger_context_matches(**context):
+        event_capability = "trigger.event.normalized_damage"
+    else:
+        return ()
+    return (capability, event_capability, "trigger.effect.fixed_event", "trigger.placement.apnap")
+
+
 def optional_combat_trigger_context_matches(*, event, active_zone, event_condition):
     return ((event, active_zone) == ("damage.dealt.self", "battlefield")
             and isinstance(event_condition, Mapping)
@@ -98,7 +130,7 @@ def valid_distinct_turn_trigger_modes(schema):
     return (
         has_distinct_turn_trigger_modes(schema)
         and type(schema[DISTINCT_TURN_TRIGGER_MODES_FIELD]) is int
-        and schema[DISTINCT_TURN_TRIGGER_MODES_FIELD] == 1
+        and schema[DISTINCT_TURN_TRIGGER_MODES_FIELD] in (1, DISTINCT_TURN_GRAVEYARD_MODES_VERSION)
         and all(type(schema.get(key)) is int and schema[key] == 1
                 for key in ("mode_count", "min_modes", "max_modes"))
         and isinstance(schema.get("modes"), Mapping)
@@ -108,7 +140,21 @@ def valid_distinct_turn_trigger_modes(schema):
     )
 
 
-def distinct_turn_trigger_context_matches(*, event, active_zone, event_condition):
+def uses_distinct_turn_graveyard_modes(schema):
+    return (has_distinct_turn_trigger_modes(schema)
+            and type(schema[DISTINCT_TURN_TRIGGER_MODES_FIELD]) is int
+            and schema[DISTINCT_TURN_TRIGGER_MODES_FIELD] == DISTINCT_TURN_GRAVEYARD_MODES_VERSION)
+
+
+def distinct_turn_trigger_context_matches(*, event, active_zone, event_condition, schema):
+    if uses_distinct_turn_graveyard_modes(schema):
+        from .event_subscriptions import GRAVEYARD_DEPARTURE_LOOKBACK_EVENT
+
+        return (
+            (event, active_zone) == (GRAVEYARD_DEPARTURE_LOOKBACK_EVENT, "battlefield")
+            and isinstance(event_condition, Mapping)
+            and FrozenMap(event_condition) == _OWNER_GRAVEYARD_DEPARTURE
+        )
     return (
         active_zone == "battlefield" and type(event) is str and isinstance(event_condition, Mapping)
         and FrozenMap(event_condition) == _DISTINCT_MODE_OCCURRENCES.get(event)

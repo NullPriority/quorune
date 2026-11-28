@@ -20,7 +20,7 @@ from .linked_exile_return_model import (
     CONTROLLER_LIBRARY_TOP_HAND_BINDING, CONTROLLER_LIBRARY_TOP_HAND_VERSION,
     EXILED_TARGET_SEARCH_BINDING, ExiledObjectIdentity, LinkedExileReturnSpec, LINKED_ABILITY_TIMING, LINKED_RETURN_OPERATION,
     LINKED_TYPE_ENTRY_COUNTERS_VERSION, LINKED_TYPE_ENTRY_COUNTER_VERSIONS,
-    LINKED_RETURN_SUBTYPE_COUNTER_PHASE, LINKED_RETURN_SUBTYPE_COUNTER_VERSION,
+    LINKED_RETURN_SUBTYPE_COUNTER_PHASE,
     LinkedPublicSetScope, SameNameConditionalExileScope, SelectedConditionalExileScope, validate_linked_instruction,
 )
 from .object_predicate import ObjectQuerySpec
@@ -115,6 +115,12 @@ def return_linked_exiled_objects(
 ) -> list[str]:
     from .linked_library_imprint_model import uses_library_imprint_death, uses_linked_artifact_library_instruction
 
+    from .linked_library_imprint_model import uses_linked_saga_library_instruction
+
+    if uses_linked_saga_library_instruction(effect):
+        from .effect_runtime.linked_library_imprint import apply_linked_saga_library_result
+
+        return apply_linked_saga_library_result(host, effect, actor=actor, operation=operation, reason=reason)
     if uses_linked_artifact_library_instruction(effect):
         from .effect_runtime.linked_library_imprint import apply_linked_artifact_owner_return
 
@@ -134,7 +140,7 @@ def return_linked_exiled_objects(
     if set(effect) - allowed or not required.issubset(effect):
         raise GameRuleError("Linked return has an invalid shape")
     spec = _spec(effect)
-    if spec.schema_version == LINKED_RETURN_SUBTYPE_COUNTER_VERSION:
+    if spec.returns_with_subtype_counter:
         raise GameRuleError("A post-return counter requires its original linked spell")
     cards = _eligible_exiled(host, effect["objects"])
     if library_top:
@@ -384,7 +390,7 @@ def resolve_linked_exile_return(
     combined_entry = binding_id == EXILED_TARGET_SEARCH_BINDING
     if combined_entry and phase == "return":
         permitted.add("_aura_target_refs")
-    subtype_counter = spec.schema_version == LINKED_RETURN_SUBTYPE_COUNTER_VERSION
+    subtype_counter = spec.returns_with_subtype_counter
     phases = {"exile", "return", LINKED_RETURN_SUBTYPE_COUNTER_PHASE} if subtype_counter else {"exile", "return"}
     if phase not in phases or set(effect) - (required | permitted) or not required.issubset(effect):
         raise GameRuleError("Linked exile/return instruction is malformed")

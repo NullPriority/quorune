@@ -200,9 +200,14 @@ def dispatch_committed_batch_zone_events(host, snapshots, occurrences, *, trigge
     with capture_batch(host, occurrences):
         _dispatch_batch_zone_members(host, snapshots, occurrences, trigger_batch=trigger_batch)
     dispatch_committed_discard_groups(host, occurrences, trigger_batch=trigger_batch)
+    from .rules.library_creature_arrival import dispatch_grouped_library_creature_arrivals
+
+    dispatch_grouped_library_creature_arrivals(host, occurrences, trigger_batch=trigger_batch)
 
 
 def _dispatch_batch_zone_members(host, snapshots, occurrences, *, trigger_batch):
+    from .rules.linked_death_token_copy import linked_death_copy_dispatch_facts
+
     for (card, departure), occurrence in zip(snapshots, occurrences, strict=True):
         sources = departure.trigger_sources
         host._dispatch_zone_change_events(
@@ -228,6 +233,7 @@ def _dispatch_batch_zone_members(host, snapshots, occurrences, *, trigger_batch)
             trigger_batch=trigger_batch,
             history_pre_recorded=True,
             discard_batch_member=True,
+            **linked_death_copy_dispatch_facts(host, departure, card.zone),
             **({"putting_player": occurrence.putting_player} if occurrence.putting_player is not None else {}),
             **({"discard_effect_origin": occurrence.discard_effect_origin} if occurrence.discard_effect_origin is not None else {}),
         )
@@ -292,6 +298,9 @@ def dispatch_zone_change_occurrence(
     events = normalized_zone_trigger_events(occurrence)
     if not history_pre_recorded:
         record_zone_change_history(host, occurrence, events=events)
+        from .rules.library_creature_arrival import dispatch_grouped_library_creature_arrivals
+
+        dispatch_grouped_library_creature_arrivals(host, (occurrence,), trigger_batch=pending)
     from .unattachment_triggers import dispatch_departure_unattachments
     departure = DepartureTriggerSnapshot(
         tuple(departure_sources), departure_source_zones, departure_source_characteristics,
@@ -308,25 +317,29 @@ def dispatch_zone_change_occurrence(
         if event.kind == "permanent.enter":
             context = _committed_entry_context(host, context, card, occurrence)
         if event.kind == "creature.dies":
-            from .event_card_return import death_source_exile_context
+            from .event_card_return import death_source_exile_context, event_library_departure_context
 
             from .rules.death_battlefield_return import death_battlefield_return_context
 
             context = death_source_exile_context(host, context, occurrence, composition_departures)
             context = death_battlefield_return_context(host, context, occurrence, composition_departures)
+            if composition_departures:
+                context = event_library_departure_context(
+                    host, context, occurrence, composition_departures, event=event.kind,
+                )
         if event.kind == "artifact.graveyard" and occurrence.composition is not None:
             from .delayed_object_actions import capture_artifact_graveyard_composition
 
             context = capture_artifact_graveyard_composition(host, context, occurrence, composition_departures)
         if event.kind == "permanent.graveyard":
-            from .delayed_object_actions import collect_target_death_return
+            from .delayed_object_actions import collect_target_graveyard_triggers
             from .rules.death_battlefield_return import death_battlefield_return_context
             from .rules.source_bound_delayed_return import small_creature_death_context
 
             context = death_battlefield_return_context(host, context, occurrence, composition_departures,
                                                        permanent_graveyard=True)
             context = small_creature_death_context(host, context, occurrence, composition_departures)
-            collect_target_death_return(host, occurrence, composition_departures, pending)
+            collect_target_graveyard_triggers(host, occurrence, composition_departures, pending)
         if event.kind == "permanent.leave":
             from .aura.runtime import collect_reanimating_aura_departure
             from .counter_snapshot import permanent_counter_snapshot
@@ -459,6 +472,15 @@ def record_zone_change_history(
             types=current_types,
             token=occurrence.token if getattr(history, "permanent_entry_token_history_version", None) == 1 else None,
         )
+        from .turn_history import record_food_entry_history
+
+        for event in normalized:
+            if event.kind == "permanent.enter":
+                record_food_entry_history(
+                    host, controller=occurrence.current_controller,
+                    incarnation=occurrence.current_logical_object_id,
+                    types=event.context.get("types", ()), subtypes=event.context.get("subtypes", ()),
+                )
     if (
         occurrence.origin == "battlefield"
         and occurrence.destination == "graveyard"

@@ -8,8 +8,8 @@ from ..fixed_counter_movement_model import (
     CHOSEN_OPPONENT_CREATURE_TO_CONTROLLED, CONTROLLED_TARGET_TO_SOURCE,
     FIXED_COUNTER_MOVEMENT_CAPABILITY, FIXED_COUNTER_MOVEMENT_OPERATION,
     OPTIONAL_CHOSEN_CONTROLLED_CREATURES, OPTIONAL_COMBAT_COUNTER_MOVEMENT_CAPABILITY,
-    FixedCounterMovementSpec, TWO_DISTINCT_TARGETS,
-    OPTIONAL_COMBAT_ALL_COUNTER_MOVEMENT_CAPABILITY, SOURCE_HAS_COUNTERS,
+    FixedCounterMovementSpec, OPTIONAL_COMBAT_ALL_COUNTER_MOVEMENT_CAPABILITY, SOURCE_COUNTER_MOVEMENT_CAPABILITY,
+    SOURCE_GIVES_COUNTERS_THEN_DRAW, SOURCE_HAS_COUNTERS, SOURCE_RECEIVES_MISSING_KINDS, TWO_DISTINCT_TARGETS,
 )
 from ..replacement.immutable import FrozenMap
 from .cumulative_object_upkeep import CONTROLLER_UPKEEP
@@ -58,6 +58,26 @@ _CHOSEN_QUANTITIES_COST = FrozenMap({
 })
 
 
+_SOURCE_MOVEMENT_COSTS = {
+    SOURCE_RECEIVES_MISSING_KINDS: FrozenMap({
+        **_CHOSEN_MOVE_COST, "text": "{T}", "mana": {**_CHOSEN_MOVE_COST["mana"], "GENERIC": 0},
+    }),
+    SOURCE_GIVES_COUNTERS_THEN_DRAW: FrozenMap({
+        **_CHOSEN_MOVE_COST, "text": "{U}, {T}", "mana": {**_CHOSEN_MOVE_COST["mana"], "GENERIC": 0, "U": 1},
+    }),
+}
+
+
+def source_counter_movement_price_is_closed(ability, form):
+    from ..compiler.activated_costs import activated_ability_cost
+
+    return (
+        ability.zones == ("battlefield",) and not ability.mana_ability and not ability.sorcery_speed
+        and not ability.activation_conditions and not ability.generic_reduction_per_legendary_creature
+        and FrozenMap(activated_ability_cost(ability)) == _SOURCE_MOVEMENT_COSTS[form]
+    )
+
+
 def chosen_counter_movement_price_is_closed(ability, *, quantities=False):
     from ..compiler.activated_costs import activated_ability_cost
 
@@ -69,6 +89,9 @@ def chosen_counter_movement_price_is_closed(ability, *, quantities=False):
 
 
 def fixed_counter_movement_target_schema(spec):
+    if spec.is_source_bound:
+        return {"zones": ["battlefield"], "categories": ["permanent"], "count": 1,
+                "controller_relation": "you", "source_exclusion": True}
     creature = {"zones": ["battlefield"], "categories": ["permanent"], "types_any": ["creature"], "count": 1}
     if spec.form == CHOSEN_OPPONENT_CREATURE_TO_CONTROLLED:
         return {"groups": [
@@ -108,6 +131,8 @@ def fixed_counter_movement_node_capabilities(*, effects, target_schema, mechanic
             return ()
         if FrozenMap(target_schema) != FrozenMap(fixed_counter_movement_target_schema(spec)):
             return ()
+        if spec.is_source_bound and FrozenMap(cost_schema or {}) != _SOURCE_MOVEMENT_COSTS[spec.form]:
+            return ()
     except (KeyError, TypeError, ValueError):
         return ()
     required = {
@@ -118,6 +143,10 @@ def fixed_counter_movement_node_capabilities(*, effects, target_schema, mechanic
         required.update(("trigger.effect.fixed_event", "trigger.placement.apnap"))
     if spec.moves_all_source_counters:
         required.update((OPTIONAL_COMBAT_ALL_COUNTER_MOVEMENT_CAPABILITY, "state_query.permanent.any_counter"))
+    elif spec.is_source_bound:
+        required.add(SOURCE_COUNTER_MOVEMENT_CAPABILITY)
+        if spec.form == SOURCE_GIVES_COUNTERS_THEN_DRAW:
+            required.add("zone.draw.library_to_hand")
     elif spec.form == OPTIONAL_CHOSEN_CONTROLLED_CREATURES:
         required.add(OPTIONAL_COMBAT_COUNTER_MOVEMENT_CAPABILITY)
     elif spec.form == CHOSEN_OPPONENT_CREATURE_TO_CONTROLLED:
@@ -162,7 +191,7 @@ def fixed_counter_movement_program_dependencies(program):
         FIXED_COUNTER_MOVEMENT_CAPABILITY, CHOSEN_COUNTER_MOVEMENT_CAPABILITY,
         OPTIONAL_COMBAT_COUNTER_MOVEMENT_CAPABILITY, CHOSEN_COUNTER_QUANTITIES_CAPABILITY,
         CHOSEN_OPPONENT_COUNTER_MOVEMENT_CAPABILITY,
-        OPTIONAL_COMBAT_ALL_COUNTER_MOVEMENT_CAPABILITY,
+        OPTIONAL_COMBAT_ALL_COUNTER_MOVEMENT_CAPABILITY, SOURCE_COUNTER_MOVEMENT_CAPABILITY,
     }.intersection(program.capability_dependencies):
         return ()
     if len(marked) != 1 or effects != marked:
@@ -178,15 +207,21 @@ def fixed_counter_movement_program_dependencies(program):
             raise ValueError("Optional movement requires its exact original controller step")
     else:
         ability = _validate_activation_catalog(program)
-        expected_cost = _CHOSEN_QUANTITIES_COST if spec.chooses_counter_quantities else _CHOSEN_MOVE_COST
-        if (spec.chooses_counter_kind or spec.chooses_counter_quantities) and (
-            program.event_condition is not None or ability.builtin_semantic_key != program.key
-            or ability.target_schema != FrozenMap(program.target_schema or {})
-            or not isinstance(program.cost_schema, Mapping)
-            or FrozenMap(program.cost_schema) != expected_cost
-            or not chosen_counter_movement_price_is_closed(ability, quantities=spec.chooses_counter_quantities)
-        ):
-            raise ValueError("Chosen counter movement requires its exact public target roles and printed activation price")
+        if spec.is_source_bound:
+            expected_cost = _SOURCE_MOVEMENT_COSTS[spec.form]
+            price_closed = source_counter_movement_price_is_closed(ability, spec.form)
+        elif spec.chooses_counter_kind or spec.chooses_counter_quantities:
+            expected_cost = _CHOSEN_QUANTITIES_COST if spec.chooses_counter_quantities else _CHOSEN_MOVE_COST
+            price_closed = chosen_counter_movement_price_is_closed(ability, quantities=spec.chooses_counter_quantities)
+        else:
+            expected_cost = None
+            price_closed = True
+        if expected_cost is not None and (
+                program.event_condition is not None or ability.builtin_semantic_key != program.key
+                or ability.target_schema != FrozenMap(program.target_schema or {})
+                or not isinstance(program.cost_schema, Mapping)
+                or FrozenMap(program.cost_schema) != expected_cost or not price_closed):
+            raise ValueError("Counter movement requires its exact public target roles and printed activation price")
     required = fixed_counter_movement_node_capabilities(
         effects=effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
         cost_schema=program.cost_schema,

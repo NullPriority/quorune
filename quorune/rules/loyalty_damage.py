@@ -5,6 +5,7 @@ from collections.abc import Mapping
 from ..replacement.immutable import FrozenMap
 from ..target_combat_damage_multiplier_model import (
     MULTIPLIER_CAPABILITY, MULTIPLIER_MECHANIC, MULTIPLIER_OPERATION, multiplier_instruction,
+    TURN_MULTIPLIER_CAPABILITY, turn_multiplier_instruction,
 )
 from .effect_shape_walkers import contains_nested_key
 from .linked_loyalty_exile_model import LOYALTY_X_CAPABILITY
@@ -58,10 +59,40 @@ def loyalty_damage_capabilities(*, effects, target_schema, mechanics, active_zon
     return (LOYALTY_X_DAMAGE_CAPABILITY, LOYALTY_X_CAPABILITY, "damage.batch.fixed_set", "target.revalidate_resolution")
 
 
+def turn_combat_multiplier_capabilities(*, effects, target_schema, mechanic_ids):
+    if (target_schema is not None or len(effects) != 2 or type(effects[1].get("schema_version")) is not int
+            or effects[1] != turn_multiplier_instruction()):
+        return ()
+    from .temporary_keyword_removal import temporary_keyword_removal_capabilities
+
+    removal = effects[0]
+    from ..object_predicate import ObjectQuerySpec
+
+    expected = ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)).to_dict()
+    predicate = removal.get("predicate", {})
+    if (not isinstance(predicate, Mapping) or FrozenMap(predicate) != FrozenMap(expected)
+            or tuple(removal.get("remove_keywords", ())) != ("Trample",)
+            or removal.get("power") != 0 or removal.get("toughness") != 0 or removal.get("keywords")):
+        return ()
+    required = temporary_keyword_removal_capabilities(effects=(removal,), target_schema=None, mechanic_ids=mechanic_ids)
+    return (*required, MULTIPLIER_CAPABILITY, TURN_MULTIPLIER_CAPABILITY) if required else ()
+
+
 def loyalty_damage_runtime_dependencies(program):
     from .effect_shape_walkers import nested_effect_operations
 
     values = (program.effects, program.handlers)
+    if any(effect.get("op") == MULTIPLIER_OPERATION and effect.get("schema_version") == 2
+           for effect in program.effects):
+        required = turn_combat_multiplier_capabilities(
+            effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+        )
+        from ..card_programs.admission import program_has_declared_complete_source_admission
+
+        if (not required or (program.event, program.active_zone) != ("resolve", "stack") or program.handlers
+                or program.cost_schema is not None or not program_has_declared_complete_source_admission(program)):
+            raise ValueError("Combat damage multiplication requires the admitted complete turn rule")
+        return required
     if not (
         set(program.capability_dependencies).intersection((MULTIPLIER_CAPABILITY, LOYALTY_X_DAMAGE_CAPABILITY))
         or MULTIPLIER_OPERATION in nested_effect_operations(values)

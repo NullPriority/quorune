@@ -40,6 +40,12 @@ def life_gain_counter_payment_projection(effect, *, resolved=False):
     return {key: thaw_value(value) for key, value in effect.items() if key != LIFE_GAIN_COUNTER_RESULT_FIELD}
 
 
+def life_gain_counter_node_capabilities(**context):
+    from .life_gain_counter_reset import life_gain_counter_reset_node_capabilities
+
+    return life_gain_counter_reset_node_capabilities(**context) or life_gain_counter_payment_node_capabilities(**context)
+
+
 def life_gain_counter_payment_node_capabilities(*, effects, target_schema, mechanic_ids=(), **kwargs):
     if (len(effects) != 1 or target_schema != _TARGET or type(target_schema.get('count')) is not int):
         return ()

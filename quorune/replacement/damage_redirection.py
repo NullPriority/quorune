@@ -1,4 +1,4 @@
-"""One-point redirection branches inside the simultaneous replacement batch."""
+"""Damage redirection rules for the simultaneous replacement batch."""
 
 from dataclasses import replace
 from hashlib import sha256
@@ -10,6 +10,15 @@ from .operations import RedirectDamage
 
 
 DAMAGE_SPLIT_ORIGIN = "damage_split_origin"
+DAMAGE_RECIPIENT_TYPES_FIELD = "damage_recipient_types_v1"
+
+
+def controller_redirection_conditions(controller, creatures_only):
+    conditions = {"amount": {"gt": 0}, "target_controller": {"eq": controller},
+                  "target_kind": {"in": ["permanent", "player"]}}
+    if creatures_only:
+        conditions[DAMAGE_RECIPIENT_TYPES_FIELD] = {"contains_any": ["creature", "player"]}
+    return conditions
 
 
 def finite_damage_redirection(effect):
@@ -27,6 +36,38 @@ def validate_finite_damage_redirection(effect, operations, declines):
         raise ReplacementEffectError("Finite damage redirection is one mandatory damage replacement")
 
 
+def validate_exclusive_damage_scope(effect, operations, declines):
+    scope = effect.exclusive_damage_scope
+    if scope is None:
+        return
+    if (
+        type(scope) is not str or not scope or effect.event_kind != "damage"
+        or effect.replacement_class is not ReplacementClass.OTHER or effect.optional or declines
+        or len(operations) != 1 or not isinstance(operations[0], RedirectDamage)
+        or operations[0].maximum_damage is not None or operations[0].target_kind != "permanent"
+        or thaw_value(effect.conditions) not in (
+            controller_redirection_conditions(scope, False), controller_redirection_conditions(scope, True),
+        )
+    ):
+        raise ReplacementEffectError("An exclusive damage scope requires one mandatory controller-wide redirection")
+
+
+def exclusive_damage_scope_effects(journal, effects):
+    """Reuse the selected destination across the remaining rows of this occurrence."""
+    scopes = {
+        effect.effect_id: (effect.exclusive_damage_scope, DAMAGE_RECIPIENT_TYPES_FIELD in effect.conditions)
+        for effect in effects if effect.exclusive_damage_scope is not None
+    }
+    if not scopes:
+        return effects
+    chosen = {}
+    for row in journal:
+        scope = scopes.get(row.effect_id)
+        if scope is not None and chosen.setdefault(scope, row.effect_id) != row.effect_id:
+            raise ReplacementEffectError("One damage occurrence has conflicting redirection destinations")
+    return tuple(effect for effect in effects if chosen.get(scopes.get(effect.effect_id), effect.effect_id) == effect.effect_id)
+
+
 def same_damage_recipient(event, operation):
     return (
         event.payload.get("target_kind") == operation.target_kind == "permanent"
@@ -35,11 +76,22 @@ def same_damage_recipient(event, operation):
     )
 
 
+def finite_damage_original_recipient_is_supported(effect, event):
+    kind = event.payload.get("target_kind")
+    if kind == "permanent":
+        return True
+    return (
+        kind == "player" and event.affected_player is not None
+        and effect.conditions.get("target_kind") == {"eq": "player"}
+        and effect.conditions.get("target") == {"eq": event.affected_player}
+    )
+
+
 def split_finite_redirection(pending, effect, operation, effects):
     """Return two canonical damage roots when one point changes recipients."""
     event = pending.choice.event
-    if pending.path or event.kind != "damage" or event.payload.get("target_kind") != "permanent":
-        raise ReplacementEffectError("Finite redirection requires an original permanent-damage event")
+    if pending.path or event.kind != "damage" or not finite_damage_original_recipient_is_supported(effect, event):
+        raise ReplacementEffectError("Finite redirection requires its bound original damage recipient")
     amount = event.payload.get("amount")
     if type(amount) is not int or amount <= 0:
         raise ReplacementEffectError("Finite redirection requires positive damage")

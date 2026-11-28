@@ -37,6 +37,57 @@ from quorune.semantics import SemanticProgram
 
 
 class DamagePreventionAftermathTests(DamageReplacementPipelineBase):
+    def test_grouped_reflection_requires_the_complete_spell_and_versioned_recipient(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from quorune.compiler.prevention_templates import fixed_prevention_effect_template
+        from quorune.damage_modifier_state import (
+            PREVENTED_SOURCE_REFLECTION, DamageAftermathRecipient, DamageModifierError,
+            DealDamagePreventionAftermath, prevention_aftermath_from_dict,
+        )
+        from quorune.rules.prevention_component_shapes import targeted_prevention_result_runtime_dependencies
+
+        name = "Fixture Reprisal"
+        text = (
+            "Prevent all damage that would be dealt to you and planeswalkers you control this turn "
+            "by sources you don't control. If damage from a creature source is prevented this way, "
+            "Fixture Reprisal deals that much damage to that creature. If damage from a noncreature source "
+            "is prevented this way, Fixture Reprisal deals that much damage to the source's controller."
+        )
+        template, effects, schema, _ = fixed_prevention_effect_template(text, card_name=name)
+        first, second = effects
+        self.assertIsNone(schema)
+        self.assertEqual(["player"], first["scope"]["target_kinds"])
+        self.assertEqual(["planeswalker"], second["scope"]["target_characteristics_all"])
+        self.assertEqual(("$stack", "$stack"), tuple(row["application_group_id"] for row in effects))
+        data = dict(event="resolve", active_zone="stack", handlers=(), event_condition=None,
+                    target_schema=schema, cost_schema=None, effects=effects, capability_dependencies=(),
+                    provenance={"template_id": template})
+        self.assertEqual(
+            {"damage.prevention.persistent_amount", "damage.prevention.aftermath.damage"},
+            set(targeted_prevention_result_runtime_dependencies(SimpleNamespace(**data))),
+        )
+        for changed in ((first,), (first, first), (first, {**second, "application_group_id": "$source"})):
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                targeted_prevention_result_runtime_dependencies(SimpleNamespace(**{**data, "effects": changed}))
+        with patch("quorune.compiler.prevention_templates._reflected_source_prevention", return_value=None):
+            self.assertIsNone(fixed_prevention_effect_template(text, card_name=name))
+
+        engine = self.session(61505210, players=4).engine
+        source = self.add_permanent(engine, seat="A", name="Mishra, Eminent One", ref="reflection-codec-source")
+        snapshot = source_snapshot(engine, source.ref, controller="A")
+        for recipient, version in (("prevented_source_controller", 1), (PREVENTED_SOURCE_REFLECTION, 2)):
+            with self.subTest(version=version):
+                value = DealDamagePreventionAftermath(
+                    source=snapshot, recipient=DamageAftermathRecipient(recipient),
+                    per_prevented=1, schema_version=version,
+                )
+                encoded = value.to_dict()
+                self.assertEqual(value, prevention_aftermath_from_dict(encoded))
+                for invalid in (True, 3, 1 if version == 2 else 2):
+                    with self.assertRaises(DamageModifierError):
+                        prevention_aftermath_from_dict({**encoded, "schema_version": invalid})
+
     def _damage_aftermath_shield(
         self,
         engine,

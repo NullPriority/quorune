@@ -14,6 +14,7 @@ from ..apnap_object_payment import (
 from ..object_predicate import ObjectQuerySpec
 from ..power_sacrifice_model import (
     ATTACK_SACRIFICE_STAT_FIELD, CONTROLLER_SACRIFICE_LIFE_FIELD, ENTRY_SACRIFICE_POWER_DRAW_FIELD,
+    ENTRY_SACRIFICE_POWER_TREASURE_FIELD, validate_entry_sacrifice_power_treasure,
     GREATEST_POWER_SACRIFICE_FIELD, GREATEST_POWER_SACRIFICE_INCARNATIONS,
     GREATEST_POWER_SACRIFICE_LIFE_RESULT, GreatestPowerSacrificeLifeResult, GreatestPowerSacrificeSpec,
     validate_attack_sacrifice_stat_effect, validate_controller_sacrifice_toughness_life,
@@ -24,7 +25,9 @@ from ..rules.counted_sacrifice_tokens import COUNTED_SACRIFICE_TOKEN_FIELD, coun
 from ..rules.committed_sacrifice_damage import capture_committed_sacrifice_damage_target
 from ..rules.any_number_sacrifice import (
     ANY_NUMBER_SACRIFICE_FIELD, any_number_sacrifice_count, any_number_sacrifice_parts, any_number_self_entry,
+    is_sacrifice_search_chapter,
 )
+from ..rules.named_searches import SACRIFICE_BOUND_CREATURE_RECIPE_FIELD
 from ..rules.target_sacrifice_toughness import TARGET_SACRIFICE_TOUGHNESS_FIELD, validate_target_sacrifice_toughness
 from ..player_maximum import current_players_at_maximum
 from ..player_maximum_model import LAND_COUNT_METRIC, uses_land_count_maximizers
@@ -149,7 +152,11 @@ def _source_sacrifice_stat_player(host, effect, continuation):
 
     attacking = ATTACK_SACRIFICE_STAT_FIELD in effect
     event = "creature.attacks" if attacking else "permanent.enter"
-    validate_effect = validate_attack_sacrifice_stat_effect if attacking else validate_entry_sacrifice_power_life_draw
+    validate_effect = validate_entry_sacrifice_power_life_draw
+    if attacking:
+        validate_effect = validate_attack_sacrifice_stat_effect
+    elif ENTRY_SACRIFICE_POWER_TREASURE_FIELD in effect:
+        validate_effect = validate_entry_sacrifice_power_treasure
     item = next((item for item in host.state.stack if item.ref == continuation.get("stack_ref")), None)
     if (
         item is None or item.kind != "triggered_ability" or item.targets
@@ -169,7 +176,8 @@ def _source_sacrifice_stat_player(host, effect, continuation):
 def sacrifice_can_decline(effect):
     marker = effect.get(ENTRY_SACRIFICE_POWER_DRAW_FIELD)
     return (
-        SHARED_TYPE_SACRIFICE in effect or ATTACK_SACRIFICE_STAT_FIELD in effect
+        SHARED_TYPE_SACRIFICE in effect or ENTRY_SACRIFICE_POWER_TREASURE_FIELD in effect
+        or ATTACK_SACRIFICE_STAT_FIELD in effect
         or (isinstance(marker, Mapping) and marker.get("optional") is True)
     )
 
@@ -183,7 +191,8 @@ def revalidate_sacrifice_incarnations(host, state, player_order):
     elif ORDER_GRAVEYARD_ARRIVALS in effect:
         validate_apnap_choice_effect(host, effect, state["resume"])
         players = host.apnap_order()
-    elif ATTACK_SACRIFICE_STAT_FIELD in effect or ENTRY_SACRIFICE_POWER_DRAW_FIELD in effect:
+    elif any(field in effect for field in (ATTACK_SACRIFICE_STAT_FIELD, ENTRY_SACRIFICE_POWER_DRAW_FIELD,
+                                          ENTRY_SACRIFICE_POWER_TREASURE_FIELD)):
         players = [_source_sacrifice_stat_player(host, effect, state["resume"])]
     elif CONTROLLER_SACRIFICE_LIFE_FIELD in effect:
         players = [_controller_sacrifice_life_player(host, effect, state["resume"])]
@@ -231,7 +240,11 @@ def sacrifice_life_commit_fields(effect, state, *, actor, selected_refs):
         sacrificing_player = None
         draw_after_life = ENTRY_SACRIFICE_POWER_DRAW_FIELD in effect
         draw_then_lose_life = ATTACK_SACRIFICE_STAT_FIELD in effect
-        if draw_then_lose_life:
+        create_treasure = ENTRY_SACRIFICE_POWER_TREASURE_FIELD in effect
+        if create_treasure:
+            validate_entry_sacrifice_power_treasure(effect, actor=actor, excluded=effect.get("exclude_ref"))
+            player, characteristic = actor, "power"
+        elif draw_then_lose_life:
             validate_attack_sacrifice_stat_effect(effect, actor=actor, excluded=effect.get("exclude_ref"))
             player, characteristic = actor, "power"
         elif draw_after_life:
@@ -256,7 +269,7 @@ def sacrifice_life_commit_fields(effect, state, *, actor, selected_refs):
         result = GreatestPowerSacrificeLifeResult(
             player, state[GREATEST_POWER_SACRIFICE_INCARNATIONS][ref], characteristic,
             draw_after_life=draw_after_life, draw_then_lose_life=draw_then_lose_life,
-            sacrificing_player=sacrificing_player,
+            sacrificing_player=sacrificing_player, create_treasure=create_treasure,
         )
         return {GREATEST_POWER_SACRIFICE_LIFE_RESULT: result.to_dict()}
     except (KeyError, TypeError, ValueError) as exc:
@@ -323,11 +336,14 @@ def _require_any_number_sacrifice(host, effect, continuation):
         capture_committed_sacrifice_damage_target(host, item)
     elif item.targets:
         raise GameRuleError("This any-number sacrifice result has no target")
-    if any_number_self_entry(domain):
+    if any_number_self_entry(domain, followup):
         identity = item.context.get("card_object_identity")
         if (item.kind != "triggered_ability" or item.context.get("event") != "permanent.enter"
                 or type(identity) is not str or identity.rpartition("@")[0] != item.source_object_id):
             raise GameRuleError("Any-number sacrifice lost the original self entry")
+    elif SACRIFICE_BOUND_CREATURE_RECIPE_FIELD in followup:
+        if item.kind != "triggered_ability" or not is_sacrifice_search_chapter(item.context.get("event")):
+            raise GameRuleError("The sacrifice search lost its original resolving chapter")
     elif item.kind not in {"spell", "spell_copy"}:
         raise GameRuleError("Any-number sacrifice lost its original resolving spell")
     return item.controller
@@ -364,6 +380,11 @@ def validate_apnap_choice_effect(host, effect, continuation):
         item = next((entry for entry in host.state.stack if entry.ref == continuation.get("stack_ref")), None)
         ordered_opponent_sacrifice_commit_fields(host, item, effect)
         return
+    from ..rules.apnap_counter_attack_truce import FIELD, validate_counter_attack_truce_choice
+    if FIELD in effect:
+        validate_counter_attack_truce_choice(host, effect, continuation)
+        return
+
     from ..rules.opponent_caster_discard_payment import uses_caster_discard_payment
     from ..rules.sacrifice_discard_fallback import uses_sacrifice_discard_fallback
     from ..rules.selected_discard_draw import SELECTED_DISCARD_DRAW_FIELD, validate_resolving_selected_discard_choice
@@ -463,7 +484,8 @@ def _validate_apnap_choice_contract(host, effect, continuation):
     if TARGET_SACRIFICE_TOUGHNESS_FIELD in effect:
         _target_sacrifice_toughness_player(host, effect, continuation)
         return
-    if ATTACK_SACRIFICE_STAT_FIELD in effect or ENTRY_SACRIFICE_POWER_DRAW_FIELD in effect:
+    if any(field in effect for field in (ATTACK_SACRIFICE_STAT_FIELD, ENTRY_SACRIFICE_POWER_DRAW_FIELD,
+                                         ENTRY_SACRIFICE_POWER_TREASURE_FIELD)):
         _source_sacrifice_stat_player(host, effect, continuation)
         return
     hand_top = is_affected_hand_top_choice(effect)

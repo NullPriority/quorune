@@ -4,7 +4,10 @@ from collections.abc import Mapping
 
 from ..continuous_effect_model import Layer
 from ..continuous_effect_state import commit_continuous_effect
-from ..declaration_costs import DeclarationCost
+from ..declaration_costs import DeclarationCost, lock_declaration_payment
+from ..errors import GameRuleError
+from ..life_state import LifeStateError, available_life_for_payment, pay_life_cost, prepare_life_payment
+from ..util import normalize_mana_bundle
 from ..protected_attack_payment_model import (
     CAPABILITY, MECHANIC, OPERATION, ResolvedProtectedAttackPayment,
     decode_protected_attack_payment,
@@ -62,6 +65,44 @@ def protected_attack_payment_costs(host, *, kind, payer, domains, by_ref):
         if option == effect.expires_on_next_turn_of
         or source_controls_planeswalker(host, by_ref.get(option), effect.expires_on_next_turn_of)
     )
+
+
+def offered_attack_declaration_costs(host, payer, costs):
+    """Expose one independently payable option per applicable Phyrexian symbol."""
+    payable_life = available_life_for_payment(host, payer) if any(cost.phyrexian_life for cost in costs) else 0
+    rows = []
+    for cost in costs:
+        row = cost.to_dict()
+        if cost.phyrexian_life is not None:
+            row['methods'] = ['mana', 'life'] if payable_life >= cost.phyrexian_life else ['mana']
+        rows.append(row)
+    return rows
+
+
+def pay_attack_declaration_costs(host, *, payer, costs, declaration, response):
+    """Commit the whole locked declaration using the existing mana and life owners."""
+    requirements, selected, life, methods = lock_declaration_payment(costs, declaration, payer=payer,
+        phyrexian_payments=response.get('phyrexian_payments'))
+    spent = normalize_mana_bundle(None)
+    activations = ()
+    try:
+        if life:
+            prepare_life_payment(host, payer, life)
+        if sum(requirements.values()):
+            payment = host._pay_for_cost(payer, requirements, response, spend_context='combat_declaration')
+            spent, activations = payment.spent, payment.activations
+        if life:
+            pay_life_cost(host, payer, life)
+    except LifeStateError as exc:
+        raise GameRuleError(str(exc)) from exc
+    return {
+        'costs': [cost.cost_id for cost in selected],
+        'requirements': {key: value for key, value in requirements.items() if value},
+        'payment': {key: value for key, value in spent.items() if value},
+        'mana_sources': [{'source': activation.get('source_ref') or activation.get('source'),
+                          'bundle': activation.get('bundle')} for activation in activations],
+        **({'phyrexian_payments': methods, 'life_payment': life} if methods else {}),
+    }
 
 
 def protected_attack_payment_node_capabilities(*, effects, target_schema, mechanic_ids):

@@ -67,7 +67,7 @@ test("@browser-lifecycle table layout, companion windows and explicit first-main
     }
     await expect(host.getByTestId("exact-step-label")).toHaveText("Upkeep");
     const boxes = await Promise.all([cards.nth(0).boundingBox(), cards.nth(1).boundingBox()]);
-    expect(boxes[0]!.x + boxes[0]!.width).toBeGreaterThan(boxes[1]!.x);
+    expect(boxes[0]!.x + boxes[0]!.width).toBeLessThanOrEqual(boxes[1]!.x + 1);
     await cards.nth(0).focus();
     await expect(host.locator(".floating-card-preview")).toContainText("Swamp");
     await host.keyboard.press("Tab");

@@ -80,6 +80,7 @@ def focused_database(directory: str) -> CardDatabase:
         [
             ROOT / "tests" / "fixtures" / "scryfall-exact-lists.json",
             ROOT / "tests" / "fixtures" / "typed-land-entry-cards.json",
+            ROOT / "tests" / "fixtures" / "external-entry-tapped-cards.json",
         ],
         path,
     )
@@ -102,6 +103,10 @@ class FixedEntryConditionCompilerTests(unittest.TestCase):
 
     def test_fixed_entry_condition_family_compiles_capability_closed(self):
         cases = (
+            (
+                "This land enters tapped unless it’s your first, second, or third turn of the game.",
+                "zone-entry-state-self-first-three-turns-v1",
+            ),
             (
                 "This land enters tapped unless you control two or fewer other lands.",
                 "zone-entry-state-self-other-land-count-v1",
@@ -185,7 +190,7 @@ class FixedEntryConditionCompilerTests(unittest.TestCase):
 
     def test_fixed_entry_condition_shapes_and_unsupported_grammar_fail_closed(self):
         unsupported = (
-            "This land enters tapped unless it's your first, second, or third turn of the game.",
+            "This land enters tapped unless it's your first, second, or fourth turn of the game.",
             "This creature enters tapped unless it's your turn.",
             "This land enters tapped unless an opponent controls two creatures.",
             "This land enters tapped unless you control X other lands.",
@@ -606,6 +611,54 @@ class FixedEntryConditionRuntimeTests(unittest.TestCase):
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(expected, replay["final_state_hash"])
 
+    def test_starting_town_uses_controller_turn_number_and_replays(self):
+        from quorune.session import CommanderSession
+
+        for turns_begun in (1, 3, 4):
+            with self.subTest(turns_begun=turns_begun):
+                session = self.session(6141230 + turns_begun)
+                engine = session.engine
+                land = self.add_land(engine, "Starting Town", "starting-town")
+                engine.state.started = True
+                engine.state.active_player = "A"
+                engine.state.phase = "precombat_main"
+                engine.state.step = "main"
+                engine.state.players["A"].turns_begun = turns_begun
+                engine.state.players["A"].land_plays_remaining = 1
+                engine.state.players["B"].turns_begun = 6
+                engine._grant_priority("A")
+                engine._issue_priority("A")
+                action = next(
+                    item for item in engine._priority_action_hints("A")["actions"]
+                    if item.get("action") == "play_land" and item.get("card") == land.ref
+                )
+                session.initial_checkpoint = checkpoint_envelope(engine.state)
+                accepted = session.act("pilot:A", {"action_id": action["id"]})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual(turns_begun > 3, engine.state.cards[land.object_id].tapped)
+                expected = authoritative_state_hash(engine.state)
+                with tempfile.TemporaryDirectory() as temporary:
+                    record = Path(temporary) / "starting-town"
+                    session.save(record)
+                    replay = replay_record(record, self.db, verify=True)
+                    resumed = CommanderSession.load(self.db, record)
+                self.assertTrue(replay["ok"], replay)
+                self.assertEqual(expected, replay["final_state_hash"])
+                self.assertEqual(expected, authoritative_state_hash(resumed.state))
+
+    def test_starting_town_checks_the_active_turn_and_prospective_controller(self):
+        for active, tapped in (("A", False), ("B", True)):
+            with self.subTest(active=active):
+                session = self.session(6141240 + int(active == "B"))
+                engine = session.engine
+                engine.state.active_player = active
+                engine.state.players["A"].turns_begun = 2
+                engine.state.players["B"].turns_begun = 7
+                land = self.add_land(engine, "Starting Town", "borrowed-town", seat="B")
+                engine.move_card(land.object_id, "battlefield", controller="A", log=False)
+                subject = engine.state.cards[land.object_id]
+                self.assertEqual(("B", "A", tapped), (subject.owner, subject.controller, subject.tapped))
+
     def test_unrelated_zone_changes_do_not_collect_entry_metrics(self):
         session = self.session(6141210)
         engine = session.engine
@@ -616,7 +669,7 @@ class FixedEntryConditionRuntimeTests(unittest.TestCase):
             and card.zone not in {"battlefield", "command", "outside"}
         )
         with patch(
-            "quorune.semantic_runtime.zone_replacements.entry_condition_metrics",
+            "quorune.semantic_runtime.zone_replacement_inputs.entry_condition_metrics",
             side_effect=AssertionError("unrelated metric collection"),
         ):
             engine.move_card(

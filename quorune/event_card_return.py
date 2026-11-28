@@ -18,10 +18,14 @@ OTHER_LEGENDARY_HAND_RETURN_CAPABILITY = "trigger.event.other_legendary_graveyar
 EVENT_BATTLEFIELD_RETURN_CAPABILITY = 'zone.return.fixed_event_battlefield'
 EVENT_TRANSFORMED_RETURN_CAPABILITY = 'zone.return.fixed_event_tapped_transformed'
 EVENT_BATTLEFIELD_RETURN_MECHANIC = 'fixed-event-battlefield-return'
+EVENT_ENCHANTMENT_RETURN_VERSION = 24
+EVENT_ENCHANTMENT_RETURN_CAPABILITY = "zone.return.fixed_event_enchantment"
 EVENT_LIBRARY_MOVE_CAPABILITY = "zone.return.fixed_event_library"
 EVENT_LIBRARY_COMPOSITION_CAPABILITY = "zone.return.fixed_event_library_components"
 EVENT_LIBRARY_MOVE_VERSION = "event_library_move_version"
 EVENT_LIBRARY_COMPONENTS = "event_library_components"
+CONTROLLED_CREATURE_DEATH_LIBRARY_VARIANT = "controlled_creature_death_library_bottom"
+CONTROLLED_CREATURE_DEATH_LIBRARY_TEMPLATE = "fixed-counter-controlled-creature-death-library-bottom-v1"
 GRAVEYARD_SOURCE_ARRIVAL_EVENT = "object.enter_graveyard"
 GRAVEYARD_SOURCE_ARRIVAL_CAPABILITY = "trigger.event.normalized_anywhere_graveyard"
 GRAVEYARD_SOURCE_SHUFFLE_TEMPLATE = "fixed-counter-source-graveyard-arrival-shuffle-v1"
@@ -67,6 +71,10 @@ def event_library_departure_condition(scope: str) -> dict[str, Any]:
     else:
         raise ValueError("Event library moves require a closed departure scope")
     return {"all": conditions}
+
+
+def controlled_creature_death_library_condition() -> dict[str, Any]:
+    return {"field": "previous_controller", "op": "eq", "value": "$source.controller"}
 
 
 def event_library_move_effect(*, position: str | int, shuffle: bool, version: int = 2) -> dict[str, Any]:
@@ -138,12 +146,14 @@ def _validate_library_components(composition, components, owner) -> None:
         raise ValueError("Event library movement contains a duplicate physical departure")
 
 
-def event_library_departure_context(host, context, occurrence, parts):
+def event_library_departure_context(host, context, occurrence, parts, *, event="permanent.leave"):
     """Seal complete post-move identities before the originating trigger is put on the stack."""
     from .rules.event_subscriptions import event_has_capability_subscriber
 
-    if not any(event_has_capability_subscriber(host, "permanent.leave", capability)
-               for capability in (EVENT_LIBRARY_COMPOSITION_CAPABILITY, EVENT_HAND_RETURN_CAPABILITY)):
+    capabilities = (EVENT_LIBRARY_COMPOSITION_CAPABILITY,)
+    if event == "permanent.leave":
+        capabilities += (EVENT_HAND_RETURN_CAPABILITY,)
+    if not any(event_has_capability_subscriber(host, event, capability) for capability in capabilities):
         return context
     group = occurrence.composition
     if group is None or not group.permanent_departure or len(parts) != group.member_count or any(
@@ -248,6 +258,23 @@ def _graveyard_source_shuffle_dependencies(program):
     return (*event_library_move_capabilities(expected), GRAVEYARD_SOURCE_ARRIVAL_CAPABILITY)
 
 
+def _controlled_creature_death_library_dependencies(program) -> tuple[str, ...]:
+    from .ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from .public_zone_moves import FIXED_OWNER_ZONE_MOVE_MECHANIC
+
+    instruction = event_library_move_effect(position="bottom", shuffle=False)
+    if (
+        (program.event, program.active_zone) != ("creature.dies", "battlefield")
+        or program.event_condition != controlled_creature_death_library_condition()
+        or program.target_schema is not None or program.cost_schema is not None or program.handlers
+        or not {CURRENT_ABILITY_FRAGMENT_COVERAGE, FIXED_OWNER_ZONE_MOVE_MECHANIC} <= set(program.coverage)
+        or "one_or_more_event_batch" in program.coverage
+        or len(program.effects) != 1 or dict(program.effects[0]) != instruction
+    ):
+        raise ValueError("A controlled creature death requires its original owner-library bottom move")
+    return event_library_move_capabilities(instruction)
+
+
 def event_library_move_runtime_dependencies(program) -> tuple[str, ...]:
     arrival_template = GRAVEYARD_SOURCE_SHUFFLE_TEMPLATE.replace("fixed-counter-", "fixed-typed-effect-", 1)
     if (program.event == GRAVEYARD_SOURCE_ARRIVAL_EVENT
@@ -259,6 +286,10 @@ def event_library_move_runtime_dependencies(program) -> tuple[str, ...]:
             return is_event_library_move(value) or any(uses_move(child) for child in value.values())
         return isinstance(value, (list, tuple)) and any(uses_move(child) for child in value)
 
+    death_template = CONTROLLED_CREATURE_DEATH_LIBRARY_TEMPLATE.replace("fixed-counter-", "fixed-typed-effect-", 1)
+    death_marked = death_template in str(program.provenance.get("template_id") or "").split("+")
+    if death_marked or program.event == "creature.dies" and uses_move(program.effects):
+        return _controlled_creature_death_library_dependencies(program)
     if not uses_move(program.effects):
         return ()
     from .public_zone_moves import FIXED_OWNER_ZONE_MOVE_MECHANIC
@@ -393,9 +424,16 @@ def event_battlefield_return_effect(
         'source': '$stack', **({'transformed_entry': True} if transformed_entry else {})}
 
 
+def event_enchantment_return_effect() -> dict[str, Any]:
+    effect = event_battlefield_return_effect(tapped=False)
+    del effect["entry_counter"]
+    return {**effect, "schema_version": EVENT_ENCHANTMENT_RETURN_VERSION, "entry_form": "enchantment"}
+
+
 def event_battlefield_return_intent(effect: Mapping[str, Any], *, actor: str, reason: str) -> ZoneMoveIntent:
-    fields = {'op', 'schema_version', 'card', 'expected_zone_change_counter', 'controller',
-        'tapped', 'entry_counter', 'source'}
+    fields = {'op', 'schema_version', 'card', 'expected_zone_change_counter', 'controller', 'tapped', 'source'}
+    version = effect.get("schema_version")
+    fields.add("entry_form" if version == EVENT_ENCHANTMENT_RETURN_VERSION else "entry_counter")
     from .rules.entry_and_death_characteristics import DEATH_ENCHANTMENT_RETURN_FIELD
 
     enchantment = DEATH_ENCHANTMENT_RETURN_FIELD in effect
@@ -412,20 +450,24 @@ def event_battlefield_return_intent(effect: Mapping[str, Any], *, actor: str, re
                 or effect.get("tapped") is not False or effect.get("entry_counter") is not None):
             raise ValueError("Enchantment return has a fixed noncountered and untapped entry description")
     if (set(effect) not in (fields, fields | {'_replacement_selections'})
-            or effect.get('op') != 'reanimate' or type(effect.get('schema_version')) is not int
-            or effect['schema_version'] != 2):
-        raise ValueError('Event battlefield return requires a closed version-two instruction')
+            or effect.get('op') != 'reanimate' or type(version) is not int
+            or version not in (2, EVENT_ENCHANTMENT_RETURN_VERSION)):
+        raise ValueError('Event battlefield return requires a closed versioned instruction')
     incarnation = effect['expected_zone_change_counter']
     if (type(incarnation) is not int or incarnation < 1
             or any(type(effect[k]) is not str or not effect[k] for k in ('card', 'controller', 'source'))
-            or type(effect['tapped']) is not bool or effect['entry_counter'] not in {None, '+1/+1'}):
+            or type(effect['tapped']) is not bool or effect.get('entry_counter') not in {None, '+1/+1'}):
         raise ValueError('Event battlefield return identity and entry facts are malformed')
     selections = effect.get('_replacement_selections', ())
     if not isinstance(selections, (list, tuple)):
         raise ValueError('Event battlefield return replacements require a sequence')
     from .entry_counter_model import EffectEntryCounter
-    counters = (() if effect['entry_counter'] is None else
+    counters = (() if effect.get('entry_counter') is None else
         (EffectEntryCounter(effect['entry_counter'], 1, effect['controller'], effect['source'], '122.6a'),))
+    if version == EVENT_ENCHANTMENT_RETURN_VERSION:
+        if enchantment or effect["entry_form"] != "enchantment" or effect["tapped"] or counters:
+            raise ValueError("The original enchantment return adds no counters or tap instruction")
+        enchantment = True
     from .semantic_runtime.entry_enchantment_return_intent import EntryEnchantmentReturnIntent
     from .semantic_runtime.intents import ZoneMoveIntent
 

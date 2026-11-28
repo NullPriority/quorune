@@ -5,7 +5,7 @@ from dataclasses import dataclass, replace
 import hashlib
 from typing import Any
 
-from .replacement.immutable import FrozenMap, thaw_value
+from .replacement.immutable import FrozenMap, freeze_value, thaw_value
 from .util import stable_json
 
 
@@ -298,6 +298,48 @@ class TriggerOccurrence(Mapping[str, Any]):
 PendingTriggerItem = TriggerOccurrence
 
 SECONDARY_TRIGGER_CONTEXT = "after_ordinary_trigger_placement"
+_TRIGGER_MULTIPLIER_AUDIT_FIELDS = ("additional_trigger_copy", "additional_trigger_source")
+
+
+def equivalent_untargeted_trigger_refs(items: Sequence[PendingTriggerItem], effect_program: Any) -> list[str] | None:
+    # Recognize separate occurrences whose resolver reads the same facts.
+
+    if (effect_program is None or effect_program.trust_level != "trusted" or effect_program.requires_arbiter
+            or effect_program.handlers or effect_program.target_schema or effect_program.cost_schema
+            or not effect_program.effects):
+        return None
+    # Closed typed resolvers do not consume these audit facts. A stored
+    # program that explicitly refers to them still keeps the ordering choice.
+    try:
+        program_inputs = stable_json(thaw_value(freeze_value((effect_program.effects, effect_program.event_condition))))
+    except (TypeError, ValueError):
+        return None
+    if '"$stack"' in program_inputs or any(field in program_inputs for field in _TRIGGER_MULTIPLIER_AUDIT_FIELDS):
+        return None
+    signature = None
+    for item in items:
+        if (item.source_ability_id != effect_program.key or not item.source_object_id
+                or not item.source_logical_object_id or item.target_selection_required):
+            return None
+        payload = item.to_dict()
+        if (payload["kind"] != "triggered_ability" or payload.get("targets")
+                or payload.get("modes") or "target_schema_override" in payload["context"]):
+            return None
+        payload.pop("stack_id")
+        payload.pop("ref")
+        has_copy_audit = any(field in payload["context"] for field in _TRIGGER_MULTIPLIER_AUDIT_FIELDS)
+        copy_index = payload["context"].pop("additional_trigger_copy", None)
+        copy_source = payload["context"].pop("additional_trigger_source", None)
+        if has_copy_audit and (
+            type(copy_index) is not int or copy_index < 1 or not isinstance(copy_source, Mapping) or not copy_source
+        ):
+            return None
+        current = stable_json(payload)
+        if signature is None:
+            signature = current
+        elif current != signature:
+            return None
+    return [item.ref for item in items]
 
 
 def _placement_stage(item: PendingTriggerItem) -> bool:

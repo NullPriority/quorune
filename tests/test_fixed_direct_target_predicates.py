@@ -314,7 +314,8 @@ class FixedDirectTargetCompilerTests(unittest.TestCase):
             "target creature with power X or greater",
             "target creature that was dealt damage by a Goblin this turn",
             "target creature with a counter on it that entered last turn",
-            "target creature that has an activated ability with {T} in its cost",
+            "target creature that has an activated ability with {Q} in its cost",
+            "target creature that has an activated ability with a tap cost",
             "target permanent with the same name as another permanent",
         )
         for subject in unsupported:

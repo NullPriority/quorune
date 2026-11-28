@@ -13,6 +13,13 @@ from ..rules.source_references import SourceReferenceSpec
 
 
 def next_spell_cost_reduction_template(text,*,source_name,source_is_permanent=None):
+    if " ".join(text.casefold().strip().removesuffix(".").split()) == (
+        "the next red or green creature spell you cast this turn can be cast without paying its mana cost"
+    ):
+        from ..next_spell_cost_model import NEXT_ELIGIBLE_FREE_MECHANIC, next_eligible_free_spell_effect
+
+        return ("next-eligible-red-or-green-creature-mana-alternative-v1", (next_eligible_free_spell_effect(),),
+                None, (MECHANIC, NEXT_ELIGIBLE_FREE_MECHANIC))
     match=re.fullmatch(r'The next (?P<quality>.*?)spell you cast this turn costs \{(?P<amount>[1-9]\d*|X)\} less to cast'
         r'(?:, where X is (?P<value>.+?))?\.', ' '.join(text.strip().split()),re.I)
     if match is None or (match['amount'].upper()=='X')!=(match['value'] is not None):return None

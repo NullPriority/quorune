@@ -32,6 +32,35 @@ def blight_placement_intent(actor, ref, amount, reason, *, effect_generated):
     )
 
 
+
+def commit_opponent_blight_batch(host, intent):
+    from ..counter_placement import CounterPlacementError, CounterPlacementRequest, place_counters
+    from ..errors import GameRuleError
+    from ..rules.opponent_blight import OPPONENT_BLIGHT_REASON
+
+    order = [seat for seat in host.apnap_order() if seat != intent.actor]
+    selected = [row.placing_player for row in intent.selections]
+    if intent.actor not in host.active_seats or selected != [seat for seat in order if seat in selected]:
+        raise GameRuleError("Opposing-player Blight lost its APNAP authority")
+    requests = []
+    for choice in intent.selections:
+        query = host._semantic_choice_query(choice.placing_player)
+        row = query.object(choice.ref, zones=("battlefield",))
+        if (not blight_creature_can_receive(row, choice.placing_player, 1, query)
+                or row.logical_object_id != choice.logical_object_id):
+            raise GameRuleError("A chosen creature is no longer eligible to receive Blight counters")
+        requests.append(CounterPlacementRequest(
+            subject_kind="permanent", subject_id=row.object_id, counter_name=BLIGHT_COUNTER,
+            amount=1, placing_player=choice.placing_player, source_ref=intent.source_ref,
+        ))
+    try:
+        results = place_counters(host, tuple(requests), selections=intent.replacement_selections,
+                                 reason=OPPONENT_BLIGHT_REASON)
+    except CounterPlacementError as exc:
+        raise GameRuleError(str(exc)) from exc
+    return tuple(host.state.cards[result.object_id].ref for result in results)
+
+
 @dataclass(frozen=True, slots=True)
 class FixedBlightChoiceHandler:
     operation: str = BLIGHT_OPERATION

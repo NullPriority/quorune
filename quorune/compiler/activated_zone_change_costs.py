@@ -12,6 +12,9 @@ from ..additional_cost_vocabulary import (
     RETURN_ONE_TO_OWNER_HAND_COST,
     SACRIFICE_ONE_COST,
 )
+from ..rules.named_sacrifice_cost_model import (
+    NAMED_SACRIFICE_COST_VERSION, NAMED_SACRIFICE_NAME_FIELD, named_creature_sacrifice_predicate,
+)
 from ..replacement.immutable import FrozenMap
 from ..sacrifice_union_model import (
     colored_or_artifact_creature_sacrifice, controlled_permanent_predicate,
@@ -29,6 +32,9 @@ _ANOTHER_SACRIFICE = re.compile(
 )
 _COUNTED_OTHER_SACRIFICE = re.compile(
     r'^sacrifice (?P<count>two|three|four|five|six|seven|eight|nine|ten|[2-9]|10) other (?P<quality>[A-Za-z][A-Za-z -]*)$', re.I,
+)
+_NAMED_SIX_CREATURE_COST = re.compile(
+    r"Sacrifice (?:six|6) creatures named (?P<name>[^$,:;.]+)", re.I,
 )
 _COLORED_OR_ARTIFACT_CREATURE_COST = re.compile(
     r"Sacrifice a (?P<color>white|blue|black|red|green) or artifact creature", re.I,
@@ -65,6 +71,13 @@ def _zone_change_descriptor(cost_text: str) -> dict[str, object] | None:
             "predicate": predicate.to_dict(),
             "another": True,
             "count": 2,
+        }
+    named = _NAMED_SIX_CREATURE_COST.fullmatch(cost_clause)
+    if named is not None and not another and len(named["name"]) <= 200:
+        return {
+            "operation": SACRIFICE_ONE_COST, "count": 6,
+            "predicate": named_creature_sacrifice_predicate().to_dict(),
+            "schema_version": NAMED_SACRIFICE_COST_VERSION, NAMED_SACRIFICE_NAME_FIELD: named["name"],
         }
     union_match = _COLORED_OR_ARTIFACT_CREATURE_COST.fullmatch(cost_clause)
     if union_match is not None:
@@ -189,7 +202,11 @@ def fixed_activated_zone_change_cost(
                 predicate=FrozenMap(predicate),
                 predicate_union=FrozenMap(union) if isinstance(union, dict) else None,
                 return_schema_version=(7 if descriptor.get('schema_version') == 7 else None),
-                sacrifice_schema_version=(8 if descriptor.get('schema_version') == 8 else None),
+                sacrifice_schema_version=(
+                    descriptor["schema_version"] if descriptor.get("schema_version") in {8, NAMED_SACRIFICE_COST_VERSION}
+                    else None
+                ),
+                sacrifice_name=descriptor.get(NAMED_SACRIFICE_NAME_FIELD),
             ),
         ),
         uncompiled_costs=(),

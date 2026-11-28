@@ -31,6 +31,10 @@ SOURCE_MANA_TAP_EVENT = "permanent.tapped_for_mana"
 SOURCE_MANA_TAP_VARIANT = "ordinary_source_mana_tap"
 SOURCE_MANA_TAP_CAPABILITY = "trigger.event.source_tap_for_mana"
 SOURCE_MANA_TAP_DAMAGE_MECHANIC = "source-mana-tap-damage"
+SOURCE_MANA_TAP_TOKEN_VARIANT = "source_mana_tap_opponent_creates_token"
+SOURCE_MANA_TAP_TOKEN_CAPABILITY = "trigger.event.source_tap_for_mana_opponent_token"
+SOURCE_MANA_TAP_TARGET_TOKEN_CAPABILITY = "trigger.event.source_tap_for_mana_target_token"
+SOURCE_MANA_TAP_TARGET_TOKEN_TEMPLATE = "fixed-source-mana-tap-target-spirit-v1"
 
 
 def source_mana_tap_condition():
@@ -69,6 +73,18 @@ def source_mana_tap_observer_mismatch(source, program, event, condition, context
 
 def source_mana_tap_damage_effect():
     return {"op": "damage_each_opponent", "source": "$source", "amount": 1}
+
+
+def source_mana_tap_spirit_effect():
+    from .fixed_token_production import TOKEN_LITERAL_NAME_VERSION_FIELD
+
+    return {
+        "op": "create_token", "name": "Spirit Token", "quantity": 1, "target": "$target.0",
+        "characteristics": {
+            "type_line": "Token Creature — Spirit", TOKEN_LITERAL_NAME_VERSION_FIELD: 1,
+            "colors": [], "power": "1", "toughness": "1",
+        },
+    }
 
 
 FIXED_TRIGGERED_MANA_EVENT = "mana.tap.production"

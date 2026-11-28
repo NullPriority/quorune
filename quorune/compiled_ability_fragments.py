@@ -165,8 +165,12 @@ def compiled_enchant_spec(
     *,
     face_name: str | None = None,
 ) -> EnchantSpec | None:
-    """Return the one trusted Enchant descriptor pinned before runtime."""
+    """Return the trusted compiled or resolution-created Enchant descriptor."""
+    from .rules.linked_enchantment_entry import linked_enchantment_current_spec
 
+    current = linked_enchantment_current_spec(host, card) if face_name is None else None
+    if current is not None:
+        return current
     fragments = compiled_static_ability_fragments(
         host,
         card,

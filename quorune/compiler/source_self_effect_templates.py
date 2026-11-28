@@ -87,6 +87,45 @@ def source_death_hand_return_template(body):
     return None
 
 
+def source_death_enchantment_return_template(body):
+    from ..event_card_return import EVENT_BATTLEFIELD_RETURN_MECHANIC, event_enchantment_return_effect
+
+    normalized = " ".join(body.split()).casefold().replace("’", "'")
+    normalized = normalized.removesuffix(" (it's not a creature.)")
+    if normalized != "if it was a creature, return it to the battlefield under its owner's control. it's an enchantment.":
+        return None
+    return ("fixed-event-death-enchantment-return-v1", (event_enchantment_return_effect(),), None,
+            (EVENT_BATTLEFIELD_RETURN_MECHANIC,), None)
+
+
+def _owner_departure_counter_token_result(body, event_phrase):
+    if event_phrase == "leaves the battlefield" and re.fullmatch(
+        r"its owner creates a tapped 1/1 white Soldier creature token for each quest counter on it\.",
+        " ".join(body.split()), re.I,
+    ):
+        from ..rules.owner_departure_tokens import owner_departure_token_effect
+        from ..scalar_effect_amount_model import SCALAR_AMOUNT_MECHANIC
+
+        return ("owner-departure-counter-token-v1", (owner_departure_token_effect(),), None,
+                ("cr-111-tokens", "fixed-token-production", SCALAR_AMOUNT_MECHANIC), None)
+    return None
+
+
+def commander_battlefield_entry_result(body):
+    if " ".join(body.casefold().split()) != (
+        "you may put a commander you own from the command zone onto the battlefield. "
+        "it gains haste. return it to the command zone at the beginning of the next end step."
+    ):
+        return None
+    from ..rules.commander_return_choice import (
+        COMMANDER_BATTLEFIELD_ENTRY_MECHANIC, COMMANDER_BATTLEFIELD_ENTRY_TEMPLATE,
+        commander_battlefield_entry_effect,
+    )
+
+    return (COMMANDER_BATTLEFIELD_ENTRY_TEMPLATE, (commander_battlefield_entry_effect(),), None,
+            (COMMANDER_BATTLEFIELD_ENTRY_MECHANIC,), None)
+
+
 def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_template):
     if event_phrase == "dies" and re.fullmatch(
         r"you may pay any amount of \{r\}\. when you do, it deals that much damage to any target\.",
@@ -110,6 +149,14 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
         return ("fixed-source-entry-then-target-opponent-draw-v1", target_entry_draw_effects(),
                 target_entry_draw_schema(),
                 ("cr-121-drawing-a-card", "cr-115-targets", "fixed-event-player-optional-draw"), None)
+    if owner_tokens := _owner_departure_counter_token_result(body, event_phrase):
+        return owner_tokens
+    if event_phrase == "enters":
+        from ..rules.name_stickers import MECHANIC, instruction
+
+        normalized = " ".join(body.casefold().split()).removesuffix(" (the vowels are a, e, i, o, u, and y.)")
+        if normalized == "you may put a name sticker on it. add {r} for each unique vowel on that sticker.":
+            return ("name-sticker-entry-vowels-v1", (instruction(),), None, (MECHANIC,), None)
     if event_phrase == "enters" and " ".join(body.casefold().split()) == (
         "search your library for a card, exile it face down, then shuffle. "
         "for as long as that card remains exiled, you may play it."
@@ -118,14 +165,20 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
 
         return ("entry-private-search-play-v1", (private_search_play_effect(),), None,
                 (PRIVATE_SEARCH_PLAY_MECHANIC,), None)
-    if event_phrase == "enters" and (phasing := _battlefield_departure_entry_phase_out(body) or _optional_entry_target_effect(body)) is not None:
-        return phasing
+    if event_phrase == "enters" and (optional := _battlefield_departure_entry_phase_out(body)
+            or _optional_entry_target_effect(body) or commander_battlefield_entry_result(body)) is not None:
+        return optional
+    if event_phrase == "enters":
+        from .searched_pair_templates import searched_pair_entry_template
+
+        if pair := searched_pair_entry_template(body, card_name=card_name):
+            return (*pair, None)
     if event_phrase == "dies":
         from .library_search_templates import creature_subset_mana_value_search_template
         from ..rules.revival_return import revival_death_result
 
-        if delayed_hand := source_death_hand_return_template(body):
-            return delayed_hand
+        if source_return := source_death_hand_return_template(body) or source_death_enchantment_return_template(body):
+            return source_return
         if revival := revival_death_result(body):
             return revival
         if search := creature_subset_mana_value_search_template(body):
@@ -169,6 +222,7 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
         from .target_opponent_counter_choice import target_opponent_counter_choice_result
         from .keep_three_sacrifice_templates import keep_three_land_entry_template
         from .collective_source_damage_templates import collective_source_damage_entry_template
+        from .optional_source_damage_templates import optional_milled_mana_damage_entry_template
         from .protected_attack_payment_templates import next_turn_attack_payment_template
         from .library_search_templates import (
             optional_literal_name_any_number_search_template, optional_subtype_graveyard_search_template,
@@ -195,6 +249,7 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
                 return (*library_search, None)
             entry_result = (target_opponent_counter_choice_result(body) or keep_three_land_entry_template(body)
                             or collective_source_damage_entry_template(body, card_name=card_name)
+                            or optional_milled_mana_damage_entry_template(body, card_name=card_name)
                             or next_turn_attack_payment_template(body, card_name=card_name))
             if entry_result is not None:
                 return (*entry_result, None)

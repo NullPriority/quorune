@@ -11,6 +11,7 @@ from .activation_restrictions import default_activation_restriction_registry
 from .action_permissions import default_action_permission_registry
 from .ability_fragments import default_ability_fragment_registry
 from .block_restrictions import default_block_restriction_registry
+from .night_shift_dice import default_night_shift_adjustment_registry
 from .cast_permissions import default_cast_permission_registry
 from .static_cast_rules import default_static_cast_rule_registry
 from .casting_activation_metadata import (
@@ -29,6 +30,7 @@ from .damage_results import default_damage_result_replacement_registry
 from .draw_replacements import default_draw_replacement_registry
 from .draw_reveals import default_draw_reveal_registry
 from .draw_restrictions import default_draw_restriction_registry
+from .retained_die_replacement import default_retained_die_replacement_registry
 from .crew_abilities import default_ordinary_crew_ability_registry
 from .station_abilities import default_ordinary_station_ability_registry
 from .cycling_abilities import default_cycling_ability_registry
@@ -66,6 +68,7 @@ from .token_replacements import (
 )
 from .untap_steps import default_untap_step_component_registry
 from .zone_replacements import default_zone_change_replacement_registry
+from .spell_copy_components import default_spell_copy_replacement_components
 
 
 def runtime_component_registries() -> tuple[Any, ...]:
@@ -82,6 +85,7 @@ def _runtime_component_registries() -> tuple[Any, ...]:
         default_action_permission_registry(),
         default_ability_fragment_registry(),
         default_block_restriction_registry(),
+        default_night_shift_adjustment_registry(),
         default_cast_permission_registry(),
         default_static_cast_rule_registry(),
         default_goad_prohibition_registry(),
@@ -96,6 +100,7 @@ def _runtime_component_registries() -> tuple[Any, ...]:
         default_draw_replacement_registry(),
         default_draw_reveal_registry(),
         default_draw_restriction_registry(),
+        default_retained_die_replacement_registry(),
         default_life_replacement_registry(),
         default_ordinary_crew_ability_registry(),
         default_ordinary_station_ability_registry(),
@@ -118,6 +123,7 @@ def _runtime_component_registries() -> tuple[Any, ...]:
         default_fixed_encore_ability_registry(),
         default_self_zone_move_ability_registry(),
         default_token_creation_replacement_registry(),
+        default_spell_copy_replacement_components(),
         default_untap_step_component_registry(),
         default_zone_change_replacement_registry(),
     )

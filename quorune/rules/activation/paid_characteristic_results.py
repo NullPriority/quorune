@@ -69,13 +69,13 @@ def source_sacrifice_power_life_runtime_dependencies(program):
     return capabilities
 
 
-def _activation_price_matches(ability, program, choice):
+def _activation_price_matches(ability, program, choice, *, card_type="creature"):
     from ...replacement.immutable import thaw_value
 
     return (
         ability.builtin_semantic_key == program.key
         and not ability.mana_ability
-        and activation_creature_sacrifice_choice(ability) == choice
+        and activation_creature_sacrifice_choice(ability, card_type=card_type) == choice
         and dict(ability.mana) == dict(program.cost_schema['mana'])
         and ability.tap_source == program.cost_schema['tap_source']
         and thaw_value(ability.target_schema) == thaw_value(program.target_schema)
@@ -219,6 +219,29 @@ def capture_activation_paid_creature_fact(host, proposal, source, ability, respo
 
     if any(is_paid_artifact_search(effect) for effect in program.effects):
         return capture_paid_artifact_search_receipt(host, proposal, source, ability, response, program)
+    if any(s.origin is ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE for s in scalar_amount_specs(program.effects)):
+        from ...public_quantity_reductions import public_mana_value
+        from ...scalar_effect_amount_model import PaidSacrificeManaValueSnapshot
+        from .paid_characteristic_price import (
+            PAID_ENCHANTMENT_MANA_VALUE_CONTEXT, activation_enchantment_pump_is_exact,
+            activation_enchantment_sacrifice_choice,
+        )
+
+        choice = activation_enchantment_sacrifice_choice(program.cost_schema)
+        if (not activation_enchantment_pump_is_exact(
+                effects=program.effects, cost_schema=program.cost_schema, target_schema=program.target_schema,
+            ) or not _activation_price_matches(ability, program, choice, card_type="enchantment")):
+            raise ValueError("Paid activation mana value has no current enchantment-sacrifice authority")
+        card = _selected_paid_creature(host, proposal, source, ability, response, choice)
+        snapshot = PaidSacrificeManaValueSnapshot(card.logical_object_id, public_mana_value(host._effective_card_data(card)))
+        return PAID_ENCHANTMENT_MANA_VALUE_CONTEXT, {
+            "paid_object_id": card.object_id, "snapshot": snapshot.to_dict(),
+            "program": program.key, "source_logical": source.logical_object_id,
+        }
+    from .paid_mana_value_damage import PAID_DAMAGE_MANA_VALUE_MECHANIC, capture_paid_damage_mana_value
+
+    if PAID_DAMAGE_MANA_VALUE_MECHANIC in program.coverage:
+        return capture_paid_damage_mana_value(host, proposal, source, ability, response, program)
     if any(is_activation_paid_creature_reference(effect.get("cast_fact")) for effect in program.effects):
         return _capture_activation_paid_characteristics(host, proposal, source, ability, response, program)
     if not any(s.origin is ScalarAmountOrigin.PAID_ACTIVATION_CREATURE for s in scalar_amount_specs(program.effects)):

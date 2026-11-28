@@ -194,19 +194,9 @@ def fixed_source_attachment_effect_template(
         if spec is not None and not (spec.types_any or spec.types_all) and spec.subtypes_any:
             if all(canonical_creature_subtype(subtype) is not None for subtype in spec.subtypes_any):
                 spec = replace(spec, types_all=("creature",))
-        if (
-            spec is not None
-            and spec.controller_relation == "you"
-            and (spec.types_any == ("creature",) or spec.types_all == ("creature",))
-            and (spec.subtypes_any or spec.subtypes_none)
-            and spec == DirectPermanentTargetSpec(
-                types_any=spec.types_any,
-                types_all=spec.types_all,
-                subtypes_any=spec.subtypes_any,
-                subtypes_none=spec.subtypes_none,
-                controller_relation="you",
-            )
-        ):
+        from ..rules.attachment_action_capability_shapes import is_restricted_source_equipment_recipient
+
+        if spec is not None and is_restricted_source_equipment_recipient(spec):
             return FixedSourceAttachmentTemplate(
                 template_id="fixed-source-equipment-restricted-attach-trigger-v1",
                 attachment_kind="equipment",

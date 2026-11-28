@@ -48,6 +48,13 @@ _SPELL_CAST_COLORS = {
     "red": "R",
     "green": "G",
 }
+_CAST_COLOR_WORD = "(?:" + "|".join(_SPELL_CAST_COLORS) + ")"
+_CONTROLLER_CAST_COLOR_LIST = re.compile(
+    rf"Whenever you cast a spell that['’]s "
+    rf"(?P<colors>{_CAST_COLOR_WORD}(?:, {_CAST_COLOR_WORD}){{2,3}}, or {_CAST_COLOR_WORD}), "
+    r"(?P<body>.+)",
+    re.IGNORECASE,
+)
 _SPELL_CAST_SUPERTYPES = frozenset({"legendary", "snow"})
 _SPELL_CAST_NONCREATURE_SUBTYPES = frozenset(
     {"adventure", "arcane", "aura", "equipment", "lesson", "saga", "vehicle"}
@@ -160,22 +167,21 @@ class FixedSpellCastCharacteristicTerm:
 
 @dataclass(frozen=True, slots=True)
 class FixedSpellCastCharacteristicQuery:
-    """One to three static spell-characteristic alternatives."""
+    """Bounded spell-characteristic alternatives, including homogeneous color sets."""
 
     terms_any: tuple[FixedSpellCastCharacteristicTerm, ...]
 
     def __post_init__(self) -> None:
         if (
             not isinstance(self.terms_any, tuple)
-            or not 1 <= len(self.terms_any) <= 3
-            or any(
-                not isinstance(term, FixedSpellCastCharacteristicTerm)
+            or not 1 <= len(self.terms_any) <= len(_SPELL_CAST_COLORS)
+            or any(not isinstance(term, FixedSpellCastCharacteristicTerm) for term in self.terms_any)
+            or len(self.terms_any) > 3 and any(
+                term.kind is not FixedSpellCastCharacteristicKind.COLOR or term.value not in _SPELL_CAST_COLORS.values()
                 for term in self.terms_any
             )
         ):
-            raise ValueError(
-                "Spell-cast characteristic queries require one to three typed terms"
-            )
+            raise ValueError("Large spell-cast disjunctions require distinct fixed colors")
         canonical = tuple(
             sorted(set(self.terms_any), key=lambda term: term.variant)
         )
@@ -191,6 +197,8 @@ class FixedSpellCastCharacteristicQuery:
 
     @property
     def event_condition(self) -> Mapping[str, Any]:
+        if len(self.terms_any) > 3:
+            return {"field": "colors", "op": "contains_any", "value": [term.value for term in self.terms_any]}
         conditions = [term.event_condition for term in self.terms_any]
         return conditions[0] if len(conditions) == 1 else {"any": conditions}
 
@@ -389,7 +397,7 @@ class FixedSpellCastSubject:
                 self.quality is not None
                 and self.characteristic_query is not None,
                 self.characteristic_query is not None
-                and len(self.characteristic_query.terms_any) == 3,
+                and len(self.characteristic_query.terms_any) >= 3,
             )
         )
 
@@ -1125,6 +1133,23 @@ def _characteristic_trait_spell_cast_binding(
     )
 
 
+def _controller_cast_color_list_binding(material_line: str) -> FixedSpellCastBindingSpec | None:
+    match = _CONTROLLER_CAST_COLOR_LIST.fullmatch(material_line)
+    if match is None:
+        return None
+    colors = match["colors"].casefold().replace(", or ", ", ").split(", ")
+    if len(set(colors)) != len(colors):
+        return None
+    query = FixedSpellCastCharacteristicQuery(tuple(
+        FixedSpellCastCharacteristicTerm(FixedSpellCastCharacteristicKind.COLOR, _SPELL_CAST_COLORS[color])
+        for color in colors
+    ))
+    return FixedSpellCastBindingSpec(
+        subject=FixedSpellCastSubject(controller=FixedSpellCastController.SOURCE, characteristic_query=query),
+        body=match["body"],
+    )
+
+
 def _targeted_creature_spell_cast_binding(material_line: str) -> FixedSpellCastBindingSpec | None:
     match = re.fullmatch(r"Whenever you cast (?P<spell>a spell|an instant or sorcery spell) that targets a creature(?P<controlled> you control)?, (?P<body>.+)", material_line, re.I)
     if match is None:
@@ -1143,6 +1168,7 @@ def fixed_spell_cast_binding_spec(
 
     for parser in (
         _targeted_creature_spell_cast_binding,
+        _controller_cast_color_list_binding,
         _basic_spell_cast_binding,
         _mana_value_limit_spell_cast_binding,
         _history_spell_cast_binding,

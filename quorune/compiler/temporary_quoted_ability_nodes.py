@@ -131,6 +131,38 @@ _PAID_COMBAT_DRAW_UNBLOCKABLE = re.compile(
     r"and it can['’]t be blocked this turn\.?",
     re.IGNORECASE,
 )
+_PAID_RECEIVING_GRANT_DAMAGE = re.compile(
+    r'\{T\}: (?P<grant>Until end of turn, target creature gains '
+    r'"Whenever this creature is dealt damage, you draw that many cards and lose that much life\.") '
+    r"That creature['’]s controller may have this artifact deal (?P<amount>[1-9][0-9]*) damage to it\. "
+    r"Activate only as a sorcery\.", re.I,
+)
+
+
+def _paid_grant_parts(line, source_name, keywords, effects, mechanics, damage_offer):
+    abilities, timing = parse_compiled_activation_line(line, card_name=source_name, keywords=keywords)
+    if len(abilities) != 1 or timing is not None or abilities[0].zones != ("battlefield",):
+        return None
+    ability, = abilities
+    if damage_offer is None:
+        return (
+            "temporary-combat-draw-unblockable-eot-v1", TEMPORARY_COMBAT_DRAW_UNBLOCKABLE_CAPABILITY,
+            (*effects, temporary_combat_draw_unblockable_rule()),
+            (*mechanics, TEMPORARY_COMBAT_DRAW_UNBLOCKABLE_MECHANIC),
+            activated_ability_cost(ability), activated_ability_cost_capabilities(ability),
+        )
+    if not ability.tap_source or not ability.sorcery_speed:
+        return None
+    from ..rules.optional_source_damage import (
+        OPTIONAL_GRANTED_CREATURE_DAMAGE_CAPABILITY, OPTIONAL_GRANTED_CREATURE_DAMAGE_TEMPLATE,
+        OPTIONAL_SOURCE_DAMAGE_MECHANIC, optional_granted_creature_damage,
+    )
+    return (
+        OPTIONAL_GRANTED_CREATURE_DAMAGE_TEMPLATE, OPTIONAL_GRANTED_CREATURE_DAMAGE_CAPABILITY,
+        (*effects, optional_granted_creature_damage(int(damage_offer["amount"]))),
+        (*mechanics, OPTIONAL_SOURCE_DAMAGE_MECHANIC, "cr-120-damage"),
+        activated_ability_cost(ability), activated_ability_cost_capabilities(ability),
+    )
 
 
 def _compose_life_loss_self_death_grant(loss_text, grant, mechanics, line, quoted, span):
@@ -363,6 +395,9 @@ def temporary_quoted_ability_nodes(*, record, face_id, node_id, line, material_l
     ):
         return firebending
     paid = None
+    damage_offer = _PAID_RECEIVING_GRANT_DAMAGE.fullmatch(line) if "artifact" in printed_card_types else None
+    if damage_offer is not None:
+        material_line = damage_offer["grant"]
     life_loss = _LIFE_LOSS_SELF_DEATH_GRANT.fullmatch(material_line)
     if life_loss is not None:
         material_line = f'Until end of turn, target creature gains "{life_loss["quoted"]}"'
@@ -456,23 +491,22 @@ def temporary_quoted_ability_nodes(*, record, face_id, node_id, line, material_l
         if composed is None:
             return None
         template, effects, mechanics, child_span = composed
-    if paid is not None:
-        template = 'temporary-combat-draw-unblockable-eot-v1'
-        abilities, timing = parse_compiled_activation_line(line, card_name=source_name, keywords=record.keywords)
-        if len(abilities) != 1 or timing is not None or abilities[0].zones != ("battlefield",):
+    paid_activation = paid is not None or damage_offer is not None
+    if paid_activation:
+        parts = _paid_grant_parts(line, source_name, record.keywords, effects, mechanics, damage_offer)
+        if parts is None:
             return None
-        cost = activated_ability_cost(abilities[0])
-        cost_capabilities = activated_ability_cost_capabilities(abilities[0])
-        effects = (*effects, temporary_combat_draw_unblockable_rule())
-        mechanics = (*mechanics, TEMPORARY_COMBAT_DRAW_UNBLOCKABLE_MECHANIC)
-        owner = TEMPORARY_COMBAT_DRAW_UNBLOCKABLE_CAPABILITY
+        template, owner, effects, mechanics, cost, cost_capabilities = parts
+    if damage_offer is not None:
+        offset = line.index(quoted)
+        child_span = SourceSpan(span.start + offset, span.start + offset + len(quoted), span.line)
     dependencies = capability_dependencies_for_node(effects=effects, target_schema=schema,
         mechanic_ids=mechanics, cost_schema=cost)
     if owner not in dependencies:
         return None
-    if paid is None and not set(printed_card_types).intersection({'instant', 'sorcery'}):
+    if not paid_activation and not set(printed_card_types).intersection({'instant', 'sorcery'}):
         return None
-    outer = _temporary_grant_outer_node(node_id=node_id, line=line, span=span, paid=paid is not None,
+    outer = _temporary_grant_outer_node(node_id=node_id, line=line, span=span, paid=paid_activation,
         template=template, cost=cost, effects=effects, schema=schema, mechanics=mechanics,
         dependencies=tuple(sorted({*dependencies, *inner.capability_dependencies, *cost_capabilities})),
         capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)

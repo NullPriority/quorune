@@ -329,6 +329,15 @@ def _fixed_v2_cost_modifier(normalized: str) -> PublicCastCostModifierV2Spec | N
     if fixed is None:
         return None
     raw_subject = fixed.group("subject")
+    if raw_subject.casefold() == "spells your opponents cast from graveyards or from exile":
+        if fixed.group("direction").casefold() != "more":
+            return None
+        return _build_v2_cost_modifier(
+            affected_controller=CastCostAffectedController.SOURCE_OPPONENTS,
+            predicates_any=(ObjectQuerySpec(),),
+            mana_adjustment=(("GENERIC", int(fixed.group("amount"))),),
+            cast_origin_zones=("graveyard", "exile"),
+        )
     minimum_mana_value = None
     bounded = re.fullmatch(
         r"(?P<base>.+? spells you cast) with mana value "

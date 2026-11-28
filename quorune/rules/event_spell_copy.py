@@ -150,7 +150,43 @@ def cast_copy_runtime_dependencies(program):
             *targeted_discard_copy_runtime_dependencies(program), *targeted_return_copy_runtime_dependencies(program))
 
 
+ATTACK_CAST_COPY_FIELD = "source_attacking_at_controller_cast"
+ATTACK_CAST_COPY_COVERAGE = "copy-controller-cast-while-source-attacking"
+ATTACK_CAST_COPY_CAPABILITY = "stack.copy.controller_cast_while_source_attacking"
+
+
+def attacking_cast_copy_condition():
+    return {"field": ATTACK_CAST_COPY_FIELD, "op": "eq", "value": True}
+
+
+def attacking_cast_copy_dependencies(program):
+    from ..replacement.immutable import FrozenMap
+
+    condition = program.event_condition
+    if (not isinstance(condition, Mapping) or condition.get("value") is not True
+            or FrozenMap(condition) != FrozenMap(attacking_cast_copy_condition())
+            or (program.event, program.active_zone) != ("spell.cast", "battlefield")
+            or program.target_schema is not None or program.cost_schema is not None or program.handlers
+            or tuple(program.effects) != (event_spell_copy_effect(),)
+            or ATTACK_CAST_COPY_COVERAGE not in program.coverage or "intervening_condition" in program.coverage):
+        raise ValueError("Attack-cast copy requires its original event-time source and complete spell copy")
+    return (ATTACK_CAST_COPY_CAPABILITY, EVENT_SPELL_COPY_CAPABILITY, "trigger.event.normalized_spell_cast",
+            "trigger.effect.fixed_event", "trigger.placement.apnap", "target.revalidate_resolution")
+
+
+def attacking_cast_copy_condition_holds(host, condition, context, source):
+    if dict(condition) != attacking_cast_copy_condition() or condition.get("value") is not True:
+        raise ValueError("Attack-cast copy requires its original cast-time predicate")
+    return (context.get("controller") == source.controller and source.zone == "battlefield" and not source.phased_out
+            and host.state.combat is not None and source.object_id in host.state.combat.attackers)
+
+
 def event_spell_copy_runtime_dependencies(program):
+    condition = program.event_condition
+    if (isinstance(condition, Mapping) and condition.get("field") == ATTACK_CAST_COPY_FIELD
+            or ATTACK_CAST_COPY_COVERAGE in program.coverage
+            or ATTACK_CAST_COPY_CAPABILITY in getattr(program, "capability_dependencies", ())):
+        return attacking_cast_copy_dependencies(program)
     from .cast_spell_suspend import cast_spell_suspend_runtime_dependencies
 
     if (suspended_copy := cast_spell_suspend_runtime_dependencies(program)) is not None:
@@ -312,4 +348,91 @@ def bind_next_cast_copy_occurrence(host, trigger, item, context):
         "stack": target.ref,
         EVENT_SPELL_COPY_CONTEXT: source.to_dict(),
         "dynamic_effects": [event_spell_copy_effect() for _ in range(spec.copies)],
+    })
+
+
+def same_turn_cast_keyword_node_capabilities(*, effects, target_schema, mechanic_ids, **_):
+    from ..event_spell_copy_model import (
+        SAME_TURN_CAST_KEYWORD_MECHANIC, SAME_TURN_CAST_KEYWORD_REQUIRED, validate_same_turn_cast_keyword_effect,
+    )
+
+    if len(effects) != 1 or target_schema is not None or SAME_TURN_CAST_KEYWORD_MECHANIC not in mechanic_ids:
+        return ()
+    try:
+        validate_same_turn_cast_keyword_effect(effects[0])
+    except (TypeError, ValueError):
+        return ()
+    return SAME_TURN_CAST_KEYWORD_REQUIRED
+
+
+def schedule_same_turn_cast_keyword(host, effect, *, actor):
+    from ..continuous_effect_state import ResolutionEffectSource
+    from ..event_spell_copy_model import (
+        SAME_TURN_CAST_KEYWORD_FIELD, SAME_TURN_CAST_KEYWORD_REQUIRED,
+        same_turn_cast_keyword_effect, validate_same_turn_cast_keyword_effect,
+    )
+    from ..replacement.immutable import thaw_value
+    from ..target_source import TARGETING_SOURCE_CONTEXT, TargetingSourceBinding
+    from ..trigger_processing import schedule_delayed_trigger
+
+    validate_same_turn_cast_keyword_effect(effect, actor=actor)
+    source = ResolutionEffectSource.from_effect(effect)
+    item = next((entry for entry in host.state.stack if entry.ref == source.stack_ref), None)
+    program = host.semantics.get(item.semantic_key) if item is not None else None
+    source_frame = TargetingSourceBinding.from_dict(item.context.get(TARGETING_SOURCE_CONTEXT)) if item else None
+    if (item is None or item.controller != actor or item.context.get("currently_resolving") is not True
+            or program is None or program.event != "saga.chapter.3"
+            or not host.semantic_program_is_current_trusted(program)
+            or not set(SAME_TURN_CAST_KEYWORD_REQUIRED) <= set(program.capability_dependencies)
+            or thaw_value(program.effects) != [same_turn_cast_keyword_effect()]
+            or source_frame is None
+            or (source_frame.object_id, source_frame.logical_object_id) != (source.object_id, source.logical_object_id)):
+        raise ValueError("Same-turn cast keyword lost its original resolving chapter and targeting source")
+    return schedule_delayed_trigger(
+        host, controller=actor, label="Grant double strike", event_kind="spell.cast",
+        condition={SAME_TURN_CAST_KEYWORD_FIELD: 1}, once=False,
+        stack_template={"context": {TARGETING_SOURCE_CONTEXT: source_frame.to_dict()}},
+        source_object_id=source.object_id, source_logical_object_id=source.logical_object_id,
+        expires_turn_sequence=host.state.turn_sequence,
+    ).ref
+
+
+def same_turn_cast_keyword_matches(trigger, context):
+    from ..event_spell_copy_model import SAME_TURN_CAST_KEYWORD_FIELD
+    from ..target_source import TARGETING_SOURCE_CONTEXT, TargetingSourceBinding
+    from .spell_cast_events import SpellCastEvent
+
+    frame = trigger.stack_template.get("context", {})
+    if (trigger.event_kind != "spell.cast" or trigger.once is not False
+            or set(trigger.condition) != {SAME_TURN_CAST_KEYWORD_FIELD}
+            or type(trigger.condition.get(SAME_TURN_CAST_KEYWORD_FIELD)) is not int
+            or trigger.condition[SAME_TURN_CAST_KEYWORD_FIELD] != 1
+            or type(trigger.created_turn_sequence) is not int or trigger.created_turn_sequence < 0
+            or trigger.expires_turn_sequence != trigger.created_turn_sequence
+            or set(trigger.stack_template) != {"context"} or not isinstance(frame, Mapping)
+            or set(frame) != {TARGETING_SOURCE_CONTEXT} or trigger.referred_object_ids):
+        raise ValueError("Same-turn cast keyword trigger has a closed repeatable window")
+    bound = TargetingSourceBinding.from_dict(frame[TARGETING_SOURCE_CONTEXT])
+    if (bound.object_id, bound.logical_object_id) != (trigger.source_object_id, trigger.source_logical_object_id):
+        raise ValueError("Same-turn cast keyword trigger changed its source incarnation")
+    cast = SpellCastEvent.from_context(context)
+    return cast.controller == trigger.controller and "creature" not in cast.types
+
+
+def bind_same_turn_cast_keyword_occurrence(host, trigger, item, context):
+    from ..event_spell_copy_model import same_turn_cast_keyword_result, same_turn_cast_keyword_target_schema
+    from .spell_cast_events import SpellCastEvent
+
+    if not same_turn_cast_keyword_matches(trigger, context):
+        raise ValueError("Same-turn cast keyword requires an actual qualifying cast")
+    cast = SpellCastEvent.from_context(context)
+    spell = next((entry for entry in host.state.stack if entry.ref == cast.stack_ref), None)
+    physical = host.state.cards.get(cast.object_id)
+    if (spell is None or spell.controller != cast.controller or spell.card_object_id != cast.object_id
+            or physical is None or physical.zone != "stack" or physical.logical_object_id != cast.logical_object_id):
+        raise ValueError("Same-turn cast keyword lost the committed spell incarnation")
+    item.context.update({
+        "target_schema_override": same_turn_cast_keyword_target_schema(),
+        "trigger_target_selection_pending": True,
+        "dynamic_effects": [same_turn_cast_keyword_result()],
     })

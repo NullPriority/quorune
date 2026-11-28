@@ -72,12 +72,27 @@ export interface ProjectedView {
   events: Record<string, JsonValue>[];
 }
 
+type ProjectionPrincipal = Pick<ProjectedView, "principal" | "state">;
+
+export function canFollowProjection(
+  current: ProjectionPrincipal | null,
+  next: { principal: string; state?: ProjectionPrincipal["state"] },
+): boolean {
+  if (!current || current.principal === next.principal) return true;
+  if (next.principal !== "spectator" || !current.principal.startsWith("pilot:")) return false;
+  const seat = current.principal.slice("pilot:".length);
+  const players = next.state?.players;
+  if (!players || typeof players !== "object" || Array.isArray(players)) return false;
+  const player = players[seat];
+  return !!player && typeof player === "object" && !Array.isArray(player) && player.in === 0;
+}
+
 export async function ingestPacket(
   current: ProjectedView | null,
   packet: DecisionPacket,
 ): Promise<ProjectedView> {
   if (packet.v !== "3.0") throw new Error(`Unsupported protocol ${packet.v}`);
-  if (current && current.principal !== packet.principal) {
+  if (!canFollowProjection(current, packet.mode === "full" ? packet : { principal: packet.principal })) {
     throw new Error("Projection belongs to another principal");
   }
   if (packet.pkt <= 0) throw new Error("Projection packet number must be positive");
@@ -95,7 +110,7 @@ export async function ingestPacket(
   }
   const actualHash = (await sha256(canonical(state))).slice(0, 20);
   if (actualHash !== packet.view) throw new Error("Projected-state hash mismatch");
-  const definitions = { ...(current?.definitions ?? {}) };
+  const definitions = { ...(current?.principal === packet.principal ? current.definitions : {}) };
   for (const definition of packet.defs ?? []) {
     const id = String(definition.cid ?? "");
     if (id) definitions[id] = definition;

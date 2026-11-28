@@ -672,7 +672,10 @@ class FixedCounterPlacementSetTemplate:
         if not isinstance(self.spec, AffectedPermanentSetSpec):
             raise ValueError("Counter-set placement requires a typed set")
         if not fixed_counter_set_spec_is_closed(self.spec):
-            raise ValueError("Counter-set placement predicate is unsupported")
+            from ..counter_placement_sets import controlled_nonflying_counter_payload_dependencies
+
+            if not controlled_nonflying_counter_payload_dependencies(self.effects[0]):
+                raise ValueError("Counter-set placement predicate is unsupported")
         if self.target_relation not in {None, "any", "opponent"}:
             raise ValueError("Counter-set player target relation is unsupported")
         needs_target = (
@@ -1389,7 +1392,13 @@ def fixed_counter_placement_set_effect_template(
         count == 1
     ):
         return None
-    parsed = _fixed_counter_set_query(match.group("subject"))
+    subject = match.group("subject")
+    if " ".join(subject.casefold().split()) == "each creature you control without flying":
+        from ..counter_placement_sets import controlled_nonflying_counter_subjects
+
+        parsed = (controlled_nonflying_counter_subjects(), None)
+    else:
+        parsed = _fixed_counter_set_query(subject)
     if parsed is None:
         return None
     spec, target_relation = parsed

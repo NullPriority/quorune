@@ -24,6 +24,7 @@ from .replacement_effects import (
     ReplacementSelection,
 )
 from .replacement.model import COUNTER_REPLACEMENT_GENERATED_FIELD
+from .replacement.counter_instruction_grouping import bind_counter_instruction_groups
 from .semantic_runtime.counter_replacements import (
     CounterPlacementEventSpec,
     collect_counter_placement_replacement_effects,
@@ -514,6 +515,7 @@ def prepare_counter_placement_specs(
             effects=(),
             journal=(),
         )
+    events = bind_counter_instruction_groups(events, effects)
     resolution = resolve_counter_placement_replacements(
         batch_id=batch_id,
         events=events,

@@ -90,7 +90,9 @@ def expand_optional_resource_costs(host, seat, card, expanded, *, suppress_sourc
         try:
             expanded = expand_discard_sacrifice_orders(expanded, declared_schema)
             from ..paid_sacrifice_copy import expand_paid_sacrifice_copy_options
+            from .optional_creature_payments import expand_sacrifice_credit_options
             expanded = expand_paid_sacrifice_copy_options(host, seat, card, expanded, declared_schema)
+            expanded = expand_sacrifice_credit_options(host, seat, card, expanded, declared_schema)
         except ValueError:
             return []
     from ...semantic_runtime.spell_payment_grants import (

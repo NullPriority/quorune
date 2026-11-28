@@ -33,7 +33,8 @@ from ..target_controller_information import (
 from ..unblocked_attacker_model import (
     UNBLOCKED_ATTACKER_CAPABILITY, UNBLOCKED_ATTACKER_EVENT, UNBLOCKED_DEFENDER_POISON_CAPABILITY,
     UNBLOCKED_DEFENDER_POISON_MECHANIC, intrinsic_unblocked_condition,
-    unblocked_defender_poison_effect,
+    unblocked_defender_poison_effect, UNBLOCKED_PLAYER_ATTACK_EVENT, UNBLOCKED_ATTACKER_PLAYER,
+    unblocked_player_attack_condition, unblocked_source_control_effects,
 )
 
 
@@ -162,6 +163,16 @@ def bind_event_player_count_effect(state, item, effect):
 
     if uses_opposing_owner_entry_life(effect):
         return bind_opposing_owner_entry_life(state, item, effect)
+    if (item.context.get("event") == UNBLOCKED_PLAYER_ATTACK_EVENT
+            and effect.get("op") == "draw" and effect.get("player") == UNBLOCKED_ATTACKER_PLAYER):
+        attacker = item.context.get("attacking_player")
+        defender = item.context.get("defender")
+        count = effect.get("count")
+        player = state.players.get(attacker) if type(attacker) is str else None
+        if (player is None or defender != item.controller or attacker == defender
+                or type(count) is not int or count <= 0 or effect != unblocked_source_control_effects(count)[0]):
+            raise ValueError("Unblocked attack draw lost its committed attacking player")
+        return effect if player.in_game else None
     if _closed_draw_damage_has_recipient(item, effect):
         player = state.players.get(item.context.get("player"))
         if player is None:
@@ -205,7 +216,38 @@ def bind_event_player_count_effect(state, item, effect):
     return {**effect, spec.amount_field: len(hand)}
 
 
+def _unblocked_source_control_capabilities(effects, target_schema, mechanics):
+    from ..recipient_control_model import RECIPIENT_CONTROL_CAPABILITY, RECIPIENT_CONTROL_MECHANIC
+
+    expected_mechanics = {
+        EVENT_PLAYER_RESULT_MECHANIC, RECIPIENT_CONTROL_MECHANIC,
+        "cr-611-continuous-effects", "cr-121-drawing-a-card", "tap-and-untap",
+    }
+    if target_schema is not None or len(effects) != 3 or not expected_mechanics <= set(mechanics):
+        return ()
+    count = effects[0].get("count")
+    if type(count) is not int or count <= 0 or tuple(effects) != unblocked_source_control_effects(count):
+        return ()
+    return (
+        UNBLOCKED_ATTACKER_CAPABILITY, EVENT_PLAYER_RESULT_CAPABILITY,
+        RECIPIENT_CONTROL_CAPABILITY, "continuous.control.fixed_resolution",
+        "zone.draw.library_to_hand", "permanent.untap.effect", "trigger.placement.apnap",
+    )
+
+
+def unblocked_source_control_program_capabilities(program):
+    if ((program.event, program.active_zone) != (UNBLOCKED_PLAYER_ATTACK_EVENT, "battlefield")
+            or program.event_condition != unblocked_player_attack_condition()
+            or program.cost_schema is not None or program.handlers
+            or {"one_or_more_event_batch", "intervening_condition"} & set(program.coverage)):
+        return ()
+    return _unblocked_source_control_capabilities(program.effects, program.target_schema, program.coverage)
+
+
 def fixed_event_player_result_node_capabilities(*,effects,target_schema,mechanic_ids):
+    unblocked_control = _unblocked_source_control_capabilities(effects, target_schema, mechanic_ids)
+    if unblocked_control:
+        return unblocked_control
     if UNBLOCKED_DEFENDER_POISON_MECHANIC in mechanic_ids:
         return unblocked_defender_poison_node_capabilities(effects, target_schema)
     if EVENT_PLAYER_DAMAGE_MECHANIC in set(mechanic_ids):
@@ -260,6 +302,9 @@ def fixed_event_player_result_covered_mechanics(supplied):
 
 
 def is_closed_fixed_event_player_result_program(program):
+    if program.event == UNBLOCKED_PLAYER_ATTACK_EVENT:
+        required = unblocked_source_control_program_capabilities(program)
+        return bool(required) and set(required) <= set(program.capability_dependencies)
     if UNBLOCKED_DEFENDER_POISON_MECHANIC in program.coverage:
         required = unblocked_defender_poison_program_capabilities(program)
         return bool(required) and set(required) <= set(program.capability_dependencies)
@@ -404,10 +449,25 @@ def _equipped_combat_hand_count_runtime_dependencies(program):
 def event_player_damage_runtime_dependencies(program):
     from .artifact_mana_tap_control import artifact_mana_tap_control_program_dependencies
     from ..land_entry_condition_model import OTHER_LAND_ARRIVAL_COVERAGE, uses_other_land_arrival_condition
-    from ..triggered_mana_model import LAND_MANA_TAP_EVENT, SOURCE_MANA_TAP_DAMAGE_MECHANIC, SOURCE_MANA_TAP_EVENT
+    from ..triggered_mana_model import (
+        LAND_MANA_TAP_EVENT,
+        SOURCE_MANA_TAP_DAMAGE_MECHANIC,
+        SOURCE_MANA_TAP_EVENT,
+        SOURCE_MANA_TAP_TOKEN_CAPABILITY,
+        SOURCE_MANA_TAP_TARGET_TOKEN_CAPABILITY,
+        SOURCE_MANA_TAP_TARGET_TOKEN_TEMPLATE,
+    )
 
     if artifact_control := artifact_mana_tap_control_program_dependencies(program):
         return artifact_control
+    if SOURCE_MANA_TAP_TOKEN_CAPABILITY in program.capability_dependencies or (
+        program.event == SOURCE_MANA_TAP_EVENT
+        and any(effect.get("op") == "create_token" for effect in program.effects)
+    ):
+        return _source_mana_tap_token_dependencies(program)
+    if (program.provenance.get("template_id") == SOURCE_MANA_TAP_TARGET_TOKEN_TEMPLATE
+            or SOURCE_MANA_TAP_TARGET_TOKEN_CAPABILITY in program.capability_dependencies):
+        return _source_mana_tap_target_token_dependencies(program)
     if program.event == SOURCE_MANA_TAP_EVENT or SOURCE_MANA_TAP_DAMAGE_MECHANIC in program.coverage:
         return _source_mana_tap_damage_dependencies(program)
     if OTHER_LAND_ARRIVAL_COVERAGE in program.coverage or uses_other_land_arrival_condition(program.event_condition):
@@ -470,6 +530,37 @@ def _opponent_other_land_arrival_dependencies(program):
             "trigger.event.normalized_zone_change")
 
 
+def _source_mana_tap_token_dependencies(program):
+    from ..fixed_token_production import fixed_token_player_target_schema
+    from ..replacement.immutable import thaw_value
+    from ..triggered_mana_model import (
+        SOURCE_MANA_TAP_EVENT, SOURCE_MANA_TAP_TOKEN_CAPABILITY, source_mana_tap_condition,
+    )
+    from .token_creation_capability_shapes import fixed_token_creation_node_capabilities
+
+    target = thaw_value(program.target_schema)
+    effect = thaw_value(program.effects[0]) if len(program.effects) == 1 else {}
+    expected = {
+        "op": "create_token", "name": "Spirit Token", "quantity": 1, "target": "$target.0",
+        "characteristics": {
+            "type_line": "Token Creature — Spirit", "literal_token_name_version": 1,
+            "colors": [], "power": "1", "toughness": "1",
+        },
+    }
+    if ((program.event, program.active_zone) != (SOURCE_MANA_TAP_EVENT, "battlefield")
+            or program.cost_schema is not None or program.handlers
+            or thaw_value(program.event_condition) != source_mana_tap_condition()
+            or target != fixed_token_player_target_schema("opponent") or effect != expected
+            or type(effect["quantity"]) is not int):
+        raise ValueError("Source mana tap token requires the exact source, opponent and fixed token result")
+    token = fixed_token_creation_node_capabilities(
+        effects=(effect,), target_schema=target, mechanic_ids={"cr-111-tokens", "cr-115-targets"},
+    )
+    if not token:
+        raise ValueError("Source mana tap token requires the standard targeted token owner")
+    return (SOURCE_MANA_TAP_TOKEN_CAPABILITY, "trigger.event.normalized_public_action", *token)
+
+
 def _source_mana_tap_damage_dependencies(program):
     from ..replacement.immutable import thaw_value
     from ..triggered_mana_model import (
@@ -488,6 +579,34 @@ def _source_mana_tap_damage_dependencies(program):
     damage = fixed_damage_node_capabilities(effects=program.effects, target_schema=None,
                                             mechanic_ids={"cr-120-damage"})
     return (SOURCE_MANA_TAP_CAPABILITY, "trigger.event.normalized_public_action", *damage)
+
+
+def _source_mana_tap_target_token_dependencies(program):
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from ..fixed_token_production import fixed_token_player_target_schema
+    from ..replacement.immutable import thaw_value
+    from ..triggered_mana_model import (
+        SOURCE_MANA_TAP_EVENT, SOURCE_MANA_TAP_TARGET_TOKEN_CAPABILITY,
+        SOURCE_MANA_TAP_TARGET_TOKEN_TEMPLATE, source_mana_tap_condition, source_mana_tap_spirit_effect,
+    )
+    from .token_creation_capability_shapes import fixed_token_creation_node_capabilities
+
+    token_mechanics = {"cr-111-tokens", "cr-115-targets"}
+    if (program.provenance.get("template_id") != SOURCE_MANA_TAP_TARGET_TOKEN_TEMPLATE
+            or (program.event, program.active_zone) != (SOURCE_MANA_TAP_EVENT, "battlefield")
+            or CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage
+            or not token_mechanics.issubset(program.coverage)
+            or thaw_value(program.event_condition) != source_mana_tap_condition()
+            or thaw_value(program.target_schema) != fixed_token_player_target_schema("opponent")
+            or program.cost_schema is not None or program.handlers or program.trigger_limit is not None
+            or len(program.effects) != 1 or thaw_value(program.effects[0]) != source_mana_tap_spirit_effect()):
+        raise ValueError("Source mana tap token creation requires its original source and one opponent target")
+    token = fixed_token_creation_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=token_mechanics,
+    )
+    if not token:
+        raise ValueError("Source mana tap token creation requires the fixed token owner")
+    return (SOURCE_MANA_TAP_TARGET_TOKEN_CAPABILITY, "trigger.event.normalized_public_action", *token)
 
 
 def _land_mana_tap_damage_dependencies(program):

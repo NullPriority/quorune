@@ -333,7 +333,7 @@ def validate_required_entry_type(value: Any) -> str:
 
 @dataclass(frozen=True, slots=True)
 class EffectEntryCounter:
-    """One effect-generated counter attached to a proposed battlefield entry."""
+    """One effect-generated counter attached to a proposed zone entry."""
 
     counter_name: str
     amount: int
@@ -342,12 +342,16 @@ class EffectEntryCounter:
     rule_id: str
     required_entry_type: str | None = None
     additional: bool = False
+    destination: str = "battlefield"
 
     def __post_init__(self) -> None:
         counter_name = _normalized_nonempty(
             self.counter_name,
             field="Effect entry counter name",
         )
+        if self.destination not in {"battlefield", "exile"} or self.destination == "exile" and (
+                counter_name != "silver" or self.amount != 1 or self.additional or self.required_entry_type is not None):
+            raise EntryCounterError("A marked exile entry requires one silver counter")
         if type(self.additional) is not bool or self.additional and counter_name != "+1/+1":
             raise EntryCounterError("The bounded additional entry policy requires +1/+1 counters")
         if type(self.amount) is not int or self.amount < 1:
@@ -380,6 +384,8 @@ class EffectEntryCounter:
             result["required_entry_type"] = self.required_entry_type
         if self.additional:
             result["additional"] = True
+        if self.destination == "exile":
+            result["destination"] = self.destination
         return result
 
     @classmethod
@@ -396,7 +402,9 @@ class EffectEntryCounter:
             "rule_id",
         }
         missing = sorted(expected - set(value))
-        unknown = sorted(set(value) - expected - {"required_entry_type", "additional"})
+        unknown = sorted(set(value) - expected - {"required_entry_type", "additional", "destination"})
+        if "destination" in value and value["destination"] != "exile":
+            raise EntryCounterError("Only an exile entry counter carries an explicit destination")
         if "additional" in value and value["additional"] is not True:
             raise EntryCounterError("Only explicit additional entry counters take the additional flag")
         if missing or unknown:
@@ -418,6 +426,7 @@ class EffectEntryCounter:
                 if "required_entry_type" in value else None
             ),
             additional=value.get("additional", False),
+            destination=value.get("destination", "battlefield"),
         )
 
 

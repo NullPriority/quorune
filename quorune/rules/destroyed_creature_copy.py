@@ -102,6 +102,10 @@ def committed_death_copy_controller(host, effect, item):
     """Validate the persisted copy receipt against the still-resolving spell."""
     from ..errors import GameRuleError
 
+    from .linked_death_token_copy import is_linked_death_copy_commit, linked_death_token_creation_controller
+
+    if is_linked_death_copy_commit(effect):
+        return linked_death_token_creation_controller(host, effect, item)
     raw = effect.get(COMMITTED_DEATH_COPY_FIELD)
     scope = {"op", "controller", "quantity", "copy_of", COMMITTED_DEATH_COPY_FIELD}
     optional = {"reason", "_replacement_selections", "_runtime_source"}
@@ -141,11 +145,16 @@ def apply_committed_death_copy(host, effect, *, actor, reason):
         raise GameRuleError("Death copy token creation requires its resolving controller")
     if controller not in host.active_seats:
         return []
+    from .linked_death_token_copy import is_linked_death_copy_commit, record_created_death_token_links
+
+    linked = is_linked_death_copy_commit(effect)
     created = create_tokens(
-        host, controller, name="", quantity=2, copy_of=effect["copy_of"], copy_source_zone="battlefield",
+        host, controller, name="", quantity=1 if linked else 2, copy_of=effect["copy_of"], copy_source_zone="battlefield",
         copy_snapshot=effect[COMMITTED_DEATH_COPY_FIELD]["snapshot"], reason=reason,
         replacement_selections=tuple(effect.get("_replacement_selections", ())),
         copied_aura_selections=copied_aura_token_selections(item),
     )
+    if linked:
+        record_created_death_token_links(host, effect, created)
     clear_copied_aura_token_selections(item)
     return created

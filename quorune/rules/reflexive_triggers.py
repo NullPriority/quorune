@@ -43,6 +43,8 @@ def enqueue_reflexive_trigger(host, intent):
     if parent is None or parent.controller != intent.controller or intent.controller not in host.active_seats:
         raise GameRuleError('Reflexive trigger creation requires its original resolving controller and frame')
     program = host.semantics.get(parent.semantic_key)
+    if intent.paid_mana is not None:
+        return _enqueue_paid_mana_entrant(host, parent, program, intent)
     if (program is None or not host.semantic_program_is_current_trusted(program)
             or not any(effect.get('op') == 'offer_optional_mana_payment' and effect.get('schema_version') == 4
                        and FrozenMap(effect.get('reflexive_program', {})) == intent.program for effect in program.effects)):
@@ -53,11 +55,33 @@ def enqueue_reflexive_trigger(host, intent):
     return _place_reflexive_trigger(host, parent, consequence, paid_creature=intent.paid_creature)
 
 
+def _enqueue_paid_mana_entrant(host, parent, program, intent):
+    from .entrant_x_reflexive import (
+        ENTRANT_X_COUNTER_CONTEXT, entrant_x_child, entrant_x_payment_program_dependencies, original_entrant_receipt,
+    )
+
+    if program is None or not host.semantic_program_is_current_trusted(program):
+        raise GameRuleError("The entrant reflexive consequence requires its admitted payment program")
+    try:
+        required = entrant_x_payment_program_dependencies(program)
+        consequence = entrant_x_child()
+        if (not required or not set(required) <= set(program.capability_dependencies)
+                or FrozenMap(consequence.to_dict()) != intent.program):
+            raise ValueError("The entrant reflexive consequence lost its creating program")
+        receipt = original_entrant_receipt(parent)
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    source_id = parent.source_object_id or parent.card_object_id
+    return _place_reflexive_trigger(host, parent, consequence, source_id=source_id, source_context={
+        ENTRANT_X_COUNTER_CONTEXT: {"entrant": receipt.to_dict(), "paid_x": intent.paid_mana},
+    })
+
+
 def resolving_reflexive_source(host, parent, consequence):
     """Use the resolving spell entity or the original battlefield source's locked facts."""
     from ..target_source import BOUND_TARGETING_SOURCE_VERSION, TARGETING_SOURCE_CONTEXT, capture_targeting_source
 
-    if parent.kind == 'triggered_ability':
+    if parent.kind in {'triggered_ability', 'activated_ability'}:
         source_id = parent.source_object_id
         return source_id, _bound_reflexive_context(parent, consequence, source_id)
     source = host.state.cards.get(parent.card_object_id)
@@ -70,6 +94,11 @@ def resolving_reflexive_source(host, parent, consequence):
 def enqueue_resolving_reflexive(host, parent, consequence):
     source_id, source_context = resolving_reflexive_source(host, parent, consequence)
     return _place_reflexive_trigger(host, parent, consequence, source_id=source_id, source_context=source_context)
+
+
+def enqueue_captured_reflexive_trigger(host, parent, consequence, *, source_id):
+    """Use a sealed occurrence that had no parent stack item."""
+    return _place_reflexive_trigger(host, parent, consequence, source_id=source_id, source_context={})
 
 
 def enqueue_token_creation_reflexive(host, parent, consequence):

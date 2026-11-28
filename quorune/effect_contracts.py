@@ -45,6 +45,8 @@ EFFECT_FAMILY_CONTRACTS = (
                 "next_spell_uncounterable",
                 "grant_next_spell_cost_reduction",
                 "grant_target_graveyard_escape",
+                "grant_target_graveyard_flashback",
+                "grant_owned_graveyard_turn_play",
                 "grant_uncounterable_hexproof_from_colors_until_end",
                 "grant_turn_spell_source_color_protection",
                 "grant_turn_creature_target_prohibition",
@@ -72,6 +74,8 @@ EFFECT_FAMILY_CONTRACTS = (
                 "exile_all",
                 "exile_graveyard",
                 "exile_opponent_graveyards",
+                "exile_opponents_graveyards_for_turn_cast",
+                "return_opponents_graveyard_exile_pool",
                 "exile_top_library_card",
                 "linked_exile_return",
                 "return_linked_exiled_objects",
@@ -164,7 +168,8 @@ EFFECT_FAMILY_CONTRACTS = (
         rule_references=("508.1c", "509.1b", "611.2c"),
         operations=frozenset(
             {"grant_declaration_restriction_until_end_of_turn", "require_blocking_this_combat", "detain_permanents",
-             "restrict_permanent_actions_until_next_turn"}
+             "restrict_permanent_actions_until_next_turn", "commit_apnap_counter_attack_truce",
+             "schedule_chosen_attack_turn"}
         ),
     ),
     EffectFamilyContract(

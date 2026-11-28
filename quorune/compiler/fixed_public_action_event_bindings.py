@@ -504,6 +504,20 @@ def _owned_zone_exile_spec(material_line: str) -> FixedPublicEventBindingSpec | 
     )
 
 
+def _library_creature_arrival_spec(material_line):
+    from ..rules.library_creature_arrival import CAPABILITY, EVENT, VARIANT, arrival_condition
+
+    match = re.fullmatch(
+        r"Whenever one or more creature cards are put into your graveyard from your library, (?P<body>.+)",
+        material_line,re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    return _spec(EVENT,VARIANT,match["body"],"fixed-counter-public-zone-trigger-v1",
+                 "trigger-event-normalized-zone-change",condition=arrival_condition(),
+                 capabilities=(CAPABILITY,"trigger.effect.fixed_event"))
+
+
 def _public_token_zone_spec(
     material_line: str,
 ) -> FixedPublicEventBindingSpec | None:
@@ -688,6 +702,7 @@ def _public_zone_spec(
         or _public_entry_zone_spec(material_line)
         or _graveyard_departure_spec(material_line)
         or _owned_zone_exile_spec(material_line)
+        or _library_creature_arrival_spec(material_line)
         or _public_sacrifice_spec(material_line, card_name=card_name)
         or _public_discard_spec(material_line)
     )
@@ -746,6 +761,17 @@ def _qualified_damage_match_spec(match, *, singular: bool):
 
 
 def _qualified_damage_batch_spec(text: str):
+    above_base = re.fullmatch(
+        r"Whenever one or more creatures you control each with power greater than its base power "
+        r"deals combat damage to a player, (?P<body>draw a card[.]?)", text, re.I,
+    )
+    if above_base is not None:
+        from ..permanent_event_state_model import ABOVE_BASE_POWER_CAPABILITY, above_base_power_combat_damage_condition
+
+        return _spec("damage.dealt", QUALIFIED_DAMAGE_BATCH_VARIANT, above_base["body"],
+            "fixed-counter-public-damage-trigger-v1", "trigger-event-normalized-damage",
+            condition=above_base_power_combat_damage_condition(),
+            capabilities=(QUALIFIED_DAMAGE_BATCH_CAPABILITY, ABOVE_BASE_POWER_CAPABILITY))
     match = _QUALIFIED_DAMAGE_BATCH.fullmatch(text)
     return _qualified_damage_match_spec(match, singular=False) if match is not None else None
 
@@ -1110,8 +1136,10 @@ def fixed_public_action_event_binding_spec(
         or _public_attack_spec(material_line)
         or _public_land_play_spec(material_line)
         or _controller_life_loss_draw_spec(material_line)
+        or _source_mana_tap_token_spec(material_line)
         or _source_mana_tap_damage_spec(material_line)
         or artifact_mana_tap_control_binding(material_line, _spec)
+        or _source_mana_tap_target_token_spec(material_line)
         or _land_mana_tap_damage_spec(material_line)
         or _mana_tapped_land_untap_spec(material_line)
         or _public_expend_spec(material_line)
@@ -1142,6 +1170,26 @@ def _controller_life_loss_draw_spec(material_line):
     )
 
 
+def _source_mana_tap_token_spec(material_line):
+    from ..triggered_mana_model import (
+        SOURCE_MANA_TAP_EVENT, SOURCE_MANA_TAP_TOKEN_CAPABILITY, SOURCE_MANA_TAP_TOKEN_VARIANT,
+        source_mana_tap_condition,
+    )
+
+    match = re.fullmatch(
+        r"Whenever you tap this land for mana, (?P<body>target opponent creates a "
+        r"1/1 colorless Spirit creature token\.)",
+        material_line, re.I,
+    )
+    if match is None:
+        return None
+    return _spec(
+        SOURCE_MANA_TAP_EVENT, SOURCE_MANA_TAP_TOKEN_VARIANT, match["body"],
+        "fixed-source-mana-tap-opponent-token-v1", "trigger-event-normalized-public-action",
+        condition=source_mana_tap_condition(), capabilities=(SOURCE_MANA_TAP_TOKEN_CAPABILITY,),
+    )
+
+
 def _source_mana_tap_damage_spec(material_line):
     from ..triggered_mana_model import (
         SOURCE_MANA_TAP_CAPABILITY, SOURCE_MANA_TAP_EVENT, SOURCE_MANA_TAP_VARIANT,
@@ -1158,6 +1206,26 @@ def _source_mana_tap_damage_spec(material_line):
         SOURCE_MANA_TAP_EVENT, SOURCE_MANA_TAP_VARIANT, match["body"],
         "fixed-counter-source-mana-tap-trigger-v1", "trigger-event-normalized-public-action",
         condition=source_mana_tap_condition(), capabilities=(SOURCE_MANA_TAP_CAPABILITY,),
+    )
+
+
+def _source_mana_tap_target_token_spec(material_line):
+    from ..triggered_mana_model import (
+        SOURCE_MANA_TAP_EVENT, SOURCE_MANA_TAP_TARGET_TOKEN_CAPABILITY, SOURCE_MANA_TAP_TARGET_TOKEN_TEMPLATE,
+        SOURCE_MANA_TAP_VARIANT, source_mana_tap_condition,
+    )
+
+    match = re.fullmatch(
+        r"Whenever you tap this land for mana, "
+        r"(?P<body>target opponent creates a 1/1 colorless Spirit creature token\.)",
+        material_line, re.I,
+    )
+    if match is None:
+        return None
+    return _spec(
+        SOURCE_MANA_TAP_EVENT, SOURCE_MANA_TAP_VARIANT, match["body"],
+        SOURCE_MANA_TAP_TARGET_TOKEN_TEMPLATE, "trigger-event-normalized-public-action",
+        condition=source_mana_tap_condition(), capabilities=(SOURCE_MANA_TAP_TARGET_TOKEN_CAPABILITY,),
     )
 
 

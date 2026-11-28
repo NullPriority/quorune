@@ -7,7 +7,7 @@ from ..continuous_effect_state import fixed_target_color_effects
 import copy
 from typing import Any, Mapping, Protocol, Sequence
 
-from ..announced_damage import announced_allocation_details
+from ..announced_counter_allocation import announce_target_allocations
 from ..entry_control_exchange_model import ENTRY_EXCHANGE_TARGET_FIELD
 from ..errors import GameRuleError
 from ..model import CardInstance, StackItem
@@ -29,6 +29,7 @@ from ..target_predicates import TargetPredicateError, materialize_greatest_power
 from ..target_protection import TargetProtectionVerdict
 from ..target_protection_engine_adapter import target_protection_verdict_for_row
 from ..targets import (
+    DEFENDING_CONTROLLER_RELATION,
     TargetGroup,
     TargetPlan,
     available_modes,
@@ -454,7 +455,12 @@ class TargetSelectionOwnerMixin:
             raise GameRuleError(str(exc)) from exc
 
     def _target_row_player_relations_match(self, controller, group, row, acting_source):
-        if not self._relation_matches(str(row.get("controller")), controller, group.controller_relation):
+        target_controller = str(row.get("controller"))
+        if group.controller_relation == DEFENDING_CONTROLLER_RELATION:
+            if (self.state.phase != "combat" or target_controller == self.state.active_player
+                    or target_controller not in self.active_seats):
+                return False
+        elif not self._relation_matches(target_controller, controller, group.controller_relation):
             return False
         if group.controller_seat is not None and str(row.get("controller")) != group.controller_seat:
             return False
@@ -483,6 +489,11 @@ class TargetSelectionOwnerMixin:
         if (group.source_exclusion or group.another) and ref == source_ref:
             return False
         card = row.get("card")
+        if group.exclude_source_incarnation:
+            if acting_source is None or acting_source.logical_object_id is None:
+                raise GameRuleError("Other-target legality requires the original source incarnation")
+            if isinstance(card, CardInstance) and card.logical_object_id == acting_source.logical_object_id:
+                return False
         if (
             row.get("category") == "card"
             and isinstance(card, CardInstance)
@@ -1060,6 +1071,12 @@ class TargetSelectionOwnerMixin:
             schema = bind_announced_x_modal_stack_schema(program, item, schema)
         except (TypeError, ValueError, KeyError) as exc:
             raise GameRuleError(str(exc)) from exc
+        from ..rules.gift_fish_spells import bind_gift_fish_stack_schema
+
+        try:
+            schema = bind_gift_fish_stack_schema(program, item, schema)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
         schema = bound_creature_role_schema(schema, item.context, self.seats)
         schema = bind_entry_exchange_target_schema(self, item, program, schema)
         if schema is None:return None
@@ -1170,7 +1187,9 @@ class TargetSelectionOwnerMixin:
         if target_schema is None:
             raise GameRuleError("Semantic target schema is no longer available")
         try:
-            allocation = announced_allocation_details(target_schema, validated, response)
+            allocation = announce_target_allocations(
+                target_schema, validated, response, trigger_creation=continuation_payload.get("trigger_creation"),
+            )
         except ValueError as exc:
             raise GameRuleError(str(exc)) from exc
         item.targets = validated

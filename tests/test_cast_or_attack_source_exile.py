@@ -125,6 +125,35 @@ class CastOrAttackSourceExileTests(InheritedNativeFixture, unittest.TestCase):
         self.assertFalse(self.return_triggers(game))
         self.replay(game, load=True)
 
+    def test_source_priority_yield_projection_is_opaque_scoped_and_target_aware(self):
+        for targeted in (False, True):
+            with self.subTest(targeted=targeted):
+                game = self.session(60307017 + targeted)
+                source = self.add(game.engine, CARD)
+                bolt = self.add(game.engine, "Lightning Bolt", seat="B", zone="hand")
+                self.add(game.engine, "Mountain", seat="B")
+                self.start(game, source, bolt)
+
+                self.cast_for(game, "B", bolt, [source.ref if targeted else "D"])
+                first = game.packet("pilot:A", full=True)["state"]["stack"][0]
+                self.assertEqual("triggered_ability", first["kind"])
+                offer = first["source_priority_yield"]
+                self.assertEqual({"id", "targeted"}, set(offer))
+                self.assertEqual(targeted, offer["targeted"])
+                self.assertRegex(offer["id"], r"^[0-9a-f]{64}$")
+                self.assertNotEqual(source.object_id, offer["id"])
+                for principal in ("pilot:B", "pilot:C", "spectator"):
+                    visible = game.packet(principal, full=True)["state"]["stack"]
+                    self.assertFalse(any("source_priority_yield" in row for row in visible), principal)
+                resumed = self.replay(game, load=True)
+                later = resumed.packet("pilot:A", full=True)["state"]["stack"][0]
+                self.assertEqual(offer, later["source_priority_yield"])
+
+                self.resolve_top(resumed)
+                next_top = resumed.packet("pilot:A", full=True)["state"]["stack"][0]
+                self.assertEqual("spell", next_top["kind"])
+                self.assertNotIn("source_priority_yield", next_top)
+
     def test_earlier_activation_removal_cannot_schedule_a_false_return(self):
         game = self.session(40007009)
         source = self.add(game.engine, CARD)

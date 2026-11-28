@@ -57,6 +57,99 @@ class FixedBeholdCostModelTests(unittest.TestCase):
                 CLAUSE.replace('behold a Dragon or','you may behold a Dragon or')]:
             self.assertIsNone(fixed_alternative_additional_cost_template(clause))
 
+    def test_linked_exile_and_owner_hand_return_keep_disjoint_closed_descriptors(self):
+        from quorune.linked_exile_return_model import (
+            LINKED_ABILITY_BINDING_PREFIX, LINKED_ABILITY_TIMING, LINKED_BEHOLD_HAND_RETURN_VERSION,
+            LINKED_EXILE_RETURN_OPERATION, LinkedExileReturnSpec, validate_linked_instruction,
+        )
+        from quorune.rules.behold_additional_cost import LINKED_BEHOLD_SCHEMA_VERSION
+        from quorune.rules.casting_additional_cost_groups import fixed_additional_cost_leaf
+
+        pair = LINKED_ABILITY_BINDING_PREFIX + '1' * 24
+        old_cost = FixedBeholdAdditionalCost('dragon')
+        linked_cost = FixedBeholdAdditionalCost('dragon', schema_version=LINKED_BEHOLD_SCHEMA_VERSION,
+                                                linked_exile_pair=pair)
+        self.assertEqual(old_cost, FixedBeholdAdditionalCost.from_descriptor(old_cost.to_descriptor()))
+        self.assertEqual(linked_cost, FixedBeholdAdditionalCost.from_descriptor(linked_cost.to_descriptor()))
+        with self.assertRaises(ValueError):
+            fixed_additional_cost_leaf(linked_cost.to_descriptor())
+        with self.assertRaises(ValueError):
+            FixedBeholdAdditionalCost.from_descriptor({**old_cost.to_descriptor(), 'linked_exile_pair': pair})
+        spec = LinkedExileReturnSpec(timing=LINKED_ABILITY_TIMING, schema_version=LINKED_BEHOLD_HAND_RETURN_VERSION)
+        instruction = {'op': LINKED_EXILE_RETURN_OPERATION, 'binding_id': pair, 'phase': 'return',
+                       'spec': spec.to_dict()}
+        validate_linked_instruction(instruction)
+        with self.assertRaises(ValueError):
+            validate_linked_instruction({**instruction, 'phase': 'exile', 'cards': '$targets'})
+        with self.assertRaises(ValueError):
+            validate_linked_instruction({**instruction, '_aura_target_refs': {'one': 'two'}})
+
+    def test_original_receipt_rejects_crossed_identity_and_stays_off_spell_copies(self):
+        from quorune.beheld_exile_state import PAID_BEHELD_EXILE_FIELD, PaidBeheldExile, mark_resolving_beheld_exile
+        from quorune.continuous_effect_model import ContinuousObjectIdentity
+        from quorune.errors import GameRuleError
+        from quorune.linked_exile_return_model import ExiledObjectIdentity, LINKED_ABILITY_BINDING_PREFIX
+        from quorune.selection.copy_targets import stack_copy_context
+
+        pair = LINKED_ABILITY_BINDING_PREFIX + '1' * 24
+        expected = PaidBeheldExile(ContinuousObjectIdentity('spell', 'spell@3'), pair,
+                                  ExiledObjectIdentity('paid', 'paid-ref', 'paid@2')).to_dict()
+        card = SimpleNamespace(object_id='spell', logical_object_id='spell@3', zone='stack',
+                               is_spell_copy=False, annotations={})
+        descriptor = FixedBeholdAdditionalCost('dragon', schema_version=2, linked_exile_pair=pair).to_descriptor()
+        program = SimpleNamespace(cost_schema={'additional_costs': [descriptor]})
+        host = SimpleNamespace(semantics={'spell-program': program})
+        item = SimpleNamespace(kind='spell', card_object_id='spell', semantic_key='spell-program', ref='stack-ref',
+                               context={'retained': [1]})
+        for change, error in (
+            ({'schema_version': True}, ValueError),
+            ({'spell': {'object_id': 'spell', 'logical_object_id': 'spell@2'}}, GameRuleError),
+            ({'ability_pair': LINKED_ABILITY_BINDING_PREFIX + '2' * 24}, GameRuleError),
+        ):
+            item.context[PAID_BEHELD_EXILE_FIELD] = {**expected, **change}
+            with self.assertRaises(error):
+                mark_resolving_beheld_exile(host, card, item)
+            self.assertEqual({}, card.annotations)
+        item.context[PAID_BEHELD_EXILE_FIELD] = expected
+        mark_resolving_beheld_exile(host, card, item)
+        self.assertEqual(expected, card.annotations[PAID_BEHELD_EXILE_FIELD])
+        copy = stack_copy_context(item, {}, {}, permanent_spell=True, characteristics={'name': 'Witness'})
+        self.assertNotIn(PAID_BEHELD_EXILE_FIELD, copy)
+        self.assertEqual([1], copy['retained'])
+        self.assertIsNot(copy['retained'], item.context['retained'])
+
+    def test_linked_behold_records_only_the_actual_nontoken_exile_arrival(self):
+        from quorune.linked_exile_return_model import LINKED_ABILITY_BINDING_PREFIX
+        from quorune.rules.casting.behold_costs import commit_linked_behold_cost
+
+        pair = LINKED_ABILITY_BINDING_PREFIX + '1' * 24
+        cost = FixedBeholdAdditionalCost('dragon', schema_version=2, linked_exile_pair=pair)
+        for token, destination, linked in ((False, 'exile', True), (True, 'exile', False),
+                                           (False, 'graveyard', False)):
+            with self.subTest(token=token, destination=destination):
+                host, source, _, _, chosen, _, _ = self.fixture()
+                chosen.is_token = token
+                ok, selected = behold_cost_selection(host, seat='A', source=source, cost=cost,
+                    response={'behold_cards': [chosen.ref]}, hint=False, choice_schema={}, cost_position=0)
+                self.assertTrue(ok)
+                result = SimpleNamespace(beheld_linked_exile=None)
+
+                def commit_zone_change(host, proposal, source, result, changes, **kwargs):
+                    self.assertIs(changes[0][0], chosen)
+                    self.assertEqual('exile', changes[0][7])
+                    chosen.zone = destination
+                    chosen.zone_change_counter += 1
+
+                with patch('quorune.rules.casting.zone_cost_commit.commit_card_cost_changes', commit_zone_change):
+                    commit_linked_behold_cost(host, SimpleNamespace(seat='A'), source, result, selected,
+                                              {'additional_costs': [cost.to_descriptor()]}, {})
+                if linked:
+                    linked_pair, identity = result.beheld_linked_exile
+                    self.assertEqual(pair, linked_pair)
+                    self.assertTrue(identity.matches_exiled_card(chosen))
+                else:
+                    self.assertIsNone(result.beheld_linked_exile)
+
     def fixture(self):
         def card(oid,zone,owner='A',controller='A',subtype='Dragon',*,phased=False):
             return CardInstance(object_id=oid,ref=oid+'-ref',

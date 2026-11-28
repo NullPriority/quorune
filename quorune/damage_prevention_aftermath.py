@@ -16,6 +16,8 @@ from .counter_placement import (
 )
 from .damage_modifier_state import (
     CreateTokensPreventionAftermath,
+    DamageAftermathRecipient,
+    DamageSubject,
     DealDamagePreventionAftermath,
     GainLifePreventionAftermath,
     PlaceCountersPreventionAftermath,
@@ -244,6 +246,71 @@ def _applied_prevention_aftermath(events, sources) -> tuple[PreventionApplicatio
     )
 
 
+def _reflected_source_subject(host, signature, source_types):
+    ref, object_id, logical_id, controller = signature
+    if "creature" not in source_types:
+        player = host.state.players.get(controller)
+        return DamageSubject(controller, "player", controller) if player is not None and player.in_game else None
+    card = host.state.cards.get(object_id)
+    if (card is None or card.zone != "battlefield" or card.phased_out
+            or card.logical_object_id != logical_id or card.ref != ref):
+        return None
+    types = host._type_parts(str(host._effective_card_data(card).get("type_line") or ""))[0]
+    if not {"creature", "planeswalker", "battle"} & types:
+        return None
+    return DamageSubject(card.ref, "permanent", card.controller, card.object_id, card.logical_object_id, card.owner)
+
+
+def _reflected_source_requests(host, events):
+    """Read actual prevention receipts before resolving one return per source occurrence."""
+    reflectors = {
+        shield.effect_id: shield
+        for shield in host.state.damage_prevention_shields
+        if any(isinstance(value, DealDamagePreventionAftermath) and value.schema_version == 2
+               for value in shield.aftermath)
+    }
+    if not reflectors:
+        return ()
+    groups = {}
+    for event in events:
+        for effect_id, amount in (event.payload.get("prevention_applied") or {}).items():
+            shield = reflectors.get(effect_id)
+            if shield is None or amount == 0:
+                continue
+            identity = event.payload.get("source_identity_key")
+            source_types = event.payload.get("source_types")
+            signature = tuple(event.payload.get(field) for field in (
+                "source", "source_object_id", "source_logical_object_id", "source_controller",
+            ))
+            if (type(identity) is not str or not identity or not isinstance(source_types, (list, tuple))
+                    or not all(type(value) is str and value for value in source_types)
+                    or type(signature[0]) is not str or not signature[0]
+                    or type(signature[3]) is not str or signature[3] not in host.state.players
+                    or "creature" in source_types and not all(type(v) is str and v for v in signature[1:3])):
+                raise PreventionAftermathError("Reflected damage lost the prevented source occurrence")
+            key = (shield.application_group_id, identity)
+            groups.setdefault(key, []).append((shield, event.event_id, amount, tuple(source_types), signature))
+
+    result = []
+    for index, (_key, rows) in enumerate(sorted(groups.items())):
+        shield, _, _, source_types, signature = rows[0]
+        if any(candidate.aftermath != shield.aftermath or kinds != source_types or source != signature
+               for candidate, _, _, kinds, source in rows):
+            raise PreventionAftermathError("A reflected source occurrence has conflicting retained facts")
+        subject = _reflected_source_subject(host, signature, source_types)
+        if subject is None:
+            continue
+        amount = sum(value for _, _, value, _, _ in rows)
+        application = PreventionApplication(
+            effect_id=min(row[0].effect_id for row in rows), source_id=shield.source_id,
+            prevented_amount=amount, damage_event_ids=tuple(sorted({row[1] for row in rows})),
+            damage_source_controllers=(signature[3],),
+        )
+        resolved = replace(shield.aftermath[0], recipient=DamageAftermathRecipient("fixed", subject), schema_version=1)
+        result.append((application, index, resolved, amount))
+    return tuple(result)
+
+
 def prevention_aftermath_requests(
     host: PreventionAftermathHost,
     events: Sequence[ReplaceableEvent],
@@ -309,7 +376,8 @@ def prevention_aftermath_requests(
                 )
                 kind, subject = "place_counters", aftermath.subject.ref
             elif isinstance(aftermath, DealDamagePreventionAftermath):
-                damage.append((application, index, aftermath, amount))
+                if aftermath.schema_version == 1:
+                    damage.append((application, index, aftermath, amount))
                 continue
             else:  # pragma: no cover - shield validation closes this union.
                 raise PreventionAftermathError(
@@ -332,7 +400,7 @@ def prevention_aftermath_requests(
         instructions=tuple(instructions),
         life=tuple(life),
         counters=tuple(counters),
-        damage=tuple(damage),
+        damage=(*damage, *_reflected_source_requests(host, events)),
     )
 
 

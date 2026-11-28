@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Public activation price summary from already validated compiled cost facts."""
 
-from ...activated_ability_descriptor import SOURCE_COUNTER_PLACEMENT_OFFER_FIELD
+from ...activated_ability_descriptor import SOURCE_COUNTER_PLACEMENT_OFFER_FIELD, SOURCE_LIBRARY_BOTTOM_OFFER
 from .granting_attachment import payable_granting_attachment
 from .pricing import payable_activation_mana_options
 from .commander_identity_life import current_commander_identity_life, uses_commander_identity_life
@@ -100,6 +100,7 @@ def activation_offer_payload(source,selected,hint):
                 "sac_self",
                 "discard_self",
                 "exile_self",
+                SOURCE_LIBRARY_BOTTOM_OFFER,
                 "choose_cost",
                 "mana_options",
                 "announced_x_symbols",

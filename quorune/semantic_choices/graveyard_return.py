@@ -5,10 +5,12 @@ import re
 
 from ..public_characteristic_aggregates import reduce_public_characteristic_values
 from ..replacement.immutable import FrozenMap
-from ..public_zone_moves import PublicZoneMoveObject
+from ..public_zone_moves import PublicZoneMoveObject, PublicBattlefieldController
 from ..rules.different_name_graveyard_return import different_name_limits
+from ..semantic_runtime.zone_move_intent import FrontFaceGraveyardCreatureReturnIntent
 from ..rules.graveyard_return_choices import (
     OPERATION, CAPABILITY, RETURN_PAIR_FIELD, chosen_different_name_permanent_move,
+    defending_nonland_chooser_is_current,
     chosen_tapped_land_move, paired_graveyard_return_move, validate_return_choice,
 )
 from ..semantic_runtime.intents import RecordChoiceIntent, ReturnGraveyardCardToOwnerHandIntent
@@ -46,6 +48,23 @@ def _return_intent(row, *, actor, reason):
                                                target_snapshot=_return_identity(row))
 
 
+def _assign_defending_return_chooser(effect, context):
+    owner, defender = effect["graveyard_owner"], effect["defender"]
+    active = context.query.active_seats
+    opponents = tuple(seat for seat in active if seat != owner)
+    eligible = (defender,) if defender in active else opponents or (owner,)
+    branches = {seat: [{**dict(effect), "player": seat, "defender_chosen": True}] for seat in eligible}
+    if len(eligible) == 1:
+        next_effect, = branches[eligible[0]]
+    else:
+        next_effect = {"op": "choose_option", "player": owner,
+                       "prompt": "Choose which opponent will select the graveyard card.",
+                       "options": [{"id": seat, "label": seat} for seat in eligible],
+                       "then_by_choice": branches}
+    return SemanticChoicePreparation(None, FrozenMap(effect),
+        auto_continue=AutoContinue(reason="Assign the required graveyard chooser", prepend_effects=(FrozenMap(next_effect),)))
+
+
 @dataclass(frozen=True, slots=True)
 class GraveyardReturnChoiceHandler:
     operation: str = OPERATION
@@ -54,7 +73,7 @@ class GraveyardReturnChoiceHandler:
     rule_references: tuple[str, ...] = ('109.5', '115.10a', '400.3', '400.7', '608.2c', '608.2d')
     capability_dependencies: tuple[str, ...] = (CAPABILITY, 'card.return.own_graveyard_to_owner_hand')
     continuation_fields: tuple[str, ...] = ('player', 'selection', '_choice_actor', '_legal_refs',
-        '_legal_logical_ids', '_stack_label')
+        '_legal_logical_ids', '_stack_label', "graveyard_owner", "defender", "defender_chosen")
     private_data: tuple[str, ...] = ()
     projected_fields: tuple[str, ...] = ('prompt', 'objects', 'legal_actions.choice_schema.legal_refs')
     mutation_path: tuple[str, ...] = ('ReturnGraveyardCardToOwnerHandIntent', 'return_to_hand')
@@ -66,12 +85,22 @@ class GraveyardReturnChoiceHandler:
             selection = validate_return_choice(effect, actor=context.actor)
         except (TypeError, ValueError) as exc:
             raise SemanticChoiceError(str(exc)) from exc
-        if (selection.required or selection.returns_to_battlefield) and context.actor != context.stack_controller:
+        owner = effect["graveyard_owner"] if selection.defending_nonland else context.actor
+        if selection.defending_nonland:
+            if owner != context.stack_controller or owner not in context.query.active_seats:
+                raise SemanticChoiceError("Defending return lost the resolving controller's graveyard")
+            if effect["defender_chosen"] and not defending_nonland_chooser_is_current(
+                context.actor, owner, effect["defender"], context.query.active_seats,
+            ):
+                raise SemanticChoiceError("The assigned defending chooser is unavailable")
+        elif (selection.required or selection.returns_to_battlefield) and context.actor != context.stack_controller:
             raise SemanticChoiceError('Graveyard return requires the resolving controller')
-        rows = _eligible_return_rows(context.query, context.actor, selection)
+        rows = _eligible_return_rows(context.query, owner, selection)
         if not rows:
             return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect),
                 auto_continue=AutoContinue(reason='No eligible card in your graveyard'))
+        if selection.defending_nonland and not effect["defender_chosen"]:
+            return _assign_defending_return_chooser(effect, context)
         if selection.greatest_power and len(rows) == 1:
             return SemanticChoicePreparation(
                 request=None, continuation_effect=FrozenMap(effect),
@@ -81,11 +110,15 @@ class GraveyardReturnChoiceHandler:
         for row in rows:
             _return_identity(row)
         refs = tuple(row.ref for row in rows)
+        if selection.committed_creature_return:
+            return _prepare_committed_return(effect, context, rows, selection.committed_count)
         optional = not selection.required
         if selection.different_name_permanents:
             return _prepare_different_name_return(effect, context, rows)
         if selection.returns_tapped_land:
             prompt = 'You may return a land card from your graveyard to the battlefield tapped.'
+        elif selection.defending_nonland:
+            prompt = "Choose a nonland card in the attacker's graveyard to return."
         elif selection.returns_to_battlefield:
             prompt = 'You may return a creature card from your graveyard to the battlefield.'
         elif selection.greatest_power:
@@ -97,7 +130,8 @@ class GraveyardReturnChoiceHandler:
         return SemanticChoicePreparation(
             request=SemanticChoiceRequest(prompt=prompt,
                 choice=ObjectChoice(field_name='card', legal_refs=refs, zones=('graveyard',),
-                    minimum=0 if optional else 1, maximum=1, optional=optional, owner_relation='actor'),
+                    minimum=0 if optional else 1, maximum=1, optional=optional,
+                    owner_relation="any" if selection.defending_nonland else "actor"),
                 public_context=FrozenMap({'stack': context.stack_ref, 'operation': self.operation,
                     'objects': [{'id': row.ref, 'name': row.printed_name} for row in rows]})),
             continuation_effect=FrozenMap({**dict(effect), '_choice_actor': context.actor,
@@ -122,6 +156,8 @@ class GraveyardReturnChoiceHandler:
         if selection.different_name_permanents:
             return _complete_different_name_return(response, query, actor, selection, identities)
         selected = response.get('card')
+        if selection.committed_creature_return:
+            return _complete_committed_return(selection, response, query, actor, refs, identities, label)
         if selection.greatest_power:
             current = _eligible_return_rows(query, actor, selection)
             if (len(current) < 2 or tuple(refs) != tuple(row.ref for row in current)
@@ -135,14 +171,28 @@ class GraveyardReturnChoiceHandler:
             prompt = ('Choose one of the eligible graveyard cards' if selection.required
                       else 'Choose one of the eligible graveyard cards or decline')
             raise SemanticChoiceError(prompt)
+        owner = effect["graveyard_owner"] if selection.defending_nonland else actor
+        if selection.defending_nonland and not defending_nonland_chooser_is_current(
+            actor, owner, effect["defender"], query.active_seats,
+        ):
+            raise SemanticChoiceError("The assigned defending chooser is unavailable")
         row = query.object(selected, zones=('graveyard',))
-        if (row is None or row.owner != actor or row.token or row.logical_object_id != identities[selected]
+        if (row is None or row.owner != owner or row.token or row.logical_object_id != identities[selected]
                 or not selection.matches(row)):
             raise SemanticChoiceError('The selected graveyard incarnation is no longer eligible')
         if selection.returns_to_battlefield:
             card = PublicZoneMoveObject.from_row(row)
             effect = chosen_tapped_land_move(card) if selection.returns_tapped_land else paired_graveyard_return_move((card,))
             return SemanticChoiceCompletion(prepend_effects=(FrozenMap(effect),))
+        if selection.defending_nonland:
+            mana_value = row.mana_value
+            if (type(mana_value) not in (int, float) or not mana_value >= 0
+                    or not float(mana_value).is_integer()):
+                raise SemanticChoiceError("The selected graveyard card's mana value is unavailable")
+            growth = (FrozenMap({"op": "modify_stats_until_end_of_turn", "card": "$source.zone_object",
+                                 "power": int(mana_value), "toughness": 0}),) if mana_value else ()
+            return SemanticChoiceCompletion(intents=(_return_intent(row, actor=owner, reason=label),),
+                                            prepend_effects=growth)
         return SemanticChoiceCompletion(intents=(_return_intent(row, actor=actor, reason=label),))
 
 
@@ -188,6 +238,45 @@ def _complete_different_name_return(response, query, actor, selection, identitie
         raise SemanticChoiceError("Choose permanent cards with different names")
     effect = chosen_different_name_permanent_move(tuple(PublicZoneMoveObject.from_row(row) for row in rows))
     return SemanticChoiceCompletion(prepend_effects=(FrozenMap(effect),))
+
+
+def _prepare_committed_return(effect, context, rows, committed_count):
+    count = min(committed_count, len(rows))
+    refs = tuple(row.ref for row in rows)
+    return SemanticChoicePreparation(
+        request=SemanticChoiceRequest(
+            prompt=f"Choose {count} creature card{'s' if count != 1 else ''} to return to the battlefield.",
+            choice=ObjectChoice(
+                field_name='cards', legal_refs=refs, zones=('graveyard',),
+                minimum=count, maximum=count, owner_relation='actor',
+                schema_extras=FrozenMap({'minimum': count, 'maximum': count}),
+            ),
+            public_context=FrozenMap({'stack': context.stack_ref, 'operation': OPERATION,
+                'objects': [{'id': row.ref, 'name': row.printed_name} for row in rows]}),
+        ),
+        continuation_effect=FrozenMap({**effect, '_choice_actor': context.actor, '_legal_refs': refs,
+            '_legal_logical_ids': {row.ref: row.logical_object_id for row in rows}, '_stack_label': context.stack_label}),
+    )
+
+
+def _complete_committed_return(selection, response, query, actor, refs, identities, label):
+    rows = _eligible_return_rows(query, actor, selection)
+    count = min(selection.committed_count, len(rows))
+    selected = response.get('cards')
+    if (
+        not count or tuple(refs) != tuple(row.ref for row in rows)
+        or dict(identities) != {row.ref: row.logical_object_id for row in rows}
+        or not isinstance(selected, (list, tuple)) or len(selected) != count
+        or any(type(ref) is not str or ref not in identities for ref in selected)
+        or len(set(selected)) != count
+    ):
+        raise SemanticChoiceError('Choose the required distinct current creature cards from your graveyard')
+    chosen = set(selected)
+    return SemanticChoiceCompletion(intents=(FrontFaceGraveyardCreatureReturnIntent(
+        actor=actor, object_refs=tuple(ref for ref in refs if ref in chosen),
+        expected_zones=('graveyard',), destination='battlefield', reason=label, owned_only=True,
+        battlefield_controller=PublicBattlefieldController.ACTOR,
+    ),))
 
 
 _PAIR_FIELDS = {"schema_version", "step", "controller", "opponent", "opponent_card", "own_card"}

@@ -4,6 +4,20 @@ from .event_player_results import _event_player
 
 
 def fixed_event_outcome_template(binding, body, *, card_name, effect_template):
+    from ..saga_lifecycle import (
+        FINAL_SAGA_CHAPTER_RESOLVED_EVENT, FINAL_SAGA_LIFE_AMOUNT_MECHANIC, final_saga_life_drain_effect,
+    )
+    from ..scalar_effect_amount_model import SCALAR_AMOUNT_MECHANIC
+
+    if binding.event.value == FINAL_SAGA_CHAPTER_RESOLVED_EVENT and re.fullmatch(
+        r"Each opponent loses X life and you gain X life, where X is that Saga['’]s mana value[.]?",
+        body, re.I,
+    ):
+        return (
+            "saga-mana-value-drain-each-opponent-v1", (final_saga_life_drain_effect(),), None,
+            ("cr-119-life", "cr-101-the-magic-golden-rules", SCALAR_AMOUNT_MECHANIC, FINAL_SAGA_LIFE_AMOUNT_MECHANIC),
+        ), True
+
     del card_name, effect_template
 
     from ..rules.postcombat_life_loss_mana import TEMPLATE as POSTCOMBAT_MANA_TEMPLATE, VARIANT as POSTCOMBAT_MANA_VARIANT
@@ -29,6 +43,17 @@ def fixed_event_outcome_template(binding, body, *, card_name, effect_template):
             and body.casefold() == SOURCE_POWER_OPPONENT_DAMAGE_BODY):
         return (SOURCE_POWER_OPPONENT_DAMAGE_TEMPLATE, (source_power_opponent_damage_effect(),), None,
                 (SOURCE_POWER_OPPONENT_DAMAGE_MECHANIC, "cr-120-damage")), True
+    if (binding.event.value == "spell.cast" and binding.active_zone == "battlefield"
+            and binding.event_condition == {"field": "controller", "op": "ne", "value": "$source.controller"}
+            and " ".join(body.split()).casefold() == (
+                "you may reveal the top card of your library. if you do, "
+                "counter that spell if it has the same mana value as the revealed card."
+            )):
+        from ..rules.event_outcome_shapes import cast_reveal_counter_effect
+        from .optional_effect_templates import FIXED_OPTIONAL_EFFECT_MECHANIC
+
+        return ("optional-reveal-top-and-compare-cast-v1", (cast_reveal_counter_effect(),), None,
+                (FIXED_OPTIONAL_EFFECT_MECHANIC,)), False
     if (binding.event.value == "step.begin" and binding.active_zone == "battlefield"
             and re.fullmatch(r"all lands you control phase out\.?", body.strip(), re.I)):
         from ..phasing_model import (
@@ -125,6 +150,15 @@ def fixed_event_outcome_template(binding, body, *, card_name, effect_template):
         return ('fixed-cast-source-sacrifice-or-counter-v1',(spec.effect(),),None,(FIXED_EFFECT_PAYMENT_MECHANIC,)),False
     if binding.event.value == 'spell.cast' and re.fullmatch(r'Counter that spell\.', body.strip(), re.I):
         return ('fixed-cast-event-counter-v1', ({'op':'counter_stack_target','stack':'$context.stack'},), None, ()), False
+    if re.fullmatch(
+        r"That player loses the game if the Ring has tempted you four or more times this game\. "
+        r"Otherwise, the Ring tempts you\.", " ".join(body.split()), re.I,
+    ):
+        from ..rules.event_player_targets import is_source_combat_damage_player_binding
+        from ..rules.source_subtype_progression import RING_DAMAGE_OUTCOME_TEMPLATE, ring_damage_outcome_effect
+
+        if is_source_combat_damage_player_binding(binding.event.value, binding.event_condition):
+            return (RING_DAMAGE_OUTCOME_TEMPLATE, (ring_damage_outcome_effect(),), None, ()), False
     if (re.fullmatch(r'That player loses the game\.', body.strip(), re.I)
             and _event_player(binding, 'that player') == '$context.target'):
         return ('fixed-damage-player-game-loss-v1', ({'op':'lose_game','player':'$context.target'},), None, ()), False

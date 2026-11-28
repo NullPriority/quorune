@@ -33,6 +33,48 @@ PROFILE = "commander_review"
 FIXTURES = ROOT / "tests" / "fixtures"
 
 
+class CastXEqualityCompilerTests(unittest.TestCase):
+    def test_exact_cast_x_return_draw_rejects_unowned_sequence_and_wrong_shape(self):
+        from test_granted_skulk import record
+        from quorune.rules.announced_mana_value_target import (
+            CAST_X_EQUALITY_CAPABILITY, announced_mana_value_node_capabilities,
+            bind_announced_mana_value_limit,
+        )
+
+        material = "Return target nonland permanent with mana value X to its owner's hand.\nDraw a card."
+        registry = load_default_capability_registry()
+
+        def compiled(text, cost="{X}{U}"):
+            fixture = replace(record(text, "Instant"), mana_cost=cost, mana_value=1)
+            return compile_oracle_card(fixture, capability_registry=registry, capability_profile=PROFILE)
+
+        ir = compiled(material)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = (node for node in ir.faces[0].nodes if node.target_schema)
+        self.assertIn(CAST_X_EQUALITY_CAPABILITY, node.capability_dependencies)
+        self.assertEqual(0, bind_announced_mana_value_limit(node.target_schema, 0)["mana_value"])
+        self.assertEqual(3, bind_announced_mana_value_limit(node.target_schema, 3)["mana_value"])
+        for text, cost in (
+            (material, "{U}"),
+            (material.replace("nonland permanent", "creature"), "{X}{U}"),
+            (material.replace("Draw a card.", "Draw two cards."), "{X}{U}"),
+            (material.replace("Draw a card.", "You may draw a card."), "{X}{U}"),
+        ):
+            with self.subTest(text=text, cost=cost):
+                self.assertNotEqual("exact", compiled(text, cost).status)
+        for effects, schema in (
+            (tuple(reversed(node.effects)), node.target_schema),
+            (node.effects, {**node.target_schema, "types_none": ["creature"]}),
+            (node.effects, {**node.target_schema, "mana_value_max": 2}),
+        ):
+            with self.subTest(effects=effects, schema=schema):
+                self.assertFalse(announced_mana_value_node_capabilities(
+                    effects=effects, target_schema=schema, mechanics=node.mechanics, cost_schema=None,
+                ))
+        with self.assertRaises(ValueError):
+            bind_announced_mana_value_limit(node.target_schema, True)
+
+
 class AnnouncedManaValueTargetTests(unittest.TestCase):
     register_fixture_cards_on_add = True
     session = native.QualifiedHexproofTests.session
@@ -76,6 +118,73 @@ class AnnouncedManaValueTargetTests(unittest.TestCase):
         self.checkpoint(session)
         actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
         return next(row for row in actions if row["id"] == "cast:" + spell.ref)
+
+    def test_actual_repeal_announces_exact_x_returns_to_owner_then_draws_with_replay(self):
+        session = self.session(601_341)
+        engine = session.engine
+        spell = self.add(engine, "Repeal", zone="hand")
+        zero = self.add(engine, "Pebble Vault", seat="C", ref="repeal-zero")
+        exact = self.add(engine, "Copper Vault", seat="B", ref="repeal-two")
+        high = self.add(engine, "Steel Vault", seat="D", ref="repeal-high")
+        land = self.add(engine, "Generic Bound Plains", seat="D", ref="repeal-land")
+        engine.change_control(exact.object_id, "A", reason="Fixture separates control and ownership")
+        session.state.config.semantic_policy = "trusted_only"
+        self.assertTrue(self.binding(session, spell)["strict_capability_ready"])
+        drawn = session.state.players["A"].zones["library"][-1]
+        action = self.cast_offer(session, spell, {"U": 1, "C": 3})
+        bounds = action["target_schema"]["x_bounds_by_ref"]
+        self.assertEqual({zero.ref: {"minimum": 0, "maximum": 0},
+                          exact.ref: {"minimum": 2, "maximum": 2}}, bounds)
+        self.assertNotIn(land.ref, action["target_schema"]["legal_refs"])
+        self.assertNotIn(high.ref, action["target_schema"]["legal_refs"])
+        request = {"action_id": action["id"], "targets": [exact.ref], "x": 2, "pay": "auto"}
+        for changed in ({"x": 1}, {"x": 3}, {"targets": [zero.ref]}, {"targets": [land.ref]}):
+            with self.subTest(changed=changed):
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:A", {**request, **changed}).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:B", request).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", request)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(2, session.state.stack[-1].context["target_schema_override"]["mana_value"])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertIn(exact.object_id, session.state.players["B"].zones["hand"])
+        self.assertIn(drawn, session.state.players["A"].zones["hand"])
+        self.assertEqual("battlefield", session.state.cards[zero.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_actual_repeal_loses_sole_target_and_does_not_draw_after_mana_value_changes(self):
+        session = self.session(601_342)
+        source = self.add(session.engine, "Repeal", zone="hand")
+        folded = self.add(session.engine, "Folded Sentry", seat="B", zone="hand", ref="repeal-morph")
+        self.prepare(session, actor="B", active="B", mana={"C": 4})
+        session.state.players["A"].mana_pool["U"] = 1
+        drawn = session.state.players["A"].zones["library"][-1]
+        self.checkpoint(session)
+        result = session.act("pilot:B", {"action_id": "cast-morph:" + folded.ref, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.priority(session, "A")
+        folded = session.state.cards[folded.object_id]
+        original = folded.logical_object_id
+        response = {"action_id": "cast:" + source.ref, "targets": [folded.ref], "x": 0, "pay": "auto"}
+        result = session.act("pilot:A", response)
+        self.assertTrue(result.ok, result.summary)
+        self.priority(session, "B")
+        result = session.act("pilot:B", {"action_id": "turn-face-up:" + folded.ref, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        current = session.state.cards[folded.object_id]
+        self.assertEqual(original, current.logical_object_id)
+        self.assertEqual(5, session.engine._target_snapshot(current.ref)["mana_value"])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("battlefield", session.state.cards[folded.object_id].zone)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertEqual(drawn, session.state.players["A"].zones["library"][-1])
+        self.replay(session, load=True)
 
     def agadeem_native(self, seed):
         session = self.session(seed)

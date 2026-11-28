@@ -22,6 +22,8 @@ CONDITIONAL_SETTING_HANDLER_ID = "continuous.characteristics.fixed-public-settin
 AURA_COUNT_SETTING_HANDLER_ID = "continuous.characteristics.fixed-aura-count-setting.v3"
 CONTROLLED_AURA_RECIPIENT_SETTING_HANDLER_ID = "continuous.characteristics.fixed-controlled-aura-recipient-setting.v1"
 FIXED_SETTING_CAPABILITY = "continuous.characteristics.fixed_public_setting"
+CONTROLLED_ENCHANTMENT_ANIMATION_HANDLER = "continuous.characteristics.controlled-enchantment-animation.v1"
+CONTROLLED_ENCHANTMENT_ANIMATION_CAPABILITY = "continuous.characteristics.controlled_enchantment_animation"
 NONOWNER_CREATURE_MODIFIER_HANDLER = "continuous.characteristics.nonowner-creature-modifier.v1"
 NONOWNER_CREATURE_MODIFIER_CAPABILITY = "continuous.characteristics.fixed_nonowner_creature_modifier"
 CREATURE_TYPE_REMOVAL_HANDLER = 'continuous.characteristics.conditional-creature-type-removal.v1'
@@ -284,6 +286,60 @@ class ConditionalCharacteristicSettingsHandler(FixedCharacteristicSettingsHandle
     capability_dependencies: tuple[str, ...] = (
         FIXED_SETTING_CAPABILITY, 'continuous.characteristics.fixed_public_state',
     )
+
+
+def controlled_enchantment_animation_condition():
+    return FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST, amount=5, schema_version=2,
+        quantity=CharacteristicQuantitySpec(
+            CharacteristicQuantityScope.CONTROLLER_ZONE,
+            query=ObjectQuerySpec(zones=("battlefield",), types_all=("enchantment",)),
+        ),
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class ControlledEnchantmentAnimationHandler:
+    handler_id: str = CONTROLLED_ENCHANTMENT_ANIMATION_HANDLER
+    schema_version: int = 1
+    family: str = CONTROLLED_ENCHANTMENT_ANIMATION_CAPABILITY
+    event: str = "characteristics.evaluate"
+    source_component_layer: Layer = Layer.TYPE
+    rule_references: tuple[str, ...] = ("202.3", "205.1b", "611.3a", "611.3b", "613.1d", "613.4b", "613.6")
+    capability_dependencies: tuple[str, ...] = (
+        CONTROLLED_ENCHANTMENT_ANIMATION_CAPABILITY, FIXED_SETTING_CAPABILITY,
+        "continuous.characteristics.fixed_public_state",
+    )
+
+    def descriptor(self):
+        return {"handler_id":self.handler_id, "schema_version":self.schema_version, "event":self.event,
+                "source_condition":controlled_enchantment_animation_condition().to_dict()}
+
+    def validate(self, descriptor):
+        from ..replacement.immutable import FrozenMap
+
+        exact_fields(descriptor, {"handler_id","schema_version","event","source_condition"},
+                     field="controlled enchantment animation")
+        if type(descriptor["schema_version"]) is not int or FrozenMap(descriptor) != FrozenMap(self.descriptor()):
+            raise SemanticNodeError("Controlled enchantment animation requires its original public threshold")
+        return controlled_enchantment_animation_condition()
+
+    def lower(self, descriptor, context: ContinuousEffectSourceContext):
+        condition = self.validate(descriptor)
+        receivers = ObjectQuerySpec(zones=("battlefield",), types_all=("enchantment",), excluded_subtypes=("aura",))
+        applies = _fixed_query_effect_predicate(receivers, target_controller="source_controller",
+                                                exclude_source=True, context=context)
+        group = f"{context.source_object_id}:{context.component_id}"
+        common = {"source_id":context.source_object_id, "timestamp":context.source_timestamp,
+                  "origin":ContinuousEffectOrigin.STATIC_ABILITY, "applies":applies,
+                  "recipient_scope_anchor":f"{group}:4"}
+        return (
+            ContinuousEffect(effect_id=f"{group}:4", layer=Layer.TYPE, sublayer="4",
+                             operations=(ContinuousOperation("add_creature_for_enchantment_threshold", condition.amount),),
+                             **common),
+            ContinuousEffect(effect_id=f"{group}:7b", layer=Layer.POWER_TOUGHNESS, sublayer="7b",
+                             operations=(ContinuousOperation("set_power_toughness_to_mana_value"),), **common),
+        )
 
 
 def attached_aura_count_setting_condition(amount: int, *, exact: bool) -> FixedPublicStateConditionSpec:

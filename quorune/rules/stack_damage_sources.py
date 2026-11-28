@@ -15,6 +15,7 @@ from ..creature_power_damage_model import (
 from ..entry_copy import copiable_oracle_id
 from ..graveyard_exile_branches_model import GRAVEYARD_EXILE_BRANCH_OPERATION, GraveyardExileBranchSpec
 from ..trigger_batches import PendingTriggerBatch
+from .committed_mill_cards import uses_milled_mana_damage
 from .damage_snapshots import source_snapshot
 from .source_references import CYCLED_SOURCE_DAMAGE_COVERAGE
 
@@ -78,8 +79,14 @@ def needs_stack_damage_source(value):
 
         if value.get("op") == "fixed_impulse_access" and value.get("schema_version") == POWER_COUNTED_IMPULSE_VERSION:
             return True
+        from .departing_x_reflexive import OPERATION
+
+        if value.get("op") == OPERATION:
+            return True
         if value.get("op") == GRAVEYARD_EXILE_BRANCH_OPERATION:
             return GraveyardExileBranchSpec.from_dict(value.get("result")).classifies_land
+        if value.get("op") == "mill" and uses_milled_mana_damage(value):
+            return True
         if value.get("op") == "choose_option":
             from .collective_source_damage import COLLECTIVE_SOURCE_DAMAGE_FIELD
             if COLLECTIVE_SOURCE_DAMAGE_FIELD in value:

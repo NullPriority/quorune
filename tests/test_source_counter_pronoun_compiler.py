@@ -12,6 +12,31 @@ class SourceCounterPronounCompilerTests(unittest.TestCase):
     def compile(self, text, *, type_line='Artifact'):
         return compile_oracle_card(replace(query_record(text), type_line=type_line), capability_registry=load_default_capability_registry())
 
+    def test_one_committed_cast_uses_a_closed_color_list_and_fixed_source_counter(self):
+        from quorune.compiler.spell_cast_predicates import fixed_spell_cast_binding_spec
+
+        text = ("Whenever you cast a spell that's white, blue, black, or red, "
+                "put a +1/+1 counter on this creature.")
+        ir = self.compile(text, type_line="Creature — Human Druid")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual((0, len(text)), (node.span.start, node.span.end))
+        self.assertEqual("spell.cast", node.event)
+        self.assertEqual({"all": [
+            {"field": "controller", "op": "eq", "value": "$source.controller"},
+            {"field": "colors", "op": "contains_any", "value": ["B", "R", "U", "W"]},
+        ]}, node.event_condition)
+        self.assertEqual(({"op": "place_counters", "card": "$source.zone_object",
+                           "counter": "+1/+1", "amount": 1, "source": "$source"},), node.effects)
+        for wrong in (
+            text.replace("white, blue", "white, white"),
+            text.replace("or red", "and red"),
+            text.replace("black", "colorless"),
+            text.replace("you cast", "an opponent casts"),
+        ):
+            with self.subTest(wrong=wrong):
+                self.assertIsNone(fixed_spell_cast_binding_spec(wrong))
+
     def test_explicit_source_and_activated_pronoun_counter_amounts_keep_original_span_and_roles(self):
         for head in ('This artifact', 'It'):
             text = '{2}, Sacrifice this artifact: ' + head + ' deals damage equal to the number of charge counters on it to any target.'

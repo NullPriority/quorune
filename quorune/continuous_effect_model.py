@@ -123,6 +123,7 @@ _OPERATION_LAYERS = {
     "face_down": Layer.COPY,
     "set_controller": Layer.CONTROL,
     "replace_text": Layer.TEXT,
+    "insert_name_sticker": Layer.TEXT,
     "set_types": Layer.TYPE,
     "set_basic_land_types": Layer.TYPE,
     "set_creature_subtype": Layer.TYPE,
@@ -148,7 +149,9 @@ _OPERATION_LAYERS = {
     "remove_ability_fragment": Layer.ABILITY,
     "set_power": Layer.POWER_TOUGHNESS,
     "set_toughness": Layer.POWER_TOUGHNESS,
+    "add_creature_for_enchantment_threshold": Layer.TYPE,
     "set_power_toughness": Layer.POWER_TOUGHNESS,
+    "set_power_toughness_to_mana_value": Layer.POWER_TOUGHNESS,
     "set_linked_exile_creature_stats": Layer.POWER_TOUGHNESS,
     "default_creature_stats": Layer.POWER_TOUGHNESS,
     "modify_power_toughness": Layer.POWER_TOUGHNESS,
@@ -276,6 +279,19 @@ def _validate_copy_values(value: Any) -> None:
             )
 
 
+def _validate_text_operation(op, value, field):
+    if op == "insert_name_sticker":
+        if (field is not None or not isinstance(value, Mapping) or set(value) != {"text", "position"}
+                or type(value["text"]) is not str or not value["text"].strip()
+                or type(value["position"]) is not int or value["position"] < 0):
+            raise ContinuousEffectError("Name sticker requires a nonempty text and a nonnegative word position")
+        return
+    if not isinstance(value, Mapping) or set(value) != {"from", "to"}:
+        raise ContinuousEffectError("replace_text requires exact from/to fields")
+    if type(value["from"]) is not str or not value["from"] or type(value["to"]) is not str:
+        raise ContinuousEffectError("replace_text values must be strings and from must be nonempty")
+
+
 def _validate_operation_value(op: str, value: Any, field: str | None) -> None:
     if op not in {"set_types", "add_types", "remove_types"} and field is not None:
         raise ContinuousEffectError(f"{op} does not accept a field")
@@ -339,11 +355,8 @@ def _validate_operation_value(op: str, value: Any, field: str | None) -> None:
     elif op == "set_controller":
         if type(value) is not str or not value:
             raise ContinuousEffectError("set_controller requires a nonempty string")
-    elif op == "replace_text":
-        if not isinstance(value, Mapping) or set(value) != {"from", "to"}:
-            raise ContinuousEffectError("replace_text requires exact from/to fields")
-        if type(value["from"]) is not str or not value["from"] or type(value["to"]) is not str:
-            raise ContinuousEffectError("replace_text values must be strings and from must be nonempty")
+    elif op in {"insert_name_sticker", "replace_text"}:
+        _validate_text_operation(op, value, field)
     elif op == 'set_basic_land_types':
         from .basic_land_types import BASIC_LAND_MANA
         words=_nonempty_words(value,field_name=op)
@@ -411,6 +424,7 @@ def _validate_operation_value(op: str, value: Any, field: str | None) -> None:
         "remove_creature_card_type",
         "remove_planeswalker_card_type",
         "default_creature_stats",
+        "set_power_toughness_to_mana_value",
         "switch_power_toughness",
     }:
         if field is not None or value is not None:
@@ -437,6 +451,9 @@ class ContinuousOperation:
     field: str | None = None
 
     def __post_init__(self) -> None:
+        if (self.op == "add_creature_for_enchantment_threshold"
+                and (self.field is not None or type(self.value) is not int or self.value != 5)):
+            raise ContinuousEffectError("Enchantment animation requires its exact five-permanent threshold")
         if type(self.op) is not str or not self.op:
             raise ContinuousEffectError(
                 "Continuous operation names must be nonempty strings"
@@ -536,7 +553,7 @@ class ContinuousObjectIdentity:
         )
 
 
-def _validate_continuous_effect_identity_scope(
+def _validate_continuous_effect_duration(
     effect: "ContinuousEffect",
     locked: tuple[ContinuousObjectIdentity, ...],
 ) -> None:
@@ -605,6 +622,13 @@ def _validate_continuous_effect_identity_scope(
             raise ContinuousEffectError("Source-presence duration cannot add a controller condition")
     elif any(value is not None for value in (effect.duration_source, effect.duration_controller, effect.duration_history)):
         raise ContinuousEffectError("Only source-bound effects may carry duration source facts")
+
+
+def _validate_continuous_effect_identity_scope(
+    effect: "ContinuousEffect",
+    locked: tuple[ContinuousObjectIdentity, ...],
+) -> None:
+    _validate_continuous_effect_duration(effect, locked)
     locked_origins = {
         ContinuousEffectOrigin.REPLACEMENT,
         ContinuousEffectOrigin.RESOLUTION,
@@ -692,7 +716,11 @@ def _validate_continuous_effect_identity_scope(
 
 def _validate_recipient_scope_anchor(effect: "ContinuousEffect") -> None:
     anchor = effect.recipient_scope_anchor
+    animation_ops = {"add_creature_for_enchantment_threshold", "set_power_toughness_to_mana_value"}
+    operations = tuple(operation.op for operation in effect.operations)
     if anchor is None:
+        if animation_ops.intersection(operations):
+            raise ContinuousEffectError("Enchantment animation requires its earlier-layer recipient scope")
         return
     if type(anchor) is not str or not anchor:
         raise ContinuousEffectError("A retained recipient scope requires an effect identity")
@@ -700,11 +728,21 @@ def _validate_recipient_scope_anchor(effect: "ContinuousEffect") -> None:
             or effect.duration is not ContinuousEffectDuration.WHILE_SOURCE_PRESENT
             or effect.relation is not ContinuousEffectRelation.NONE
             or effect.locked_objects or effect.characteristic_defining
-            or not effect.applies.controlled_by_nonowner or not effect.applies.controller
-            or effect.applies.types_all != ("creature",)):
-        raise ContinuousEffectError("Retained recipients require a live nonowner creature query")
-    if (anchor == effect.effect_id) != (effect.layer is Layer.TYPE) or effect.sublayer not in {"4","6","7c"}:
-        raise ContinuousEffectError("Retained recipients start in layer four and continue in six or seven c")
+            or not effect.applies.controller):
+        raise ContinuousEffectError("Retained recipients require a live controlled permanent query")
+    if (anchor == effect.effect_id) != (effect.layer is Layer.TYPE):
+        raise ContinuousEffectError("Retained recipients start in layer four")
+    if (effect.applies.controlled_by_nonowner and effect.applies.types_all == ("creature",)
+            and effect.sublayer in {"4", "6", "7c"} and not animation_ops.intersection(operations)):
+        return
+    predicate = ObjectQuerySpec(zones=("battlefield",), types_all=("enchantment",), excluded_subtypes=("aura",),
+                                controller=effect.applies.controller, exclude_ref=effect.applies.exclude_ref)
+    expected_operation = {(Layer.TYPE, "4"):"add_creature_for_enchantment_threshold",
+                          (Layer.POWER_TOUGHNESS, "7b"):"set_power_toughness_to_mana_value"}.get(
+                              (effect.layer, effect.sublayer))
+    if (effect.applies != predicate or not effect.applies.exclude_ref or expected_operation is None
+            or operations != (expected_operation,)):
+        raise ContinuousEffectError("Retained recipients require the exact original enchantment animation")
 
 
 @dataclass(frozen=True, slots=True)

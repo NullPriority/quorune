@@ -1,6 +1,8 @@
 """Read a selected creature’s current stat immediately before it is sacrificed."""
 
 from ..errors import GameRuleError
+from ..fixed_token_production import treasure_token_identity
+from ..token_copy_value_model import predefined_token_name_mode
 from ..object_query import exact_numeric_characteristic
 from ..relative_power_target import RelativePowerTargetError, current_effective_creature_power
 from ..replacement.immutable import FrozenMap
@@ -35,6 +37,13 @@ def committed_sacrifice_life_amount(host, intent, object_id: str, amount) -> int
     result = intent.result
     # Destination replacement can send the creature elsewhere and still complete the sacrifice.
     committed = current is None or current.logical_object_id != result.incarnation
+    if result.create_treasure:
+        if not committed or amount <= 0:
+            return CommittedQuantityFollowup(())
+        name, characteristics = treasure_token_identity(legacy_name=predefined_token_name_mode(host) is None)
+        effect = {"op": "create_token", "controller": result.player, "quantity": amount,
+                  "name": name, "characteristics": characteristics}
+        return CommittedQuantityFollowup((FrozenMap(effect),))
     if result.draw_then_lose_life:
         if not isinstance(amount, PaidCreatureStatSnapshot) or amount.logical_object_id != result.incarnation:
             raise GameRuleError("A committed sacrifice requires both signed stats from its original incarnation")

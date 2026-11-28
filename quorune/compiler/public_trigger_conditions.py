@@ -437,15 +437,7 @@ def _main_phase_landfall_combat_binding(match, *, card_name, compile_binding):
     )
 
 
-def bind_public_intervening_trigger(match, *, card_name, compile_binding, compile_source_binding):
-    if match["condition"].casefold() == "you cast it from anywhere other than your hand":
-        from .fixed_counter_trigger_nodes import _public_trigger_binding
-
-        return _public_trigger_binding(match.string, card_name=card_name)
-    if off_turn := _opponent_off_turn_draw_binding(match, card_name=card_name, compile_binding=compile_binding):
-        return off_turn
-    if land_combat := _main_phase_landfall_combat_binding(match, card_name=card_name, compile_binding=compile_binding):
-        return land_combat
+def _enchantment_death_return_binding(match, *, card_name):
     from .event_card_return_templates import self_death_return_binding
     from ..rules.entry_and_death_characteristics import DEATH_ENCHANTMENT_RETURN_VARIANT
 
@@ -457,6 +449,19 @@ def bind_public_intervening_trigger(match, *, card_name, compile_binding, compil
 
             return public_binding_from_spec(death, binding_type=FixedCounterTriggerBinding,
                                             event_type=FixedCounterTriggerEvent)
+
+
+def bind_public_intervening_trigger(match, *, card_name, compile_binding, compile_source_binding):
+    if match["condition"].casefold() == "you cast it from anywhere other than your hand":
+        from .fixed_counter_trigger_nodes import _public_trigger_binding
+
+        return _public_trigger_binding(match.string, card_name=card_name)
+    if off_turn := _opponent_off_turn_draw_binding(match, card_name=card_name, compile_binding=compile_binding):
+        return off_turn
+    if land_combat := _main_phase_landfall_combat_binding(match, card_name=card_name, compile_binding=compile_binding):
+        return land_combat
+    if death := _enchantment_death_return_binding(match, card_name=card_name):
+        return death
     from .opposing_end_step_advantage_templates import opposing_end_step_advantage_binding
     if advantage := opposing_end_step_advantage_binding(match):
         return advantage
@@ -472,7 +477,7 @@ def bind_public_intervening_trigger(match, *, card_name, compile_binding, compil
         return public_binding_from_spec(departure, binding_type=FixedCounterTriggerBinding,
                                         event_type=FixedCounterTriggerEvent)
     from .counter_movement_templates import source_counter_trigger_binding
-    from .fixed_counter_trigger_nodes import FixedCounterTriggerBinding, FixedCounterTriggerEvent
+    from .fixed_counter_trigger_nodes import FixedCounterTriggerBinding
 
     counter_binding = source_counter_trigger_binding(
         match.string, card_name=card_name, binding_type=FixedCounterTriggerBinding, event_type=FixedCounterTriggerEvent,
@@ -597,6 +602,36 @@ def bind_public_intervening_trigger(match, *, card_name, compile_binding, compil
     return replace(base, public_state_condition=condition)
 
 
+def public_state_source_self_trigger_spec(material_line, *, card_name):
+    """Parse source-self zone forms accepted by typed intervening-if."""
+    from ..rules.source_references import SourceReferenceSpec
+    from .public_event_binding_spec import public_event_binding
+
+    subjects = (
+        r"this (?:artifact|Aura|card|creature|enchantment|Equipment|land|permanent)"
+    )
+    if card_name:
+        subjects = rf"(?:{subjects}|{SourceReferenceSpec(card_name).regex_pattern})"
+    match = re.fullmatch(
+        rf"(?:When|Whenever) {subjects} (?P<event>enters|dies), "
+        r"(?P<body>.+)",
+        material_line,
+        re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    event = match.group("event").casefold()
+    return public_event_binding(
+        (
+            FixedCounterTriggerEvent.SOURCE_VEHICLE_DIES.value
+            if event == "dies"
+            else FixedCounterTriggerEvent.SOURCE_VEHICLE_ENTER.value
+        ),
+        f"public_state_source_{event}", match.group("body"),
+        "fixed-counter-public-state-source-zone-trigger-v1", "trigger-event-normalized-zone-change",
+    )
+
+
 def public_trigger_condition_capabilities(condition: PublicTriggerCondition | None) -> tuple[str, ...]:
     if condition is None:
         return ()
@@ -629,5 +664,8 @@ def public_trigger_condition_capabilities(condition: PublicTriggerCondition | No
         for leaf in condition.leaf_conditions()
         for capability in nonowner_control_quantity_capabilities(leaf.quantity)
     }
+    if any(leaf.fact is FixedPublicStateFact.CONTROLLER_CONTROLS_OWN_COMMANDER
+           for leaf in condition.leaf_conditions()):
+        query_capabilities.add('state_query.commander.designation')
     return (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY, *dungeon_condition_dependencies(condition),
             *sorted(query_capabilities))

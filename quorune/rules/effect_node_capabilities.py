@@ -27,6 +27,7 @@ from .endure_shapes import fixed_endure_node_capabilities
 from .earthbend_shapes import earthbend_node_capabilities
 from .suspect_shapes import suspect_node_capabilities
 from .blight_shapes import fixed_blight_node_capabilities
+from .opponent_blight import fixed_opponent_blight_node_capabilities
 from .goad_capability_shapes import fixed_goad_node_capabilities
 from .exploit_capability_shapes import exploit_instruction_node_capabilities
 from .source_keyword_choice_shapes import source_keyword_choice_capabilities
@@ -37,7 +38,7 @@ from .counter_capability_shapes import fixed_counter_placement_group_node_capabi
 from .creature_power_damage_capability_shapes import fixed_creature_power_damage_node_capabilities
 from .main_phase_creature_cohort import creature_cohort_addendum_node_capabilities
 from .prepared_creature_power_damage_shapes import prepared_creature_power_damage_capabilities
-from .delayed_draw_capability_shapes import fixed_next_turn_draw_node_capabilities
+from .delayed_draw_capability_shapes import delayed_draw_node_capabilities
 from ..delayed_object_model import delayed_object_node_capabilities
 from .delayed_counter_shapes import delayed_counter_node_capabilities
 from .graveyard_card_targets import targeted_graveyard_return_node_capabilities
@@ -57,6 +58,7 @@ from .affected_player_discard_capability_shapes import fixed_affected_player_han
 from .alternative_discard_shapes import alternative_discard_node_capabilities
 from .entry_permanent_results import entry_permanent_result_capabilities
 from .entry_return_capability_shapes import fixed_entry_return_node_capabilities
+from .commander_return_choice import commander_battlefield_entry_capabilities
 from .node_capability_shapes import fixed_counter_placement_batch_node_capabilities, fixed_counter_placement_node_capabilities, fixed_counter_placement_set_node_capabilities, fixed_counter_placement_target_set_node_capabilities, fixed_target_effect_sequence_node_capabilities, fixed_source_effect_sequence_node_capabilities, fixed_source_characteristics_node_capabilities, fixed_target_characteristics_node_capabilities, temporary_declaration_restriction_node_capabilities, fixed_player_counter_placement_node_capabilities, fixed_damage_node_capabilities, mass_destruction_node_capabilities, fixed_draw_node_capabilities, fixed_scry_node_capabilities, single_explore_node_capabilities, single_proliferate_node_capabilities, self_regeneration_node_capabilities, fixed_self_counter_keyword_action_node_capabilities, fixed_bolster_node_capabilities, fixed_amass_node_capabilities, targeted_counter_node_capabilities, targeted_destruction_node_capabilities, targeted_exile_node_capabilities, targeted_return_to_hand_node_capabilities, targeted_tap_state_node_capabilities
 from .token_creation_capability_shapes import fixed_token_creation_node_capabilities
 from .event_player_result_shapes import fixed_mill_node_capabilities, fixed_event_player_result_node_capabilities
@@ -118,6 +120,8 @@ from .prior_qualified_cast_copy import prior_cast_copy_node_capabilities
 
 from .magecraft_rummage_ordinal import magecraft_ordinal_node_capabilities
 
+from .magecraft_rummage_ordinal import magecraft_ordinal_node_capabilities
+
 _TURN_SCHEDULE_NODE_RESOLVERS = (
     source_counter_mill_node_capabilities,
     recipient_counter_damage_node_capabilities,
@@ -125,6 +129,7 @@ _TURN_SCHEDULE_NODE_RESOLVERS = (
     paid_nonland_damage_node_capabilities,
     type_return_node_capabilities,
     prior_cast_copy_node_capabilities,
+    magecraft_ordinal_node_capabilities,
     magecraft_ordinal_node_capabilities,
     fixed_end_turn_node_capabilities,
     fixed_extra_turn_node_capabilities,
@@ -214,6 +219,7 @@ def _effect_node_resolvers():
         earthbend_node_capabilities,
         suspect_node_capabilities,
         fixed_blight_node_capabilities,
+        fixed_opponent_blight_node_capabilities,
         resolution_control_node_capabilities,
         fixed_attachment_action_node_capabilities,
         all_counter_removal_node_capabilities,
@@ -235,7 +241,7 @@ def _effect_node_resolvers():
         prepared_creature_power_damage_capabilities,
         fixed_damage_node_capabilities,
         mass_destruction_node_capabilities,
-        fixed_next_turn_draw_node_capabilities,
+        delayed_draw_node_capabilities,
         delayed_object_node_capabilities,
         delayed_counter_node_capabilities,
         fixed_draw_node_capabilities,
@@ -247,6 +253,7 @@ def _effect_node_resolvers():
         fixed_affected_player_sacrifice_node_capabilities,
         protection_then_life_capabilities,
         fixed_entry_return_node_capabilities,
+        commander_battlefield_entry_capabilities,
         fixed_mill_node_capabilities, tap_state_event_player_node_capabilities, scheduled_player_node_capabilities,fixed_event_player_result_node_capabilities,
         event_player_choice_node_capabilities,
         fixed_impulse_access_node_capabilities,
@@ -318,6 +325,10 @@ def effect_node_capabilities(
         )
     from .departing_x_reflexive import node_capabilities as departure_x_node_capabilities
     dependencies.update(departure_x_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics))
+    from .name_stickers import node_capabilities as name_sticker_node_capabilities
+    dependencies.update(name_sticker_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics))
+    from ..resolving_cast_budget_model import node_capabilities as budgeted_cast_node_capabilities
+    dependencies.update(budgeted_cast_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics))
     if dependencies:
         from .finality_counters import finality_counter_dependencies
         dependencies.update(finality_counter_dependencies(effects))

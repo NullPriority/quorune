@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from ..graveyard_arrival_order_model import GraveyardArrivalOrders
+from ..hideaway_model import HIDEAWAY_DESTINATION
 from ..linked_library_imprint_model import LIBRARY_IMPRINT_DESTINATION
 from ..private_opponent_library_cast_model import PRIVATE_OPPONENT_LIBRARY_CAST_DESTINATION
 from ..replacement.immutable import FrozenMap
@@ -25,6 +26,7 @@ class LibrarySelectionIntent:
     entry_aura_target_ref: str | None = None
     require_graveyard_order: bool = False
     graveyard_orders: GraveyardArrivalOrders | None = None
+    committed_graveyard_treasure: bool = False
 
     def __post_init__(self) -> None:
         if any(
@@ -50,7 +52,7 @@ class LibrarySelectionIntent:
             raise ValueError(
                 "Library selection visibility must be a boolean"
             )
-        if self.arrangement.selected_destination == LIBRARY_IMPRINT_DESTINATION and (
+        if self.arrangement.selected_destination in {LIBRARY_IMPRINT_DESTINATION, HIDEAWAY_DESTINATION} and (
             self.actor != self.player or self.looked_are_public or self.selected_are_public
         ):
             raise ValueError("Private library imprint is owned by its resolving viewer")
@@ -62,6 +64,10 @@ class LibrarySelectionIntent:
         if (type(self.require_graveyard_order) is not bool or self.require_graveyard_order and not (hand_partition or damage_cast)
                 or damage_cast and not self.require_graveyard_order):
             raise ValueError("Library selection requires its own hand and graveyard for arrival order")
+        if (type(self.committed_graveyard_treasure) is not bool
+                or self.committed_graveyard_treasure and (not hand_partition or not self.looked_are_public
+                    or not self.require_graveyard_order or len(self.arrangement.looked) > 4)):
+            raise ValueError("Committed graveyard Treasure requires its public hand and graveyard partition")
         if self.graveyard_orders is not None and (
             not self.require_graveyard_order or not isinstance(self.graveyard_orders, GraveyardArrivalOrders)
             or not self.graveyard_orders.groups or self.graveyard_orders.current_group is not None
@@ -71,6 +77,9 @@ class LibrarySelectionIntent:
             self.actor == self.player or self.looked_are_public or self.selected_are_public
         ):
             raise ValueError("Private opponent library cast access separates its viewer from its supplier")
+        if self.arrangement.silver_exile and (self.actor != self.player or not self.looked_are_public
+                or not self.selected_are_public):
+            raise ValueError("Marked exile requires the controller's public library selection")
         self.arrangement.validate_entry_attachment(self.entry_aura_target_ref, controller_selected=self.actor == self.player,
                                                    looked_are_public=self.looked_are_public)
         object.__setattr__(

@@ -6,7 +6,7 @@ from typing import Any, Mapping
 from ..replacement.immutable import FrozenMap
 from ..counter_placement_targets import (
     CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD, CONTROLLED_CREATURE_COUNTER_SNAPSHOTS,
-    OPPONENT_CREATURE_COUNTER_CHOICE_VERSION,
+    CONTROLLED_CREATURE_VIGILANCE_COUNTER_CHOICE_VERSION, OPPONENT_CREATURE_COUNTER_CHOICE_VERSION,
     controlled_creature_counter_choice_dependencies,
 )
 from ..linked_exile_return_model import is_selected_conditional_exile
@@ -17,6 +17,10 @@ from .linked_loyalty_exile import (
 from ..rules.linked_creature_settlement import FIELD as LINKED_CREATURE_SETTLEMENT, CHOICE_OFFERED as LINKED_CREATURE_OFFERED
 from ..rules.linked_death_upkeep import FIELD as LINKED_DEATH_UPKEEP, OFFERED as LINKED_DEATH_UPKEEP_OFFERED
 from ..rules.controlled_return import CONTROLLED_RETURN_FIELD
+from ..rules.controller_damage_redirection import (
+    CHOICE_FIELD as DAMAGE_REDIRECTION_CHOICE, CHOSEN as DAMAGE_REDIRECTION_CHOSEN,
+    DESTINATION_TYPES as DAMAGE_REDIRECTION_TYPES, redirection_instruction, redirection_payload_dependencies,
+)
 from ..rules.commander_return_choice import COMMANDER_RETURN_FIELD
 from ..rules.owned_commander_amount import OWNED_COMMANDER_AMOUNT_FIELD
 from .owned_commander_amount import (
@@ -25,6 +29,8 @@ from .owned_commander_amount import (
 from ..rules.void_counter_play import CHOICE_FIELD
 from ..rules.milled_permanent_recovery import CHOICE_FIELD as MILLED_PERMANENT_CHOICE_FIELD
 from .void_counter_play import CANDIDATES_FIELD, complete_void_counter_play, prepare_void_counter_play
+from ..rules.silver_exile_loyalty import SILVER_EXILE_RETURN_CANDIDATES, SILVER_EXILE_RETURN_FIELD
+from .silver_exile_return import complete_silver_exile_return, prepare_silver_exile_return
 from ..rules.distinct_sacrifices import DISTINCT_SACRIFICE_FIELD
 from ..rules.opponent_greatest_power_destruction import GREATEST_POWER_DESTRUCTION_FIELD
 from ..rules.opponent_greatest_power_exile import GREATEST_POWER_EXILE_FIELD
@@ -42,7 +48,7 @@ from ..rules.targeted_discard_spell_copy import COPY_OFFER_FIELD
 from ..rules.targeted_return_spell_copy import LAND_PAYMENT_FIELD
 from .targeted_discard_spell_copy import complete_targeted_discard_copy, prepare_targeted_discard_copy
 from ..rules.permanent_resolution_choices import (
-    COUNTER_KEYWORDS_VERSION, controlled_counter_keywords_dependencies, controlled_counter_keywords_results,
+    COUNTER_KEYWORDS_VERSION, controlled_counter_keywords_results,
 )
 from ..semantic_runtime.intents import (
     CreateTokenIntent,
@@ -144,7 +150,10 @@ class PublicObjectChoiceHandler:
         "_maximum",
         "_stack_label",
         CONTROLLED_RETURN_FIELD,
+        DAMAGE_REDIRECTION_CHOICE,
+        "_damage_redirection_incarnations",
         COMMANDER_RETURN_FIELD, CHOICE_FIELD, CANDIDATES_FIELD, "source",
+        SILVER_EXILE_RETURN_FIELD, SILVER_EXILE_RETURN_CANDIDATES,
         OWNED_COMMANDER_AMOUNT_FIELD, COMMANDER_AMOUNT_CANDIDATES,
         MILLED_PERMANENT_CHOICE_FIELD,
         CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD,
@@ -166,6 +175,7 @@ class PublicObjectChoiceHandler:
         "_gravestorm_copies",
         "copy_source",
         "player",
+        "creature_damage_table_spare_choice",
         "_options_fingerprint",
         "_return_candidates",
         LINKED_LOYALTY_EXILE_FIELD,
@@ -246,6 +256,8 @@ class PublicObjectChoiceHandler:
         if DISTINCT_SACRIFICE_FIELD in effect:
             from .distinct_sacrifices import prepare_distinct_sacrifices
             return prepare_distinct_sacrifices(effect, context)
+        if SILVER_EXILE_RETURN_FIELD in effect:
+            return prepare_silver_exile_return(effect, context)
         if CHOICE_FIELD in effect:
             return prepare_void_counter_play(effect, context)
         if COMMANDER_RETURN_FIELD in effect:
@@ -258,12 +270,17 @@ class PublicObjectChoiceHandler:
             from .controlled_return import prepare_controlled_return
             return prepare_controlled_return(effect, context)
         refs = _public_choice_candidates(effect, context.query)
+        redirection_incarnations = _damage_redirection_incarnations(effect, refs, context)
+        if redirection_incarnations is not None:
+            refs = tuple(redirection_incarnations)
         opponent = effect.get(CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD) == OPPONENT_CREATURE_COUNTER_CHOICE_VERSION
         if opponent:
             _validate_opponent_counter_actor(context.query, context.stack_ref, effect.get("player"))
             if effect.get("player") != context.actor:
                 raise SemanticChoiceError("The opponent counter choice actor changed")
             refs = tuple(ref for ref in refs if context.query.counter_placement_allowed(ref, "deathtouch", 1))
+        if effect.get(CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD) == CONTROLLED_CREATURE_VIGILANCE_COUNTER_CHOICE_VERSION:
+            refs = tuple(ref for ref in refs if context.query.counter_placement_allowed(ref, "vigilance", 1))
         resolved_player = context.actor if opponent else None
         if not refs:
             _controlled_counter_choice_snapshot(effect, (), resolved_player=resolved_player)
@@ -328,15 +345,15 @@ class PublicObjectChoiceHandler:
                     "_minimum": minimum,
                     "_maximum": maximum,
                     "_stack_label": context.stack_label,
+                    **({"_damage_redirection_incarnations": redirection_incarnations}
+                       if redirection_incarnations is not None else {}),
                 }
             ),
         )
 
     def complete(
-        self,
-        continuation: SemanticChoiceContinuation,
-        response: Mapping[str, Any],
-        query: SemanticChoiceQuery,
+        self, continuation: SemanticChoiceContinuation,
+        response: Mapping[str, Any], query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
         effect = continuation.effect
         from ..meld_model import uses_meld_pair
@@ -384,6 +401,8 @@ class PublicObjectChoiceHandler:
         if DISTINCT_SACRIFICE_FIELD in effect:
             from .distinct_sacrifices import complete_distinct_sacrifices
             return complete_distinct_sacrifices(continuation, response, query)
+        if SILVER_EXILE_RETURN_FIELD in effect:
+            return complete_silver_exile_return(continuation, response, query)
         if CHOICE_FIELD in effect:
             return complete_void_counter_play(continuation, response, query)
         if COMMANDER_RETURN_FIELD in effect:
@@ -395,10 +414,7 @@ class PublicObjectChoiceHandler:
         if CONTROLLED_RETURN_FIELD in effect:
             from .controlled_return import complete_controlled_return
             return complete_controlled_return(continuation, response, query)
-        selected = tuple(
-            str(value)
-            for value in response.get("objects", response.get("cards", ()))
-        )
+        selected = tuple(str(value) for value in response.get("objects", response.get("cards", ())))
         legal = {str(value) for value in effect.get("_legal_refs", ())}
         if MILLED_PERMANENT_CHOICE_FIELD in effect and not set(selected) <= set(query.choice_candidate_refs()):
             raise SemanticChoiceError("The selected permanent is no longer a committed arrival from this Mill")
@@ -409,9 +425,7 @@ class PublicObjectChoiceHandler:
             or not minimum <= len(selected) <= maximum
             or any(ref not in legal for ref in selected)
         ):
-            raise SemanticChoiceError(
-                "Object choices do not satisfy the authoritative constraints"
-            )
+            raise SemanticChoiceError("Object choices do not satisfy the authoritative constraints")
         if MILLED_PERMANENT_CHOICE_FIELD in effect and not selected:
             return SemanticChoiceCompletion()
         rows = tuple(query.object(ref) for ref in selected)
@@ -421,7 +435,10 @@ class PublicObjectChoiceHandler:
         _check_controlled_counter_choice(effect, rows, actor)
         _check_opponent_counter_completion(effect, continuation, query, actor, selected)
         label = str(effect["_stack_label"])
-        followup = _controlled_counter_keyword_followup(continuation, query, actor, selected)
+        from ..rules.die_damage_table import die_damage_spare_followup
+
+        followup = (_owned_public_object_followup(continuation, query, actor, selected, rows)
+                    or die_damage_spare_followup(continuation, query, actor, selected, rows))
         intents: list[Any] = []
         for raw in (() if followup else effect.get("then", ())):
             if not isinstance(raw, Mapping):
@@ -536,9 +553,49 @@ def _validated_public_object_selection(effect,response,query):
     return selected, rows
 
 
-def _controlled_counter_keyword_followup(continuation, query, actor, selected):
+def _valid_damage_redirection_choice_row(row, actor):
+    return (
+        row is not None and row.zone == "battlefield" and not row.phased_out
+        and row.controller == actor and not DAMAGE_REDIRECTION_TYPES[DAMAGE_REDIRECTION_CHOSEN].isdisjoint(row.types)
+    )
+
+
+def _damage_redirection_incarnations(effect, refs, context):
+    if DAMAGE_REDIRECTION_CHOICE not in effect:
+        return None
+    try:
+        redirection_payload_dependencies(effect)
+    except (TypeError, ValueError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    return {
+        ref: row.logical_object_id for ref in refs
+        if _valid_damage_redirection_choice_row(row := context.query.object(ref), context.actor)
+    }
+
+
+def _damage_redirection_followup(continuation, query, actor, rows):
     effect = continuation.effect
-    if effect.get(CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD) != COUNTER_KEYWORDS_VERSION:
+    stack = query.stack_object(continuation.stack_ref)
+    incarnations = effect.get("_damage_redirection_incarnations")
+    if (
+        stack is None or stack.controller != actor or actor not in query.active_seats or len(rows) != 1
+        or not _valid_damage_redirection_choice_row(row := rows[0], actor)
+        or not isinstance(incarnations, Mapping) or incarnations.get(row.ref) != row.logical_object_id
+    ):
+        raise SemanticChoiceError("The resolving controller must choose one current offered permanent")
+    return ({
+        **redirection_instruction(DAMAGE_REDIRECTION_CHOSEN),
+        "destination": row.ref,
+        "destination_incarnation": row.logical_object_id,
+    },)
+
+
+def _owned_public_object_followup(continuation, query, actor, selected, rows):
+    effect = continuation.effect
+    if DAMAGE_REDIRECTION_CHOICE in effect:
+        return _damage_redirection_followup(continuation, query, actor, rows)
+    version = effect.get(CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD)
+    if version not in {COUNTER_KEYWORDS_VERSION, CONTROLLED_CREATURE_VIGILANCE_COUNTER_CHOICE_VERSION}:
         return ()
     stack = query.stack_object(continuation.stack_ref)
     if stack is None or stack.controller != actor or actor not in query.active_seats or len(selected) != 1:
@@ -546,11 +603,15 @@ def _controlled_counter_keyword_followup(continuation, query, actor, selected):
     transient = {"_choice_actor", "_legal_refs", "_minimum", "_maximum", "_stack_label",
                  CONTROLLED_CREATURE_COUNTER_SNAPSHOTS}
     try:
-        controlled_counter_keywords_dependencies(
+        controlled_creature_counter_choice_dependencies(
             FrozenMap({key: value for key, value in effect.items() if key not in transient}),
         )
     except (ValueError, TypeError) as exc:
         raise SemanticChoiceError(str(exc)) from exc
+    if version == CONTROLLED_CREATURE_VIGILANCE_COUNTER_CHOICE_VERSION:
+        if not query.counter_placement_allowed(selected[0], "vigilance", 1):
+            raise SemanticChoiceError("The selected creature can no longer receive its vigilance counter")
+        return ({"op": "place_counters", "card": selected[0], "counter": "vigilance", "amount": 1, "source": "$source"},)
     return controlled_counter_keywords_results(selected[0])
 
 

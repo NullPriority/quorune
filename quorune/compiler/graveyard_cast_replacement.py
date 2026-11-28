@@ -7,6 +7,10 @@ from copy import deepcopy
 from . import regex_working_set as re
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .library_search_templates import fixed_counted_library_search_effect_template
+from ..graveyard_cast_reanimation_copy import (
+    GRAVEYARD_REANIMATION_COPY_CLAUSE, GRAVEYARD_REANIMATION_COPY_VERSION,
+    is_graveyard_reanimation_copy_target, optional_resolving_source_copy,
+)
 from ..cast_origin_replacement import (
     CAST_ORIGIN_BY_VERSION, CAST_ORIGIN_REFERENCE,
     EXILE_CAST_REPLACEMENT_VERSION, GRAVEYARD_CAST_COPY_REPLACEMENT_VERSION, GRAVEYARD_CAST_REPLACEMENT_VERSION,
@@ -23,6 +27,7 @@ _TEMPLATES = {
     GRAVEYARD_CAST_REPLACEMENT_VERSION: "fixed-graveyard-cast-replacement-v1",
     EXILE_CAST_REPLACEMENT_VERSION: "fixed-exile-cast-opponent-damage-v1",
     GRAVEYARD_CAST_COPY_REPLACEMENT_VERSION: "fixed-graveyard-cast-stack-copies-v1",
+    GRAVEYARD_REANIMATION_COPY_VERSION: "fixed-graveyard-cast-reanimation-optional-copy-v1",
 }
 _ORIGIN_CLAUSE = re.compile(r"If this spell was cast from (?P<origin>a graveyard|exile), ", re.I)
 _CONDITION = "if this spell was cast from a graveyard, "
@@ -92,6 +97,14 @@ def _graveyard_stack_copy_results(normal_text, compile_component):
     return normal, (normal[0], (deepcopy(effect), deepcopy(effect)), normal[2], normal[3])
 
 
+def _graveyard_reanimation_copy_results(normal_text, compile_component):
+    normal = compile_component(normal_text)
+    if normal[0] is None or len(normal[1]) != 1 or not is_graveyard_reanimation_copy_target(normal[2]):
+        return None
+    optional_copy = optional_resolving_source_copy(controller="$controller", stack="$stack")
+    return normal, (normal[0], (*normal[1], optional_copy), normal[2], normal[3])
+
+
 def cast_origin_replacement_template(text, *, source_name, compile_component):
     text = text.strip()
     marker = _ORIGIN_CLAUSE.search(text)
@@ -110,6 +123,9 @@ def cast_origin_replacement_template(text, *, source_name, compile_component):
         elif normal_text.casefold() == _CONTROLLED_COPY and body.casefold() == _DOUBLE_COPY:
             version = GRAVEYARD_CAST_COPY_REPLACEMENT_VERSION
             results = _graveyard_stack_copy_results(normal_text, compile_component)
+        elif body.casefold() == GRAVEYARD_REANIMATION_COPY_CLAUSE:
+            version = GRAVEYARD_REANIMATION_COPY_VERSION
+            results = _graveyard_reanimation_copy_results(normal_text, compile_component)
         else:
             results = _fixed_results(normal_text, body, compile_component)
         if results is None:

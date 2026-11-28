@@ -10,6 +10,7 @@ from ..library_battlefield_model import (
     RANDOM_REVEALED_CREATURE_ENTRY_VERSION, RevealedCreatureEntryFollowup, validate_random_revealed_creature_entry,
     validate_private_top_land_entry,
 )
+from ..hideaway_model import uses_hideaway_selection, validate_hideaway_selection
 from ..linked_library_imprint_model import uses_library_imprint_selection, validate_library_imprint_selection
 from ..private_opponent_library_cast_model import (
     uses_damage_library_cast_selection, uses_private_opponent_library_cast_selection, validate_private_opponent_library_cast_selection,
@@ -30,6 +31,10 @@ from ..replacement.immutable import FrozenMap, thaw_value
 from ..rules.library_play_partition import uses_private_hand_bottom_exile, validate_private_hand_bottom_exile
 from ..rules.blocked_damage_cast import exile_offer, represents_window, window_dependencies, window_predicate
 from ..rules.library_partition import LibraryPartitionError, partition_refs
+from ..rules.revealed_legendary_graveyard_treasure import (
+    LEGENDARY_QUERY, TREASURE_FIELD, validate_revealed_legendary_treasure_effect,
+)
+from .revealed_legendary_graveyard_treasure import TREASURE_ORDER, TREASURE_SELECTED
 from ..rules.library_selection import (
     LibrarySelectionArrangement,
     LibrarySelectionError,
@@ -428,6 +433,14 @@ class FixedLibrarySelectionChoiceHandler:
             except (TypeError, ValueError) as exc:
                 raise SemanticChoiceError(str(exc)) from exc
             return ((window_predicate(),),)
+        if uses_hideaway_selection(effect):
+            if context.stack_controller != context.actor:
+                raise SemanticChoiceError("Hideaway belongs to the controller of the resolving trigger")
+            try:
+                validate_hideaway_selection(effect, player=context.actor)
+            except (TypeError, ValueError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+            return ()
         if uses_private_opponent_library_cast_selection(effect):
             player = effect.get("player")
             if context.stack_controller != context.actor or player == context.actor or player not in context.query.active_seats:
@@ -475,6 +488,14 @@ class FixedLibrarySelectionChoiceHandler:
                     or not private_one_hand_ordered_bottom_shape(effect, player=context.actor)):
                 raise SemanticChoiceError("The private hand and bottom partition is malformed")
             return ()
+        if TREASURE_FIELD in effect:
+            if context.stack_controller != context.actor:
+                raise SemanticChoiceError("The revealed legendary choice belongs to the resolving controller")
+            try:
+                validate_revealed_legendary_treasure_effect(effect, player=context.actor)
+            except (TypeError, ValueError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+            return ((LEGENDARY_QUERY,),)
         version_two=type(effect.get('schema_version')) is int and effect.get('schema_version')==2
         if type(effect.get('schema_version')) is int and effect.get('schema_version') in (3, LIBRARY_REVEALED_ENTRY_FOLLOWUP_VERSION):
             from ..library_battlefield_model import validate_library_battlefield_effect,fixed_selection_without_entry_fields
@@ -556,6 +577,10 @@ class FixedLibrarySelectionChoiceHandler:
 
         if effect.get("schema_version") == PRIVATE_LOOK_LAND_OR_HAND_VERSION:
             return prepare_private_land_hand(effect, context)
+        if TREASURE_SELECTED in effect:
+            from .revealed_legendary_graveyard_treasure import prepare_legendary_treasure_commit
+
+            return prepare_legendary_treasure_commit(effect, context)
         if effect.get("schema_version") == REVEALED_TOP_HAND_LIFE_VERSION:
             from ..rules.repeat_top_hand_life import REPEAT_TOP_HAND_LIFE_FIELD
             from .repeat_top_hand_life import prepare_repeat_top_hand_life
@@ -633,6 +658,11 @@ class FixedLibrarySelectionChoiceHandler:
             ),
         ) if refs else ()
 
+        if TREASURE_FIELD in effect and not refs:
+            return SemanticChoicePreparation(
+                request=None, continuation_effect=continuation,
+                auto_continue=AutoContinue(reason="No library cards can be revealed or moved."),
+            )
         sole_partition = uses_private_hand_bottom_exile(effect) and len(refs) == 1
         deterministic = (policy == "all_matching" or not refs or sole_partition or (represents_window(effect) and not legal_refs)
                          or effect.get("schema_version") in {LIBRARY_REVEALED_ENTRY_FOLLOWUP_VERSION,
@@ -700,7 +730,7 @@ class FixedLibrarySelectionChoiceHandler:
             from .library_play_partition import private_hand_bottom_exile_request
 
             return private_hand_bottom_exile_request(refs, public_context)
-        if uses_private_opponent_library_cast_selection(effect):
+        if uses_private_opponent_library_cast_selection(effect) or uses_hideaway_selection(effect):
             return SemanticChoiceRequest(
                 prompt=("Choose one card to exile face down. The rest go to their owner's graveyard."
                         if uses_damage_library_cast_selection(effect) else
@@ -723,6 +753,14 @@ class FixedLibrarySelectionChoiceHandler:
                     }),
                     legacy_destination=None,
                 ),
+                public_context=public_context,
+            )
+        if TREASURE_FIELD in effect:
+            return SemanticChoiceRequest(
+                prompt="Choose any revealed legendary cards to put into your hand.",
+                choice=ObjectChoice(field_name="cards", legal_refs=tuple(legal_refs), zones=("library",),
+                                    minimum=0, maximum=effective_maximum, optional=True,
+                                    visibility="public", owner_relation="actor"),
                 public_context=public_context,
             )
         if effect["remainder_order"] == "chosen":
@@ -845,6 +883,10 @@ class FixedLibrarySelectionChoiceHandler:
             return complete_private_land_hand(continuation, response, query)
         if effect.get("schema_version") == RANDOM_REVEALED_CREATURE_ENTRY_VERSION:
             raise SemanticChoiceError("Random creature entry accepts no player selection")
+        if TREASURE_ORDER in effect:
+            from .revealed_legendary_graveyard_treasure import complete_legendary_treasure_graveyard_order
+
+            return complete_legendary_treasure_graveyard_order(continuation, response, query)
         if DAMAGE_GRAVE_ORDER in effect:
             return complete_damage_library_graveyard_order(continuation, response, query)
         if effect.get("schema_version") in _PRIVATE_SINGLETON_SELECTION_VERSIONS:
@@ -862,12 +904,14 @@ class FixedLibrarySelectionChoiceHandler:
         raw_cards = response.get("cards")
         if represents_window(effect) and not isinstance(raw_cards, (list, tuple)):
             raise SemanticChoiceError("Choose zero or one nonland from the private damage window")
+        if TREASURE_FIELD in effect and not isinstance(raw_cards, (tuple, list)):
+            raise SemanticChoiceError("Choose the legendary cards using the issued optional object selection")
         if effect.get("schema_version") == RESOLVED_TOP_RANDOM_BOTTOM_VERSION and (
             set(response) - {"action", "choice_schema", "cards"} or ("cards" in response and raw_cards is None)
         ):
             raise SemanticChoiceError("The private top selection accepts only the optional kept card")
         imprint = uses_library_imprint_selection(effect)
-        if uses_private_opponent_library_cast_selection(effect):
+        if uses_private_opponent_library_cast_selection(effect) or uses_hideaway_selection(effect):
             player = effect["player"]
             if (not isinstance(raw_cards, (list, tuple)) or player not in query.active_seats
                     or looked_refs != query.library_refs(player, top_first=True)[:int(effect["look_count"])]):
@@ -948,6 +992,8 @@ class FixedLibrarySelectionChoiceHandler:
             raise SemanticChoiceError(str(exc)) from exc
         if uses_damage_library_cast_selection(effect):
             return SemanticChoiceCompletion(repeat_effect=FrozenMap({**effect, DAMAGE_SELECTED: arrangement.selected_refs[0]}))
+        if TREASURE_FIELD in effect:
+            return SemanticChoiceCompletion(repeat_effect=FrozenMap({**effect, TREASURE_SELECTED: arrangement.selected_refs}))
         if represents_window(effect):
             return SemanticChoiceCompletion(
                 intents=(self._intent(effect, arrangement, stack_ref=continuation.stack_ref),),

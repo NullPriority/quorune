@@ -72,3 +72,37 @@ def resolve_fixed_goad_refs(host,effect,*,actor):
     from .object_query import query_objects
     rows=host.affected_permanent_object_rows(actor)
     return tuple(row.ref for row in sorted(query_objects(rows,query),key=lambda row:row.logical_object_id))
+
+
+WATCHED_COMBAT_DRAW_FIELD = "watched_combat_draw_version"
+WATCHED_COMBAT_DRAW_CAPABILITY = "trigger.delayed.goaded_creature_combat_draw"
+WATCHED_COMBAT_DRAW_MECHANIC = "goaded-creature-combat-draw"
+HAND_COUNT_UNBLOCKABLE_FIELD = "hand_count_unblockable_version"
+HAND_COUNT_UNBLOCKABLE_CAPABILITY = "resolution.effect.hand_count_bonus_and_unblockable"
+HAND_COUNT_UNBLOCKABLE_MECHANIC = "hand-count-bonus-and-unblockable"
+
+
+def watched_combat_draw_schema():
+    from .target_cardinality import AnnouncedTargetCardinality
+
+    return {
+        "zones": ["battlefield"], "categories": ["permanent"], "types_any": ["creature"],
+        "controller_relation": "opponent", "distinct_controllers": True, "retain_controller": True,
+        "count_parameter": AnnouncedTargetCardinality(
+            parameter="any_number", selection="up_to", schema_version=2,
+        ).to_dict(),
+    }
+
+
+def watched_combat_draw_effect():
+    return {"op": "goad", "cards": "$targets", WATCHED_COMBAT_DRAW_FIELD: 1}
+
+
+def hand_count_unblockable_schema():
+    return {"zones": ["battlefield"], "categories": ["permanent"],
+            "count": 1, "types_any": ["creature"], "controller_relation": "you"}
+
+
+def hand_count_unblockable_effect():
+    return {"op": "grant_declaration_restriction_until_end_of_turn", "card": "$target.0",
+            "restriction": "unblockable", HAND_COUNT_UNBLOCKABLE_FIELD: 1}

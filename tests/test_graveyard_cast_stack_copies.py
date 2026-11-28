@@ -5,6 +5,7 @@ from dataclasses import replace
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
+from unittest.mock import patch
 
 from common import ROOT
 from inherited_composition_fixture import InheritedNativeFixture
@@ -13,11 +14,17 @@ from quorune.carddb import CardDatabase
 from quorune.cast_origin_replacement import GRAVEYARD_CAST_COPY_REPLACEMENT_VERSION
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.flashback import FLASHBACK_CAST_OPTION_ID
+from quorune.graveyard_cast_reanimation_copy import (
+    GRAVEYARD_REANIMATION_COPY_CAPABILITY, GRAVEYARD_REANIMATION_COPY_VERSION,
+)
 from quorune.oracle_ir import compile_oracle_card
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import load_default_capability_registry
 from scripts.build_test_database import build_fixture_database
 from test_controller_creature_keyword_absence import register_card
+
+
+RECLAMATION = "Sevinne's Reclamation"
 
 
 class GraveyardCastStackCopiesTests(InheritedNativeFixture, unittest.TestCase):
@@ -157,3 +164,146 @@ class GraveyardCastStackCopiesTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual((40, 40, 40, 40), self.life(game))
         self.assertEqual("exile", game.state.cards[vengeance.object_id].zone)
         self.replay(game, load=True)
+
+    def setup_reclamation(self, seed, *, zone="graveyard", returning="Wall of Omens"):
+        game = self.session(seed)
+        spell = self.add(game.engine, RECLAMATION, zone=zone)
+        original_target = self.add(game.engine, returning, zone="graveyard", ref="first-reclamation-target")
+        other_target = self.add(game.engine, "Plains", zone="graveyard", ref="second-reclamation-target")
+        expensive = self.add(game.engine, "Hill Giant", zone="graveyard", ref="too-large-for-reclamation")
+        hostile = self.add(game.engine, "Plains", seat="B", zone="graveyard", ref="foreign-reclamation-target")
+        for card in (spell, original_target):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"C": 4, "W": 1})
+        self.checkpoint(game)
+        return game, spell, original_target, other_target, expensive, hostile
+
+    def choose_reclamation_copy(self, game, choice):
+        pending = game.state.pending_decision
+        self.assertEqual(("semantic.choice", ["A"]), (pending.kind, pending.actors))
+        context = game.packet("pilot:A", full=True)["decision"]["ctx"]
+        self.assertEqual("offer_optional_effect", context["operation"])
+        command = {"action_id": "choose", "choice": choice}
+        self.reject(game, "B", command)
+        accepted = game.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+
+    def test_reclamation_original_bind_preserves_flashback_and_rejects_forged_copy_scope(self):
+        admission, semantics = register_card(self.db, self.registry, RECLAMATION)
+        self.assertTrue(admission["strict_capability_ready"], admission["blockers"])
+        card = self.db.lookup(RECLAMATION, fuzzy=False)
+        ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status)
+        programs = semantics.programs_for_oracle(card.oracle_id)
+        self.assertTrue(any("casting.flashback.fixed_mana" in p.capability_dependencies for p in programs))
+        program, = (p for p in programs if p.event == "resolve")
+        self.assertIn(GRAVEYARD_REANIMATION_COPY_CAPABILITY, program.capability_dependencies)
+        wrapper, = program.effects
+        self.assertEqual(GRAVEYARD_REANIMATION_COPY_VERSION, wrapper["schema_version"])
+        self.assertEqual(wrapper["otherwise_effects"][0], wrapper["effects"][0])
+        self.assertEqual(3, program.target_schema["mana_value_max"])
+        self.assertEqual("you", program.target_schema["owner_relation"])
+        other_stack = deepcopy(wrapper)
+        other_stack["effects"][1]["effects"][0]["stack"] = "$target.0"
+        for invalid in (replace(program, effects=[other_stack]),
+                        replace(program, target_schema={**program.target_schema, "owner_relation": "any"})):
+            ruling = bind_semantic_program_runtime(
+                invalid, capability_registry=self.registry, profile="commander_review",
+            )
+            self.assertFalse(ruling["strict"])
+
+    def test_reclamation_flashback_retargets_before_returned_permanent_trigger_and_replays(self):
+        # Commander 2019 release notes put copy targeting before the returned permanent's
+        # ETB can resolve, and its trigger must resolve before the copy.
+        game, spell, original, other, expensive, hostile = self.setup_reclamation(70710074)
+        hand = len(game.state.players["A"].zones["hand"])
+        self.use_flashback(game, spell, original.ref)
+        source_stack = game.state.stack[-1].ref
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self.assertEqual("battlefield", game.state.cards[original.object_id].zone)
+        self.assertEqual("graveyard", game.state.cards[other.object_id].zone)
+        self.assertEqual(hand, len(game.state.players["A"].zones["hand"]))
+        game = self.replay(game, load=True)
+        self.choose_reclamation_copy(game, "apply")
+        packet = game.packet("pilot:A", full=True)["decision"]["ctx"]
+        self.assertEqual("copy_stack_item", packet["operation"])
+        self.assertEqual(source_stack, packet["target_stack"])
+        self.assertEqual([original.ref], list(packet["default_targets"]))
+        self.assertEqual(hand, len(game.state.players["A"].zones["hand"]))
+        for forbidden in (expensive.ref, hostile.ref):
+            self.reject(game, "A", {"action_id": "choose", "targets": [forbidden]})
+        game = self.replay(game, load=True)
+        accepted = game.act("pilot:A", {"action_id": "choose", "targets": [other.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        copied, = (item for item in game.state.stack if item.kind == "spell_copy")
+        self.assertEqual([other.ref], list(copied.targets))
+        self.assertEqual("triggered_ability", game.state.stack[-1].kind)
+        self.assertEqual("exile", game.state.cards[spell.object_id].zone)
+        self.resolve_top(game)
+        self.assertEqual(hand + 1, len(game.state.players["A"].zones["hand"]))
+        self.assertEqual("graveyard", game.state.cards[other.object_id].zone)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("battlefield", game.state.cards[other.object_id].zone)
+        self.assertEqual(1, sum(event.code == "stack.copy" for event in game.state.events))
+        self.replay(game, load=True)
+
+    def test_reclamation_hand_and_decline_only_return_the_original_and_replay(self):
+        for index, zone in enumerate(("hand", "graveyard")):
+            with self.subTest(zone=zone):
+                game, spell, original, other, _, _ = self.setup_reclamation(
+                    70710075 + index, zone=zone, returning="Plains",
+                )
+                if zone == "hand":
+                    self.cast_for(game, "A", spell, [original.ref])
+                    self.assertIsNone(self.resolve(game))
+                else:
+                    self.use_flashback(game, spell, original.ref)
+                    self.assertEqual("semantic.choice", self.resolve(game).kind)
+                    self.choose_reclamation_copy(game, "decline")
+                self.assertEqual("battlefield", game.state.cards[original.object_id].zone)
+                self.assertEqual("graveyard", game.state.cards[other.object_id].zone)
+                self.assertEqual("exile" if zone == "graveyard" else "graveyard",
+                                 game.state.cards[spell.object_id].zone)
+                self.assertFalse(any(event.code == "stack.copy" for event in game.state.events))
+                self.replay(game, load=True)
+
+    def test_reclamation_copy_may_retain_the_now_illegal_target_and_fails_to_resolve(self):
+        game, spell, original, other, _, _ = self.setup_reclamation(70710077, returning="Plains")
+        self.use_flashback(game, spell, original.ref)
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self.choose_reclamation_copy(game, "apply")
+        decision = game.act("pilot:A", {"action_id": "choose"})
+        self.assertTrue(decision.ok, decision.summary)
+        copied, = (item for item in game.state.stack if item.kind == "spell_copy")
+        self.assertEqual([original.ref], list(copied.targets))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("battlefield", game.state.cards[original.object_id].zone)
+        self.assertEqual("graveyard", game.state.cards[other.object_id].zone)
+        self.assertEqual(1, sum(event.code == "stack.copy" for event in game.state.events))
+        self.replay(game, load=True)
+
+    def test_reclamation_original_loses_sole_target_and_cannot_offer_copy(self):
+        game, spell, original, other, _, _ = self.setup_reclamation(70710078, returning="Plains")
+        crypt = self.add(game.engine, "Tormod's Crypt", seat="B")
+        self.assert_closed(game, crypt)
+        self.checkpoint(game)
+        self.use_flashback(game, spell, original.ref)
+        self.priority(game, "B")
+        actions = game.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer = next(option for option in actions if option["id"].startswith(f"activate:{crypt.ref}:"))
+        result = game.act("pilot:B", {"action_id": offer["id"], "targets": ["A"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("exile", game.state.cards[original.object_id].zone)
+        self.assertEqual("exile", game.state.cards[other.object_id].zone)
+        self.assertEqual("exile", game.state.cards[spell.object_id].zone)
+        self.assertFalse(any(event.code == "stack.copy" for event in game.state.events))
+        self.replay(game, load=True)
+
+    def test_reclamation_hand_copy_guard_mutation_is_detected(self):
+        game, spell, original, _, _, _ = self.setup_reclamation(70710079, zone="hand", returning="Plains")
+        self.cast_for(game, "A", spell, [original.ref])
+        with patch("quorune.semantic_runtime.values.was_cast_from_origin", return_value=True):
+            pending = self.resolve(game)
+        self.assertEqual("semantic.choice", pending.kind)
+        self.assertEqual("offer_optional_effect", game.packet("pilot:A", full=True)["decision"]["ctx"]["operation"])

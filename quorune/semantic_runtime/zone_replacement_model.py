@@ -175,6 +175,14 @@ def _validated_prospective_types(subject):
     object_types = tuple(sorted(set(subject.object_types)))
     if any(type(value) is not str or not value for value in object_types):
         raise ZoneReplacementError("Zone replacement subject types must be canonical strings")
+    if type(subject.granted_read_ahead_chapters) is not tuple:
+        raise ZoneReplacementError("Granted Read Ahead chapters require an immutable tuple")
+    if subject.granted_read_ahead_chapters:
+        from ..read_ahead import read_ahead_entry_handler_descriptor
+
+        if subject.destination != "battlefield" or not subject.is_card_object or "saga" not in subject.object_types:
+            raise ZoneReplacementError("Granted Read Ahead requires a physical Saga entering the battlefield")
+        read_ahead_entry_handler_descriptor(subject.granted_read_ahead_chapters)
     counter_view = subject.entry_time_counter_types
     if counter_view is not None and (
         not isinstance(counter_view, EntryTimeCounterTypes)
@@ -229,6 +237,7 @@ class ZoneChangeSubjectSnapshot:
     active_players: tuple[str,...] = ()
     entry_time_counter_types: EntryTimeCounterTypes | None = None
     discard_effect_origin: DiscardEffectOrigin | None = None
+    granted_read_ahead_chapters: tuple[int, ...] = ()
 
     def __post_init__(self) -> None:
         _validate_discard_replacement_origin(self)
@@ -485,6 +494,19 @@ class PreparedZoneChange:
     def entry_chosen_jeskai_temur_faction(self) -> str | None:
         return (None if self.event is None
                 else self.event.payload.get("entry_chosen_jeskai_temur_faction"))
+
+    @property
+    def resolved_destination_controller(self) -> str | None:
+        if self.event is None or self.destination != "battlefield":
+            return self.destination_controller
+        from ..entry_designations import ENTRY_OPPONENT_FIELD, EntryOpponentChoice
+
+        raw_choice = self.event.payload.get(ENTRY_OPPONENT_FIELD)
+        if raw_choice is not None:
+            choice = EntryOpponentChoice.from_dict(raw_choice)
+            if choice.changes_entry_controller:
+                return choice.seat
+        return self.event.payload["destination_controller"]
 
     def __post_init__(self) -> None:
         sacrifices=tuple(self.devour_sacrifices)

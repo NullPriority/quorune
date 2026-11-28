@@ -20,7 +20,8 @@ def typed_attacker_requirements(
 ) -> list[DeclarationRequirement]:
     """Return current intrinsic attack requirements for one legal attacker."""
 
-    result: list[DeclarationRequirement] = []
+    from .rules.chosen_attack_turn import chosen_attack_turn_requirements
+    result = list(chosen_attack_turn_requirements(host.state, attacker))
     from .rules.bound_static_declarations import bound_declaration_requirements
     from .continuous_effect_state import active_resolution_declaration_rule_effects
     from .declaration_fragments import DeclarationRequirementTemplate
@@ -43,7 +44,8 @@ def typed_attacker_requirements(
     resolved = tuple((f"resolved:{effect.effect_id}", effect.restriction) for effect in matched
                      if isinstance(effect.restriction, DeclarationRequirementTemplate))
     for effect in matched:
-        if effect.live_query is None or not isinstance(effect.restriction, DeclarationRequirementTemplate):
+        if (effect.live_query is None or not isinstance(effect.restriction, DeclarationRequirementTemplate)
+                or effect.expires_on_next_turn_of is None):
             continue
         excluded = effect.expires_on_next_turn_of
         result.append(DeclarationRequirement(
@@ -115,6 +117,7 @@ def typed_blocker_requirements(
     blockers_by_ref: Mapping[str, CardInstance],
     *,
     error_type: type[Exception],
+    domains: Mapping[str, Sequence[str]] | None = None,
 ) -> list[DeclarationRequirement]:
     result: list[DeclarationRequirement] = []
     for requirement in host.state.combat.blocking_requirements:
@@ -127,7 +130,19 @@ def typed_blocker_requirements(
                 or blocker.ref not in blockers_by_ref):continue
         result.append(DeclarationRequirement(requirement_id=requirement.requirement_id,kind='choose_option',
             variable=blocker.ref,option=attacker.ref,label='This creature blocks the required attacker this combat if able.'))
+    from .rules.block_capacity import active_resolved_block_capacity_rules
     for blocker_ref, blocker in blockers_by_ref.items():
+        attacking_options = () if domains is None else domains.get(blocker_ref, ())
+        if attacking_options:
+            result.extend(
+                DeclarationRequirement(
+                    requirement_id=f"block:{blocker_ref}:{attacker_ref}:required:{rule.effect_id}",
+                    kind="choose_option", variable=blocker_ref, option=attacker_ref,
+                    label="This creature blocks each attacking creature if able.",
+                )
+                for rule in active_resolved_block_capacity_rules(host, blocker) if rule.require_each_attacker
+                for attacker_ref in attacking_options
+            )
         fragments = host._effective_ability_fragments(
             blocker,
             error_type=error_type,

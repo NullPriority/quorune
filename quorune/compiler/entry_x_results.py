@@ -1,7 +1,11 @@
 """Bind an ordinary X-cost permanent's self-entry instruction to sealed entry X."""
 from collections.abc import Mapping
 from . import regex_working_set as re
-from ..entry_x_amount_model import EntryXAmountSpec,ENTRY_X_AMOUNT_MECHANIC,entry_half_x_food_effect
+from ..entry_x_amount_model import (
+    EntryXAmountSpec, ENTRY_X_AMOUNT_MECHANIC, entry_half_x_food_effect, entry_x_counter_half_draw_effects,
+)
+from ..replacement.immutable import thaw_value
+from ..rules.source_references import SourceReferenceSpec
 from ..query_effect_amount_model import CAST_X_AMOUNT_KIND,CastXAmountSpec
 from .declared_effect_amounts import DECLARED_EFFECT_AMOUNT_MECHANIC, declared_effect_amount_template
 from .draw_templates import trigger_ability_word_material_line
@@ -9,6 +13,10 @@ from .optional_effect_templates import fixed_optional_effect_template
 
 
 _SUPPORT_X_BODY = re.compile(r"support X\.?", re.IGNORECASE)
+_COUNTER_HALF_DRAW = re.compile(
+    r"put X \+1/\+1 counters on (?P<receiver>.+?)\. Then draw half X cards, rounded down\.",
+    re.IGNORECASE,
+)
 
 
 def _entry_x_support_effect_compiler(ordinary):
@@ -46,8 +54,23 @@ def _entry_x_token_batch(body, *, ordinary, **kwargs):
 
 
 def entry_x_trigger_effect_compiler(record,material_line,*,card_name,ordinary,match_source):
-    if '{X}' not in record.mana_cost or record.faces or re.search(r'\bX\b',material_line) is None:return ordinary
+    from .cast_x_search_templates import entry_x_zone_search_template
+
     material = trigger_ability_word_material_line(material_line)
+    front = record.faces[0] if record.layout == "transform" and record.faces else None
+    face_mana = front.get("mana_cost") if front and front.get("name") == card_name else (
+        record.mana_cost if not record.faces else ""
+    )
+    if face_mana and type(face_mana) is str and face_mana.count("{X}") == 1:
+        entry = match_source(material, card_name=card_name)
+        if entry is not None and entry["event"].casefold() == "enters":
+            search = entry_x_zone_search_template(entry["body"])
+            if search is not None:
+                def compile_zone_search(body, **kwargs):
+                    return entry_x_zone_search_template(body) or ordinary(body, **kwargs)
+
+                return compile_zone_search
+    if '{X}' not in record.mana_cost or record.faces or re.search(r'\bX\b',material_line) is None:return ordinary
     if record.mana_cost.count("{X}") == 1 and "support" in material.casefold():
         from .oracle_source_text import without_parenthetical_reminder
 
@@ -82,6 +105,16 @@ def entry_x_trigger_effect_compiler(record,material_line,*,card_name,ordinary,ma
             batch = _entry_x_token_batch(body, ordinary=ordinary, **kwargs)
             if batch is not None:
                 return batch
+        if found := _COUNTER_HALF_DRAW.fullmatch(body):
+            receiver = found["receiver"]
+            if receiver.casefold() in {"him", "her"} or SourceReferenceSpec(card_name).matches(receiver):
+                template, fixed, schema, mechanics = declared(
+                    "Put X +1/+1 counters on this creature. Then draw X cards.", **kwargs,
+                )
+                expected = entry_x_counter_half_draw_effects()
+                projection = [expected[0], {**expected[1], "count": EntryXAmountSpec().to_dict()}]
+                if template is not None and schema is None and thaw_value(fixed) == projection:
+                    return ("entry-x-counter-half-draw-v1", expected, None, mechanics)
         if re.fullmatch(r"create half X Food tokens, rounded up\.", body, re.IGNORECASE):
             template, _effects, schema, mechanics = ordinary("Create two Food tokens.", **kwargs)
             if template is not None and schema is None:

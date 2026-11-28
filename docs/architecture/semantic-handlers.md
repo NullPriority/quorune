@@ -9,6 +9,10 @@ maintenance: "hand-maintained"
 
 # Typed semantic handlers
 
+A linked death copy and its granted token-departure return are admitted
+through their complete triggered program shapes. The replacement-decision
+owner resumes those same instructions after a replacement choice.
+
 A token replacement that adds one token for each pending token uses the current
 creation recipes after earlier replacements. Added tokens retain the individual
 creation instructions for status and attack assignment and have their own token
@@ -149,6 +153,14 @@ then prepares their replacements and commits the pair in one transaction.
 For an optional upkeep trigger, targets are chosen when it is put on the
 stack and the controller chooses whether to exchange on resolution.
 
+A targeted source handoff uses the existing control journal for the original
+battlefield incarnation. A committed change places a separate reflexive
+trigger under the activation controller. The draw resolves for that controller
+and the quest counter can be placed only on the same battlefield incarnation.
+A source-departure Soldier trigger uses the sealed quest-counter quantity and
+creates the tapped tokens for the source owner, independently of the departing
+permanent’s last controller.
+
 A paired exchange can precede token creation within one resolving spell.
 The token instruction reads the two legal players’ current totals after
 the exchange and its replacement choices. It can create a zero-size token
@@ -202,6 +214,12 @@ spell's modes, paid choices, and ordered target groups. The copy validator
 checks the original source incarnation against every target slot before
 offering the choice and again when the player accepts. A legal Aura spell
 copy enters as a token attached to that receiver.
+
+A source-attacking spell-copy trigger qualifies the controller's original cast
+against the source's current combat membership. After the trigger has occurred,
+losing the source does not suppress it. The common cast-event copy owner
+retains the spell and its choices, creates one compulsory copy, and allows new
+legal targets for that copy.
 
 The creature-set spell-copy trigger observes an instant or sorcery cast
 whose only distinct target is its original source. The ability controller
@@ -483,6 +501,17 @@ Consecutive upkeep steps retain the disclosure. Ending it preserves learned
 identity and independent public-hand permissions. A later hand incarnation
 gets independent usage and reveal state.
 
+An announced artifact sacrifice uses a positive X as a selected-object count.
+Its fixed mana fee stays separate. The issued target bounds and ordinary
+resolution recheck use the same X for the owned graveyard creature’s maximum
+power. The counted payment and replacement journal retain the original
+artifact references, including an eligible ability source.
+
+A source-entry choice can create Treasure from the paid creature’s power. The
+existing sacrifice transaction captures power before departure, and a completed
+replacement departure still pays the choice. The result creates the ordinary
+Treasure tokens in one batch.
+
 Announced activation X can compose with a fixed sacrifice of its own source,
 with or without a printed tap cost. The catalog keeps both the X symbol count
 and the existing sacrifice flag, validated against the entire printed cost.
@@ -541,6 +570,13 @@ all validation and mutation. The wrapper rejects unknown operations, changed
 chooser identity, extra fields, and nested optional wrappers. Specialized
 optional choices such as fixed counter placement retain their historical
 operation and replay identity rather than being rewritten through this owner.
+
+A subtype-conditioned activation tests the original source’s current subtype
+as it resolves. The ordinary layer journal keeps the resulting subtype, base
+stats, keyword or granted ability on that battlefield incarnation. The bound
+combat-damage child uses its controller’s current Ring count and the original
+damaged player. It chooses the regular Ring temptation or game-loss effect
+once before the selected effect starts.
 
 The public resolution-condition handler receives one immutable result from the
 canonical public-state query at the current instruction boundary. A known false

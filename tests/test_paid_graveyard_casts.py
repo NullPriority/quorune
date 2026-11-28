@@ -597,10 +597,13 @@ class GrantedEscapeAuthorityTests(unittest.TestCase):
         reentered = SimpleNamespace(object_id="grant", logical_object_id="grant@2")
         spell = SimpleNamespace(zone="graveyard", logical_object_id="spell@6")
         printed = {"id": "printed", "kind": "mana", "requirements": {"W": 1}}
-        host = SimpleNamespace(_compiled_printed_cost_options=Mock(return_value=([printed], False)))
+        host = SimpleNamespace(
+            state=SimpleNamespace(players={}),
+            _compiled_printed_cost_options=Mock(return_value=([printed], False)),
+        )
 
         with (
-            patch.object(escape_grants, "_escape_face_price", return_value=("Tear", "{W}")),
+            patch.object(escape_grants, "graveyard_printed_cast_price", return_value=("Tear", "{W}")),
             patch.object(escape_grants, "_current_escape_grants", return_value=((source, "grant:ability", spec),)) as grants,
         ):
             original, = escape_grants.granted_escape_base_options(host, "A", spell, [printed])

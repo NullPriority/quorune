@@ -97,7 +97,10 @@ def _color_set_mana_modes(
         current = (host.state.cards[entry.object_id] for entry in linked)
         colors = {color for card in current if not card.face_down
                   for color in host._effective_card_data(card).get("colors", ())}
-        return _one_mana_color_modes(colors)
+        modes = _one_mana_color_modes(colors)
+        if not modes and spec.relation is ColorSetRelation.LINKED_GRAVEYARD_EXILE:
+            return (ManaMode(normalize_mana_bundle(None)),)
+        return modes
     query = replace(
         spec.query,
         controller=(
@@ -419,10 +422,15 @@ def typed_mana_modes_for_abilities(
 
 
 def has_ordinary_mana_mode_price(ability: ActivatedAbility) -> bool:
+    from .fixed_mana_abilities import supports_paid_five_color_combination
     from .rules.exert_mana import is_exert_mana
     from .fixed_mana_results import doubles_unspent_mana
+    from .rules.next_cast_library_access import NEXT_CAST_LIBRARY_ACCESS
 
-    if is_exert_mana(ability) or doubles_unspent_mana(ability):
+    if (is_exert_mana(ability)
+            or doubles_unspent_mana(ability)
+            or supports_paid_five_color_combination(ability)
+            or ability.fixed_mana_result is not None and ability.fixed_mana_result.kind == NEXT_CAST_LIBRARY_ACCESS):
         return True
     spec = ability.color_set_mana_output
     return (chosen_subtype_mana_output(ability) is not None
@@ -497,9 +505,23 @@ def mana_output_for_ability(
     if potential is not None:
         return _select_land_potential_mana(host, seat, potential, response,
                                            amount=potential.amount(source.counters))
+    spec = ability.color_set_mana_output
+    if spec is not None and spec.relation is ColorSetRelation.LINKED_GRAVEYARD_EXILE and "mana_choice" in response:
+        choice = response["mana_choice"]
+        if type(choice) is not str or choice.upper() not in {"W", "U", "B", "R", "G"}:
+            raise GameRuleError("Choose a current linked-exile color")
     legal_modes = (chosen_color_mana_modes(source, ability, source_information=source_information)
                    if chosen_color_mana_output(ability) is not None else mana_modes_for_ability(host, seat, source, ability))
-    declared = normalize_mana_bundle(response.get("mana_output"))
+    raw_output = response.get("mana_output")
+    if raw_output is not None:
+        from .fixed_mana_abilities import supports_paid_five_color_combination
+
+        if supports_paid_five_color_combination(ability) and (
+            not isinstance(raw_output, Mapping)
+            or any(type(amount) is not int for amount in raw_output.values())
+        ):
+            raise GameRuleError("A five-color combination requires integer mana quantities")
+    declared = normalize_mana_bundle(raw_output)
     raw_choice = str(response.get("mana_choice") or "").upper()
     if raw_choice in "WUBRGC" and len(raw_choice) == 1:
         declared[raw_choice] += 1

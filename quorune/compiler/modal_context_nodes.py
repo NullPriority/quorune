@@ -120,6 +120,22 @@ def _bind_combat_recipient_modes(node, target_schema):
     )
 
 
+def _bind_distinct_graveyard_mode_occurrence(node, target_schema):
+    """Use the committed before-zone occurrence for the versioned graveyard modal."""
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from ..rules.event_subscriptions import GRAVEYARD_DEPARTURE_LOOKBACK_EVENT
+    from ..rules.modal_selection import uses_distinct_turn_graveyard_modes
+
+    if node is None or not uses_distinct_turn_graveyard_modes(target_schema):
+        return node
+    if node.event != "card.leave_graveyard" or "one_or_more_event_batch" not in node.runtime_coverage:
+        return None
+    return replace(
+        node, event=GRAVEYARD_DEPARTURE_LOOKBACK_EVENT,
+        runtime_coverage=tuple(dict.fromkeys((*node.runtime_coverage, CURRENT_ABILITY_FRAGMENT_COVERAGE))),
+    )
+
+
 def _context_node(
     *,
     node_id: str,
@@ -220,19 +236,20 @@ def _context_node(
             effect_template=modal_effect_template,
         )
     node = _bind_combat_recipient_modes(node, target_schema)
+    node = _bind_distinct_graveyard_mode_occurrence(node, target_schema)
     if node is None or not node.lowerable:
         return None
     if modal.minimum_modes == 0:
-        from ..rules.modal_selection import optional_combat_trigger_context_matches
+        from ..rules.modal_selection import optional_trigger_mode_context_dependencies
 
-        if not optional_combat_trigger_context_matches(
-            event=node.event, active_zone=node.active_zone, event_condition=node.event_condition,
+        if not optional_trigger_mode_context_dependencies(
+            target_schema, event=node.event, active_zone=node.active_zone, event_condition=node.event_condition,
         ):
             return None
     from ..rules.modal_selection import distinct_turn_trigger_context_matches, has_distinct_turn_trigger_modes
 
     if has_distinct_turn_trigger_modes(target_schema) and not distinct_turn_trigger_context_matches(
-        event=node.event, active_zone=node.active_zone, event_condition=node.event_condition,
+        event=node.event, active_zone=node.active_zone, event_condition=node.event_condition, schema=target_schema,
     ):
         return None
     block_text = oracle_text[span.start : span.end]

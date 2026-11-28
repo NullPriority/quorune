@@ -11,6 +11,9 @@ from .effect_shape_walkers import nested_effects
 COMMANDER_RETURN_FIELD = "own_commander_return"
 COMMANDER_RETURN_MECHANIC = "own-commander-command-return"
 COMMANDER_RETURN_CAPABILITY = "zone.return.own_commander_choice"
+COMMANDER_BATTLEFIELD_ENTRY_CAPABILITY = "zone.move.owned_commander_entry_and_return"
+COMMANDER_BATTLEFIELD_ENTRY_MECHANIC = "owned-commander-entry-and-delayed-return"
+COMMANDER_BATTLEFIELD_ENTRY_TEMPLATE = "owned-commander-entry-and-delayed-return-v1"
 
 _COST_FLAGS = {
     "tap_source": True,
@@ -33,6 +36,26 @@ def is_commander_return_effect(effect, *, actor="$controller"):
     marker = effect.get(COMMANDER_RETURN_FIELD)
     return (isinstance(marker, Mapping) and type(marker.get("schema_version")) is int
             and thaw_value(effect) == commander_return_effect(actor))
+
+
+def commander_battlefield_entry_effect(actor="$controller"):
+    return {"op": "choose_objects", "player": actor, COMMANDER_RETURN_FIELD: {"schema_version": 2}}
+
+
+def is_commander_battlefield_entry_effect(effect, *, actor="$controller"):
+    marker = effect.get(COMMANDER_RETURN_FIELD)
+    return (isinstance(marker, Mapping) and type(marker.get("schema_version")) is int
+            and thaw_value(effect) == commander_battlefield_entry_effect(actor))
+
+
+def commander_battlefield_entry_capabilities(*, effects, target_schema, mechanic_ids, **_unused):
+    if (COMMANDER_BATTLEFIELD_ENTRY_MECHANIC not in mechanic_ids or target_schema is not None
+            or len(effects) != 1 or not is_commander_battlefield_entry_effect(effects[0])):
+        return ()
+    from .reanimation_followup import BattlefieldEntryFollowup, battlefield_entry_followup_capabilities
+
+    followup = BattlefieldEntryFollowup("zone_object", "command", "next")
+    return battlefield_entry_followup_capabilities(followup)
 
 
 def commander_return_price_is_closed(price):
@@ -58,6 +81,17 @@ def commander_return_node_capabilities(*, effects, target_schema, mechanic_ids, 
 def commander_return_runtime_dependencies(program):
     if not any(COMMANDER_RETURN_FIELD in effect for effect in nested_effects(program.effects)):
         return ()
+    if COMMANDER_BATTLEFIELD_ENTRY_MECHANIC in program.coverage or any(
+        is_commander_battlefield_entry_effect(effect) for effect in program.effects
+    ):
+        required = commander_battlefield_entry_capabilities(
+            effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+        )
+        if (not required or program.event != "permanent.enter.self" or program.active_zone != "battlefield"
+                or program.event_condition is not None or program.cost_schema is not None
+                or program.trigger_limit is not None or program.handlers):
+            raise ValueError("Commander battlefield entry requires its complete untargeted self-entry trigger")
+        return required
     from ..semantic_runtime.activated_abilities import ACTIVATED_ABILITY_CATALOG_HANDLER_ID
 
     price = program.cost_schema

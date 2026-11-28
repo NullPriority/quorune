@@ -158,8 +158,9 @@ _WITNESSES = {
         "Creatures you control with no abilities get +1/+1.\n"
         "As long as you've drawn two or more cards this turn, creatures "
         "you control get +1/+1.\n"
+        # Token multiplication is supported. Its conditional replacement still needs ordering.
         "If one or more tokens would be created under your control, twice "
-        "that many of those tokens are created instead.",
+        "that many of those tokens are created instead unless you control an artifact.",
         "{2}",
     ),
     "saga-attached-boundary": _Witness(

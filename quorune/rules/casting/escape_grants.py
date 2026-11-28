@@ -14,35 +14,10 @@ from ...cast_lifecycles import (
 )
 from ...util import stable_json
 from ...temporary_graveyard_escape import temporary_escape_sources
-from .face_queries import current_printed_cast_mana_cost
+from .face_queries import graveyard_printed_cast_price
 
 
 _PRINTED_PRICE_KINDS = frozenset({"mana", "hybrid"})
-
-
-def _escape_face_price(host, seat, card):
-    physical = host.state.cards.get(card.object_id)
-    if (physical is None or physical.zone != "graveyard" or card.zone != "graveyard"
-            or physical.owner != seat or physical.object_kind != "card"
-            or physical.logical_object_id != card.logical_object_id):
-        return None
-    if card.face_down or card.annotations.get("prospective_cast_prototype") or card.annotations.get("prospective_cast_fuse"):
-        return None
-    record = host.card_record(physical)
-    if record is None:
-        return None
-    face = card.active_face
-    if record.faces:
-        front = str(record.faces[0]["name"])
-        face = face or front
-        if face != front and record.layout not in {"split", "adventure", "modal_dfc"}:
-            return None
-    for view in (physical, card):
-        types, _, _ = host._type_parts(str(host._effective_card_data(view).get("type_line") or ""))
-        if "land" in types:
-            return None
-    mana_cost = current_printed_cast_mana_cost(host, card, record).strip()
-    return (face, mana_cost) if mana_cost else None
 
 
 def _current_escape_grants(host, seat):
@@ -80,7 +55,7 @@ def _available_escape_grants(host, seat, card):
 
 
 def compiled_granted_escape_permission(host, seat, card) -> bool:
-    return _escape_face_price(host, seat, card) is not None and bool(_available_escape_grants(host, seat, card))
+    return graveyard_printed_cast_price(host, seat, card) is not None and bool(_available_escape_grants(host, seat, card))
 
 
 def _grant_use(source, key, card, *, seat, face, mana_cost, printed_id):
@@ -94,7 +69,7 @@ def _grant_use(source, key, card, *, seat, face, mana_cost, printed_id):
 def granted_escape_base_options(host, seat, card, printed):
     if card.zone != "graveyard":
         return []
-    price = _escape_face_price(host, seat, card)
+    price = graveyard_printed_cast_price(host, seat, card)
     if price is None:
         return []
     face, mana_cost = price
@@ -127,7 +102,7 @@ def validate_granted_escape_option(host, seat, card, option, *, origin, x_value=
             or type(use.get("printed_cost_id")) is not str or origin != "graveyard"
             or option.get("source_zone") != "graveyard"):
         raise ValueError("Granted Escape requires its sealed source and printed price")
-    price = _escape_face_price(host, seat, card)
+    price = graveyard_printed_cast_price(host, seat, card)
     if price is None:
         raise ValueError("The selected Escape face is no longer payable")
     printed, _ = host._compiled_printed_cost_options(seat, card, x_value=x_value, hint=False)

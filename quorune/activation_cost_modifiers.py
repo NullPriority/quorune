@@ -143,14 +143,31 @@ class AbilityLocalPublicManaAdjustment:
             CharacteristicQuantitySpec.from_dict(value['quantity']) if value['quantity'] is not None else None)
 
 
+@dataclass(frozen=True, slots=True)
+class AbilityLocalRadReduction:
+    """Reduce the generic activated price once per rad counter on its actor."""
+
+    def to_dict(self):
+        from .rad_counter_model import RAD_COUNTER
+        return {"schema_version": 5, "per_player_counter": RAD_COUNTER}
+
+    @classmethod
+    def from_dict(cls, value):
+        spec = cls()
+        if (not isinstance(value, Mapping) or value != spec.to_dict()
+                or type(value.get("schema_version")) is not int):
+            raise ValueError("Ability-local rad reduction requires its exact public player counter")
+        return spec
+
+
 AbilityLocalManaReduction = (CharacteristicQuantitySpec | ConditionalActivationReduction
     | PublicCharacteristicAggregateSpec | AbilityLocalPublicManaAdjustment | TargetActivationReduction
-    | OpponentControlledActivationReduction)
+    | OpponentControlledActivationReduction | AbilityLocalRadReduction)
 
 
 def validate_ability_local_mana_reduction(quantity: AbilityLocalManaReduction) -> None:
     if isinstance(quantity, (ConditionalActivationReduction, AbilityLocalPublicManaAdjustment,
-                             TargetActivationReduction, OpponentControlledActivationReduction)):
+                             TargetActivationReduction, OpponentControlledActivationReduction, AbilityLocalRadReduction)):
         return
     if isinstance(quantity, PublicCharacteristicAggregateSpec):
         if quantity.schema_version != 1 or quantity.controller_relation != 'source_controller':
@@ -172,7 +189,9 @@ def validate_ability_local_mana_reduction(quantity: AbilityLocalManaReduction) -
 def ability_local_mana_reduction_from_dict(value: Mapping[str, Any]) -> AbilityLocalManaReduction:
     if not isinstance(value, Mapping):
         raise ValueError('Ability-local mana reduction must be a descriptor')
-    if 'opponent_controlled_query' in value:
+    if "per_player_counter" in value or value.get("schema_version") == 5:
+        reduction = AbilityLocalRadReduction.from_dict(value)
+    elif 'opponent_controlled_query' in value:
         reduction = OpponentControlledActivationReduction.from_dict(value)
     elif 'target_metric' in value:
         reduction = TargetActivationReduction.from_dict(value)
@@ -200,6 +219,9 @@ def ability_local_mana_reduction_capabilities(reduction: AbilityLocalManaReducti
         return tuple(sorted({OPPONENT_CONTROLLED_ACTIVATION_CAPABILITY, ABILITY_LOCAL_PUBLIC_VALUE_CAPABILITY,
                              *object_query_capabilities(reduction.to_dict())}))
     if isinstance(reduction, TargetActivationReduction):return (TARGET_ACTIVATION_VALUE_CAPABILITY,)
+    if isinstance(reduction, AbilityLocalRadReduction):
+        from .rad_counter_model import RAD_CAPABILITY
+        return (ABILITY_LOCAL_PUBLIC_VALUE_CAPABILITY, RAD_CAPABILITY)
     if isinstance(reduction, CharacteristicQuantitySpec) and zone == 'battlefield':
         return (ABILITY_LOCAL_MANA_REDUCTION_CAPABILITY,)
     raw = reduction.to_dict()

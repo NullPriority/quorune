@@ -31,8 +31,8 @@ def reduce_public_quantity(
     if reduction is CharacteristicQuantityReduction.TOTAL_COUNTERS:
         return sum(permanent_counter_total(row.counters) for row, _data, _kind in rows)
     if reduction is CharacteristicQuantityReduction.NAMED_COUNTER_TOTAL:
-        if counter_name != "+1/+1":
-            raise ValueError("Named public counter totals require the represented counter")
+        if counter_name not in {"+1/+1", "lore"}:
+            raise ValueError("Named public counter totals require a represented counter")
         return sum(permanent_counter_snapshot(row.counters).get(counter_name, 0) for row, _data, _kind in rows)
     if reduction in {CharacteristicQuantityReduction.COLORED_MANA_SYMBOLS,CharacteristicQuantityReduction.DEVOTION}:
         count = 0

@@ -13,6 +13,7 @@ from .graveyard_card_targets import (
     GraveyardCardTargetError,
     OwnGraveyardCardTargetSpec,
     PublicGraveyardCardTargetSpec,
+    per_color_graveyard_return_node_capabilities,
 )
 from .permanent_predicate_capability_shapes import (
     direct_target_predicate_capabilities,
@@ -138,6 +139,8 @@ def fixed_homogeneous_target_set_node_capabilities(
         "cr-115-targets",
     }.issubset(mechanics) or len(effects) != 1:
         return ()
+    if grouped_return := per_color_graveyard_return_node_capabilities(effects, target_schema):
+        return grouped_return
     effect = effects[0]
     from .event_player_targets import DAMAGED_PLAYER_GRAVEYARD_EXILE_CAPABILITY, is_damaged_player_graveyard_exile
 
@@ -368,7 +371,7 @@ def announced_target_runtime_dependencies(program: Any) -> tuple[str, ...]:
             raise ValueError("Returned creature counters require their original target-set reanimation")
         return required
     from .targeted_control_set import targeted_control_set_runtime_dependencies
-    from .counter_target_set_shapes import split_two_counter_program_dependencies
+    from .counter_target_set_shapes import counter_distribution_program_dependencies
     from .controlled_destruction_source_counters import controlled_destruction_source_counter_program_dependencies
 
     from .announced_x_damage_sets import scaled_announced_target_damage_program_dependencies
@@ -377,8 +380,8 @@ def announced_target_runtime_dependencies(program: Any) -> tuple[str, ...]:
         return scaled_damage
     if required := controlled_destruction_source_counter_program_dependencies(program):
         return required
-    if split := split_two_counter_program_dependencies(program):
-        return split
+    if distribution := counter_distribution_program_dependencies(program):
+        return distribution
     if targeted_control := targeted_control_set_runtime_dependencies(program):
         return targeted_control
     schema = getattr(program, "target_schema", None)

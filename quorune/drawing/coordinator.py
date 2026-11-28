@@ -7,6 +7,7 @@ from ..model import GameState
 from ..replacement import FrozenMap
 from ..rules.faction_trigger_model import CountFactionDraw
 from ..rules.opponent_draw_result import ObserveOpponentDraw
+from ..rules.opponent_draw_followup import CountDistinctOpponentDraw
 from ..replacement.immutable import thaw_value
 from ..semantic_runtime.context import SemanticNodeError
 from ..semantic_runtime.draw_reveals import (
@@ -335,7 +336,8 @@ def _prepare_runtime_draw_event(
 def _retain_committed_draw_observers(draw, original):
     observers = tuple(
         action for action in original.post_draw_actions
-        if isinstance(action, (CountFactionDraw, ObserveOpponentDraw)) and action not in draw.post_draw_actions
+        if isinstance(action, (CountFactionDraw, ObserveOpponentDraw, CountDistinctOpponentDraw))
+        and action not in draw.post_draw_actions
     )
     return replace(draw, post_draw_actions=(*draw.post_draw_actions, *observers)) if observers else draw
 

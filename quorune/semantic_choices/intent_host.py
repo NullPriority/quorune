@@ -1,9 +1,11 @@
 from __future__ import annotations
+from ..rules.opponent_blight import OpponentBlightBatchIntent
 from .token_creation_intents import execute_token_creation_intent
 from ..semantic_runtime.stack_execution import execute_stack_copy
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
 from ..semantic_runtime.life_gain_cost_intent import LifeGainCostBatchIntent
 from ..semantic_runtime.control_intents import (
+    DirectionalControlIntent,
     GainControlIntent, GainControlSetIntent, GainSpellControlIntent,
     ExchangePermanentControlIntent, GiveControlIntent, GiveControlSetIntent, RestoreOwnerControlIntent,
 )
@@ -21,9 +23,7 @@ from ..counter_placement import (
     place_counters,
 )
 from ..counter_doubling import resolve_effect_counters_on_refs as place_counters_on_refs
-from ..counter_placement_sets import (
-    CounterPlacementSetError,
-)
+from ..counter_placement_sets import CounterPlacementSetError
 from ..counter_doubling import resolve_effect_counter_set as resolve_counter_placement_set
 from ..counter_placement_targets import (
     CounterPlacementTargetSetError,
@@ -44,14 +44,8 @@ from ..counter_state import player_counter_snapshot
 from ..continuous_effect_state import ResolutionEffectSource
 from ..errors import GameRuleError
 from ..trigger_processing import schedule_delayed_trigger
-from ..fixed_damage_set import (
-    FixedDamageSetError,
-    resolve_fixed_damage_set,
-)
-from ..destruction_sets import (
-    DestructionSetError,
-    resolve_destruction_set,
-)
+from ..fixed_damage_set import FixedDamageSetError, resolve_fixed_damage_set
+from ..destruction_sets import DestructionSetError, resolve_destruction_set
 from ..effect_runtime import dispatch_effect
 from ..effect_runtime.hand_inspection import commit_hand_inspection
 from ..life_change import (
@@ -70,7 +64,6 @@ from ..permanent_designations import (
     become_renowned,
 )
 from ..carddb_characteristics import library_reveal_printed_identity
-from ..rules.committed_quantity_followups import CommittedQuantityFollowup
 from ..semantic_runtime.intents import RevealEachLibraryTopIntent
 from ..rules.library_scry import ScryError, commit_scry_arrangement
 from ..rules.library_surveillance import (
@@ -128,20 +121,13 @@ from ..zone_object_keyword_grants import (
     ZoneObjectKeywordGrantError,
     commit_zone_object_keyword_grant,
 )
-from ..public_zone_moves import (
-    PublicZoneMoveError,
-    resolve_public_zone_move_set,
-)
+from .public_zone_move_intent import commit_public_zone_move_intent
 from ..zone_object_subtype_grants import (
     ZoneObjectSubtypeGrantError,
     commit_zone_object_subtype_addition,
 )
-from ..semantic_runtime.zone_replacements import (
-    prepare_zone_change_replacement,
-)
-from ..semantic_runtime.life_replacements import (
-    collect_life_change_replacement_effects,
-)
+from ..semantic_runtime.zone_replacements import prepare_zone_change_replacement
+from ..semantic_runtime.life_replacements import collect_life_change_replacement_effects
 
 
 _REASON_FIELD = "reason"
@@ -158,12 +144,16 @@ class SemanticChoiceIntentHostMixin:
             raise GameRuleError(str(exc)) from exc
 
     def gain_control_set_intent(self, intent: GainControlSetIntent | GiveControlSetIntent
-                                | RestoreOwnerControlIntent | ExchangePermanentControlIntent):
+                                | RestoreOwnerControlIntent | ExchangePermanentControlIntent | DirectionalControlIntent):
         from ..control_effects import (
             ControlEffectError, execute_control_set, execute_owner_control_restoration,
             execute_permanent_control_exchange, execute_recipient_control_set,
         )
         try:
+            if isinstance(intent, DirectionalControlIntent):
+                from ..rules.directional_control import execute_directional_control
+
+                return execute_directional_control(self, intent)
             if isinstance(intent, ExchangePermanentControlIntent):
                 return execute_permanent_control_exchange(self, intent)
             if isinstance(intent,RestoreOwnerControlIntent):return execute_owner_control_restoration(self,intent)
@@ -262,6 +252,7 @@ class SemanticChoiceIntentHostMixin:
                 actor=intent.actor,
                 ordered_exclusion=intent.ordered_exclusion,
                 followup=intent.followup,
+                excluded_created_tokens=intent.excluded_created_tokens,
                 spec=intent.spec,
                 reason=intent.reason,
                 source_ref=intent.source_ref,
@@ -278,22 +269,7 @@ class SemanticChoiceIntentHostMixin:
         self,
         intent: MovePublicZoneSetIntent,
     ):
-        try:
-            return resolve_public_zone_move_set(
-                self,
-                actor=intent.actor,
-                followup=intent.followup,
-                spec=intent.spec,
-                reason=intent.reason,
-                source_ref=intent.source_ref,
-                aura_target_refs=thaw_value(intent.aura_target_refs) if intent.aura_target_refs is not None else None,
-                replacement_selections=tuple(
-                    thaw_value(value)
-                    for value in intent.replacement_selections
-                ),
-            )
-        except PublicZoneMoveError as exc:
-            raise GameRuleError(str(exc)) from exc
+        return commit_public_zone_move_intent(self, intent)
 
     def apply_domain_effect_intent(self, intent: DomainEffectIntent) -> Any:
         try:
@@ -495,6 +471,17 @@ class SemanticChoiceIntentHostMixin:
             thaw_value(value) for value in intent.replacement_selections
         )
         prepared_replacement = None
+        if intent.entry_enchantment is not None:
+            from ..zone_transitions import ZoneTransitionOwner
+
+            if intent.new_controller != card.owner:
+                raise GameRuleError("Enchantment return requires its original owner's control")
+            ZoneTransitionOwner(self).move_card(
+                card.object_id, "battlefield", controller=card.owner, tapped=tapped, reason=intent.reason,
+                semantic_events=intent.semantic_events, putting_player=intent.actor,
+                replacement_selections=replacement_selections, resolution_entry_enchantment=intent.entry_enchantment,
+            )
+            return card.ref if card.zone == "battlefield" else ""
         if intent.library_face_down_entry:
             from ..zone_transitions import ZoneTransitionOwner
             ZoneTransitionOwner(self).move_card(card.object_id, 'battlefield', controller=intent.actor,
@@ -919,7 +906,7 @@ class SemanticChoiceIntentHostMixin:
 
     def library_selection_intent(
         self, intent: LibrarySelectionIntent,
-    ) -> tuple[str, ...]:
+    ) -> tuple[str, ...] | CommittedQuantityFollowup:
         from .library_selection_intent_commit import commit_library_selection_intent
 
         return commit_library_selection_intent(self, intent)
@@ -1027,6 +1014,11 @@ class SemanticChoiceIntentHostMixin:
         return tuple(
             self.state.cards[result.object_id].ref for result in results
         )
+
+    def place_opponent_blight_batch_intent(self, intent: OpponentBlightBatchIntent) -> tuple[str, ...]:
+        from .blight import commit_opponent_blight_batch
+
+        return commit_opponent_blight_batch(self, intent)
 
     def place_counter_batch_intent(
         self,
@@ -1213,6 +1205,7 @@ class SemanticChoiceIntentHostMixin:
                 maximum_targets=intent.maximum_targets,
                 counter_name=intent.counter_name,
                 amount=intent.amount,
+                target_shares=intent.target_shares,
                 reason=intent.reason,
                 source_ref=intent.source_ref,
                 replacement_selections=tuple(

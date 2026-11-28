@@ -15,6 +15,7 @@ from .damage_modifier_state import (
     DamagePreventionShield,
     DamageSubject,
     DealDamagePreventionAftermath,
+    PREVENTED_SOURCE_REFLECTION,
     GainLifePreventionAftermath,
     PlaceCountersPreventionAftermath,
     PreventionDamageKind,
@@ -138,7 +139,7 @@ class DealDamageAftermathRequest:
                 raise DamagePreventionCreationError(
                     "Fixed prevention damage requires a recipient"
                 )
-        elif self.recipient_kind == "prevented_source_controller":
+        elif self.recipient_kind in {"prevented_source_controller", PREVENTED_SOURCE_REFLECTION}:
             if self.recipient_ref is not None:
                 raise DamagePreventionCreationError(
                     "A prevented-source controller recipient cannot be fixed"
@@ -299,6 +300,7 @@ class PreventionShieldCreationRequest:
     aftermath: tuple[PreventionAftermathRequest, ...] = ()
     triggered_ability: PreventionTriggeredAbilityRequest | None = None
     lock_battlefield_subjects: bool = False
+    source_next_instance_batch_version: int | None = None
 
     def __post_init__(self) -> None:
         if not str(self.source_id or "") or not str(self.controller or ""):
@@ -504,6 +506,8 @@ def _shield_ids(
     request: PreventionShieldCreationRequest,
     subjects: Sequence[DamageSubject],
 ) -> tuple[str, ...]:
+    from .damage_modifier_state import SOURCE_NEXT_INSTANCE_BATCH_FIELD
+
     seed = stable_json(
         {
             "revision": int(host.state.revision),
@@ -516,6 +520,8 @@ def _shield_ids(
             "amounts": [allocation.amount for allocation in request.subjects],
             "chosen_source": request.chosen_source_ref,
             "source_predicate": request.source_predicate.to_dict(),
+            **({SOURCE_NEXT_INSTANCE_BATCH_FIELD: request.source_next_instance_batch_version}
+               if request.source_next_instance_batch_version is not None else {}),
             "application_group_id": request.application_group_id,
             "aftermath": [
                 (
@@ -653,6 +659,7 @@ def _aftermath_for_subject(
                     recipient=recipient,
                     per_prevented=value.per_prevented,
                     fixed_amount=value.fixed_amount,
+                    schema_version=2 if recipient.kind == PREVENTED_SOURCE_REFLECTION else 1,
                 )
             )
             continue
@@ -782,6 +789,7 @@ def plan_prevention_shield_creation(
                 application_group_id=request.application_group_id,
                 aftermath=_aftermath_for_subject(host, request, subject),
                 triggered_ability=triggered_ability,
+                source_next_instance_batch_version=request.source_next_instance_batch_version,
             )
             for shield_id, subject, allocation in zip(
                 ids, subjects, request.subjects, strict=True

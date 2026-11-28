@@ -12,10 +12,12 @@ from quorune.card_programs.binding import bind_semantic_program_runtime
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.mana_provenance import mana_provenance_lots
 from quorune.oracle_ir import compile_oracle_card
+from quorune.preflight import card_semantic_status, semantic_preflight
 from quorune.record import authoritative_state_hash
 from quorune.rules.boast_allowance import CAPABILITY as BOAST_CAPABILITY
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.rules.turn_retained_resolution_mana import CAPABILITY as MANA_CAPABILITY
+from quorune.semantics import SemanticRegistry
 from scripts.build_test_database import build_fixture_database
 
 
@@ -143,6 +145,21 @@ class BirgiHarnfelTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual("fully_playable", row["status"], row["unresolved"])
         self.assertTrue(row["card_program_strict_capability_ready"])
         self.assertTrue(result["card_rules_ready"], result["strict_binding_blockers"])
+
+    def test_harnfel_preflight_requires_exact_activation_source_coverage(self):
+        record = self.db.lookup(ORIGINAL, fuzzy=False)
+        deck = DeckDefinition("Harnfel preflight", [DeckEntry(ORIGINAL)], [])
+        registry = SemanticRegistry(include_builtin_packs=False)
+        row, = semantic_preflight(self.db, deck, registry=registry)["cards"]
+        self.assertEqual("fully_playable", row["status"], row["unresolved"])
+        self.assertTrue(row["card_program_strict_capability_ready"])
+
+        activation, = (program for program in registry.programs_for_oracle(record.oracle_id)
+                       if program.event == "activate")
+        registry.put(replace(activation, trust_level="provisional"))
+        row = card_semantic_status(record, registry, db=self.db)
+        self.assertEqual("partial", row["status"])
+        self.assertIn("activated_ability:ab4", row["unresolved"])
 
     def test_actual_harnfel_discard_and_legal_land_choice_remain_private_then_public(self):
         game = self.session(70214203)

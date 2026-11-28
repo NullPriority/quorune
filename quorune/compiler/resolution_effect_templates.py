@@ -177,6 +177,19 @@ def _attachment_or_zone_result(
 from .creature_subtype_set_templates import creature_subtype_set_template
 
 
+def _budgeted_hand_graveyard_cast(text):
+    normalized = " ".join(text.casefold().split()).replace("’", "'")
+    if normalized != (
+        "you may cast up to two instant and/or sorcery spells with total mana value 6 or less "
+        "from your graveyard and/or hand without paying their mana costs. "
+        "if those spells would be put into your graveyard, exile them instead."
+    ):
+        return None
+    from ..resolving_cast_budget_model import MECHANIC, effect
+
+    return "two-spell-six-value-hand-graveyard-cast-v1", (effect(),), None, (MECHANIC,)
+
+
 _DIRECT_RESOLUTION_EFFECT_COMPILERS = (
     fixed_draw_hand_putback_template,
     hand_library_redraw_template,
@@ -292,6 +305,14 @@ def _forced_block_status_template(text: str) -> CompiledEffectTemplate | None:
             forced_block_status_target_schema(), ("cr-115-targets",))
 
 
+def _turn_damage_resolution_template(text, *, card_name, source_is_permanent):
+    from .damage_permission_templates import turn_damage_prevention_template, turn_received_damage_watch_template
+
+    return turn_received_damage_watch_template(text, source_is_permanent=source_is_permanent) or (
+        turn_damage_prevention_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
+    )
+
+
 def _source_context_resolution_template(
     text: str, *, card_name: str, source_is_permanent: bool | None,
     source_card_types: Sequence[str],
@@ -309,8 +330,7 @@ def _source_context_resolution_template(
     )
     if stack_change is not None:
         return stack_change
-    from .damage_permission_templates import turn_damage_prevention_template
-    turn_damage = turn_damage_prevention_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
+    turn_damage = _turn_damage_resolution_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
     if turn_damage is not None:return turn_damage
     from .source_sacrifice_templates import fixed_source_sacrifice_template
     sacrifice = fixed_source_sacrifice_template(text, source_name=card_name,
@@ -413,6 +433,10 @@ def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate
     if protection := permanent_protection_then_life_template(text):
         return protection
     """Retain the precedence of leaves that do not inspect source context."""
+    from .main_phase_combat_templates import main_phase_combat_template
+
+    if extra_combat := main_phase_combat_template(text):
+        return extra_combat
     from .apnap_library_reveals import apnap_library_reveal_round_template
     from .airbend_templates import airbend_and_cast_restriction_template
     from .library_search_templates import private_search_random_discard_effect_template
@@ -487,8 +511,8 @@ def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate
     from .temporary_player_rule_templates import temporary_player_rule_template
     cast_restriction=temporary_player_rule_template(text)
     if cast_restriction is not None:return cast_restriction
-    from .random_graveyard_returns import random_graveyard_return_template
-    random_return=random_graveyard_return_template(text)
+    from .random_graveyard_returns import random_graveyard_exile_cast_template, random_graveyard_return_template
+    random_return=random_graveyard_return_template(text) or random_graveyard_exile_cast_template(text)
     if random_return is not None:return random_return
     from .manifest_templates import manifest_effect_template
     from .cloak_templates import cloak_effect_template
@@ -680,6 +704,12 @@ def _greatest_power_target_template(text: str) -> CompiledEffectTemplate | None:
 
 
 def _source_reference_resolution_template(text, *, card_name, source_is_permanent, attachment):
+    from .controller_damage_redirection import controller_damage_redirection_template
+
+    if redirection := controller_damage_redirection_template(
+        text, source_is_permanent=source_is_permanent, source_attachment_relation=attachment,
+    ):
+        return redirection
     from ..rules.combat_prevention_draw import combat_prevention_draw_grant_template
 
     combat_draw = combat_prevention_draw_grant_template(text)
@@ -721,7 +751,7 @@ def typed_resolution_effect_template(
     source_attachment_relation: AttachmentReferenceKind | None = None,
 ) -> CompiledEffectTemplate | None:
     """Lower closed typed resolution-effect families."""
-    referenced = owner_library_position_template(text) or _source_reference_resolution_template(
+    referenced = _budgeted_hand_graveyard_cast(text) or owner_library_position_template(text) or _source_reference_resolution_template(
         text, card_name=card_name, source_is_permanent=source_is_permanent, attachment=source_attachment_relation)
     if referenced is not None:
         return referenced

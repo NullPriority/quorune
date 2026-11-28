@@ -10,6 +10,21 @@ RAD_TRIGGER_VERSION = 1
 RAD_EFFECT_FIELD = "inherent_rad"
 RAD_PRODUCER_FIELD = "rad_producer_version"
 RAD_CAPABILITY = "variant.rad.inherent_resolution"
+ENTRY_RAD_CHOICE_FIELD = "entry_tapped_rad_choice"
+ENTRY_RAD_COUNTER_CHILD = "entry_player_rad_counter"
+ENTRY_RAD_CHOICE_HANDLER = "replacement.zone.entry-tapped-rad.v1"
+ENTRY_RAD_CHOICE_CAPABILITY = "zone.entry.optional_tapped_rad_counters"
+ENTRY_RAD_CHOICE_DEPENDENCIES = (
+    ENTRY_RAD_CHOICE_CAPABILITY, "zone.entry.tapped_state", "counter.producer.fixed_player_effect",
+    RAD_CAPABILITY, "zone.change.destination_replacement",
+)
+
+
+def entry_rad_choice_descriptor():
+    return {
+        "handler_id": ENTRY_RAD_CHOICE_HANDLER, "schema_version": 1, "event": "zone.change",
+        "source_relation": "affected_object", "subject": {"types_all": ["land"]}, "amount": 2,
+    }
 
 
 def rad_trigger_version(value: object) -> int | None:

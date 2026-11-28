@@ -88,6 +88,16 @@ def summoning_sickness_prohibits_attack(
     return is_summoning_sick(host, card) and not has_effective_haste(host, card)
 
 
+def summoning_sickness_prohibits_declaration(host: HasteRuleHost, card: Any) -> bool:
+    """Apply the continuous-control restriction and the attack-only exception."""
+    from .rules.attached_attack_haste import current_enchanted_attack_permission
+
+    return (
+        summoning_sickness_prohibits_attack(host, card)
+        and not current_enchanted_attack_permission(host, card)
+    )
+
+
 def summoning_sickness_prohibits_tap_or_untap_cost(
     host: HasteRuleHost,
     card: Any,
@@ -113,5 +123,6 @@ __all__ = [
     "is_summoning_sick",
     "normalized_effective_keywords",
     "summoning_sickness_prohibits_attack",
+    "summoning_sickness_prohibits_declaration",
     "summoning_sickness_prohibits_tap_or_untap_cost",
 ]

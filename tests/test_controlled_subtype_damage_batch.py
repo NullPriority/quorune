@@ -14,7 +14,12 @@ from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.oracle_ir import compile_oracle_card
 from quorune.rules.capabilities import CapabilityRegistry, DEFAULT_CAPABILITY_REGISTRY, load_default_capability_registry
-from quorune.rules.controlled_subtype_damage_batch import CAPABILITY, EVENT, controlled_subtype_damage_occurrences
+from quorune.rules.controlled_subtype_damage_batch import (
+    CAPABILITY, COMBAT_CAPABILITY, COMBAT_EVENT, COMBAT_MECHANIC, EVENT,
+    controlled_subtype_combat_occurrences, controlled_subtype_damage_occurrences,
+    controlled_subtype_damage_runtime_dependencies,
+)
+from quorune.record import authoritative_state_hash
 from quorune.rules.evidence import validate_capability_evidence_index
 from quorune.rules.evidence_storage import read_evidence_document
 from scripts.build_test_database import build_fixture_database
@@ -80,6 +85,112 @@ class ControlledSubtypeDamageBatchTests(InheritedNativeFixture, unittest.TestCas
         self.assertEqual(("B", "C"), occurrence.opponents)
         self.assertEqual(3, len(occurrence.hits))
         self.assertEqual(2, occurrence.semantic_context()["amount"])
+
+    def test_broodcaller_sums_only_combat_dragons_and_replays_private_hand_entry(self):
+        game = self.session(51020056)
+        engine = game.engine
+        source = self.add(engine, "Broodcaller Scourge")
+        incoming = self.add(engine, "Grizzly Bears", zone="hand", ref="private-broodcaller-bear")
+        too_expensive = self.add(engine, "Broodcaller Scourge", zone="hand", ref="private-broodcaller-heavy")
+        nonpermanent = self.add(engine, "Murder", zone="hand", ref="private-broodcaller-instant")
+        foreign = self.add(engine, "Grizzly Bears", zone="hand", seat="D", ref="private-broodcaller-foreign")
+        unrelated = self.add(engine, "Grizzly Bears", ref="unrelated-combat-bear")
+        attackers = {}
+        for index, (power, seat) in enumerate(((2, "B"), (2, "B"), (1, "C"))):
+            ref, = engine.create_token("A", name=f"Fixture Dragon {index}", characteristics={
+                "type_line": "Token Creature — Dragon", "power": str(power), "toughness": "2",
+            })
+            dragon = engine._resolve_object("A", ref, zones={"battlefield"})
+            dragon.acquired_control_turn_count = -1
+            attackers[ref] = seat
+        unrelated.acquired_control_turn_count = -1
+        attackers[unrelated.ref] = "B"
+        self.assert_closed(game, source)
+        self.prepare(game)
+        self.checkpoint(game)
+        self.until(game, lambda current: current.state.pending_decision.kind == "combat.attackers")
+        accepted = game.act("pilot:A", {"action_id": "attack", "attackers": attackers})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.until(game, lambda current: sum(item.context.get("event") == COMBAT_EVENT
+                                             for item in current.state.stack) == 2)
+        triggers = {item.context["target"]: item for item in game.state.stack if item.context.get("event") == COMBAT_EVENT}
+        self.assertEqual({"B": 4, "C": 1}, {seat: row.context["amount"] for seat, row in triggers.items()})
+        self.assertEqual(2, len({row.context["event_id"] for row in triggers.values()}))
+        self.assertTrue(all(row.source_object_id == source.object_id and not row.targets for row in triggers.values()))
+        self.assertEqual(34, game.state.players["B"].life)
+        self.assertEqual(39, game.state.players["C"].life)
+        for _ in range(2):
+            defender = game.state.stack[-1].context["target"]
+            pending = self.resolve(game)
+            self.assertEqual("semantic.choice", pending.kind)
+            refs = pending.payload_by_actor["A"]["legal_actions"][0]["choice_schema"]["legal_refs"]
+            self.assertEqual(defender == "B", incoming.ref in refs)
+            self.assertTrue({too_expensive.ref, nonpermanent.ref, foreign.ref}.isdisjoint(refs))
+            command = {"action_id": "choose", "card": incoming.ref if defender == "B" else None}
+            for seat in "BCD":
+                packet = json.dumps(game.packet(f"pilot:{seat}", full=True))
+                self.assertNotIn(too_expensive.ref, packet)
+                self.assertNotIn(nonpermanent.ref, packet)
+            baseline = authoritative_state_hash(game.state)
+            self.assertFalse(game.act("pilot:D", command).ok)
+            self.assertFalse(game.act("pilot:A", {"action_id": "choose", "card": nonpermanent.ref}).ok)
+            self.assertEqual(baseline, authoritative_state_hash(game.state))
+            game = self.replay(game, load=True)
+            result = game.act("pilot:A", command)
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual("battlefield", game.state.cards[incoming.object_id].zone)
+        self.assertEqual("hand", game.state.cards[too_expensive.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_broodcaller_fails_closed_without_exact_combat_amount_authority(self):
+        source = self.db.lookup("Broodcaller Scourge", fuzzy=False)
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+
+        def closed():
+            code = compile_oracle_card(source, **options)
+            self.assertEqual("exact", code.status, code.material_residuals)
+            node, = [node for face in code.faces for node in face.nodes if node.event == COMBAT_EVENT]
+            self.assertIn(COMBAT_CAPABILITY, node.capability_dependencies)
+            self.assertEqual("$context.amount", node.effects[0]["query"]["amount"])
+            self.assertIsNone(node.target_schema)
+            return node
+
+        node = closed()
+        for text in (
+            source.oracle_text.replace("combat damage", "damage"),
+            source.oracle_text.replace("a player", "a planeswalker"),
+            source.oracle_text.replace("that damage", "the number of attacking creatures"),
+            source.oracle_text.replace("onto the battlefield.", "into your graveyard."),
+        ):
+            self.assertNotEqual("exact", compile_oracle_card(replace(source, oracle_text=text), **options).status)
+        with patch("quorune.compiler.controlled_subtype_damage_batch._combat_binding_parts", return_value=None):
+            with self.assertRaises(AssertionError):
+                closed()
+        program = SimpleNamespace(
+            event=COMBAT_EVENT, coverage=(COMBAT_MECHANIC,), effects=(
+                {**node.effects[0], "query": {**node.effects[0]["query"], "amount": 4}},
+            ), target_schema=None, active_zone="battlefield", handlers=(), cost_schema=None, trigger_limit=None,
+        )
+        with self.assertRaises(ValueError):
+            controlled_subtype_damage_runtime_dependencies(program)
+
+    def test_broodcaller_damage_receipt_excludes_noncombat_and_other_recipients(self):
+        def event(target, amount, **changes):
+            return SimpleNamespace(**{
+                "target": target, "dealt_amount": amount, "was_dealt": amount > 0, "combat": True,
+                "target_kind": "player", "source_zone": "battlefield", "source_controller": "A",
+                "source_subtypes": ("dragon",), **changes,
+            })
+
+        rows = controlled_subtype_combat_occurrences(
+            (event("B", 3), event("B", 2), event("C", 2), event("D", 0),
+             event("B", 9, combat=False), event("B", 9, source_subtypes=("cat",)),
+             event("B", 9, source_controller="D"), event("walker", 9, target_kind="permanent")),
+            event_id="damage", active_seats=frozenset("ABCD"), wanted_subtypes=frozenset({"dragon"}),
+        )
+        self.assertEqual([("A", "B", 5), ("A", "C", 2), ("D", "B", 9)],
+                         [(row["source_controller"], row["target"], row["amount"]) for row in rows])
+        self.assertEqual(3, len({row["event_id"] for row in rows}))
 
     def game(self, seed):
         game = self.session(seed)

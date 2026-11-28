@@ -45,6 +45,200 @@ class BoastRestrictionTests(unittest.TestCase):
     def ability(self,session,source):
         return next((r for r in self.actions(session) if r['id'].startswith('activate:'+source.ref+':')),None)
 
+    def test_paid_boast_mana_value_damage_compiles_with_closed_price_and_scalar(self):
+        from dataclasses import replace
+        import json
+
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.scalar_effect_amount_model import (
+            PAID_ACTIVATION_DAMAGE_MANA_VALUE_CAPABILITY, ScalarAmountOrigin, ScalarEffectAmountSpec,
+        )
+        from test_fixed_mana_abilities import record
+
+        printed = (
+            "Menace, haste\nBoast — Sacrifice another creature or artifact: "
+            "This creature deals damage equal to 2 plus the sacrificed permanent's mana value to any target."
+        )
+        witness = replace(record(printed), type_line="Creature — Goblin")
+        ir = compile_oracle_card(witness, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[-1]
+        effect, = node.effects
+        self.assertEqual(("damage", "$source", "$target.0"), (effect["op"], effect["source"], effect["target"]))
+        self.assertEqual((19, 2), (effect["amount"]["schema_version"], effect["amount"]["offset"]))
+        self.assertIn(PAID_ACTIVATION_DAMAGE_MANA_VALUE_CAPABILITY, node.capability_dependencies)
+        for bad in (
+            {**effect["amount"], "offset": True}, {**effect["amount"], "offset": 3},
+            {**effect["amount"], "coefficient": 2}, {**effect["amount"], "schema_version": 18},
+        ):
+            with self.assertRaises(ValueError):
+                ScalarEffectAmountSpec.from_dict(bad)
+        legacy = ScalarEffectAmountSpec(
+            ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE, characteristic="mana_value", schema_version=12,
+        )
+        self.assertNotIn("offset", legacy.to_dict())
+        self.assertEqual(legacy, ScalarEffectAmountSpec.from_dict(legacy.to_dict()))
+
+        for printed_variant in (
+            printed.replace("2 plus", "3 plus"),
+            printed.replace("another creature or artifact", "a creature or artifact"),
+            printed.replace("to any target", "to each opponent"),
+        ):
+            self.assertNotEqual("exact", compile_oracle_card(
+                replace(witness, oracle_text=printed_variant),
+                capability_registry=self.registry, capability_profile="commander_review",
+            ).status)
+        with patch("quorune.rules.activation.paid_mana_value_damage.PRINTED_PAID_DAMAGE_RESULT", ""):
+            self.assertNotEqual("exact", compile_oracle_card(
+                witness, capability_registry=self.registry, capability_profile="commander_review",
+            ).status)
+        value = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        capability = next(row for row in value["capabilities"] if row["id"] == PAID_ACTIVATION_DAMAGE_MANA_VALUE_CAPABILITY)
+        capability.update(status="blocked", blockers=["Withdrawn by the focused witness"])
+        blocked = CapabilityRegistry(value)
+        blocked.mark_evidence_verified("0" * 64)
+        self.assertNotEqual("exact", compile_oracle_card(
+            witness, capability_registry=blocked, capability_profile="commander_review",
+        ).status)
+
+    def _broadside_source(self, session):
+        source = self.add(session.engine, "Broadside Bombardiers", ref="broadside-source")
+        self.assert_closed(session, source)
+        return source
+
+    def _broadside_attack(self, session, source):
+        self.advance(session, lambda game: game.state.pending_decision is not None
+                     and game.state.pending_decision.kind == "combat.attackers")
+        result = session.act("pilot:A", {"action_id": "attack", "attacks": {source.ref: "B"}})
+        self.assertTrue(result.ok, result.summary)
+
+    def _broadside_offer(self, session, source, actor="A"):
+        self.advance(session, lambda game: game.state.pending_decision is not None
+                     and game.state.pending_decision.kind == "priority" and game.state.priority_player == actor)
+        actions = session.packet("pilot:" + actor, full=True)["decision"]["ctx"]["legal"]["actions"]
+        return next((row for row in actions if row["id"].startswith(f"activate:{source.ref}:")), None)
+
+    def _reject_broadside(self, session, actor, response):
+        before = authoritative_state_hash(session.state)
+        commands = len(session.commands)
+        result = session.act("pilot:" + actor, response)
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.assertEqual(commands, len(session.commands))
+
+    def test_actual_broadside_boast_rejects_bad_cost_targets_and_second_use(self):
+        import json
+
+        from quorune.rules.activation.paid_mana_value_damage import PAID_DAMAGE_MANA_VALUE_CONTEXT
+
+        session = self.session(751175)
+        source = self._broadside_source(session)
+        payment = self.add(session.engine, "Sol Ring", ref="broadside-payment")
+        spare = self.add(session.engine, "Grizzly Bears", ref="broadside-spare")
+        foreign = self.add(session.engine, "Sol Ring", seat="B", ref="broadside-foreign")
+        private = self.add(session.engine, "Unsummon", seat="C", zone="hand", ref="broadside-private-hand")
+        self.prepare(session)
+        source.acquired_control_turn_count = session.state.players["A"].turns_begun
+        self.checkpoint(session)
+
+        ability, = session.engine._activated_abilities(source)
+        command = {"action_id": f"activate:{source.ref}:{ability.ability_id}", "targets": ["D"],
+                   "cost_objects": [payment.ref], "pay": "auto"}
+        self._reject_broadside(session, "A", command)
+        self._broadside_attack(session, source)
+        offer = self._broadside_offer(session, source)
+        self.assertIsNotNone(offer)
+        self.assertEqual(command["action_id"], offer["id"])
+        for alternate in (
+            {**command, "cost_objects": [source.ref]},
+            {**command, "cost_objects": [foreign.ref]},
+            {**command, "cost_objects": [payment.ref, spare.ref]},
+            {**command, "cost_cards": [spare.ref]},
+            {**command, "targets": [foreign.ref]},
+        ):
+            self._reject_broadside(session, "A", alternate)
+        logical_id = session.state.cards[payment.object_id].logical_object_id
+        result = session.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", session.state.cards[payment.object_id].zone)
+        fact = session.state.stack[-1].context[PAID_DAMAGE_MANA_VALUE_CONTEXT]
+        self.assertEqual((logical_id, 1), (fact["snapshot"]["logical_object_id"], fact["snapshot"]["mana_value"]))
+        self.assertNotIn(private.ref, json.dumps(session.packet("spectator", full=True)))
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(37, session.state.players["D"].life)
+        self._broadside_offer(session, source)
+        self._reject_broadside(session, "A", {**command, "cost_objects": [spare.ref]})
+        self.assertEqual("battlefield", session.state.cards[spare.object_id].zone)
+        self.replay(session)
+
+    def test_actual_broadside_copy_payment_and_exile_replacement_keep_the_sealed_value(self):
+        from quorune.rules.activation.paid_mana_value_damage import PAID_DAMAGE_MANA_VALUE_CONTEXT
+
+        session = self.session(751176)
+        source = self._broadside_source(session)
+        source.acquired_control_turn_count = -1
+        original = self.add(session.engine, "Sol Ring", ref="broadside-copy-template")
+        copied_ref, = session.engine.create_token("A", name="Sol Ring", copy_of=original.ref)
+        copied = next(card for card in session.state.cards.values() if card.ref == copied_ref)
+        replacement = self.add(session.engine, "Rest in Peace", seat="B", ref="broadside-exile-payment")
+        bounce = self.add(session.engine, "Unsummon", seat="B", zone="hand")
+        self.add(session.engine, "Island", seat="B", ref="broadside-bounce-mana")
+        self.assert_closed(session, replacement)
+        self.assertEqual(1, session.engine._effective_card_data(copied)["mana_value"])
+        self.prepare(session)
+        self.checkpoint(session)
+        self._broadside_attack(session, source)
+        offer = self._broadside_offer(session, source)
+        result = session.act("pilot:A", {
+            "action_id": offer["id"], "targets": ["D"], "cost_objects": [copied.ref], "pay": "auto",
+        })
+        self.assertTrue(result.ok, result.summary)
+        effect = session.state.stack[-1]
+        fact = effect.context[PAID_DAMAGE_MANA_VALUE_CONTEXT]
+        self.assertEqual((copied.object_id, 1), (fact["paid_object_id"], fact["snapshot"]["mana_value"]))
+        self.assertTrue(any(event.code == "replacement.apply"
+                            and event.details.get("object") == copied.ref
+                            and event.details.get("destination") == "exile" for event in session.state.events))
+        self.cast(session, "B", bounce, [source.ref])
+        self.advance(session, lambda game: game.state.cards[source.object_id].zone == "hand")
+        session = self.replay(session, load=True)
+        self.assertEqual([effect.ref], [item.ref for item in session.state.stack])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(37, session.state.players["D"].life)
+        self.replay(session)
+
+    def test_actual_broadside_new_controller_can_pay_after_the_same_incarnation_attacked(self):
+        session = self.session(751177)
+        source = self._broadside_source(session)
+        source.acquired_control_turn_count = -1
+        victim = self.add(session.engine, "Grizzly Bears", ref="broadside-creature-target")
+        theft = self.add(session.engine, "Turn Against", seat="B", zone="hand")
+        payment = self.add(session.engine, "Ornithopter", seat="B", ref="broadside-zero-value")
+        foreign = self.add(session.engine, "Sol Ring", ref="broadside-a-only")
+        for index in range(5):
+            self.add(session.engine, "Mountain", seat="B", ref=f"broadside-control-mana-{index}")
+        self.assert_closed(session, theft)
+        self.prepare(session)
+        self.checkpoint(session)
+        self._broadside_attack(session, source)
+        self.cast(session, "B", theft, [source.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("B", session.state.cards[source.object_id].controller)
+        offer = self._broadside_offer(session, source, actor="B")
+        self.assertIsNotNone(offer)
+        command = {"action_id": offer["id"], "targets": [victim.ref], "pay": "auto"}
+        self._reject_broadside(session, "B", {**command, "cost_objects": [foreign.ref]})
+        result = session.act("pilot:B", {**command, "cost_objects": [payment.ref]})
+        self.assertTrue(result.ok, result.summary)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[victim.object_id].zone)
+        self.assertEqual("graveyard", session.state.cards[payment.object_id].zone)
+        self.assertEqual("battlefield", session.state.cards[foreign.object_id].zone)
+        self.replay(session)
+
     def test_actual_duskwielder_rejects_boast_before_attacking_without_any_cost_or_effect(self):
         session=self.session(751100);source=self.add(session.engine,'Duskwielder');source.acquired_control_turn_count=-1
         self.assert_closed(session,source)

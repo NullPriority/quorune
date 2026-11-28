@@ -63,7 +63,7 @@ class CommittedDamageDealerOptionalDrawTests(InheritedNativeFixture, unittest.Te
         for text in (
             record.oracle_text.replace("combat damage", "damage"),
             record.oracle_text.replace("one of your opponents", "a planeswalker"),
-            record.oracle_text.replace("may draw a card", "may pay 1 life. If they do, they draw a card"),
+            record.oracle_text.replace("may draw a card", "may pay 2 life. If they do, they draw a card"),
             record.oracle_text + " Invent an unsupported instruction.",
         ):
             with self.subTest(text=text):

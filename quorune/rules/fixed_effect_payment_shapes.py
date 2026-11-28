@@ -171,8 +171,10 @@ def fixed_payment_event_player_runtime_dependencies(program):
     from ..fixed_effect_payment import EQUIPPED_DEATH_LIFE_DRAW_FIELD, equipped_death_life_draw_program_dependencies
 
     from .mandatory_sacrifice_reanimation import mandatory_sacrifice_reanimation_runtime_dependencies
+    from .entrant_x_reflexive import entrant_x_payment_program_dependencies
 
     required=set(life_gain_counter_payment_program_dependencies(program))
+    required.update(entrant_x_payment_program_dependencies(program))
     required.update(mandatory_sacrifice_reanimation_runtime_dependencies(program))
     required.update(capped_life_gain_draw_program_dependencies(program))
     required.update(life_gain_life_draw_program_dependencies(program))

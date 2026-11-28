@@ -148,7 +148,7 @@ def temporary_player_rule_node_capabilities(**shape):
     from .temporary_cast_restrictions import temporary_cast_node_capabilities
     from ..draw_redirect_model import temporary_draw_redirect_node_capabilities
     from .next_draw_replacement_shapes import next_draw_replacement_node_capabilities
-    from .event_spell_copy import next_cast_copy_node_capabilities
+    from .event_spell_copy import next_cast_copy_node_capabilities, same_turn_cast_keyword_node_capabilities
     from .temporary_cast_timing import temporary_cast_timing_node_capabilities
     from .land_play_permissions import turn_land_plays_node_capabilities
     from .all_player_turn_rules import all_player_turn_rule_node_capabilities
@@ -157,7 +157,8 @@ def temporary_player_rule_node_capabilities(**shape):
     return (next_spell_payment_node_capabilities(**shape) or cast_cascade_node_capabilities(**shape)
             or next_cast_protection_node_capabilities(**shape) or temporary_cast_node_capabilities(**shape)
             or temporary_draw_redirect_node_capabilities(**shape) or next_draw_replacement_node_capabilities(**shape)
-            or next_cast_copy_node_capabilities(**shape) or temporary_cast_timing_node_capabilities(**shape)
+            or next_cast_copy_node_capabilities(**shape) or same_turn_cast_keyword_node_capabilities(**shape)
+            or temporary_cast_timing_node_capabilities(**shape)
             or turn_land_plays_node_capabilities(**shape) or turn_color_spell_protection_node_capabilities(**shape)
             or turn_spell_source_color_protection_node_capabilities(**shape)
             or turn_creature_target_prohibition_node_capabilities(**shape)
@@ -172,7 +173,9 @@ def temporary_player_rule_covered_mechanics(supplied):
     from .cast_cascade_grants import CAST_CASCADE_CAPABILITY, CAST_CASCADE_MECHANIC
     from .next_cast_counter_protection import NEXT_CAST_PROTECTION_CAPABILITY, NEXT_CAST_PROTECTION_MECHANIC
 
-    from ..event_spell_copy_model import NEXT_CAST_COPY_CAPABILITY, NEXT_CAST_COPY_MECHANIC
+    from ..event_spell_copy_model import (
+        NEXT_CAST_COPY_CAPABILITY, NEXT_CAST_COPY_MECHANIC, SAME_TURN_CAST_KEYWORD_CAPABILITY, SAME_TURN_CAST_KEYWORD_MECHANIC,
+    )
     from .temporary_cast_timing import TEMPORARY_CAST_TIMING_CAPABILITY, TEMPORARY_CAST_TIMING_MECHANIC
     from .land_play_permissions import TURN_LAND_PLAY_ALLOWANCE_CAPABILITY, TURN_LAND_PLAY_ALLOWANCE_MECHANIC
 
@@ -182,6 +185,7 @@ def temporary_player_rule_covered_mechanics(supplied):
         (CAST_CASCADE_CAPABILITY, CAST_CASCADE_MECHANIC),
         (NEXT_CAST_PROTECTION_CAPABILITY, NEXT_CAST_PROTECTION_MECHANIC),
         (NEXT_CAST_COPY_CAPABILITY, NEXT_CAST_COPY_MECHANIC),
+        (SAME_TURN_CAST_KEYWORD_CAPABILITY, SAME_TURN_CAST_KEYWORD_MECHANIC),
         (DRAW_REDIRECT_CAPABILITY, DRAW_REDIRECT_MECHANIC),
         (NEXT_DRAW_REPLACEMENT_CAPABILITY, NEXT_DRAW_REPLACEMENT_MECHANIC),
         (TEMPORARY_CAST_TIMING_CAPABILITY, TEMPORARY_CAST_TIMING_MECHANIC),
@@ -198,8 +202,19 @@ def expire_temporary_cast_ability_grants(stats):
 
     from .land_play_permissions import expire_turn_land_play_allowance
     from ..temporary_graveyard_escape import TEMPORARY_ESCAPE_STATS_FIELD
+    from .target_graveyard_flashback import GRAVEYARD_FLASHBACK_STATS_FIELD
 
     stats.pop(TEMPORARY_ESCAPE_STATS_FIELD, None)
+    stats.pop(GRAVEYARD_FLASHBACK_STATS_FIELD, None)
+    from .owned_graveyard_turn_play import STATS_FIELD as GRAVEYARD_TURN_PLAY_FIELD
+
+    stats.pop(GRAVEYARD_TURN_PLAY_FIELD, None)
+    from ..temporary_graveyard_flashback import STATS_FIELD as TEMPORARY_FLASHBACK_STATS_FIELD
+
+    stats.pop(TEMPORARY_FLASHBACK_STATS_FIELD, None)
+    from .owned_graveyard_turn_play import STATS_FIELD as GRAVEYARD_TURN_PLAY_FIELD
+
+    stats.pop(GRAVEYARD_TURN_PLAY_FIELD, None)
     expire_temporary_cast_timing(stats)
     expire_turn_land_play_allowance(stats)
     expire_next_spell_payments(stats)

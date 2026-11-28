@@ -8,6 +8,7 @@ from ..rules.loyalty_graveyard_cast import (
 from ..rules.artifact_graveyard_cast_activation import (
     ARTIFACT_GRAVEYARD_CAST_CAPABILITY, ARTIFACT_GRAVEYARD_CAST_MECHANIC,
     artifact_graveyard_cast_dependencies, artifact_graveyard_cast_effect, artifact_graveyard_cast_target,
+    first_paid_graveyard_source_ability_is_closed,
 )
 from ..rules.source_references import SourceReferenceSpec
 from . import regex_working_set as re
@@ -17,6 +18,19 @@ from .dependency_gate import DependencyGate, explicit_capabilities_gate
 
 def loot_transform_or_graveyard_cast(ability, *, text, source_name, public_timing):
     surface = " ".join(text.split()).replace("’", "'")
+    if surface.casefold() == (
+        "choose target nonland permanent card in your graveyard. if you haven't cast a spell this turn, "
+        "you may cast that card. if you do, you can't cast additional spells this turn."
+    ):
+        from ..rules.graveyard_card_targets import targeted_graveyard_cast_instruction_schema
+        from ..targeted_graveyard_cast_model import GRAVEYARD_CAST_MECHANIC, first_paid_graveyard_cast_effect
+
+        cost = activated_ability_cost(ability, public_timing=public_timing)
+        if first_paid_graveyard_source_ability_is_closed(ability, cost):
+            return ("targeted-first-paid-graveyard-cast-v1", (first_paid_graveyard_cast_effect(),),
+                    targeted_graveyard_cast_instruction_schema("you", first_paid=True),
+                    (GRAVEYARD_CAST_MECHANIC, "cr-115-targets"))
+        return None
     if surface.casefold() == "choose target artifact card in your graveyard. you may cast that card this turn.":
         effect, target = artifact_graveyard_cast_effect(), artifact_graveyard_cast_target()
         cost = activated_ability_cost(ability, public_timing=public_timing)
@@ -59,6 +73,20 @@ def loot_transform_or_graveyard_cast(ability, *, text, source_name, public_timin
 
 def loot_transform_and_graveyard_cast_gate(**scope):
     mechanics = set(scope["mechanics"])
+    from ..targeted_graveyard_cast_model import (
+        FIRST_PAID_GRAVEYARD_CAST_CAPABILITY, GRAVEYARD_CAST_MECHANIC, first_paid_graveyard_cast,
+    )
+    if (GRAVEYARD_CAST_MECHANIC in mechanics and len(scope["effects"]) == 1
+            and first_paid_graveyard_cast(scope["effects"][0])):
+        from ..rules.graveyard_card_targets import targeted_graveyard_cast_node_capabilities
+
+        required = targeted_graveyard_cast_node_capabilities(
+            effects=scope["effects"], target_schema=scope["target_schema"], mechanic_ids=mechanics,
+        )
+        if not required:
+            return DependencyGate(blockers=(f"capability:{FIRST_PAID_GRAVEYARD_CAST_CAPABILITY}",))
+        return explicit_capabilities_gate(required, capability_registry=scope["capability_registry"],
+                                          capability_profile=scope["capability_profile"])
     if LOOT_TRANSFORM_MECHANIC in mechanics:
         resolver, capability = loot_transform_dependencies, LOOT_TRANSFORM_CAPABILITY
     elif ARTIFACT_GRAVEYARD_CAST_MECHANIC in mechanics:

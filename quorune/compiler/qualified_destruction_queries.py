@@ -26,6 +26,13 @@ def creature_counter_absence_query(counter_name: str | None) -> ObjectQuerySpec:
     )
 
 
+def unenchanted_creature_destruction_query(phrase: str) -> ObjectQuerySpec | None:
+    if phrase.casefold() != "creatures that aren't enchanted":
+        return None
+    return ObjectQuerySpec(zones=('battlefield',), types_all=('creature',),
+                           state_predicate=PermanentStatePredicateSpec(enchanted=False))
+
+
 def qualified_destruction_query(phrase,*,parse_base):
     numeric=re.fullmatch(r'(?P<body>creatures) with (?P<stat>power|toughness) (?P<n>[0-9]+) or (?P<bound>greater|less)',phrase)
     if numeric:

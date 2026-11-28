@@ -489,3 +489,26 @@ __all__ = [
     "AbilityKeywordFragmentLowering",
     "lower_ability_keyword_fragments",
 ]
+
+
+def independently_exact_protection_handler(node: Any) -> bool:
+    """Allow closed protection fragments on a partially known keyword line.
+
+    Printed comma-separated keyword lists are independent abilities.  A typed
+    protection fragment therefore remains exact even when a sibling keyword
+    on the same Oracle line lacks a capability contract.  No effect program or
+    arbitrary runtime-handler family receives this exception.
+    """
+
+    return bool(
+        node.kind == "keyword_ability"
+        and node.template_id == "printed-keyword-list-v1"
+        and not node.effects
+        and node.handlers
+        and all(
+            handler.get("handler_id") == "ability.static.protection.v1"
+            for handler in node.handlers
+        )
+        and tuple(node.capability_dependencies)
+        == ("protection.typed.debt",)
+    )

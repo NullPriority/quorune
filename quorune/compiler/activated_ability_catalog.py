@@ -19,6 +19,7 @@ from ..fixed_mana_abilities import (
     FixedManaMode,
     fixed_mana_modes_from_effect,
 )
+from ..library_search_model import CONDITIONAL_UNTAP_SEARCH_VERSION
 from ..replacement.immutable import FrozenMap
 from ..rules.capabilities import CapabilityRegistry
 from ..semantic_runtime.activated_abilities import (
@@ -249,12 +250,49 @@ def _specialized_ability(
     return candidates[0] if candidates else None
 
 
+def _is_printed_source_characteristic_activation(program: SemanticProgram) -> bool:
+    return (
+        program.event == "activate" and program.active_zone == "battlefield"
+        and program.provenance.get("template_id") == "fixed-source-characteristics-until-end-of-turn-v1"
+    )
+
+
+def qualify_colliding_activation_faces(programs: list[SemanticProgram]) -> list[SemanticProgram]:
+    """Keep distinct resolving programs for a repeated printed activation slot."""
+    by_id: dict[str, list[int]] = {}
+    for index, program in enumerate(programs):
+        if program.event == "activate":
+            by_id.setdefault(program.ability_id, []).append(index)
+    result = list(programs)
+    for ability_id, indices in by_id.items():
+        if len(indices) < 2 or not ability_id.startswith("ability:ab") or not ability_id[10:].isdigit():
+            continue
+        siblings = [programs[index] for index in indices]
+        faces = [program.provenance.get("face_id") for program in siblings]
+        if (
+            any(type(face) is not str or not face for face in faces)
+            or len(set(faces)) != len(faces)
+            or not all(_is_printed_source_characteristic_activation(program) for program in siblings)
+        ):
+            continue
+        for index, program, face in zip(indices[1:], siblings[1:], faces[1:], strict=True):
+            scoped_id = f"{ability_id}:face:{face}"
+            result[index] = replace(program, ability_id=scoped_id, key=f"{program.oracle_id}:{scoped_id}")
+    return result
+
+
 def _ability_id(program: SemanticProgram) -> str | None:
     prefix, separator, value = program.ability_id.partition(":")
     if prefix != "ability" or not separator or not value:
         return None
     if program.provenance.get("template_id") == "loot-graveyard-owner-transform-v1":
         return value.removesuffix(":loot-transform")
+    if _is_printed_source_characteristic_activation(program):
+        face = program.provenance.get("face_id")
+        if type(face) is str and face:
+            slot = value.removesuffix(f":face:{face}")
+            if slot.startswith("ab") and slot[2:].isdigit():
+                return slot
     return value
 
 
@@ -345,6 +383,10 @@ def _catalog_ability_for_program(
         effect.get("op") == "search" and effect.get("schema_version") == SEARCHED_LAND_UNTAP_VERSION
         for effect in program.effects
     )
+    composed_library_search = (
+        len(program.effects) == 1 and program.effects[0].get("op") == "search"
+        and program.effects[0].get("schema_version") == CONDITIONAL_UNTAP_SEARCH_VERSION
+    )
     return replace(
         ability,
         zones=(
@@ -354,7 +396,7 @@ def _catalog_ability_for_program(
         ),
         target_schema=target_schema,
         library_search_types=(
-            () if uses_versioned_land_search or TARGET_CONTROLLER_INFORMATION_MECHANIC in program.coverage
+            () if uses_versioned_land_search or composed_library_search or TARGET_CONTROLLER_INFORMATION_MECHANIC in program.coverage
             else ability.library_search_types
         ),
         builtin_semantic_key=(
@@ -463,7 +505,7 @@ def _catalog_provenance(
 
     if (not has_forage_cost(ability) and not has_bounded_sacrifice(ability)
             and not ability.chooses_activation_x and ability.ability_local_mana_reduction is None
-            and not has_source_equipment_unattach(ability)):
+            and not ability.source_library_bottom and not has_source_equipment_unattach(ability)):
         return program.provenance
     reference = next((value for value in references if value.key == program.key), None)
     source = reference.provenance if reference is not None else carrier_provenance or {}
@@ -509,7 +551,7 @@ def _append_catalog_carriers(
             if (has_forage_cost(ability) or has_bounded_sacrifice(ability)
                     or ability.loyalty_x or ability.ability_local_mana_reduction is not None
                     or ability.variable_colored_reveal_price is not None
-                    or ability.source_counter_placement_cost is not None):
+                    or ability.source_counter_placement_cost is not None or ability.source_library_bottom):
                 continue  # The price requires its exact resolving program.
             if (
                 _ability_source_slot(

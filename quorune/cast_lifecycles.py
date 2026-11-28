@@ -170,6 +170,7 @@ def _validate_fixed_zone_cast_spec(spec: Any) -> None:
 
 
 GRANTED_ESCAPE_LIFECYCLE_VERSION = 6
+EXTERNAL_PLOT_LIFECYCLE_VERSION = 7
 GRANTED_ESCAPE_EXILE_COUNT = 3
 GRANTED_ESCAPE_CAPABILITY = "casting.lifecycle.source_granted_escape"
 GRANTED_ESCAPE_HANDLER_ID = "permission.cast.source-granted-escape.v1"
@@ -197,6 +198,15 @@ class FixedCastLifecycleSpec:
     additional_costs: tuple[FrozenMap, ...] = ()
 
     def __post_init__(self) -> None:
+        if type(self.schema_version) is int and self.schema_version == EXTERNAL_PLOT_LIFECYCLE_VERSION:
+            if self.kind is not FixedCastLifecycleKind.PLOT or self.additional_costs or any(
+                field is not None for field in (
+                    self.ability_id, self.line_index, self.oracle_line, self.cost_text,
+                    self.mana_cost, self.counter_count, self.exile_count,
+                )
+            ):
+                raise FixedCastLifecycleError("External Plot requires a designation without a printed price")
+            return
         if type(self.schema_version) is int and self.schema_version == GRANTED_ESCAPE_LIFECYCLE_VERSION:
             if (self.kind is not FixedCastLifecycleKind.ESCAPE or type(self.exile_count) is not int
                     or self.exile_count != GRANTED_ESCAPE_EXILE_COUNT or self.additional_costs
@@ -326,6 +336,11 @@ class FixedCastLifecycleSpec:
         cls,
         value: Mapping[str, Any],
     ) -> "FixedCastLifecycleSpec":
+        if isinstance(value, Mapping) and value.get("schema_version") == EXTERNAL_PLOT_LIFECYCLE_VERSION:
+            if (set(value) != {"schema_version", "kind"} or type(value["schema_version"]) is not int
+                    or value["kind"] != FixedCastLifecycleKind.PLOT.value):
+                raise FixedCastLifecycleError("External Plot has a closed designation-only receipt")
+            return externally_plotted_cast_spec()
         if isinstance(value, Mapping) and value.get("schema_version") == GRANTED_ESCAPE_LIFECYCLE_VERSION:
             if (set(value) != {"schema_version", "kind", "exile_count"}
                     or type(value["schema_version"]) is not int or value["kind"] != FixedCastLifecycleKind.ESCAPE.value):
@@ -382,6 +397,8 @@ class FixedCastLifecycleSpec:
         )
 
     def to_dict(self) -> dict[str, Any]:
+        if self.schema_version == EXTERNAL_PLOT_LIFECYCLE_VERSION:
+            return {"schema_version": self.schema_version, "kind": self.kind.value}
         if self.schema_version == GRANTED_ESCAPE_LIFECYCLE_VERSION:
             return {"schema_version": self.schema_version, "kind": self.kind.value, "exile_count": self.exile_count}
         value = {
@@ -406,6 +423,7 @@ class FixedCastLifecycleSpec:
         return value
 
     def fixed_cost_option(self) -> dict[str, Any]:
+        external_plot = self.schema_version == EXTERNAL_PLOT_LIFECYCLE_VERSION
         if self.schema_version == GRANTED_ESCAPE_LIFECYCLE_VERSION:
             raise FixedCastLifecycleError("Granted Escape uses the current selected spell's printed price")
         if self.kind in {
@@ -414,7 +432,7 @@ class FixedCastLifecycleSpec:
             FixedCastLifecycleKind.SUSPEND,
             FixedCastLifecycleKind.JUMP_START,
             FixedCastLifecycleKind.REBOUND,
-        } or self.mana_cost is None:
+        } or (self.mana_cost is None and not external_plot):
             raise FixedCastLifecycleError(
                 "This lifecycle does not define a fixed-mana cast option"
             )
@@ -425,7 +443,7 @@ class FixedCastLifecycleSpec:
                 if self.kind is FixedCastLifecycleKind.BUYBACK
                 else "alternate"
             ),
-            "label": f"{self.kind.value.title()} {self.cost_text}",
+            "label": "Plot" if external_plot else f"{self.kind.value.title()} {self.cost_text}",
             "requirements": (
                 {field: 0 for field in _MANA_FIELDS}
                 if self.kind is FixedCastLifecycleKind.PLOT
@@ -523,6 +541,13 @@ class FixedCastLifecycleSpec:
                 "Only Retrace decorates a printed cost option"
             )
         return self.printed_zone_cost_option(base_option)
+
+
+def externally_plotted_cast_spec() -> FixedCastLifecycleSpec:
+    """The shared later-turn Plot cast without a hand-staging ability."""
+    return FixedCastLifecycleSpec(
+        None, None, None, FixedCastLifecycleKind.PLOT, None, None, schema_version=EXTERNAL_PLOT_LIFECYCLE_VERSION,
+    )
 
 
 def _fixed_count(value: str) -> int | None:

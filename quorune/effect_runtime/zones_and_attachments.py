@@ -30,16 +30,20 @@ from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..model import CardInstance
 from ..milling import mill_cards, MillRequest
 from ..linked_exile_return import resolve_linked_exile_return, return_linked_exiled_objects
+from ..rules.opponents_graveyards_exile_cast import apply_exile_pool_cast, apply_return_exile_pool
 from .library_top_exile import apply_exile_top_library_card
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..targets import TargetGroup
 from ..public_zone_moves import (
-    GRAVEYARD_LIBRARY_TARGET_FIELD, STACK_SPELL_EXILE_FIELD, StackSpellExileScope, StackSpellExileSpec,
+    GRAVEYARD_LIBRARY_TARGET_FIELD, STACK_SPELL_EXILE_FIELD,
 )
 from ..rules.reanimation_followup import REANIMATION_FOLLOWUP_VERSIONS, wrap_gift_reanimation
 from ..util import unique_preserving_order
 from ..zone_trigger_events import ZoneTransitionKind
-from .linked_zone_movement import apply_move_if_in_zone, commit_resolved_zone_movement
+from .linked_zone_movement import (
+    apply_move_if_in_zone, apply_shuffle_into_library, commit_resolved_zone_movement,
+)
+from .stack_spell_exile import apply_stack_spell_exile
 from .recover import apply_recover_source_result
 
 _EXILE_ZONE = "exile"
@@ -49,50 +53,8 @@ OPERATIONS = effect_family_contract("zones-and-attachments.v1").operations
 
 
 def _apply_stack_spell_exile(host, effect, *, actor, reason):
-    from ..zone_transitions import ZoneTransitionOwner
-
-    try:
-        spec = StackSpellExileSpec.from_dict(effect[STACK_SPELL_EXILE_FIELD])
-        source_ref = ResolutionEffectSource.from_effect(effect).stack_ref
-    except (ValueError, TypeError, ContinuousEffectStateError) as exc:
-        raise GameRuleError(str(exc)) from exc
-    selected = spec.scope is StackSpellExileScope.SELECTED
-    allowed = {"op", STACK_SPELL_EXILE_FIELD, "_runtime_source", "reason", "_replacement_selections"}
-    if selected:
-        allowed.add("stacks")
-    if set(effect) - allowed or effect.get("op") != "exile":
-        raise GameRuleError("Stack exile effect fields are closed")
-    stack = {item.ref: item for item in host.state.stack}
-    source = stack.get(source_ref)
-    if (source is None or source.kind not in {"spell", "spell_copy"} or source.controller != actor
-            or source.context.get("currently_resolving") is not True):
-        raise GameRuleError("Stack exile requires its current resolving source")
-    spell_kinds = {"spell", "spell_copy"}
-    if selected:
-        refs = effect.get("stacks")
-        if (not isinstance(refs, (list, tuple)) or any(type(ref) is not str for ref in refs)
-                or len(set(refs)) != len(refs) or source_ref in refs):
-            raise GameRuleError("Stack exile requires distinct other spell targets")
-        spells = [stack[ref] for ref in refs if ref in stack]
-        if any(item.kind not in spell_kinds for item in spells):
-            raise GameRuleError("Stack exile targets must be spells")
-        abilities = ()
-    else:
-        spells = [item for item in stack.values() if item.ref != source_ref and item.kind in spell_kinds]
-        abilities = tuple(item.ref for item in stack.values() if item.kind in {"activated_ability", "triggered_ability"})
-    moves = []
-    for item in spells:
-        card = host.state.cards.get(item.card_object_id)
-        if card is None or card.zone != "stack":
-            raise GameRuleError("An exiled spell is missing its current stack object")
-        moves.append((card.object_id, "exile"))
-    with host.transaction():
-        moved = ZoneTransitionOwner(host).move_cards_simultaneously(
-            moves, reason=reason, log=False, replacement_selections=tuple(effect.get("_replacement_selections") or ()),
-        )
-        for ref in abilities:
-            host._counter_stack_item(ref, reason=reason, countered_by=actor)
-    return moved
+    """Keep the zone effect route bound to the closed stack-exile operation."""
+    return apply_stack_spell_exile(host, effect, actor=actor, reason=reason)
 
 
 def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
@@ -106,6 +68,11 @@ def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
     from ..rules.linked_hand_mana_model import PAIR
 
     op = operation
+    if op == "move":
+        from ..rules.selected_commander_entry import FIELD, apply_selected_commander_entry
+
+        if FIELD in effect:
+            return apply_selected_commander_entry(host, effect, actor=actor, reason=reason)
     if op == "exile" and PAIR in effect:
         from .linked_hand_mana import apply_linked_hand_imprint
 
@@ -120,14 +87,9 @@ def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
         from .cast_spell_suspend import apply_cast_spell_suspend
 
         return apply_cast_spell_suspend(host, effect, actor=actor, reason=reason)
-    from ..rules.opponent_spell_or_permanent_return import (
-        ENTRY_FIELD,
-        FIELD as OPPONENT_RETURN_FIELD,
-        SPELL_FIELD,
-        COPY_RETURN_FIELD,
-    )
+    from ..rules.opponent_spell_or_permanent_return import OWNER_HAND_RETURN_FIELDS
 
-    if op == "move" and {OPPONENT_RETURN_FIELD, ENTRY_FIELD, SPELL_FIELD, COPY_RETURN_FIELD}.intersection(effect):
+    if op == "move" and OWNER_HAND_RETURN_FIELDS.intersection(effect):
         from .opponent_spell_or_permanent_return import apply_opponent_spell_or_permanent_return
 
         return apply_opponent_spell_or_permanent_return(host, effect, actor=actor, reason=reason)
@@ -149,10 +111,16 @@ def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
         implicit_zones["move"] = {"graveyard"}
     followup = None
     if 'hand_entry_query' in effect:
+        from ..rules.ordered_source_owner_hand_entry import OWNER_HAND_MOVE, resolve_original_owner_hand_move
         from ..hand_entry_move import resolve_selected_hand_entry_card
         from ..rules.hand_entry_followup import decode_hand_entry_followup
         from ..continuous_effect_state import ResolutionEffectSource
 
+        if OWNER_HAND_MOVE in effect:
+            try:
+                actor, effect = resolve_original_owner_hand_move(host, effect, stack_controller=actor)
+            except (KeyError, TypeError, ValueError) as exc:
+                raise GameRuleError(str(exc)) from exc
         card=resolve_selected_hand_entry_card(host,effect,actor=actor)
         followup = decode_hand_entry_followup(effect)
         if followup is not None:
@@ -288,6 +256,10 @@ def _apply_reanimate_attached_creature_aura(
     operation: str,
     reason: str,
 ) -> Any:
+    from ..rules.linked_enchantment_entry import LINKED_ENCHANTMENT_ENTRY_VERSION, apply_linked_enchantment_entry
+
+    if LINKED_ENCHANTMENT_ENTRY_VERSION in effect:
+        return apply_linked_enchantment_entry(host, effect, actor=actor, reason=reason)
     if "aura_incarnation" in effect:
         from ..aura.runtime import reanimate_graveyard_attachment
 
@@ -871,7 +843,9 @@ def _apply_reanimate(
     followup = None
     if effect.get("schema_version") in REANIMATION_FOLLOWUP_VERSIONS:
         from ..continuous_effect_state import ResolutionEffectSource
-        from ..rules.reanimation_followup import current_linked_subject, validate_reanimation_followup
+        from ..rules.reanimation_followup import (
+            ReanimationFinalityHaste, apply_saga_finality_haste, current_linked_subject, validate_reanimation_followup,
+        )
 
         try:
             followup = validate_reanimation_followup(effect, materialized=True)
@@ -879,6 +853,8 @@ def _apply_reanimate(
         except (ValueError, TypeError) as exc:
             raise GameRuleError(str(exc)) from exc
         subject = effect["target_snapshot"]
+        if isinstance(followup, ReanimationFinalityHaste):
+            return apply_saga_finality_haste(host, effect, actor=actor, source=source, followup=followup, reason=reason)
         if current_linked_subject(host, subject, zone="graveyard") is None:
             return None
         effect = {key: value for key, value in effect.items() if key not in {"schema_version", "followup", "target_snapshot"}}
@@ -1136,6 +1112,7 @@ def _apply_modify_all_matching_permanents_until_end_of_turn(
     reason: str,
 ) -> Any:
     from ..rules.combat_keyword_share import VERSION as COMBAT_KEYWORD_SHARE_VERSION
+    from ..rules.attack_food_bonus import ATTACK_FOOD_STATS_VERSION_FIELD
     from ..rules.same_name_creature_modifiers import SAME_NAME_STAT_VERSION_FIELD, resolve_same_name_creature_stats
     from ..rules.target_player_stat_untap import TARGET_PLAYER_STAT_UNTAP_VERSION
     from .combat_keyword_share import apply_combat_keyword_share
@@ -1148,6 +1125,8 @@ def _apply_modify_all_matching_permanents_until_end_of_turn(
         from .counter_snapshot_protection import apply_counter_snapshot_protection
 
         return apply_counter_snapshot_protection(host, effect, actor=actor, reason=reason)
+    if ATTACK_FOOD_STATS_VERSION_FIELD in effect:
+        return _apply_attack_food_stats(host, effect, actor=actor, reason=reason)
     if TARGET_PLAYER_STAT_UNTAP_VERSION in effect:
         return _apply_target_player_stats_then_untap(host, effect, actor=actor, reason=reason)
     if SAME_NAME_STAT_VERSION_FIELD in effect:
@@ -1222,12 +1201,30 @@ def _apply_modify_all_matching_permanents_until_end_of_turn(
     )
 
 
+def _apply_attack_food_stats(host, effect, *, actor, reason):
+    from ..public_tap_state_sets import commit_public_tap_state_snapshot, snapshot_public_tap_state
+    from ..rules.attack_food_bonus import resolve_attack_food_stats
+
+    try:
+        affected, food_entered = resolve_attack_food_stats(host, effect, actor=actor)
+        snapshot = snapshot_public_tap_state(affected)
+        changed = _commit_temporary_stat_set(host, effect, affected, actor=actor, power_delta=1, toughness_delta=1)
+        if food_entered:
+            commit_public_tap_state_snapshot(host, snapshot, actor=actor, tapped=False, reason=reason)
+            _commit_temporary_stat_set(host, effect, affected, actor=actor, power_delta=2, toughness_delta=2)
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    return changed
+
+
 def _apply_target_player_stats_then_untap(host, effect, *, actor, reason):
     from ..public_tap_state_sets import commit_public_tap_state_snapshot, snapshot_public_tap_state
-    from ..rules.target_player_stat_untap import decode_target_player_stat_untap
+    from ..rules.target_player_stat_untap import ControllerSubtypeStatUntapSpec, decode_target_player_stat_untap
 
     try:
         spec, player = decode_target_player_stat_untap(effect, resolved=True)
+        if isinstance(spec, ControllerSubtypeStatUntapSpec) and player != actor:
+            raise ValueError("Controller subtype stats and untap require the resolving controller")
         if player not in host.affected_permanent_active_seats():
             return []
         affected = matching_battlefield_objects(host, spec.receivers(player))
@@ -1412,39 +1409,6 @@ def _apply_pump_controlled_creatures(
 
 
 
-def _apply_shuffle_into_library(
-    host: Any,
-    effect: Mapping[str, Any],
-    *,
-    actor: str,
-    operation: str,
-    reason: str,
-) -> Any:
-    from ..rules.death_counter_shuffle import DEATH_COUNTER_SHUFFLE_FIELD, resolve_departure_shuffle
-
-    if DEATH_COUNTER_SHUFFLE_FIELD in effect:
-        departure = resolve_departure_shuffle(host.state, host.active_seats, effect)
-        if departure is None:
-            return None
-        owner, card = departure
-    else:
-        card = host._resolve_object(actor, str(effect["card"]), zones={"battlefield", "graveyard", "exile", "stack"})
-        owner = card.owner
-
-    moved = None
-    if card is not None:
-        moved = host.move_card(
-            card.object_id,
-            "library",
-            reason=reason,
-            semantic_events=True,
-            replacement_selections=tuple(effect.get("_replacement_selections") or ()),
-        )
-    host.shuffle_library(owner, reason=reason)
-    return moved.ref if moved is not None else None
-
-
-
 def _apply_shuffle_graveyard_bottom_random(
     host: Any,
     effect: Mapping[str, Any],
@@ -1587,6 +1551,8 @@ HANDLERS = {
     'exile_all': _apply_exile_all,
     'exile_graveyard': _apply_exile_graveyard,
     'exile_opponent_graveyards': _apply_exile_opponent_graveyards,
+    'exile_opponents_graveyards_for_turn_cast': apply_exile_pool_cast,
+    'return_opponents_graveyard_exile_pool': apply_return_exile_pool,
     'exile_top_library_card': apply_exile_top_library_card,
     'mill': _apply_mill,
     'move': _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice,
@@ -1596,7 +1562,7 @@ HANDLERS = {
     'reveal_top_permanent': _apply_reveal_top_permanent,
     'sacrifice': _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice,
     'shuffle_graveyard_bottom_random': _apply_shuffle_graveyard_bottom_random,
-    'shuffle_into_library': _apply_shuffle_into_library,
+    'shuffle_into_library': apply_shuffle_into_library,
     'modify_all_matching_permanents_until_end_of_turn': _apply_modify_all_matching_permanents_until_end_of_turn,
     'exchange_artifact_zones': _apply_exchange_artifact_zones,
 }

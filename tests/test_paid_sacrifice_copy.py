@@ -15,6 +15,7 @@ from quorune.errors import StateInvariantError
 from quorune.oracle_ir import compile_oracle_card
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import CapabilityRegistry, DEFAULT_CAPABILITY_REGISTRY, load_default_capability_registry
+from quorune.rules.casting.optional_creature_payments import SACRIFICE_CREDIT_CAPABILITY
 from quorune.rules.evidence import validate_capability_evidence_index
 from quorune.rules.evidence_storage import read_evidence_document
 from quorune.rules.paid_sacrifice_copy import (
@@ -88,6 +89,104 @@ class PaidSacrificeCopyTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual(hand_before, len(game.state.players["A"].zones["hand"]))
         self.assertEqual(39, game.state.players["A"].life)
         self.replay(game, load=True)
+
+    def test_extus_sacrifice_credit_pays_commander_tax_and_replays_avatar(self):
+        name = "Extus, Oriq Overlord // Awaken the Blood Avatar"
+        self.deck = DeckDefinition("Avatar price", [
+            DeckEntry(name, 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], [name])
+        for index, (previous_casts, colorless) in enumerate(((3, 4), (0, 0))):
+            with self.subTest(previous_casts=previous_casts):
+                game = self.session(6051620 + index)
+                game.state.config.semantic_policy = "trusted_only"
+                player = game.state.players["A"]
+                spell = game.state.cards[player.zones["command"][0]]
+                self.assert_closed(game, spell)
+                player.commander_casts[spell.oracle_id] = previous_casts
+                offerings = [self.add(game.engine, "Grizzly Bears", ref=f"avatar-price-{i}") for i in range(4)]
+                opponents = {
+                    seat: [self.add(game.engine, "Grizzly Bears", seat=seat, ref=f"avatar-{seat}-{i}") for i in range(2)]
+                    for seat in "BC"
+                } if previous_casts else {}
+                self.prepare(game, mana={"C": colorless, "B": 1, "R": 1})
+                self.checkpoint(game)
+                actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                action, option = next(
+                    (row, choice) for row in actions if row.get("card") == spell.ref
+                    for choice in row.get("cost_options", ())
+                    if choice["id"].endswith("+creature-sacrifice-credit:4")
+                )
+                requirements = option["requirements"]
+                self.assertEqual((colorless, 1, 1),
+                                 (requirements["GENERIC"], requirements["B"], requirements["R"]))
+                self.assertCountEqual(
+                    [obj.ref for obj in offerings], option["choice_schema"]["sacrifice_cards"]["legal_refs"],
+                )
+                request = {"action_id": action["id"], "cost_option": option["id"], "pay": "auto"}
+                before = authoritative_state_hash(game.state)
+                illegal = [offerings[0].ref] * 4
+                self.assertFalse(game.act("pilot:A", {**request, "sacrifice_cards": illegal}).ok)
+                self.assertEqual(before, authoritative_state_hash(game.state))
+                paid = game.act("pilot:A", {**request, "sacrifice_cards": [obj.ref for obj in offerings]})
+                self.assertTrue(paid.ok, paid.summary)
+                self.assertTrue(all(game.state.cards[obj.object_id].zone == "graveyard" for obj in offerings))
+                self.assertEqual(previous_casts + 1, game.state.players["A"].commander_casts[spell.oracle_id])
+                for seat, bodies in opponents.items():
+                    self.until(game, lambda s: s.state.pending_decision.kind == "choice.apnap")
+                    self.assertEqual([seat], list(game.state.pending_decision.actors))
+                    if seat == "C":
+                        self.assertEqual("battlefield", game.state.cards[opponents["B"][0].object_id].zone)
+                        game = self.replay(game, load=True)
+                    chosen = game.act("pilot:" + seat, {"action_id": "choose", "cards": [bodies[0].ref]})
+                    self.assertTrue(chosen.ok, chosen.summary)
+                self.until(game, lambda s: s.state.pending_decision.kind == "state.commander_zone")
+                returned = game.act("pilot:A", {"action_id": "command"})
+                self.assertTrue(returned.ok, returned.summary)
+                self.assertEqual("command", game.state.cards[spell.object_id].zone)
+                self.settle(game)
+                for sacrificed, kept in opponents.values():
+                    self.assertEqual("graveyard", game.state.cards[sacrificed.object_id].zone)
+                    self.assertEqual("battlefield", game.state.cards[kept.object_id].zone)
+                avatars = [
+                    game.state.cards[object_id] for object_id in game.state.players["A"].zones["battlefield"]
+                    if game.state.cards[object_id].is_token
+                ]
+                self.assertEqual(1, len(avatars), [event.code for event in game.state.events[-30:]])
+                avatar, = avatars
+                characteristics = game.engine._effective_card_data(avatar)
+                self.assertIn("Avatar", characteristics["type_line"])
+                self.assertCountEqual(["B", "R"], characteristics["colors"])
+                self.assertEqual(
+                    (3, 6), tuple(game.engine._numeric_stat(avatar.object_id, stat) for stat in ("power", "toughness")),
+                )
+                self.assertIn("haste", game.engine._combat_keywords(avatar))
+                life_before = {seat: game.state.players[seat].life for seat in "ABCD"}
+                self.attack(game, [(avatar, "B")])
+                self.assertEqual(1, self.trigger_count(game, avatar))
+                self.resolve_top(game)
+                for seat, life in life_before.items():
+                    self.assertEqual(life - (3 if seat != "A" else 0), game.state.players[seat].life)
+                self.replay(game, load=True)
+
+    def test_extus_sacrifice_credit_is_closed_to_the_exact_typed_price(self):
+        from quorune.compiler.creature_sacrifice_credit import creature_sacrifice_credit_template
+
+        source = self.db.lookup("Extus, Oriq Overlord // Awaken the Blood Avatar")
+        result = compile_oracle_card(source, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", result.status, result.material_residuals)
+        spell, avatar = result.faces[1].nodes
+        self.assertIn(SACRIFICE_CREDIT_CAPABILITY, spell.capability_dependencies)
+        self.assertEqual(["choose_cards_apnap", "create_token"], [effect["op"] for effect in spell.effects])
+        self.assertEqual("$controller", spell.effects[1]["controller"])
+        self.assertEqual("creature.attacks", avatar.event)
+        price = source.faces[1]["oracle_text"].splitlines()[0]
+        self.assertIsNotNone(creature_sacrifice_credit_template(price))
+        for unsupported in (price.replace("{2}", "{3}"), price.replace("creatures", "permanents")):
+            self.assertIsNone(creature_sacrifice_credit_template(unsupported))
+        with patch("quorune.compiler.creature_sacrifice_credit.creature_sacrifice_credit_template", return_value=None), \
+                patch("quorune.compiler.spell_additional_cost_nodes.creature_sacrifice_credit_template", return_value=None):
+            withdrawn = compile_oracle_card(source, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertNotEqual("exact", withdrawn.status)
 
     def order_triggers(self, game):
         while game.state.pending_decision is not None and game.state.pending_decision.kind == "trigger.order":

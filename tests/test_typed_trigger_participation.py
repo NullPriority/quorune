@@ -428,7 +428,8 @@ class TypedTriggerParticipationNativeTests(unittest.TestCase):
             ROOT/'tests/fixtures/typed-trigger-participation-controls.json',ROOT/'tests/fixtures/conditional-copy-value-cards.json',
             ROOT/'tests/fixtures/typed-trigger-participation-entry-controls.json',ROOT/'tests/fixtures/public-negative-keyword-cards.json',
             ROOT/'tests/fixtures/kicked-damage-replacement-cards.json',ROOT/'tests/fixtures/face-up-effect-cards.json',
-            ROOT/'tests/fixtures/departure-trigger-limit-cards.json',ROOT/'tests/fixtures/source-self-optional-cards.json'],path)
+            ROOT/'tests/fixtures/departure-trigger-limit-cards.json',ROOT/'tests/fixtures/source-self-optional-cards.json',
+            ROOT/'tests/fixtures/counted-library-search-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Typed participation',[DeckEntry('Generic Bound Commander',1,'commander'),
             DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
@@ -499,6 +500,37 @@ class TypedTriggerParticipationNativeTests(unittest.TestCase):
         self.assertEqual(hand+3,len(s.state.players['A'].zones['hand']))
         self.replay(s,load=True)
 
+    def test_borrowed_permanent_triggers_preserve_lki_owner_and_separate_targets(self):
+        session = self.session(650032)
+        engine = session.engine
+        modifier = self.add(engine, "Jabs, Mistress of Mockery")
+        self.closed(session, modifier)
+        self.add(engine, "Goblin Arsonist", ref="owned-arsonist")
+        borrowed = self.add(engine, "Goblin Arsonist", seat="B", zone="hand", ref="borrowed-arsonist")
+        engine.move_card(borrowed.object_id, "battlefield", controller="A")
+        self.assertEqual(("B","A"), (engine.state.cards[borrowed.object_id].owner,
+                                         engine.state.cards[borrowed.object_id].controller))
+        wipe = self.add(engine, "Day of Judgment", zone="hand", ref="borrowed-permanent-wipe")
+        self.start(session)
+        self.cast(session, wipe)
+        picked = []
+        for _ in range(80):
+            choice = self.resolve(session)
+            if choice is None:
+                break
+            principal = session.pending_principals()[0]
+            if choice.kind == "semantic.target":
+                target = ("B","C","D")[len(picked)]
+                result = session.act(principal, {"action_id":"choose","targets":[target]})
+                picked.append(target)
+            else:
+                self.assertEqual("semantic.choice", choice.kind)
+                result = session.act(principal, {"action_id":"choose","choice":"apply"})
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual(["B","C","D"], picked)
+        self.assertEqual([39,39,39], [session.state.players[seat].life for seat in "BCD"])
+        self.replay(session, load=True)
+
     def test_original_death_modifiers_and_hushbringer_use_simultaneous_lookback_sources(self):
         for prohibited in (False,True):
             with self.subTest(prohibited=prohibited):
@@ -547,6 +579,70 @@ class TypedTriggerParticipationNativeTests(unittest.TestCase):
         self.assertEqual(5,int(s.engine._effective_card_data(harmonic).get('power',1)))
         self.assertEqual(11,int(s.engine._effective_card_data(veyran).get('power',2)))
         self.replay(s,load=True)
+
+    def test_actual_battlesphere_counts_live_myr_and_uses_its_departed_damage_source(self):
+        from quorune.model import CombatState
+        from quorune.record import authoritative_state_hash
+
+        for source_leaves in (False, True):
+            with self.subTest(source_leaves=source_leaves):
+                s = self.session(650071 + int(source_leaves))
+                e = s.engine
+                sphere = self.add(e, "Myr Battlesphere")
+                sphere.acquired_control_turn_count = -1
+                self.closed(s, sphere)
+                outsider = self.add(e, "Goblin Arsonist")
+                source_bounce = self.add(e, "Unsummon", seat="B", zone="hand")
+                traits = {"type_line":"Token Artifact Creature — Myr","power":"1","toughness":"1","colors":[]}
+                refs = e.create_token("A", name="Myr Token", quantity=2, characteristics=traits)
+                (enemy_ref,) = e.create_token("B", name="Myr Token", characteristics=traits)
+                self.start(s)
+                e.permissions.invalidate_current()
+                e.state.pending_decision = None
+                e.state.phase = "combat"
+                e.state.step = "declare_attackers"
+                e.state.phase_index = 5
+                e.state.combat = CombatState()
+                e._issue_attackers()
+                self.checkpoint(s)
+                attack = s.act("pilot:A", {"action_id":"attack","attackers":{sphere.ref:"B"}})
+                self.assertTrue(attack.ok, attack.summary)
+                if source_leaves:
+                    self.cast(s, source_bounce, seat="B", targets=[sphere.ref])
+                choice = self.resolve(s)
+                self.assertEqual("semantic.choice", choice.kind)
+                self.assertEqual(["pilot:A"], s.pending_principals())
+                ctx = s.packet("pilot:A", full=True)["decision"]["ctx"]
+                offered = {row["id"] for row in ctx["objects"]}
+                self.assertEqual(set(refs), offered)
+                before = authoritative_state_hash(s.state)
+                for invalid in ([outsider.ref], [enemy_ref], [refs[0],refs[0]]):
+                    self.assertFalse(s.act("pilot:A", {"action_id":"choose","objects":invalid}).ok)
+                    self.assertEqual(before, authoritative_state_hash(s.state))
+                s = self.replay(s, load=True)
+                selected = s.act("pilot:A", {"action_id":"choose","objects":list(refs)})
+                self.assertTrue(selected.ok, selected.summary)
+                self.assertEqual(38, s.state.players["B"].life)
+                self.assertTrue(all(any(card.ref==ref and card.tapped for card in s.state.cards.values()) for ref in refs))
+                current = s.state.cards[sphere.object_id]
+                if source_leaves:
+                    self.assertEqual("hand", current.zone)
+                else:
+                    self.assertEqual(6, s.engine._numeric_stat(current.object_id,"power"))
+                self.replay(s, load=True)
+
+    def test_battlesphere_attack_payment_requires_complete_declared_self_attack(self):
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.tap_attack_result import CAPABILITY
+        from unittest.mock import patch
+
+        card = self.db.lookup("Myr Battlesphere", fuzzy=False)
+        build = lambda: compile_oracle_card(card, capability_registry=self.registry, capability_profile="commander_review")
+        ir = build()
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        self.assertTrue(any(CAPABILITY in node.capability_dependencies for face in ir.faces for node in face.nodes))
+        with patch("quorune.compiler.tap_attack_result_templates.tap_attack_result_template", return_value=None):
+            self.assertTrue(build().material_residuals)
 
     def test_original_isshin_doubles_actual_attack_trigger_with_principal_rollback_and_replay(self):
         from quorune.model import CombatState

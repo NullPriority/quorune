@@ -7,7 +7,6 @@ from typing import Any, Callable, Mapping, Sequence
 from ..attachment_references import AttachmentReferenceKind
 from ..abilities import ActivatedAbility, parse_activated_abilities
 from ..ability_fragments import (
-    CURRENT_ABILITY_FRAGMENT_COVERAGE,
     GrantedActivatedAbilitySpec,
     GrantedTriggeredAbilitySpec,
     ability_fragment_to_dict,
@@ -23,7 +22,6 @@ from ..granted_activation_model import (
 from ..carddb import CardRecord
 from ..rules.capabilities import CapabilityRegistry
 from ..rules.activation_counter_cost import SourceCounterRemovalCost
-from ..rules.attacked_player_life import ATTACKED_PLAYER_LIFE_COVERAGE
 from ..util import normalize_card_name
 from .continuous_templates import (
     attached_quoted_ability_handler,
@@ -407,10 +405,9 @@ def _compile_granted_ability_pair(
     inner = bind_granted_plan_dependencies(inner, plan, capability_registry, capability_profile)
     if inner is None:
         return None
-    compiled = compile_shell(
-        plan.fragment,
-        tuple(inner.capability_dependencies),
-    )
+    from .granted_trigger_providers import quoted_trigger_provider_contract
+    fragment, coverage = quoted_trigger_provider_contract(plan.fragment, inner, runtime_coverage)
+    compiled = compile_shell(fragment, tuple(inner.capability_dependencies))
     if compiled is None:
         return None
     from ..continuous_conditions import GRAVEYARD_QUERY_GRANT_HANDLER_ID,GRAVEYARD_CONDITIONAL_GRANT_HANDLER_ID
@@ -430,10 +427,6 @@ def _compile_granted_ability_pair(
         capability_profile=capability_profile,
         residuals=residuals,
     )
-    coverage = inner.runtime_coverage
-    if ATTACKED_PLAYER_LIFE_COVERAGE in coverage:
-        # The typed grant itself supplies current ability presence for its recipient.
-        coverage = tuple(tag for tag in coverage if tag != CURRENT_ABILITY_FRAGMENT_COVERAGE)
     granted = replace(
         inner,
         node_id=f"{node_id}:granted",
@@ -727,6 +720,35 @@ def _cast_linked_permanent_nodes(
     return None
 
 
+def _composed_source_trigger_nodes(*, printed_card_types, **scope):
+    from .experience_results import experience_attack_node
+
+    experience = experience_attack_node(**scope)
+    if experience is not None:
+        return (experience,)
+    from .persistent_self_copy_trigger import copy_trigger_node
+
+    copy_trigger = copy_trigger_node(printed_card_types=printed_card_types, **scope)
+    return (copy_trigger,) if copy_trigger is not None else None
+
+
+def _closed_attachment_restraint_nodes(*, source_attachment_relation, node_id, line, material_line, span,
+                                       source_name, capability_registry, capability_profile, residuals):
+    """Recognize the attached counter and untap restraints before ordinary keywords."""
+    from .attached_untap_restraints import attached_counter_prohibition_nodes, attached_untap_restraint_node
+    attached_rules = attached_counter_prohibition_nodes(
+        source_attachment_relation=source_attachment_relation, node_id=node_id, line=line,
+        material_line=material_line, span=span, source_name=source_name,
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals,
+    )
+    if attached_rules is not None:
+        return attached_rules
+    restraint=attached_untap_restraint_node(node_id=node_id,line=line,material_line=material_line,span=span,
+        source_name=source_name,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if restraint is not None:return (restraint,)
+    return None
+
+
 def compile_early_material_nodes(
     *,
     record: CardRecord,
@@ -770,12 +792,19 @@ def compile_early_material_nodes(
     )
     if cycle_death is not None:
         return cycle_death
-    from .persistent_self_copy_trigger import copy_trigger_node
-    copy_trigger = copy_trigger_node(node_id=node_id, line=line, material_line=material_line,
+    from .cycling_nodes import cycling_x_token_node
+
+    cycling_x = cycling_x_token_node(
+        record=record, node_id=node_id, line=line, material_line=material_line, span=span, source_name=source_name,
+        capability_registry=capability_registry, capability_profile=capability_profile,
+    )
+    if cycling_x is not None:
+        return (cycling_x,)
+    composed_triggers = _composed_source_trigger_nodes(node_id=node_id, line=line, material_line=material_line,
         printed_card_types=printed_card_types, source_name=source_name, span=span,
         capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
-    if copy_trigger is not None:
-        return (copy_trigger,)
+    if composed_triggers is not None:
+        return composed_triggers
     if material_line.casefold().startswith(DECK_COPY_LIMIT_PREFIX):
         deck_limit = printed_deck_copy_limit_node(record=record, node_id=node_id, line=line,
             material_line=material_line, span=span, capability_registry=capability_registry,
@@ -846,17 +875,12 @@ def compile_early_material_nodes(
     )
     if typed_token_nodes is not None:
         return typed_token_nodes
-    from .attached_untap_restraints import attached_counter_prohibition_nodes, attached_untap_restraint_node
-    attached_rules = attached_counter_prohibition_nodes(
+    if (restraints := _closed_attachment_restraint_nodes(
         source_attachment_relation=source_attachment_relation, node_id=node_id, line=line,
         material_line=material_line, span=span, source_name=source_name,
         capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals,
-    )
-    if attached_rules is not None:
-        return attached_rules
-    restraint=attached_untap_restraint_node(node_id=node_id,line=line,material_line=material_line,span=span,
-        source_name=source_name,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
-    if restraint is not None:return (restraint,)
+    )) is not None:
+        return restraints
     keyword_nodes = keyword_node_compiler(
         record=record, face_id=face_id,
         node_id=node_id, line=line, material_line=material_line,
@@ -896,12 +920,28 @@ def _compile_quoted_grant_forms(*,record,face_id,node_id,line,material_line,span
         )
         if planeswalker is not None:
             return planeswalker
+    from .source_subtype_progression import source_subtype_progression_nodes
+    progression = source_subtype_progression_nodes(record=record, face_id=face_id, node_id=node_id, line=line,
+        material_line=material_line, span=span, source_name=source_name, trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals,
+        compile_inner=compile_inner, trigger_node=trigger_node, effect_template=effect_template,
+        trigger_effect_template=trigger_effect_template, material_line_for=material_line_for)
+    if progression is not None:
+        return progression
     from .entry_copy_ability_nodes import entry_copy_ability_nodes
     copied = entry_copy_ability_nodes(record=record,face_id=face_id,node_id=node_id,line=line,
         material_line=material_line,span=span,source_name=source_name,trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,capability_profile=capability_profile,compile_inner=compile_inner,
         effect_template=effect_template,trigger_effect_template=trigger_effect_template,material_line_for=material_line_for,keyword_node_compiler=keyword_node_compiler)
     if copied is not None:return copied
+    from .grantor_damage_redirection import grantor_damage_redirection_nodes
+    grantor = grantor_damage_redirection_nodes(
+        record=record, face_id=face_id, node_id=node_id, line=line, material_line=material_line, span=span,
+        printed_card_types=printed_card_types, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals,
+    )
+    if grantor is not None:
+        return grantor
     from .blocked_damage_grant_nodes import composed_temporary_ability_nodes
     temporary = composed_temporary_ability_nodes(record=record, face_id=face_id,
         node_id=node_id, line=line, material_line=material_line, span=span,

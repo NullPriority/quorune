@@ -27,6 +27,8 @@ from ..semantic_runtime.action_permissions import (
     OPENING_HAND_BATTLEFIELD_CAPABILITY,
     OPENING_HAND_LUCK_HANDLER_ID,
     OPENING_HAND_LUCK_CAPABILITY,
+    MULLIGAN_REDRAW_HANDLER_ID,
+    MULLIGAN_REDRAW_CAPABILITY,
     QUALIFIED_LIBRARY_TOP_HANDLER_ID,
     ActionPermissionKind,
     ActionPermissionScope,
@@ -286,6 +288,26 @@ def opening_hand_battlefield_permission_handler(text: str, *, source_name: str |
             permission=ActionPermissionKind.OPENING_HAND_BATTLEFIELD),
             'requires_complete_card_program':True},OPENING_HAND_BATTLEFIELD_CAPABILITY)
     return None
+
+
+def mulligan_redraw_permission_handler(text: str, *, source_name: str | None = None):
+    normalized = " ".join(text.strip().split())
+    if not normalized.casefold().startswith("any time you could mulligan "):
+        return None
+    source = "this card"
+    if source_name:
+        source = rf"(?:this card|{SourceReferenceSpec(source_name).regex_pattern})"
+    clause = (
+        rf"Any time you could mulligan and {source} is in your hand, "
+        r"you may exile all the cards from your hand, then draw that many cards\."
+        r"(?: \(You can do this in addition to taking mulligans\.\))?"
+    )
+    if re.fullmatch(clause, normalized, re.I) is None:
+        return None
+    return ("mulligan-redraw-permission-v1", {
+        **_descriptor(handler_id=MULLIGAN_REDRAW_HANDLER_ID, permission=ActionPermissionKind.MULLIGAN_REDRAW),
+        "requires_complete_card_program": True,
+    }, MULLIGAN_REDRAW_CAPABILITY)
 
 
 def _static_hand_visibility_handler(normalized: str) -> ActionPermissionHandlerTemplate | None:

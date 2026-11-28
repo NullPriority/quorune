@@ -93,8 +93,9 @@ def prepare_copy_targets(host: CopyTargetHost, *, actor: str, schema: Mapping[st
         return PreparedCopyTargets((), FrozenMap(), FrozenMap())
     plan = target_plan(schema, modes, require_modes=bool(schema.get("modes")))
     original = original_copy_groups(host, schema, modes, defaults, original_groups)
+    from ..announced_counter_allocation import COUNTER_ALLOCATION_FIELD
     from ..announced_damage import damage_allocation_spec
-    allocated = damage_allocation_spec(schema) is not None
+    allocated = damage_allocation_spec(schema) is not None or COUNTER_ALLOCATION_FIELD in schema
     slots = [(group.group_id, ref) for group in plan.groups for ref in original[group.group_id]]
     values: list[tuple[str | None, Any]] = []
     if submitted is None:
@@ -264,7 +265,11 @@ def materialize_optional_stack_target_change(host, effect, response):
 def stack_copy_context(target: Any, groups: Mapping[str, Sequence[str]], snapshots: Mapping[str, Any],
                        *, permanent_spell: bool, characteristics: Mapping[str, Any]) -> dict[str, Any]:
     """Copy decisions and resolution context without rebinding kept targets."""
-    return {**copy.deepcopy(dict(target.context)),
+    from ..beheld_exile_state import PAID_BEHELD_EXILE_FIELD
+
+    context = copy.deepcopy(dict(target.context))
+    context.pop(PAID_BEHELD_EXILE_FIELD, None)
+    return {**context,
             "target_groups": {key: list(values) for key, values in groups.items()},
             "target_snapshots": copy.deepcopy(dict(snapshots)),
             "targets_revalidated": False, "targets_chosen_at_creation": True,

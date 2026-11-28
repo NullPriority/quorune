@@ -169,7 +169,8 @@ class LifeGainCountedCounterNativeTests(InheritedNativeFixture, unittest.TestCas
         base = json.loads((ROOT / 'tests/fixtures/bound-effect-program-cards.json').read_text(encoding='utf-8'))
         base['cards'] = [r for r in base['cards'] if r['name'] == 'Generic Bound Plains']; base['rulings'] = []
         basic = folder / 'basic.json'; basic.write_text(json.dumps(base), encoding='utf-8')
-        build_fixture_database([basic, ROOT / 'tests/fixtures/life-gain-counted-result-cards.json'], folder / 'life-gain.sqlite3')
+        build_fixture_database([basic, ROOT / 'tests/fixtures/life-gain-counted-result-cards.json',
+            ROOT / 'tests/fixtures/cast-counter-and-source-depletion-threshold-cards.json'], folder / 'life-gain.sqlite3')
         cls.db = CardDatabase(folder / 'life-gain.sqlite3'); cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition('Life event counted counters', [DeckEntry('Sliver Hivelord', 1, 'commander'),
             DeckEntry('Generic Bound Plains', 30)], ['Sliver Hivelord'])
@@ -398,6 +399,116 @@ class LifeGainCountedCounterNativeTests(InheritedNativeFixture, unittest.TestCas
                 if not prohibited: self.assertEqual(43, s.state.players['B'].life)
                 for card in (own, foreign): self.assertEqual(0, s.state.cards[card.object_id].counters.get('+1/+1', 0))
                 self.finish(s, private)
+
+    def test_prize_pig_executes_settled_life_and_ribbon_transactions_with_exact_replay(self):
+        from quorune.card_programs.adapters import compile_card_program
+        from quorune.card_programs.binding import bind_card_program_runtime
+
+        record = self.db.lookup("Prize Pig")
+        plans = []
+        for profile in ("traditional", "commander_duel", "commander_review"):
+            program = compile_card_program(self.db, record, capability_registry=self.registry,
+                                           capability_profile=profile, trust_level="trusted")
+            binding = bind_card_program_runtime(program, capability_registry=self.registry, profile=profile)
+            self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+            trigger, = (ability for ability in program.abilities if ability.event == "life.gained")
+            plans.append((trigger.effects, trigger.event_condition, trigger.capability_dependencies))
+        self.assertEqual([plans[0]] * 3, plans)
+        cases = (
+            ("Boon Reflection", 0, True, False, 6, (6, 6), 0, False),
+            ("Doubling Season", 0, True, True, 3, (3, 6), 0, True),
+            ("Solemnity", 2, True, False, 3, None, 2, True),
+            ("Solemnity", 3, False, False, 3, None, 0, False),
+            ("Havoc Festival", 3, True, False, 0, None, 3, True),
+        )
+        for index, (name, ribbons, tapped, stunned, life, placement, expected_ribbons, expected_tap) in enumerate(cases):
+            with self.subTest(replacement=name, initial_ribbons=ribbons):
+                game, private = self.start(728100 + index)
+                pig = self.add(game.engine, "Prize Pig")
+                gain = self.add(game.engine, "Revitalize", zone="hand")
+                modifier = self.add(game.engine, name, seat="B" if name == "Havoc Festival" else "A")
+                for card in (pig, gain, modifier):
+                    self.assert_closed(game, card)
+                pig.tapped = tapped
+                pig.counters["+1/+1"] = 1
+                if ribbons:
+                    pig.counters["ribbon"] = ribbons
+                if stunned:
+                    pig.counters["stun"] = 1
+                self.prepare(game, mana={"C": 1, "W": 1})
+                self.checkpoint(game)
+                self.cast(game, "A", gain)
+                self.resolve_top(game)
+                self.assertEqual(40 + life, game.state.players["A"].life)
+                trigger = [item for item in game.state.stack if item.source_object_id == pig.object_id]
+                self.assertEqual(int(life > 0), len(trigger))
+                if trigger:
+                    self.assertEqual(life, trigger[0].context["amount"])
+                self.assertIsNone(self.resolve(game))
+                additions = [(event.details["requested"], event.details["placed"]) for event in game.state.events
+                             if event.code == "counter.add" and event.details.get("object") == pig.ref
+                             and event.details.get("counter") == "ribbon" and event.details["placed"] > 0]
+                self.assertEqual([placement] if placement is not None else [], additions)
+                self.assertEqual(expected_ribbons, pig.counters.get("ribbon", 0))
+                self.assertEqual(1, pig.counters["+1/+1"])
+                self.assertEqual(0, pig.counters.get("stun", 0))
+                self.assertEqual(expected_tap, pig.tapped)
+                self.finish(game, private)
+
+    def test_prize_pig_old_trigger_replays_without_following_a_departed_source(self):
+        game, private = self.start(728105)
+        pig = self.add(game.engine, "Prize Pig")
+        gain = self.add(game.engine, "Revitalize", zone="hand")
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        for card in (pig, gain, bounce):
+            self.assert_closed(game, card)
+        pig.tapped = True
+        pig.counters["ribbon"] = 2
+        self.prepare(game, mana={"C": 1, "W": 1})
+        game.state.players["B"].mana_pool["U"] = 1
+        self.checkpoint(game)
+        self.cast(game, "A", gain)
+        self.resolve_top(game)
+        self.assertEqual(1, len([item for item in game.state.stack if item.source_object_id == pig.object_id]))
+        self.cast(game, "B", bounce, [pig.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("hand", pig.zone)
+        self.assertFalse([event for event in game.state.events if event.code == "counter.add"
+                          and event.details.get("object") == pig.ref])
+        self.finish(game, private)
+
+    def test_prize_pig_requires_exact_threshold_compiler_and_named_counter_authority(self):
+        from copy import deepcopy
+        from unittest.mock import patch
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index, discover_tests
+
+        card = self.db.lookup("Prize Pig")
+        profiles = ("traditional", "commander_duel", "commander_review")
+        for profile in profiles:
+            result = compile_oracle_card(card, capability_registry=self.registry, capability_profile=profile)
+            self.assertEqual("exact", result.status)
+        with patch("quorune.compiler.life_gain_counted_results.life_gain_counter_reset_result", return_value=None):
+            for profile in profiles:
+                result = compile_oracle_card(card, capability_registry=self.registry, capability_profile=profile)
+                self.assertNotEqual("exact", result.status)
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        declarations = read_evidence_document(ROOT / "platform/capability-evidence-declarations.json")
+        discovered = set(discover_tests(ROOT).values())
+        for capability in ("quantity_expression.source_counter_kind_count", "counter.removal.all_named_source_effect"):
+            changed = deepcopy(raw)
+            row = next(value for value in changed["capabilities"] if value["id"] == capability)
+            row.update(status="blocked", blockers=["Independently withdrew the named-counter authority"])
+            registry = CapabilityRegistry(changed)
+            evidence = build_index(registry_value=changed, declaration_source=declarations, discovered_test_ids=discovered)
+            registry.mark_evidence_verified(validate_capability_evidence_index(evidence, registry=registry))
+            for profile in profiles:
+                result = compile_oracle_card(card, capability_registry=registry, capability_profile=profile)
+                self.assertNotEqual("exact", result.status)
 
     def test_actual_post_counter_commit_fault_restores_payment_choice_mana_and_counters_then_retries(self):
         import quorune.counter_placement as owner

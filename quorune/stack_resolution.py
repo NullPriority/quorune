@@ -206,7 +206,7 @@ def arbiter_resolution_effects(raw: Any) -> list[dict[str, Any]]:
     from .next_turn_attack_restriction_model import ATTACK_RESTRICTION_OPERATION
     from .counter_bound_attack_model import COUNTER_BOUND_ATTACK_OPERATION
     from .rules.counter_marked_keep import KEEP_COUNTER_FIELD
-    from .extra_combat_model import uses_other_creature_extra_combat
+    from .extra_combat_model import uses_other_creature_extra_combat, uses_targeted_main_combat
     from .creature_power_damage_model import uses_trample_bite
     from .rules.announced_x_damage_sets import SCALED_ANNOUNCED_TARGET_DAMAGE_FIELD
     from .rules.secret_number_choices import OPERATION as PRIVATE_NUMBER_OPERATION
@@ -214,17 +214,28 @@ def arbiter_resolution_effects(raw: Any) -> list[dict[str, Any]]:
     from .rules.artifact_mana_tap_control import FIELD as ARTIFACT_MANA_TAP_CONTROL
     from .rules.discarded_card_exile import DISCARD_PLAY_VERSION
     from .rules.effect_shape_walkers import nested_effects
-    from .rules.event_optional_draw_shapes import EVENT_OPTIONAL_DRAW_FIELD, TABLE_DRAW_ATTACK_RESTRICTION_VERSION
+    from .chosen_attack_turn_model import (
+        CHOOSE as CHOSEN_ATTACK_CHOICE, COMMIT as CHOSEN_ATTACK_COMMIT, DESTROY as CHOSEN_ATTACK_DESTROY,
+    )
+    from .rules.apnap_counter_attack_truce import COMMIT as COUNTER_TRUCE_COMMIT, FIELD as COUNTER_TRUCE_FIELD
+    from .rules.event_optional_draw_shapes import (
+        ACCEPTED_TOKEN_CREATORS_FIELD, EVENT_OPTIONAL_DRAW_FIELD, TABLE_DRAW_ATTACK_RESTRICTION_VERSION,
+        TEMPTING_DRAW_TOKEN_VERSION,
+    )
     from .rules.target_entry_draw import uses_target_entry_draw
     from .rules.targeted_return_spell_copy import LAND_PAYMENT_FIELD, RETURN_TARGET_FIELD
 
     effects = [dict(effect) for effect in raw or ()]
     for effect in nested_effects(effects):
+        if effect["op"].casefold() in (CHOSEN_ATTACK_CHOICE, CHOSEN_ATTACK_COMMIT, CHOSEN_ATTACK_DESTROY):
+            raise GameRuleError("This resolution requires the original chosen-attacker activation")
         if (effect["op"].startswith("$")
                 or EVENT_OPTIONAL_DRAW_FIELD in effect and type(effect[EVENT_OPTIONAL_DRAW_FIELD]) is not int):
             raise GameRuleError("Raw effect operations and optional draw versions must be literal")
         if KEEP_COUNTER_FIELD in effect or effect["op"] == COUNTER_BOUND_ATTACK_OPERATION:
             raise GameRuleError("Counter-marked retention requires server-issued choices")
+        if uses_targeted_main_combat(effect):
+            raise GameRuleError("Targeted additional combat requires its registered spell")
         if uses_other_creature_extra_combat(effect):
             raise GameRuleError("The extra combat requires its committed linked Exert trigger")
         if uses_trample_bite(effect):
@@ -232,7 +243,8 @@ def arbiter_resolution_effects(raw: Any) -> list[dict[str, Any]]:
         if SCALED_ANNOUNCED_TARGET_DAMAGE_FIELD in effect:
             raise GameRuleError("Equal announced-X damage requires the original announced spell targets")
         if (effect["op"] == ATTACK_RESTRICTION_OPERATION
-                or effect.get(EVENT_OPTIONAL_DRAW_FIELD) == TABLE_DRAW_ATTACK_RESTRICTION_VERSION
+                or ACCEPTED_TOKEN_CREATORS_FIELD in effect
+                or effect.get(EVENT_OPTIONAL_DRAW_FIELD) in (TABLE_DRAW_ATTACK_RESTRICTION_VERSION, TEMPTING_DRAW_TOKEN_VERSION)
                 or uses_target_entry_draw(effect)):
             raise GameRuleError("This resolution requires server-issued optional draw choices")
         if LAND_PAYMENT_FIELD in effect or RETURN_TARGET_FIELD in effect:
@@ -245,6 +257,8 @@ def arbiter_resolution_effects(raw: Any) -> list[dict[str, Any]]:
             raise GameRuleError("Mana-tap artifact control requires a bound card program")
         if DISCARD_PLAY_VERSION in effect:
             raise GameRuleError("Discarded-card play requires a bound card program")
+        if effect["op"] == COUNTER_TRUCE_COMMIT or COUNTER_TRUCE_FIELD in effect:
+            raise GameRuleError("This resolution requires server-issued APNAP counter choices")
     return effects
 
 
@@ -357,6 +371,9 @@ def complete_stack_resolution(host: StackResolutionCompletionHost,*,item: StackI
                                  actor=item.controller, shuffling_player=item.controller)
         from .spell_resolution_names import finish_spell_resolution_names
         finish_spell_resolution_names(host, item)
+    from .saga_progression import dispatch_resolved_final_saga_chapter
+
+    dispatch_resolved_final_saga_chapter(host, item)
 
 
 def _complete_stack_resolution(
@@ -372,8 +389,10 @@ def _complete_stack_resolution(
     item.context.pop("currently_resolving", None)
     if item.card_object_id:
         from .zone_object_state import mark_resolving_cast_facts
+        from .beheld_exile_state import mark_resolving_beheld_exile
 
         mark_resolving_cast_facts(host.state.cards[item.card_object_id], item)
+        mark_resolving_beheld_exile(host, host.state.cards[item.card_object_id], item)
     from .rules.event_spell_copy import pin_event_spell_copy_departure
     pin_event_spell_copy_departure(host,item)
     host.state.stack.remove(item)

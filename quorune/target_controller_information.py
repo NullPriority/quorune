@@ -113,13 +113,13 @@ def pin_target_controller_departures(host,cards,*,error_type=ValueError):
             program=host.semantics.get(item.semantic_key) if item.semantic_key else None
             indices=_reference_indices((program.effects if program else (),item.context.get('dynamic_effects',()),item.context.get('cast_option_effects',())))
             schema = item.context.get("target_schema_override")
-            if (program and PAWPRINT_CAPABILITY in program.capability_dependencies
-                    and item.targets and schema and schema.get(PAWPRINT_SELECTION_FIELD)):
+            if (item.targets and isinstance(schema, Mapping) and schema.get(PAWPRINT_SELECTION_FIELD)
+                    and program and PAWPRINT_CAPABILITY in program.capability_dependencies):
                 from .targets import mode_effects
                 groups = item.context.get("target_groups_current", item.context.get("target_groups"))
                 indices.update(_reference_indices(mode_effects(schema, item.modes, target_groups=groups)))
-            if (program and CONDITIONAL_TARGET_LIFE_MECHANIC in program.coverage and item.targets
-                    and item.targets[0] is not None and item.targets[0] not in host.state.players):
+            if (item.targets and item.targets[0] is not None and item.targets[0] not in host.state.players
+                    and program and CONDITIONAL_TARGET_LIFE_MECHANIC in program.coverage):
                 indices.add(0)
             if not indices:continue
             old=item.context.get(_LKI_FIELD,{})

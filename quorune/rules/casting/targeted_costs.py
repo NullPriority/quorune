@@ -15,17 +15,22 @@ from ...errors import GameRuleError
 
 
 def target_cost_fact(sources,targets):
-    applied=tuple((source,source.adjustment(targets)) for source in sources if source.applies(targets))
+    applied = tuple((source, source.adjustment(targets), source.life_payment(targets))
+                    for source in sources if source.applies(targets))
+    life = sum(cost for _, _, cost in applied)
     counted=any(source.spec.schema_version==5 for source in sources)
     reduction=counted or any(source.spec.generic<0 for source in sources)
-    return {'schema_version':3 if counted else 2 if reduction else 1,'generic':sum(max(0,amount) for source,amount in applied),
-        **({'generic_reduction':sum(max(0,-amount) for source,amount in applied)} if reduction else {}),
+    return {'schema_version':4 if life else 3 if counted else 2 if reduction else 1,
+        'generic':sum(max(0,amount) for _,amount,_ in applied),
+        **({'generic_reduction':sum(max(0,-amount) for _,amount,_ in applied)} if reduction or life else {}),
+        **({'life':life} if life else {}),
         'sources':[{'component_id':source.component_id,'source_ref':source.source_ref,'source_identity':source.source_identity,
-            'controller':source.controller,'generic':amount} for source,amount in applied]}
+            'controller':source.controller,'generic':amount,**({'life':cost} if life else {})}
+            for source,amount,cost in applied]}
 
 
 def _cost_signature(fact):
-    return tuple((row['component_id'],row['generic']) for row in fact['sources'])
+    return tuple((row['component_id'], row['generic'], row.get('life', 0)) for row in fact['sources'])
 
 
 def _target_assignments(host,seat,card,schema,modes,*,required=None,extra_targets=0,sources=None,
@@ -156,7 +161,7 @@ def target_cost_for_x_preview(option):
     if fact is None:
         return None
     if ('target_count_parameter' in option or option.get("announced_mana_value_limit")
-            or fact.get('schema_version') in {2, 3}
+            or fact.get('schema_version') in {2, 3, 4}
             or variable_damage_allocation(option.get('target_schema')) is not None):
         return fact
     return None
@@ -171,14 +176,15 @@ def _preview_option_rank(option):
     if variable_damage_allocation(raw.get('target_schema')) is not None:
         maximum = raw['choice_schema']['x']['maximum']
         return -maximum, sum(raw['requirements'].values())
-    maximum=raw.get('choice_schema',{}).get('x',{}).get('maximum',0) if version in {2,3} else 0
+    maximum=raw.get('choice_schema',{}).get('x',{}).get('maximum',0) if version in {2,3,4} else 0
     if version==3:return -maximum,sum(raw['requirements'].values())
-    return sum(raw['requirements'].values()),-maximum
+    return sum(raw['requirements'].values()),-maximum,raw.get('targeted_cost',{}).get('life',0)
 
 
 def target_cost_clauses(host,seat,*,card=None,spell_program=None):
     return [{'generic':source.spec.generic,'any_target_refs':list(source.eligible_target_refs),
         'source':source.source_ref,'component_id':source.component_id,
+        **({'life':source.spec.life} if source.spec.life else {}),
         **({'counted_targets':source.spec.counted_targets} if source.spec.schema_version==5 else {})}
         for source in targeted_spell_cost_sources(host,seat,card=card,spell_program=spell_program)]
 
@@ -208,14 +214,15 @@ def consolidate_target_cost_options(options,*,hint):
             modes=tuple(raw.get('target_cost_witness',{}).get('modes',()))
             components=tuple(row['component_id'] for row in raw['targeted_cost']['sources'])
             count=raw.get('target_count_price')
-            amounts=tuple(row['generic'] for row in raw['targeted_cost']['sources'])
+            amounts=tuple((row['generic'], row.get('life', 0)) for row in raw['targeted_cost']['sources'])
             prices.setdefault(option.option_id,{})[(modes,components,count,amounts)]={'modes':list(modes),'components':list(components),
                 **({'generic_adjustments':[{'component_id':row['component_id'],'generic':row['generic']}
-                    for row in raw['targeted_cost']['sources']]} if raw['targeted_cost'].get('schema_version')==3 else {}),
+                    for row in raw['targeted_cost']['sources']]} if raw['targeted_cost'].get('schema_version') in {3,4} else {}),
+                **({'life':raw['targeted_cost']['life']} if 'life' in raw['targeted_cost'] else {}),
                 **({'target_count':count} if count is not None else {}),
                 'requirements':raw['requirements'], **({'maximum_x':raw['choice_schema']['x']['maximum']}
                 if (allocation is not None or 'target_count_parameter' in raw or raw.get("announced_mana_value_limit")
-                    or raw['targeted_cost'].get('schema_version') in {2,3}) and 'x' in raw.get('choice_schema',{}) else {})}
+                    or raw['targeted_cost'].get('schema_version') in {2,3,4}) and 'x' in raw.get('choice_schema',{}) else {})}
         prior=result.get(option.option_id)
         if prior is None or _preview_option_rank(option)<_preview_option_rank(prior):result[option.option_id]=option
     return tuple(CastCostOption.from_dict({**option.to_dict(),**({'payable_target_witnesses':witnesses[oid],
@@ -227,18 +234,23 @@ def public_target_costs(host,seat,option,*,card=None,spell_program=None):
     from ...morph import FACE_DOWN_CAST_METHODS
     clauses=target_cost_clauses(host,seat,card=card if option.get('id') not in FACE_DOWN_CAST_METHODS else None,spell_program=spell_program)
     if not clauses and 'target_count_cost' not in option:return None
-    def label(requirements):
-        value=(f"{{{requirements['GENERIC']}}}" if requirements.get('GENERIC') else '')
-        value+=''.join(('{'+key+'}')*requirements.get(key,0) for key in 'WUBRGC')
+    def label(row):
+        requirements = row['requirements']
+        value = (f"{{{requirements['GENERIC']}}}" if requirements.get('GENERIC') else '')
+        value += ''.join(('{'+key+'}')*requirements.get(key,0) for key in 'WUBRGC')
+        life = row.get('life',0)
+        if life:
+            return f"Pay {value} and {life} life" if value else f"Pay {life} life"
         return 'Pay '+(value or '{0}')
     kind=('generic_adjustment_per_distinct_target' if any('counted_targets' in row for row in clauses)
         else 'generic_adjustment_once_per_source' if any(row['generic']<0 for row in clauses) else 'generic_increase_once_per_source')
-    shows_x = (option.get('targeted_cost', {}).get('schema_version') in {2, 3}
+    shows_x = (option.get('targeted_cost', {}).get('schema_version') in {2, 3, 4}
                or option.get("announced_mana_value_limit")
                or variable_damage_allocation(option.get('target_schema')) is not None)
     return {'kind':kind,'clauses':clauses,
-        'prices':[{**row,'label':f"Choose X up to {row['maximum_x']}" if shows_x and 'maximum_x' in row
-            else label(row['requirements'])} for row in option.get('target_cost_prices',())]}
+        'prices':[{**row,'label':(f"Choose X up to {row['maximum_x']}"
+            + (f" and pay {row['life']} life" if row.get('life') else '')) if shows_x and 'maximum_x' in row
+            else label(row)} for row in option.get('target_cost_prices',())]}
 
 
 def public_payable_target_schema(schema,option):

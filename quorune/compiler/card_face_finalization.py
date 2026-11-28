@@ -29,4 +29,9 @@ def finalize_card_faces(record,faces,*,material_line_for,capability_registry,cap
     faces = compile_linked_graveyard_aura_faces(
         record, faces, capability_registry=capability_registry, capability_profile=capability_profile,
     )
+    from .linked_enchantment_entry_nodes import compile_linked_enchantment_entry_faces
+
+    faces = compile_linked_enchantment_entry_faces(
+        record, faces, capability_registry=capability_registry, capability_profile=capability_profile,
+    )
     return scope_declared_card_faces(scope_entry_designation_faces(faces))

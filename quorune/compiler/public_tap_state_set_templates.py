@@ -9,13 +9,17 @@ from typing import Any, Mapping
 from ..affected_permanents import (
     AffectedPermanentSetSpec,
     PermanentControllerRelation,
+    TARGET_OPPONENT_NONLAND_UNTAP_SNAPSHOT_FIELD,
     TARGET_PLAYER_CREATURE_UNTAP_SNAPSHOT_FIELD,
     TARGET_UNSPENT_MANA_FIELD,
     target_player_creature_snapshot_spec,
+    target_opponent_nonland_snapshot_spec,
+    target_opponent_nonland_snapshot_target_schema,
     target_player_creature_snapshot_target_schema,
     target_unspent_mana_tap_spec,
     target_unspent_mana_target_schema,
 )
+from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from .destruction_templates import fixed_affected_permanent_query
 
 
@@ -39,6 +43,7 @@ class FixedPublicTapStateSetTemplate:
     target_schema: Mapping[str, Any] | None = None
     lose_unspent_mana: bool = False
     restrain_snapshot_on_player_untap: bool = False
+    restrain_snapshot_on_controller_untap: bool = False
 
     def __post_init__(self) -> None:
         if not isinstance(self.spec, AffectedPermanentSetSpec):
@@ -62,10 +67,18 @@ class FixedPublicTapStateSetTemplate:
             or self.target_schema != target_player_creature_snapshot_target_schema()
         ):
             raise ValueError("Player-bound untap restraint requires the exact original creature set")
+        if type(self.restrain_snapshot_on_controller_untap) is not bool or self.restrain_snapshot_on_controller_untap and (
+            not self.tapped or self.lose_unspent_mana or self.restrain_snapshot_on_player_untap
+            or self.spec != target_opponent_nonland_snapshot_spec("$target.0")
+            or self.target_schema != target_opponent_nonland_snapshot_target_schema()
+        ):
+            raise ValueError("Controller untap restraint requires the exact original nonland set")
 
     @property
     def template_id(self) -> str:
         action = "tap" if self.tapped else "untap"
+        if self.restrain_snapshot_on_controller_untap:
+            return f"{action}-fixed-public-set-{self.spec.fingerprint[:16]}-v4"
         version = 3 if self.restrain_snapshot_on_player_untap else 2 if self.lose_unspent_mana else 1
         return f"{action}-fixed-public-set-{self.spec.fingerprint[:16]}-v{version}"
 
@@ -79,6 +92,7 @@ class FixedPublicTapStateSetTemplate:
                 "tapped": self.tapped,
                 **({TARGET_UNSPENT_MANA_FIELD: 1} if self.lose_unspent_mana else {}),
                 **({TARGET_PLAYER_CREATURE_UNTAP_SNAPSHOT_FIELD: 1} if self.restrain_snapshot_on_player_untap else {}),
+                **({TARGET_OPPONENT_NONLAND_UNTAP_SNAPSHOT_FIELD: 1} if self.restrain_snapshot_on_controller_untap else {}),
             },
         )
 
@@ -121,6 +135,13 @@ def fixed_public_tap_state_set_effect_template(
 ) -> FixedPublicTapStateSetTemplate | None:
     normalized = " ".join(text.strip().split())
     if normalized.casefold() == (
+        "tap all nonland permanents target opponent controls. they don't untap during their controller's next untap step."
+    ):
+        return FixedPublicTapStateSetTemplate(
+            target_opponent_nonland_snapshot_spec("$target.0"), True,
+            target_opponent_nonland_snapshot_target_schema(), restrain_snapshot_on_controller_untap=True,
+        )
+    if normalized.casefold() == (
         "tap all creatures target player controls. those creatures don't untap during that player's next untap step."
     ):
         return FixedPublicTapStateSetTemplate(
@@ -131,6 +152,14 @@ def fixed_public_tap_state_set_effect_template(
         return FixedPublicTapStateSetTemplate(
             target_unspent_mana_tap_spec("$target.0"), True, target_unspent_mana_target_schema(),
             lose_unspent_mana=True,
+        )
+    if normalized.casefold() == "untap each enchanted permanent you control.":
+        return FixedPublicTapStateSetTemplate(
+            AffectedPermanentSetSpec(
+                query=ObjectQuerySpec(zones=("battlefield",), state_predicate=PermanentStatePredicateSpec(enchanted=True)),
+                controller_relation=PermanentControllerRelation.ACTOR,
+            ),
+            False,
         )
     match = re.fullmatch(
         r"(?P<action>Tap|Untap) (?P<quantifier>all|each) (?P<subject>.+?)"

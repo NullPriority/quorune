@@ -30,6 +30,11 @@ from ..rules.damage_capability_shapes import (
     NONCOMBAT_PREVENTION_LIFE_GAIN_HANDLER,
     noncombat_prevention_life_gain_descriptor,
 )
+from ..rules.static_prevention_trigger import (
+    DEPENDENCIES as STATIC_PREVENTION_TRIGGER_DEPENDENCIES,
+    HANDLER as STATIC_PREVENTION_TRIGGER_HANDLER,
+    static_prevention_trigger_descriptor,
+)
 
 
 _QUANTITY_HANDLER_ID = "replacement.damage.quantity.v1"
@@ -837,6 +842,20 @@ class AllDamagePreventionHandler:
 
 
 @dataclass(frozen=True, slots=True)
+class StaticSelfPreventionTriggerHandler(AllDamagePreventionHandler):
+    handler_id: str = STATIC_PREVENTION_TRIGGER_HANDLER
+    family: str = "prevention.damage.static-self-triggered-reflection"
+    rule_references: tuple[str, ...] = ("120.4b", "603.3b", "603.3d", "615.13", "616.1")
+    capability_dependencies: tuple[str, ...] = STATIC_PREVENTION_TRIGGER_DEPENDENCIES
+
+    def validate(self, descriptor):
+        if (type(descriptor.get("schema_version")) is not int
+                or dict(descriptor) != static_prevention_trigger_descriptor()):
+            raise SemanticNodeError("Static reflexive prevention requires its closed self scope")
+        return AllDamagePreventionHandler.validate(self, descriptor)
+
+
+@dataclass(frozen=True, slots=True)
 class NoncombatPreventionLifeGainHandler(AllDamagePreventionHandler):
     handler_id: str = NONCOMBAT_PREVENTION_LIFE_GAIN_HANDLER
     rule_references: tuple[str, ...] = ("109.5", "120.4c", "615.5", "615.12", "616.1")
@@ -999,6 +1018,7 @@ def default_damage_replacement_registry() -> DamageReplacementRegistry:
             FixedDamagePreventionV2Handler(),
             FixedUntappedDamagePreventionHandler(),
             AllDamagePreventionHandler(),
+            StaticSelfPreventionTriggerHandler(),
             NoncombatPreventionLifeGainHandler(),
             FixedDamageRemainderHandler(),
             StaticDamageRedirectionHandler(),

@@ -17,6 +17,9 @@ LIFE_TOTAL_PROHIBITION_HANDLER = 'life.total.prohibition.controller.v1'
 TEMPORARY_LIFE_TOTAL_PROHIBITION_CAPABILITY = 'life.change.prohibition.controller_until_end_of_turn'
 TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD = 'temporary_life_gain_prohibition'
 TEMPORARY_LIFE_GAIN_PROHIBITION_KIND = 'temporary_life_gain_prohibition'
+DEALT_DAMAGE_LIFE_GAIN_PROHIBITION_CAPABILITY = 'life.gain.prohibition.damage_recipients_for_game'
+DEALT_DAMAGE_LIFE_GAIN_PROHIBITION_FIELD = 'dealt_damage_life_gain_prohibition'
+_DEALT_DAMAGE_RELATION = 'damage_recipients'
 
 
 @dataclass(frozen=True, slots=True)
@@ -87,18 +90,32 @@ class ResolvedLifeGainProhibition:
         if (
             any(type(value) is not str or not value for value in (self.effect_id, self.source_id, self.controller))
             or type(self.timestamp) is not int or self.timestamp < 0
-            or (self.duration is not ContinuousEffectDuration.UNTIL_END_OF_TURN
-                and (self.duration is not ContinuousEffectDuration.UNTIL_NEXT_TURN or not self.denies_loss))
+            or not self._duration_is_valid()
         ):
             raise ContinuousEffectError("Resolved life permission requires its source, controller and a represented duration")
         LifeGainPermissionSnapshot(self.denied_players)
-        if self.denies_loss:
+        if self.affected_player_relation == _DEALT_DAMAGE_RELATION:
+            if not self.denied_players:
+                raise ContinuousEffectError("A game-duration life prohibition requires committed player recipients")
+        elif self.denies_loss:
             if self.denied_players != (self.controller,):
                 raise ContinuousEffectError("A temporary life-total prohibition requires only its resolving controller")
         else:
             spec = FixedLifeGainProhibitionSpec(self.affected_player_relation)
             if (self.controller in self.denied_players) != (spec.affected_player_relation == "any"):
                 raise ContinuousEffectError("Resolved life permission does not match its relation")
+
+    def _duration_is_valid(self) -> bool:
+        if self.affected_player_relation == _DEALT_DAMAGE_RELATION:
+            return self.duration is ContinuousEffectDuration.UNTIL_END_OF_GAME
+        return self.duration is ContinuousEffectDuration.UNTIL_END_OF_TURN or (
+            self.duration is ContinuousEffectDuration.UNTIL_NEXT_TURN and self.denies_loss
+        )
+
+    @classmethod
+    def for_dealt_damage(cls, effect_id, source_id, timestamp, controller, denied_players):
+        return cls(effect_id, source_id, timestamp, controller, denied_players,
+                   ContinuousEffectDuration.UNTIL_END_OF_GAME, _DEALT_DAMAGE_RELATION)
 
     @property
     def denies_loss(self) -> bool:
@@ -120,6 +137,8 @@ class ResolvedLifeGainProhibition:
         elif self.denies_loss:
             version = 4 if self.duration is ContinuousEffectDuration.UNTIL_NEXT_TURN else 3
             value.update(schema_version=version, affected_player_relation="controller")
+        elif self.affected_player_relation == _DEALT_DAMAGE_RELATION:
+            value.update(schema_version=5, affected_player_relation=_DEALT_DAMAGE_RELATION)
         return value
 
     @classmethod
@@ -141,10 +160,15 @@ class ResolvedLifeGainProhibition:
         elif (value["schema_version"] in {3, 4} and set(value) == fields | {"affected_player_relation"}
               and value["affected_player_relation"] == "controller"):
             relation = "controller"
+        elif (value["schema_version"] == 5 and set(value) == fields | {"affected_player_relation"}
+              and value["affected_player_relation"] == _DEALT_DAMAGE_RELATION):
+            relation = _DEALT_DAMAGE_RELATION
         else:
             raise ContinuousEffectError("Malformed temporary life permission relation or version")
-        duration = (ContinuousEffectDuration.UNTIL_NEXT_TURN if value["schema_version"] == 4
-                    else ContinuousEffectDuration.UNTIL_END_OF_TURN)
+        duration = {
+            4: ContinuousEffectDuration.UNTIL_NEXT_TURN,
+            5: ContinuousEffectDuration.UNTIL_END_OF_GAME,
+        }.get(value["schema_version"], ContinuousEffectDuration.UNTIL_END_OF_TURN)
         if value["duration"] != duration.value:
             raise ContinuousEffectError("Temporary life permission duration does not match its schema")
         return cls(
@@ -155,6 +179,15 @@ class ResolvedLifeGainProhibition:
     @property
     def fingerprint(self):
         return immutable_fingerprint(self.to_dict())
+
+
+def has_dealt_damage_life_gain_prohibition(effect):
+    if DEALT_DAMAGE_LIFE_GAIN_PROHIBITION_FIELD not in effect:
+        return False
+    version = effect[DEALT_DAMAGE_LIFE_GAIN_PROHIBITION_FIELD]
+    if type(version) is not int or version != 1:
+        raise ValueError("Dealt-damage life prohibition requires its exact instruction version")
+    return True
 
 
 def temporary_life_gain_effect(affected_player_relation):

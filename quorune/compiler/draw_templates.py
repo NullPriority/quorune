@@ -14,6 +14,7 @@ from ..drawing.step_exemption import (
     DRAW_STEP_EXEMPT_REDIRECT_HANDLER_ID,
 )
 from ..rules.capabilities import CapabilityRegistry
+from ..rules.opponent_draw_followup import distinct_opponent_draw_effects
 from ..rules.mana_contribution_draw import (
     MANA_CONTRIBUTION_DRAW_MECHANIC,
     MANA_CONTRIBUTION_DRAW_OPERATION,
@@ -248,6 +249,13 @@ def mana_contribution_draw_template(text: str) -> DrawEffectTemplate | None:
 
 
 def _multiplayer_fixed_draw_template(text: str) -> DrawEffectTemplate | None:
+    if re.fullmatch(
+        r"each opponent draws a card, then you draw a card for each opponent who drew a card this way\.?",
+        text,
+        re.IGNORECASE,
+    ):
+        return ("draw-followup-distinct-opponents-v1", distinct_opponent_draw_effects(), None,
+                ("cr-121-drawing-a-card",))
     shared = re.fullmatch(
         rf"you draw (?P<controller>{FIXED_COUNT_PATTERN}|twenty) cards? and "
         rf"each opponent draws (?P<opponents>{FIXED_COUNT_PATTERN}|twenty) cards?\.?",

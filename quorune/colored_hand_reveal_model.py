@@ -1,10 +1,12 @@
-"""Versioned private colored-hand selection and fixed result parameterization."""
+"""Versioned private hand selection and fixed result parameterization."""
+from collections import Counter
 from collections.abc import Mapping
 from dataclasses import dataclass
 from .replacement.immutable import FrozenMap, thaw_value
 
 COLORED_REVEAL_OPERATION = 'reveal_colored_hand_then_effect'
 COLORED_REVEAL_CAPABILITY = 'hand.reveal.colored_count_result'
+MATCHED_MANA_REVEAL_CAPABILITY = "hand.reveal.matching_nonland_mana_value"
 COLORED_REVEAL_MECHANIC = 'colored-hand-reveal-results'
 REVEAL_RESULT_KIND = 'colored_hand_result_template'
 REVEAL_COUNT_KIND = 'selected_hand_reveal_count'
@@ -93,11 +95,45 @@ class ColoredHandRevealSpec:
     def effect(self):return {'op':COLORED_REVEAL_OPERATION,'player':'$controller','reveal':self.to_dict()}
 
 
+@dataclass(frozen=True, slots=True)
+class MatchingManaValueHandRevealSpec:
+    maximum: int = 5
+    schema_version: int = 2
+
+    def __post_init__(self):
+        if (type(self.maximum) is not int or self.maximum != 5
+                or type(self.schema_version) is not int or self.schema_version != 2):
+            raise ValueError("Matching mana-value reveal requires its original five-card limit")
+
+    def to_dict(self):
+        return {"schema_version":self.schema_version, "selection":"nonland", "maximum":self.maximum,
+                "result":"matching_mana_value_treasures"}
+
+    @classmethod
+    def from_dict(cls, value):
+        expected = cls()
+        if not isinstance(value, Mapping) or dict(value) != expected.to_dict() or (
+                type(value["schema_version"]) is not int or type(value["maximum"]) is not int):
+            raise ValueError("Matching mana-value reveal requires its closed nonland choice and Treasure result")
+        return expected
+
+    def effect(self):
+        return {"op":COLORED_REVEAL_OPERATION, "player":"$controller", "reveal":self.to_dict()}
+
+    def matching_count(self, values):
+        if len(values) > self.maximum or any(type(value) is not int or value < 0 for value in values):
+            raise ValueError("Matching mana values require the original chosen nonland cards")
+        return sum(quantity for quantity in Counter(values).values() if quantity > 1)
+
+
 def decode_colored_hand_reveal(effect,*,player='$controller'):
     if (not isinstance(effect,Mapping) or set(effect)!={'op','player','reveal'}
             or effect['op']!=COLORED_REVEAL_OPERATION or effect['player']!=player):
         raise ValueError('Colored hand reveal requires its closed controller instruction')
-    return ColoredHandRevealSpec.from_dict(effect['reveal'])
+    value = effect["reveal"]
+    if isinstance(value, Mapping) and value.get("schema_version") == 2:
+        return MatchingManaValueHandRevealSpec.from_dict(value)
+    return ColoredHandRevealSpec.from_dict(value)
 
 
 @dataclass(frozen=True, slots=True)

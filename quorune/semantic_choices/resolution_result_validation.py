@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 
 from ..cast_origin_replacement import MAIN_PHASE_CAST_DISCARD_VERSION
+from ..graveyard_cast_reanimation_copy import GRAVEYARD_REANIMATION_COPY_VERSION
 from ..resolution_conditions import RESOLUTION_ALTERNATIVE_SCHEMA_VERSION
 from .model import SemanticChoiceError
 
@@ -44,6 +45,9 @@ def validate_resolution_result_children(effect, effects, otherwise, context):
 
     for children, mechanics in ((effects, effect['mechanic_ids']), (otherwise, effect.get('otherwise_mechanic_ids', ()))):
         for child in children:
+            if effect.get("schema_version") == GRAVEYARD_REANIMATION_COPY_VERSION and child.get("op") == "offer_optional_effect":
+                # Its complete optional self-copy child was decoded by the cast-origin validator.
+                continue
             try:
                 if controlled_creature_counter_choice_dependencies(child):
                     continue

@@ -6,6 +6,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from ..counter_names import normalized_counter_name
 from ..counter_snapshot import permanent_counter_snapshot
+from ..fixed_counter_movement_model import SOURCE_GIVES_COUNTERS_THEN_DRAW, SOURCE_RECEIVES_MISSING_KINDS
 from ..replacement.immutable import FrozenMap
 
 
@@ -16,8 +17,10 @@ def decode_counter_movement_identity(value):
         if set(value) == fields:
             return MoveCountersIntent(**value).identity()
         set_fields = fields - {"counter_name", "amount"} | {"amounts"}
-        if set(value) == set_fields or (set(value) == set_fields | {"all_to_creature"}
-                                        and value["all_to_creature"] is True):
+        shape = set(value)
+        if (shape == set_fields
+                or shape == set_fields | {"all_to_creature"} and value["all_to_creature"] is True
+                or shape == set_fields | {"mode"} and value["mode"] is not None):
             return MoveCounterSetIntent(**value).identity()
     raise ValueError("Counter movement continuation identity is malformed")
 
@@ -70,6 +73,7 @@ class MoveCounterSetIntent:
     reason: str
     source_ref: str | None = None
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    mode: str | None = None
 
     all_to_creature: bool = False
 
@@ -82,9 +86,13 @@ class MoveCounterSetIntent:
             raise ValueError("Counter movement source reference must be nonempty")
         if type(self.all_to_creature) is not bool:
             raise ValueError("Counter movement destination mode must be explicit")
+        if self.mode is not None and self.mode not in (SOURCE_RECEIVES_MISSING_KINDS, SOURCE_GIVES_COUNTERS_THEN_DRAW):
+            raise ValueError("Counter set movement requires its original mode")
         amounts = permanent_counter_snapshot(self.amounts)
         if not amounts or amounts != self.amounts:
             raise ValueError("Counter movement requires a nonempty set of positive canonical amounts")
+        if self.mode == SOURCE_RECEIVES_MISSING_KINDS and any(amount != 1 for amount in amounts.values()):
+            raise ValueError("Movement onto the source requires at most one of each missing kind")
         object.__setattr__(self, "amounts", amounts)
         object.__setattr__(self, "replacement_selections", _freeze_replacement_selections(
             tuple(self.replacement_selections), family="Counter movement"))
@@ -95,7 +103,13 @@ class MoveCounterSetIntent:
             "to_ref": self.to_ref, "to_identity": self.to_identity, "amounts": dict(self.amounts),
             "reason": self.reason, "source_ref": self.source_ref,
             **({"all_to_creature": True} if self.all_to_creature else {}),
+            **({"mode": self.mode} if self.mode is not None else {}),
         }
+
+
+def counter_set_controllers_match(mode, actor, donor_controller, recipient_controller):
+    return ((mode == SOURCE_GIVES_COUNTERS_THEN_DRAW or donor_controller == actor)
+            and (mode == SOURCE_RECEIVES_MISSING_KINDS or recipient_controller == actor))
 
 
 @dataclass(frozen=True, slots=True)

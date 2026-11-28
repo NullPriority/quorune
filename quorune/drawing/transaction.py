@@ -11,6 +11,10 @@ from ..rules.faction_trigger_model import (
 from ..rules.opponent_draw_result import (
     ObserveOpponentDraw, OPPONENT_DRAW_OBSERVER_FIELD, OPPONENT_DRAW_RECEIPT_FIELD,
 )
+from ..rules.opponent_draw_followup import (
+    CountDistinctOpponentDraw, DISTINCT_DRAW_OBSERVER, DISTINCT_DRAW_RECEIPT,
+    DistinctOpponentDrawReceipt, distinct_draw_runtime_dependencies,
+)
 from ..model import CardInstance, GameState
 from ..next_draw_replacement_model import ResolvedNextDrawReplacement
 from ..player_result_events import CardDrawEvent, dispatch_card_draw_event
@@ -268,6 +272,56 @@ def opponent_draw_reward(item):
     return None
 
 
+def _distinct_draw_receipt(item, observer):
+    if (
+        item.ref != observer.stack_ref or item.controller != observer.controller
+        or item.kind != "spell" or item.context.get("currently_resolving") is not True
+    ):
+        raise DrawError("The opponent draw receipt does not match its resolving spell")
+    try:
+        return DistinctOpponentDrawReceipt.from_dict(item.context.get(DISTINCT_DRAW_RECEIPT), observer)
+    except ValueError as exc:
+        raise DrawError(str(exc)) from exc
+
+
+def prepare_distinct_draw_followup(host, item, effect, instruction_pointer):
+    """Start or conclude the two phases of a sealed, resolving spell."""
+    program = host.semantics.get(item.semantic_key) if item.semantic_key else None
+    if (
+        program is None or program.trust_level != "trusted" or item.kind != "spell"
+        or item.context.get("currently_resolving") is not True or item.targets
+        or not distinct_draw_runtime_dependencies(program)
+        or type(effect.get("schema_version")) is not int
+        or effect != program.effects[0 if instruction_pointer == 0 else 1]
+    ):
+        raise DrawError("An opponent draw follow-up requires its original resolving spell")
+    observer = CountDistinctOpponentDraw(item.ref, item.controller)
+    if instruction_pointer == 0:
+        if DISTINCT_DRAW_RECEIPT in item.context:
+            raise DrawError("The opponent draw instruction was already started")
+        opponents = tuple(sorted(seat for seat in host.apnap_order() if seat != item.controller))
+        item.context[DISTINCT_DRAW_RECEIPT] = DistinctOpponentDrawReceipt(observer, opponents).to_dict()
+        return {
+            "op": "draw_each_player", "scope": "controller_opponents", "count": 1,
+            "private": True, DISTINCT_DRAW_OBSERVER: observer.to_dict(),
+        }
+    receipt = _distinct_draw_receipt(item, observer)
+    del item.context[DISTINCT_DRAW_RECEIPT]
+    if receipt.drawers:
+        return {"op": "draw", "player": item.controller, "count": len(receipt.drawers), "private": True}
+    return None
+
+
+def record_distinct_opponent_draw(state, observer, drawer):
+    item = next((item for item in state.stack if item.ref == observer.stack_ref), None)
+    if item is None:
+        raise DrawError("The originating opponent draw spell no longer exists")
+    receipt = _distinct_draw_receipt(item, observer)
+    observed = receipt.with_drawer(drawer)
+    if observed is not receipt:
+        item.context[DISTINCT_DRAW_RECEIPT] = observed.to_dict()
+
+
 def _record_draw(
     host: DrawCommitHost,
     prepared: PreparedDrawEvent,
@@ -438,6 +492,9 @@ def _apply_drawn_card_actions(
                 record_opponent_draw(host.state, action, resolution.player)
             except ValueError as exc:
                 raise DrawError(str(exc)) from exc
+            continue
+        if isinstance(action, CountDistinctOpponentDraw):
+            record_distinct_opponent_draw(host.state, action, resolution.player)
             continue
         current = host.state.cards.get(object_id)
         if current is None or current.zone != "hand":

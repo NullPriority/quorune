@@ -122,17 +122,19 @@ def land_play_timing_matches(window, card, record, face) -> bool:
             and TemporaryCastTimingScope.NEXT_CREATURE_CARD.matches(type_line, physical_card=card.object_kind == "card"))
 
 
-def resolving_exile_land_play_options(host, actor, card):
-    return resolving_land_play_options(host, actor, card, origin="exile")
+def resolving_exile_land_play_options(host, actor, card, *, hideaway=False, supplier=None):
+    return resolving_land_play_options(host, actor, card, origin="exile", hideaway=hideaway, supplier=supplier)
 
 
-def resolving_land_play_options(host, actor, card, *, origin):
+def resolving_land_play_options(host, actor, card, *, origin, hideaway=False, supplier=None):
     """Offer land faces within the controller's existing play quota."""
     from ..discover_model import discover_options_fingerprint
 
-    if (origin not in {"library", "exile"} or actor not in host.active_seats or host.state.active_player != actor
+    owner = actor if supplier is None else supplier
+    if (origin not in {"library", "exile"} or supplier is not None and origin != "exile"
+            or actor not in host.active_seats or host.state.active_player != actor
             or not land_play_permission_options(host, actor) or card.zone != origin
-            or card.owner != actor or not card.is_card_object or card.face_down):
+            or not card.is_card_object or not hideaway and (card.owner != owner or card.face_down)):
         return ()
     record = host.card_record(card)
     if record is None:
@@ -160,19 +162,27 @@ def resolving_land_play_response(host, actor, intent):
 
 
 def resolving_exile_land_play_response(host, actor, intent):
-    from ..discover_casting import require_discover_resolution
+    from ..discover_casting import require_announced_opponent_resolution, require_discover_resolution
+    from .hideaway_play import authorized_hideaway_exile
 
     if not isinstance(intent, ResolvingExileLandPlayIntent) or intent.actor != actor:
         raise GameRuleError("Resolving land play requires its typed controller authorization")
-    require_discover_resolution(host, actor=actor, stack_ref=intent.stack_ref)
+    item = require_discover_resolution(host, actor=actor, stack_ref=intent.stack_ref)
+    if intent.supplier is not None:
+        require_announced_opponent_resolution(host, item, supplier=intent.supplier, count=item.x_value)
     identity = intent.card
     card = host.state.cards.get(identity.object_id)
     if card is None or card.ref != identity.ref or card.logical_object_id != identity.logical_object_id:
         raise GameRuleError("The resolving land play lost its captured exile incarnation")
-    option = next((row for row in resolving_exile_land_play_options(host, actor, card)
+    hideaway = authorized_hideaway_exile(host, item=item, actor=actor, card=card)
+    option = next((row for row in resolving_exile_land_play_options(host, actor, card, hideaway=hideaway, supplier=intent.supplier)
                    if row["id"] == intent.option_id), None)
     if option is None:
         raise GameRuleError("The resolving land play is unavailable")
+    if hideaway and card.face_down:
+        from ..zone_object_state import reveal_exiled_card
+
+        reveal_exiled_card(card, viewers=host.seats)
     return {"card": card.ref, "from": "exile", "face": option["face"], "pay_life": option["pay_life"],
             "_entry_replacement_selections": [thaw_value(value) for value in intent.replacement_selections]}
 

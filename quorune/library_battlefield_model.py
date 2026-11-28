@@ -115,8 +115,8 @@ def validate_library_battlefield_effect(effect):
     if not fixed_library_selection_node_capabilities(effects=(proxy,),target_schema=None,
             mechanic_ids={'fixed-library-selection'}):
         raise ValueError('Battlefield selection lacks an owned fixed partition')
-    # The initial entry family owns explicit creature, land and planeswalker
-    # selections. Aura-capable/ambiguous sets need an attachment-choice owner.
+    # Broad enchantment selection still requires an attachment-choice owner.
+    # The exact Saga selector uses the represented non-Aura Saga entry path.
     groups=effect['predicate_groups']
     if not groups or any(not _entry_query_is_owned(predicate) for group in groups for predicate in group):
         raise ValueError('Battlefield selection predicate requires an unrepresented entry quality')
@@ -128,7 +128,8 @@ def _entry_query_is_owned(value):
     from .object_predicate import ObjectQuerySpec
     query=ObjectQuerySpec.from_dict(value)
     kinds={'creature','land','planeswalker'}
-    return bool(set(query.types_all)&kinds or query.types_any and set(query.types_any)<=kinds)
+    return (query == ObjectQuerySpec(zones=("library",), subtypes_any=("saga",))
+            or bool(set(query.types_all)&kinds or query.types_any and set(query.types_any)<=kinds))
 
 
 def library_mana_value_permits(effect,row):

@@ -101,10 +101,15 @@ def linked_face_ability_compilers(record, material_rows, effect_template, compil
     trigger_compiler = named_artifact_echo_compiler(
         trigger_compiler, material_rows=material_rows, permanent=permanent, card_types=card_types,
     )
-    return linked_fading_compilers(
+    compile_ability, trigger_compiler = linked_fading_compilers(
         compile_ability, trigger_compiler, trigger_node=trigger_node, material_rows=material_rows,
         card_name=card_name, match_source=match_source, card_types=card_types,
     )
+    from .beheld_exile_nodes import linked_behold_compilers
+
+    return linked_behold_compilers(compile_ability, trigger_compiler, record=record,
+        material_rows=material_rows, card_types=card_types, card_name=card_name,
+        permanent=permanent, trigger_node=trigger_node, match_source=match_source)
 
 
 def linked_ability_trigger_compiler(fallback, *, trigger_node, material_rows, card_name, match_source, permanent):
@@ -328,6 +333,7 @@ def linked_exile_return_effect_template(text: str, *, card_name: str,
             (LINKED_EXILE_RETURN_MECHANIC, "cr-115-targets"),
         )
     normalized = canonical_optional_enchantment_return(normalized) or normalized
+    normalized = canonical_optional_enchantment_return(normalized) or normalized
     if prospective := prospective_entry_linked_return_template(normalized):
         return prospective
     if normalized.casefold().startswith("you may "):
@@ -344,6 +350,9 @@ def linked_exile_return_effect_template(text: str, *, card_name: str,
     if public_set := _public_set_return_template(normalized):
         return public_set
     parse_text = normalized
+    owned_other = normalized.casefold() == (
+        "exile another target permanent you own, then return it to the battlefield under your control."
+    )
     if normalized.casefold() == ("exile target creature. return the exiled card to the battlefield "
                                  "under its owner's control at the beginning of the next end step."):
         parse_text = "Exile target creature. Return that card to the battlefield under its owner's control at the beginning of the next end step."
@@ -374,11 +383,13 @@ def linked_exile_return_effect_template(text: str, *, card_name: str,
             subject = ("another target " if cardinality["other"] else "target ") + _singularize_subject(cardinality["quality"])
         else:
             minimum = maximum = 1
-        target = direct_permanent_target_spec("another target creature" if owned_creature else subject)
+        target = direct_permanent_target_spec("another target creature" if owned_creature else "another target permanent" if owned_other else subject)
         if target is None:
             return None
         schema = target.to_target_schema()
         if owned_creature:
+            schema["owner_relation"] = "you"
+        if owned_other:
             schema["owner_relation"] = "you"
         if minimum == 0:
             schema.pop("count")

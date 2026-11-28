@@ -8,6 +8,7 @@ from ..bounded_hand_cast_model import (
     LEGENDARY_WIZARD_HAND_CAST_VERSION, bounded_hand_cast_payload_dependencies, is_legendary_wizard_hand_cast_effect,
     DAMAGED_PLAYER_HAND_CAST_VERSION, SOURCE_COMBAT_DAMAGE_PLAYER_CONDITION, is_damaged_player_hand_cast_effect,
     ANNOUNCED_X_HAND_CAST_VERSION,
+    ANNOUNCED_X_HAND_CAST_VERSION, has_announced_x_hand_cast_amount,
 )
 from ..characteristic_evaluation import type_parts
 from ..discover_model import discover_options_fingerprint
@@ -121,11 +122,23 @@ def _require_announced_x_cast(host, item, spec):
         raise GameRuleError("The hand cast must retain the original resolving spell and its announced X")
 
 
+def _require_announced_x_hand_cast(host, item, spec):
+    program = host.semantics.get(item.semantic_key)
+    x = item.x_value
+    if (program is None or (program.event, program.active_zone) != ("resolve", "stack")
+            or item.kind not in {"spell", "spell_copy"} or not host.semantic_program_is_current_trusted(program)
+            or not any(has_announced_x_hand_cast_amount(effect) for effect in nested_effects(program.effects))
+            or type(x) is not int or x < 0 or spec.mana_value_limit.maximum != x):
+        raise GameRuleError("The hand cast ceiling changed from its resolving spell's announced X")
+
+
 def _option_pairs(host, actor, spec, *, item=None):
     pairs = []
     owner = actor
     if spec.schema_version == ANNOUNCED_X_HAND_CAST_VERSION:
         _require_announced_x_cast(host, item, spec)
+    if spec.schema_version == ANNOUNCED_X_HAND_CAST_VERSION:
+        _require_announced_x_hand_cast(host, item, spec)
     if spec.schema_version == DAMAGED_PLAYER_HAND_CAST_VERSION:
         owner = _require_damage_recipient_hand(host, item, spec)
         if owner not in host.active_seats:

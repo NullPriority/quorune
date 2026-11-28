@@ -18,7 +18,7 @@ import {
   list,
   orderedPartitionNames,
   record,
-  selectedDamageAllocation,
+  selectedTargetAllocation,
   targetGroupModes,
   targetGroups,
   selectedTargetCostLabel,
@@ -508,7 +508,7 @@ export function TargetControl({
   const targetModes = targetGroupModes(field);
   const minimumModes = Number(schema.min_modes ?? schema.mode_count ?? 1);
   const maximumModes = Number(schema.max_modes ?? schema.mode_count ?? 1);
-  const allocation = selectedDamageAllocation(field, values);
+  const allocation = selectedTargetAllocation(field, values);
   function toggleMode(mode: string, checked: boolean) {
     const next = updateModalTargetSelection(
       schema,
@@ -529,7 +529,7 @@ export function TargetControl({
       next = maximum === 1 ? [ref] : [...next.slice(-(maximum - 1)), ref];
     }
     const updated = { ...values, [name]: { ...targets, [id]: next } };
-    if (allocation) delete updated[DAMAGE_ALLOCATION_FIELD];
+    if (allocation) delete updated[allocation.name];
     onChange(updated);
   }
   return (
@@ -601,7 +601,7 @@ export function TargetControl({
       })}
       {allocation && allocation.refs.length > 0 && (
         <fieldset className="choice-field">
-          <legend>Divide {allocation.total} damage</legend>
+          <legend>Divide {allocation.total} {allocation.counters ? "+1/+1 counters" : "damage"}</legend>
           {allocation.refs.map((ref) => (
             <label key={ref} className="choice-option">
               <span>{labelFor(ref)}</span>
@@ -612,7 +612,7 @@ export function TargetControl({
                 value={text(allocation.shares[ref])}
                 onChange={(event) => onChange({
                   ...values,
-                  [DAMAGE_ALLOCATION_FIELD]: {
+                  [allocation.name]: {
                     ...allocation.shares,
                     [ref]: event.target.value === "" ? "" : Number(event.target.value),
                   },
@@ -966,6 +966,51 @@ function CopyTargets({
   );
 }
 
+function EntryCreatureTypePicker({ field, value, onValue, types }: {
+  field: ChoiceField;
+  value: JsonValue | undefined;
+  onValue: (value: string) => void;
+  types: Record<string, JsonValue>;
+}) {
+  const [query, setQuery] = useState("");
+  const [showAll, setShowAll] = useState(false);
+  const options = list(field.options).map(record);
+  const filter = query.trim().toLowerCase();
+  const preferred = options.some((option) => record(types[text(option.value)]).preferred === true);
+  const showCatalog = showAll || Boolean(filter) || !preferred;
+  const matches = options.flatMap((option) => {
+    const ref = text(option.value);
+    const type = record(types[ref]);
+    const label = text(type.label ?? option.label ?? option.value);
+    const visible = !type.label || showCatalog || type.preferred === true || ref === value;
+    return visible && label.toLowerCase().includes(filter) ? [{ ref, label }] : [];
+  });
+  const radioName = useId();
+
+  return <fieldset className="choice-field creature-type-choice">
+    <legend>Creature type</legend>
+    <div className="creature-type-tools">
+      <label className="choice-filter">
+        <span>Search all creature types</span>
+        <input type="search" value={query} onChange={(event) => setQuery(event.target.value)}
+          onKeyDown={(event) => { if (event.key === "Enter") event.preventDefault(); }} />
+      </label>
+      {preferred && !filter && <button type="button" className="secondary-button" aria-pressed={showAll}
+        onClick={() => setShowAll((current) => !current)}>
+        {showAll ? "Show types in your deck" : "Show all types"}
+      </button>}
+    </div>
+    {!showCatalog && <small>Types in your deck</small>}
+    {matches.length === 0 && <p role="status">No matching creature types.</p>}
+    <div className="creature-type-options">
+      {matches.map(({ ref, label }) => <label key={ref} className="choice-option">
+        <input type="radio" name={radioName} value={ref} checked={ref === value} onChange={() => onValue(ref)} />
+        {label}
+      </label>)}
+    </div>
+  </fieldset>;
+}
+
 function ChoiceControl({
   field,
   values,
@@ -1063,13 +1108,16 @@ export function ChoiceFormView({ form, values, onChange, labelFor, view, tableTa
   const changeCost = (value: string) => onChange(choicesWithDefaults(form, { ...values, [selector]: value }));
   const fields = activeFields(form, values);
   const decisionKind = view?.decision?.kind;
+  const entryTypes = record(view?.decision?.ctx.entry_creature_types);
   const choosingHandCards = decisionKind === "mulligan.bottom" || decisionKind === "cleanup.discard";
   const cardPicker = (field: ChoiceField) => {
     if (decisionKind === "state.legend" && field.name === "card") {
       return field.control === "ref" || field.control === "select" || field.control === "refs";
     }
-    if (decisionKind === "search.fetch" && field.name === "search_card") return field.control === "ref";
-    return field.control === "refs" && (field.name === "cost_cards" || field.name === "search_cards"
+    if (field.name === "search_card" || field.name === "search_cards") {
+      return field.control === "ref" || field.control === "select" || field.control === "refs";
+    }
+    return field.control === "refs" && (field.name === "cost_cards"
       || (choosingHandCards && field.name === "cards"));
   };
   const cards = view && fields.some(cardPicker)
@@ -1109,6 +1157,9 @@ export function ChoiceFormView({ form, values, onChange, labelFor, view, tableTa
         if (decisionKind === "trigger.order" && field.control === "refs" && field.ordered) {
           return <TriggerOrderCards key={name} field={field} value={values[name]} onValue={onValue} labelFor={labelFor}
             previews={view?.decision?.ctx.preview_cards ?? []} />;
+        }
+        if (name === "replacement" && list(field.options).some((raw) => entryTypes[text(record(raw).value)])) {
+          return <EntryCreatureTypePicker key={name} field={field} value={values[name]} onValue={onValue} types={entryTypes} />;
         }
         if (view && cards && cardPicker(field)) {
           return <CardChoiceGrid key={name} field={field} value={values[name]}

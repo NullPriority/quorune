@@ -10,7 +10,10 @@ from .model import (
     ReplacementEffect,
     ReplacementEffectError,
 )
+from .damage_redirection import DAMAGE_RECIPIENT_TYPES_FIELD
+
 COUNTER_RECIPIENT_TYPES_FIELD = "counter_recipient_types_v1"
+_RECIPIENT_TYPE_EVENTS = {COUNTER_RECIPIENT_TYPES_FIELD: "counter.place", DAMAGE_RECIPIENT_TYPES_FIELD: "damage"}
 
 _COLLECTION_PREDICATES = {
     "contains",
@@ -41,8 +44,8 @@ def event_field(event: ReplaceableEvent, field_name: str) -> Any:
         from ..zone_object_qualifications import zone_object_qualifications_v1
         try:return zone_object_qualifications_v1(event)
         except (ValueError,TypeError) as exc:raise ReplacementEffectError(str(exc)) from exc
-    if field_name == COUNTER_RECIPIENT_TYPES_FIELD:
-        if event.kind != "counter.place":
+    if field_name in _RECIPIENT_TYPE_EVENTS:
+        if event.kind != _RECIPIENT_TYPE_EVENTS[field_name]:
             return ()
         kind = event.payload.get("target_kind")
         if kind == "player":

@@ -141,6 +141,8 @@ def fixed_resolution_characteristic_set_node_capabilities(
             effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
         )
 
+    from .attack_food_bonus import ATTACK_FOOD_STATS_VERSION_FIELD, attack_food_stats_node_capabilities
+    from .source_subtype_progression import PROGRESSION_FIELD, progression_dependencies
     from .target_player_stat_untap import TARGET_PLAYER_STAT_UNTAP_VERSION, target_player_stat_untap_node_capabilities
 
     from .counter_snapshot_protection import FIELD, KEYWORDS, counter_snapshot_protection_query
@@ -157,6 +159,16 @@ def fixed_resolution_characteristic_set_node_capabilities(
             *object_query_capabilities(query),
             *(cap for keyword in KEYWORDS for cap in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword]),
         )
+    if len(effects) == 1 and ATTACK_FOOD_STATS_VERSION_FIELD in effects[0]:
+        return attack_food_stats_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
+    if len(effects) == 1 and PROGRESSION_FIELD in effects[0]:
+        try:
+            return progression_dependencies(effects[0]) if target_schema is None else ()
+        except (TypeError, ValueError, KeyError):
+            return ()
+
     if len(effects) == 1 and TARGET_PLAYER_STAT_UNTAP_VERSION in effects[0]:
         return target_player_stat_untap_node_capabilities(
             effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
@@ -328,6 +340,9 @@ def fixed_resolution_characteristics_runtime_dependencies(program):
     """Bind canonical public-set and attachment descriptors independently of declared owners."""
     if share := combat_keyword_share_program_dependencies(program):
         return share
+    from .source_subtype_progression import progression_program_dependencies
+    if progression := progression_program_dependencies(program):
+        return progression
     from .creature_subtype_set_results import creature_subtype_set_runtime_dependencies
     from .source_block_defender import source_block_defender_runtime_dependencies
 
@@ -337,8 +352,11 @@ def fixed_resolution_characteristics_runtime_dependencies(program):
         return subtype_set
     if chosen_type := _chosen_type_temporary_modifier_runtime_dependencies(program):
         return chosen_type
+    from .attack_food_bonus import attack_food_stats_program_dependencies
     from .target_player_stat_untap import target_player_stat_untap_runtime_dependencies
 
+    if attack_food := attack_food_stats_program_dependencies(program):
+        return attack_food
     if target_player := target_player_stat_untap_runtime_dependencies(program):
         return target_player
     if same_name := same_name_creature_stat_runtime_dependencies(program):
@@ -355,8 +373,11 @@ def fixed_resolution_characteristics_runtime_dependencies(program):
         NEXT_TURN_TARGET_LAND_ANIMATION_MECHANICS,
     )
     from .resolution_characteristic_shapes import (
-        is_target_creature_ability_loss, targeted_tap_then_ability_loss_capabilities,
-        is_next_turn_target_land_animation, next_turn_land_animation_activation_capabilities,
+        counted_land_animation_runtime_dependencies,
+        is_target_creature_ability_loss,
+        targeted_tap_then_ability_loss_capabilities,
+        is_next_turn_target_land_animation,
+        next_turn_land_animation_activation_capabilities,
     )
 
     if any(is_next_turn_target_land_animation(effect) for effect in nested_effects((program.effects, program.handlers))):
@@ -373,6 +394,9 @@ def fixed_resolution_characteristics_runtime_dependencies(program):
         if ability.mana_ability or ability.builtin_semantic_key != program.key or ability.loyalty_delta != 1:
             raise ValueError("Land animation must share its own activation catalog")
         return owners
+
+    if counted_animation := counted_land_animation_runtime_dependencies(program):
+        return counted_animation
 
     if any(is_target_creature_ability_loss(effect) for effect in nested_effects((program.effects, program.handlers))):
         owners = targeted_tap_then_ability_loss_capabilities(
@@ -428,6 +452,10 @@ def fixed_resolution_characteristics_runtime_dependencies(program):
         ):
             raise ValueError("Source-duration land setting requires a battlefield source")
         return required
+    return _fixed_characteristic_effect_dependencies(program)
+
+
+def _fixed_characteristic_effect_dependencies(program):
     from ..compiler.program_composition import composed_spell_family_runtime_dependencies
     families=[]
     if any(is_attached_characteristic_effect(effect)

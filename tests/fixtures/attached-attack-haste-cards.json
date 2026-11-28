@@ -1,0 +1,75 @@
+{
+  "cards": [
+    {
+      "card_faces": [],
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Instill Energy",
+      "oracle_id": "8695c3c1-fb4b-4429-ae33-ec186f68796b",
+      "oracle_text": "Enchant creature\nEnchanted creature can attack as though it had haste.\n{0}: Untap enchanted creature. Activate only during your turn and only once each turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2011-01-10",
+      "toughness": null,
+      "type_line": "Enchantment — Aura"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "Instill Energy's untap ability will not untap the creature until it resolves. This means other spells and abilities can be used before it actually becomes untapped.",
+      "oracle_id": "8695c3c1-fb4b-4429-ae33-ec186f68796b",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If attached to an opponent's creature, you can untap their creature during your turn.",
+      "oracle_id": "8695c3c1-fb4b-4429-ae33-ec186f68796b",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any Auras (or other effects) which are on the creature that would cause it to not be untapped (or have a cost to be untapped) during untap step do not in any way hinder or imply a cost to use this card's ability to untap once during the turn.",
+      "oracle_id": "8695c3c1-fb4b-4429-ae33-ec186f68796b",
+      "published_at": "2005-08-01",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1
+}

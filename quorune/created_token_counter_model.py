@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Closed creation followed by untargeted counters on its actual results."""
+"""Closed follow-ups bound to the actual results of a token instruction."""
 
 from typing import Any,Mapping
 
@@ -8,6 +8,10 @@ CREATED_TOKEN_COUNTER_CAPABILITY='token.creation.post_creation_counter'
 CREATED_TOKEN_COUNTER_MECHANIC='created-token-counter-followup'
 CREATE_THEN_COUNTER='create_token_then_counters'
 COUNTER_CREATED='place_created_token_counters'
+ANNOUNCED_X_CREATE_AND_WIPE = 'announced_x_create_and_destroy_other_creatures'
+DESTROY_EXCEPT_CREATED = 'destroy_other_than_created_tokens'
+CREATED_TOKEN_WIPE_CAPABILITY = 'token.creation.announced_x_other_creature_destruction'
+CREATED_TOKEN_WIPE_MECHANIC = 'announced-x-created-token-destruction'
 DEPENDENCIES=(CREATED_TOKEN_COUNTER_CAPABILITY,'token.creation.fixed_definition',
     'counter.producer.fixed_effect','counter.placement.quantity_replacement')
 
@@ -67,7 +71,39 @@ def validate_created_token_counter(effect:Mapping[str,Any],*,resolved:bool=False
     return effect
 
 
+def validate_announced_x_token_wipe(effect, *, resolved=False):
+    from .query_effect_amount_model import CastXAmountSpec
+    from .replacement.immutable import FrozenMap
+
+    fields = {'op', 'schema_version', 'controller', 'source', 'amount', 'minimum', 'token', 'token_mechanics'}
+    if (not isinstance(effect, Mapping) or set(effect) != fields
+            or effect['op'] != ANNOUNCED_X_CREATE_AND_WIPE
+            or type(effect['schema_version']) is not int or effect['schema_version'] != 1
+            or type(effect['minimum']) is not int or effect['minimum'] <= 0):
+        raise ValueError('Announced-X token destruction requires its complete printed threshold and token definition')
+    if resolved:
+        if (type(effect['amount']) is not int or effect['amount'] < 0
+                or any(type(effect[key]) is not str or not effect[key] for key in ('controller', 'source'))):
+            raise ValueError('Announced-X token destruction requires its current controller, source and X value')
+    elif (effect['controller'] != '$controller' or effect['source'] != '$source'
+            or effect['amount'] != FrozenMap(CastXAmountSpec().to_dict())):
+        raise ValueError('Announced-X token destruction requires its original spell and announced cost X')
+    token_capabilities = validate_single_created_token(effect)
+    type_line = str(effect['token']['characteristics'].get('type_line') or '').split(' — ', 1)[0]
+    if 'Creature' not in type_line.split():
+        raise ValueError('The token instruction must create creatures')
+    return (CREATED_TOKEN_WIPE_CAPABILITY, *token_capabilities)
+
+
 def created_token_counter_payload_dependencies(value):
-    if not isinstance(value,Mapping) or value.get('op') not in {CREATE_THEN_COUNTER,COUNTER_CREATED}:return ()
+    if not isinstance(value, Mapping):
+        return ()
+    operation = value.get('op')
+    if operation == ANNOUNCED_X_CREATE_AND_WIPE:
+        return validate_announced_x_token_wipe(value)
+    if operation == DESTROY_EXCEPT_CREATED:
+        raise ValueError('Created-token destruction results exist only inside their committed continuation')
+    if operation not in {CREATE_THEN_COUNTER, COUNTER_CREATED}:
+        return ()
     validate_created_token_counter(value)
     return DEPENDENCIES

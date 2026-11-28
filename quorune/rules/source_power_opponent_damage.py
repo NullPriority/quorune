@@ -8,7 +8,9 @@ from ..creature_power_damage_model import (
 from ..replacement.immutable import FrozenMap
 from .effect_shape_walkers import nested_effects
 from .event_subscriptions import FixedEventSubscription, fixed_event_subscription_condition
-from .target_announcements import TARGET_ANNOUNCEMENT_CAPABILITY, TARGET_ANNOUNCEMENT_EVENT
+from .target_announcements import (
+    TARGET_ANNOUNCEMENT_CAPABILITY, TARGET_ANNOUNCEMENT_EVENT, source_targeted_by_spell_condition,
+)
 
 
 SOURCE_POWER_OPPONENT_DAMAGE_MECHANIC = "source-power-damage-each-opponent"
@@ -25,11 +27,10 @@ SOURCE_POWER_OPPONENT_DAMAGE_DEPENDENCIES = (
 
 def source_combat_or_spell_target_condition():
     source = {"field": "card", "op": "eq", "value": "$source.ref"}
-    spell = {"field": "stack_kind", "op": "in", "value": ["spell", "spell_copy"]}
     return fixed_event_subscription_condition((
         FixedEventSubscription("creature.attacks", source),
         FixedEventSubscription("creature.blocks", source),
-        FixedEventSubscription(TARGET_ANNOUNCEMENT_EVENT, {"all": [source, spell]}),
+        FixedEventSubscription(TARGET_ANNOUNCEMENT_EVENT, source_targeted_by_spell_condition()),
     ))
 
 

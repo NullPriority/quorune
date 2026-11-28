@@ -13,6 +13,7 @@ from quorune.rules.capabilities import load_default_capability_registry
 from quorune.record import authoritative_state_hash
 from scripts.build_test_database import build_fixture_database
 import test_provoke_rules as controls
+import test_source_attack_alone as attack_controls
 
 
 class DeliveryInteractionBoundaryTests(unittest.TestCase):
@@ -27,13 +28,15 @@ class DeliveryInteractionBoundaryTests(unittest.TestCase):
     private_replay=controls.ProvokeTests.private_replay
     priority=controls.ProvokeTests.priority
     actions=controls.ProvokeTests.actions
+    until = attack_controls.SourceAttackAloneNativeTests.until
 
     @classmethod
     def setUpClass(cls):
         cls.temp=tempfile.TemporaryDirectory();path=Path(cls.temp.name)/'interaction-boundaries.sqlite3'
         build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
             ROOT/'tests/fixtures/delivery-interaction-boundary-cards.json',
-            ROOT/'tests/fixtures/constructed-resolution-mana-saga-boundary.json'],path)
+            ROOT/'tests/fixtures/constructed-resolution-mana-saga-boundary.json',
+            ROOT/'tests/fixtures/source-attack-alone-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Interaction boundaries',[DeckEntry('Generic Bound Commander',1,'commander'),
             DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
@@ -122,15 +125,158 @@ class DeliveryInteractionBoundaryTests(unittest.TestCase):
         self.reject(s,{'action_id':'activate:'+c.ref+':ab3-reconfigure-attach','targets':[target.ref],'pay':'auto'})
         self.replay(s)
 
-    def test_exact_all_colors_fragment_does_not_admit_unowned_saga_and_replacement(self):
-        s,c,ir=self.partial_source('The Kami War // O-Kagachi Made Manifest',764114)
-        self.assertTrue(any('continuous.characteristics.all_colors_definition' in n.capability_dependencies for f in ir.faces for n in f.nodes))
-        c.active_face='O-Kagachi Made Manifest'
-        self.prepare(s,mana={'C':2,'W':1,'U':1,'B':1,'R':1,'G':1});self.checkpoint(s)
-        self.assertFalse(self.binding(s,c)['strict_capability_ready'])
-        self.assertTrue(any(r.material for f in ir.faces for r in f.residuals))
-        self.reject(s,{'action_id':'cast:'+c.ref,'pay':'auto'})
-        self.replay(s)
+
+    def test_kami_war_all_colors_preserves_its_original_scope(self):
+        from dataclasses import replace
+
+        name = "The Kami War // O-Kagachi Made Manifest"
+        game = self.session(764114)
+        original = self.add(game.engine, name, zone="battlefield")
+        self.assertTrue(self.binding(game, original)["strict_capability_ready"])
+        card = self.db.lookup(name, fuzzy=False)
+        changed_faces = (*card.faces[:-1], {**card.faces[-1], "oracle_text":
+                         card.faces[-1]["oracle_text"] + "\nInvent an unsupported attack outcome."})
+        changed = replace(card, faces=changed_faces, oracle_text=card.oracle_text + "\nInvent an unsupported attack outcome.")
+        ir = compile_oracle_card(changed, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertNotEqual("exact", ir.status)
+        self.assertTrue(ir.material_residuals)
+        self.assertTrue(any("continuous.characteristics.all_colors_definition" in node.capability_dependencies
+                            for face in ir.faces for node in face.nodes))
+
+    def kami_attack(self, seed, *, transform=False, has_bounce=False, empty=False):
+        from quorune.engine import TURN_STEPS
+
+        game = self.session(seed)
+        kami = self.add(game.engine, "The Kami War // O-Kagachi Made Manifest", ref="kami-war-attacker")
+        if transform:
+            kami.counters["lore"] = 2
+            self.add(game.engine, "Fervor")
+        else:
+            kami.active_face = "O-Kagachi Made Manifest"
+            kami.acquired_control_turn_count = -1
+        high = low = None
+        if not empty:
+            high = self.add(game.engine, "Grizzly Bears", zone="graveyard", ref="kami-graveyard-two")
+            low = self.add(game.engine, "Lightning Bolt", zone="graveyard", ref="kami-graveyard-one")
+        land = self.add(game.engine, "Generic Bound Plains", zone="graveyard", ref="kami-graveyard-land")
+        enemy = self.add(game.engine, "Grizzly Bears", seat="B", zone="graveyard", ref="kami-foreign-card")
+        unknown = self.add(game.engine, "Generic Bound Growth", seat="D", zone="hand", ref="kami-private-hand")
+        bounce = self.add(game.engine, "Unsummon", seat="C", zone="hand", ref="kami-bounce") if has_bounce else None
+        self.assertTrue(self.binding(game, kami)["strict_capability_ready"])
+        game.state.config.semantic_policy = "trusted_only"
+        self.prepare(game)
+        if bounce is not None:
+            self.assertTrue(self.binding(game, bounce)["strict_capability_ready"])
+            self.add(game.engine, "Island", seat="C", ref="kami-bounce-island")
+        if transform:
+            game.state.phase_index = TURN_STEPS.index(("beginning", "draw"))
+            game.engine._grant_priority("A")
+            game.engine.pump()
+        self.checkpoint(game)
+        if transform:
+            self.until(game, lambda active: any(item.context.get("event") == "saga.chapter.3"
+                                                for item in active.state.stack))
+            self.assertIsNone(self.resolve(game))
+        current = game.state.cards[kami.object_id]
+        self.assertEqual("O-Kagachi Made Manifest", current.active_face)
+        self.assertEqual({"W", "U", "B", "R", "G"}, set(game.engine._effective_card_data(current)["colors"]))
+        self.until(game, lambda active: active.state.pending_decision is not None
+                                       and active.state.pending_decision.kind == "combat.attackers")
+        action = game.act("pilot:A", {"action_id": "attack", "attackers": {current.ref: "B"}})
+        self.assertTrue(action.ok, action.summary)
+        trigger, = (item for item in game.state.stack if item.context.get("event") == "creature.attacks")
+        self.assertEqual("B", trigger.context["defending_player"])
+        self.assertEqual(kami.object_id, trigger.source_object_id)
+        return game, kami, high, low, land, enemy, unknown, bounce
+
+    def kami_choose(self, game, chooser, refs, selected):
+        self.assertEqual(("semantic.choice", [chooser]), (game.state.pending_decision.kind, list(game.state.pending_decision.actors)))
+        packet = game.packet("pilot:" + chooser, full=True)["decision"]
+        choice = packet["legal_actions"][0]["choice_schema"]
+        self.assertEqual(set(refs), set(choice["legal_refs"]))
+        actor = "A" if chooser != "A" else "D"
+        command = {"action_id": "choose", "card": selected.ref}
+        self.reject(game, command, principal="pilot:" + actor)
+        self.reject(game, {"action_id": "choose"}, principal="pilot:" + chooser)
+        result = game.act("pilot:" + chooser, command)
+        self.assertTrue(result.ok, result.summary)
+
+    def test_kami_war_transforms_attacks_and_defender_chooses_its_power_bonus_in_replay(self):
+        game, kami, high, low, land, enemy, unknown, _ = self.kami_attack(764120, transform=True)
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        game = self.replay(game, load=True)
+        for bad in (land, enemy):
+            self.reject(game, {"action_id": "choose", "card": bad.ref}, principal="pilot:B")
+        self.kami_choose(game, "B", (high.ref, low.ref), high)
+        self.assertEqual("hand", game.state.cards[high.object_id].zone)
+        self.assertEqual("graveyard", game.state.cards[low.object_id].zone)
+        self.assertEqual((8, 6), tuple(game.engine._numeric_stat(kami.object_id, stat) for stat in ("power", "toughness")))
+        self.assertNotIn(unknown.ref, str(game.packet("pilot:B", full=True)))
+        self.replay(game, load=True)
+
+    def test_kami_war_returns_the_choice_after_source_departure_and_skips_growth(self):
+        game, kami, high, low, _, _, _, bounce = self.kami_attack(764121, has_bounce=True)
+        self.cast(game, bounce, {}, [kami.ref], seat="C", auto=True)
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self.assertEqual("hand", game.state.cards[kami.object_id].zone)
+        game = self.replay(game, load=True)
+        self.kami_choose(game, "B", (high.ref, low.ref), low)
+        self.assertEqual("hand", game.state.cards[low.object_id].zone)
+        self.assertEqual("hand", game.state.cards[kami.object_id].zone)
+        self.assertEqual("graveyard", game.state.cards[high.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_kami_war_departed_defender_reassigns_card_choice_to_another_opponent(self):
+        game, kami, high, low, _, _, _, _ = self.kami_attack(764122)
+        self.priority(game, "B")
+        result = game.act("pilot:B", {"action_id": "concede", "choices": {"confirm_concede": True}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self.assertEqual(["A"], list(game.state.pending_decision.actors))
+        assignment = {"action_id": "choose", "choice": "C"}
+        self.reject(game, assignment, principal="pilot:D")
+        game = self.replay(game, load=True)
+        result = game.act("pilot:A", assignment)
+        self.assertTrue(result.ok, result.summary)
+        self.kami_choose(game, "C", (high.ref, low.ref), low)
+        self.assertEqual("hand", game.state.cards[low.object_id].zone)
+        self.assertEqual(7, game.engine._numeric_stat(kami.object_id, "power"))
+        self.replay(game, load=True)
+
+    def test_kami_war_no_eligible_nonland_completes_without_choice_or_growth(self):
+        game, kami, _, _, land, enemy, _, _ = self.kami_attack(764124, empty=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(6, game.engine._numeric_stat(kami.object_id, "power"))
+        self.assertEqual("graveyard", game.state.cards[land.object_id].zone)
+        self.assertEqual("graveyard", game.state.cards[enemy.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_kami_war_defending_return_authority_and_scope_fail_closed(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.graveyard_return_choices import DEFENDING_NONLAND_RETURN_CAPABILITY
+
+        name = "The Kami War // O-Kagachi Made Manifest"
+        game = self.session(764123)
+        card = self.add(game.engine, name)
+        program, = (program for program in game.engine.semantics.programs_for_oracle(card.oracle_id)
+                    if DEFENDING_NONLAND_RETURN_CAPABILITY in program.capability_dependencies)
+        kept = tuple(value for value in program.capability_dependencies if value != DEFENDING_NONLAND_RETURN_CAPABILITY)
+        altered_effect = {**program.effects[0], "graveyard_owner": "$context.defending_player"}
+        for changed in (
+            replace(program, effects=[altered_effect]),
+            replace(program, event_condition=None),
+            replace(program, capability_dependencies=kept,
+                    capability_closure=self.registry.closure(kept, profile="commander_review").to_dict()),
+        ):
+            self.assertFalse(bind_semantic_program_runtime(
+                changed, capability_registry=self.registry, profile="commander_review",
+            )["strict"])
+        with patch("quorune.compiler.graveyard_return_choice_templates.defending_nonland_return_template", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(
+                self.db.lookup(name), capability_registry=self.registry, capability_profile="commander_review",
+            ).status)
 
     def test_exact_resolution_mana_fragment_does_not_admit_unowned_saga_and_replacement(self):
         s=self.session(764115)

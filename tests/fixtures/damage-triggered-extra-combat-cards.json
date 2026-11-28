@@ -98,6 +98,53 @@
       "type_line": "Creature — Demon"
     },
     {
+      "cmc": 6.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{R}{R}",
+      "name": "Full Throttle",
+      "oracle_id": "3c2f87eb-b0f4-4578-b143-6fba313a82ec",
+      "oracle_text": "After this main phase, there are two additional combat phases.\nAt the beginning of each combat this turn, untap all creatures that attacked this turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-02-14",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
       "cmc": 5.0,
       "color_identity": [
         "R"
@@ -192,10 +239,72 @@
       "released_at": "2025-08-01",
       "toughness": "6",
       "type_line": "Legendary Creature — Minotaur Warrior"
+    },
+    {
+      "oracle_id": "2a6abd59-e448-46f1-9af8-bb9040645971",
+      "name": "Seize the Day",
+      "mana_cost": "{3}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Untap target creature. After this main phase, there is an additional combat phase followed by an additional main phase.\nFlashback {2}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flashback"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "faces": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
   "rulings": [
+    {
+      "comment": "If you somehow cast this spell when it’s not a main phase, the second ability still takes effect, but there are no additional combat phases this turn. If you cast it during an opponent’s main phase, there are two additional combat phases, but that opponent gets to attack during those combat phases, not you.",
+      "oracle_id": "3c2f87eb-b0f4-4578-b143-6fba313a82ec",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "There is no main phase between the two additional combat phases. If you cast this during your second main phase, you will go directly to the end step after the two additional combat phases are complete.",
+      "oracle_id": "3c2f87eb-b0f4-4578-b143-6fba313a82ec",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
     {
       "comment": "Port Razer doesn't have to attack in any additional combat it creates (or any other time for that matter).",
       "oracle_id": "653e4b68-3184-4352-ac91-127f7e6d7c12",
@@ -237,6 +346,60 @@
       "oracle_id": "6288c0cb-cf32-4ae9-abf0-104ec71654fa",
       "published_at": "2020-09-25",
       "source": "wotc"
+    },
+    {
+      "oracle_id": "2a6abd59-e448-46f1-9af8-bb9040645971",
+      "published_at": "2018-12-07",
+      "source": "wotc",
+      "comment": "If the target creature becomes an illegal target for Seize the Day, the spell doesn't resolve. There isn't an additional combat phase or main phase."
+    },
+    {
+      "oracle_id": "2a6abd59-e448-46f1-9af8-bb9040645971",
+      "published_at": "2018-12-07",
+      "source": "wotc",
+      "comment": "If you somehow cast Seize the Day during an opponent's main phase, that opponent attacks during the resulting combat phase, since it's still that player's turn. If you somehow cast it not during a main phase at all, all that happens is you untap the target creature."
+    },
+    {
+      "oracle_id": "2a6abd59-e448-46f1-9af8-bb9040645971",
+      "published_at": "2018-12-07",
+      "source": "wotc",
+      "comment": "Seize the Day can target a creature that's already untapped."
+    },
+    {
+      "oracle_id": "2a6abd59-e448-46f1-9af8-bb9040645971",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "\"Flashback [cost]\" means \"You may cast this card from your graveyard by paying [cost] rather than paying its mana cost\" and \"If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.\""
+    },
+    {
+      "oracle_id": "2a6abd59-e448-46f1-9af8-bb9040645971",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way."
+    },
+    {
+      "oracle_id": "2a6abd59-e448-46f1-9af8-bb9040645971",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions."
+    },
+    {
+      "oracle_id": "2a6abd59-e448-46f1-9af8-bb9040645971",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was."
+    },
+    {
+      "oracle_id": "2a6abd59-e448-46f1-9af8-bb9040645971",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast."
+    },
+    {
+      "oracle_id": "2a6abd59-e448-46f1-9af8-bb9040645971",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery."
     }
   ],
   "schema_version": 1,

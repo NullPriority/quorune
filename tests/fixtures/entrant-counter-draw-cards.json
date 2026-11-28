@@ -1,0 +1,94 @@
+{
+  "cards": [
+    {
+      "cmc": 9.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{7}{G}{G}",
+      "name": "The Great Henge",
+      "oracle_id": "78427103-9543-41fb-b6d4-72963fe87275",
+      "oracle_text": "This spell costs {X} less to cast, where X is the greatest power among creatures you control.\n{T}: Add {G}{G}. You gain 2 life.\nWhenever a nontoken creature you control enters, put a +1/+1 counter on it and draw a card.",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2023-08-04",
+      "toughness": null,
+      "type_line": "Legendary Artifact"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Once The Great Henge's last ability has triggered, you'll draw a card even if you can't put a +1/+1 counter on the creature for some reason (most likely because it has left the battlefield).",
+      "oracle_id": "78427103-9543-41fb-b6d4-72963fe87275",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you announce that you're casting a spell, no player may take actions until the spell has been paid for. Notably, opponents can't try to change by how much The Great Henge's cost is reduced.",
+      "oracle_id": "78427103-9543-41fb-b6d4-72963fe87275",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you determine the cost to cast The Great Henge, you may activate mana abilities to pay that cost. If the greatest power among creatures you control changes while activating mana abilities, the cost to cast The Great Henge remains what you previously determined.",
+      "oracle_id": "78427103-9543-41fb-b6d4-72963fe87275",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "The cost reduction ability reduces only the generic mana in The Great Henge's cost. The colored mana must still be paid.",
+      "oracle_id": "78427103-9543-41fb-b6d4-72963fe87275",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "The first step of casting a spell is to move it to the stack. If this causes the greatest power among creatures you control to change, that new power will be used to determine the cost reduction.",
+      "oracle_id": "78427103-9543-41fb-b6d4-72963fe87275",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was.",
+      "oracle_id": "78427103-9543-41fb-b6d4-72963fe87275",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

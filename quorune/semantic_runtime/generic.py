@@ -10,6 +10,7 @@ from ..drawing.model import (
 )
 from ..rules.faction_trigger_model import CountFactionDraw, FACTION_DRAW_OBSERVER_FIELD
 from ..rules.opponent_draw_result import ObserveOpponentDraw, OPPONENT_DRAW_OBSERVER_FIELD
+from ..rules.opponent_draw_followup import CountDistinctOpponentDraw, DISTINCT_DRAW_OBSERVER
 from ..fractional_quantity_model import HalfQuantitySpec
 from ..query_effect_amount_model import OPPONENT_HAND_MILL_KIND, OpponentHandMillCount
 from ..selected_graveyard_mill_count import SELECTED_GRAVEYARD_MILL_KIND, SelectedGraveyardMillCount
@@ -189,7 +190,12 @@ def _mill_followup(effect, count, context):
         return None
     from ..rad_counter_model import RAD_EFFECT_FIELD
     from ..rad_counters import RadMillFollowup
-    from ..rules.committed_mill_cards import MillAdventuresToHand, uses_committed_mill_result
+    from ..rules.committed_mill_cards import (
+        MillAdventuresToHand,
+        uses_committed_mill_result,
+        MilledManaDamage,
+        uses_milled_mana_damage,
+    )
     from ..rules.mill_paid_hand_return import MillPaidHandReturn, uses_mill_paid_hand_return
     from ..rules.milled_creature_tokens import MilledCreatureTokens
     from ..rules.milled_permanent_battlefield import MillOnePermanentToBattlefield, uses_milled_permanent_battlefield
@@ -210,6 +216,14 @@ def _mill_followup(effect, count, context):
                     or context.source.object_id is not None or type(count) is not int or count <= 0):
                 raise ValueError("Radiation Mill requires its original sourceless controller")
             return RadMillFollowup.from_dict(result)
+        if uses_milled_mana_damage(effect):
+            damage = MilledManaDamage.from_dict(result)
+            if (set(effect) - {"_replacement_selections", "reason"} != {"op", "player", "count", "followup"}
+                    or effect["player"] != context.actor or type(count) is not int or count <= 0
+                    or context.source is None or context.source.object_id is None or damage.opponent == context.actor
+                    or damage.opponent not in context.query.active_seats):
+                raise ValueError("Milled mana-value damage requires its fixed controller Mill and announced opponent")
+            return damage
         permanent_choice = uses_milled_permanent_battlefield(effect)
         paid_hand = uses_mill_paid_hand_return(effect)
         if uses_committed_mill_result(effect) or permanent_choice or paid_hand:
@@ -260,14 +274,19 @@ class DrawEachPlayerHandler:
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
         observers = ()
-        if FACTION_DRAW_OBSERVER_FIELD in effect:
+        observer_fields = {FACTION_DRAW_OBSERVER_FIELD, DISTINCT_DRAW_OBSERVER}.intersection(effect)
+        if observer_fields:
+            if len(observer_fields) != 1:
+                raise SemanticNodeError("A draw batch can carry only one result observer")
+            field, = observer_fields
+            observer_type = CountFactionDraw if field == FACTION_DRAW_OBSERVER_FIELD else CountDistinctOpponentDraw
             try:
-                observer = CountFactionDraw.from_dict(effect[FACTION_DRAW_OBSERVER_FIELD])
+                observer = observer_type.from_dict(effect[field])
             except ValueError as exc:
                 raise SemanticNodeError(str(exc)) from exc
             if (observer.controller != context.actor or effect.get("scope") != "controller_opponents"
                     or _count(effect) != 1 or effect.get("private") is not True):
-                raise SemanticNodeError("The faction observer requires its original private opponent draw")
+                raise SemanticNodeError("The observer requires its original private opponent draw")
             observers = (observer,)
         if OPPONENT_DRAW_OBSERVER_FIELD in effect:
             try:
@@ -282,9 +301,9 @@ class DrawEachPlayerHandler:
         if "scope" in effect:
             shared = effect["scope"] == "controller_and_opponents"
             fields = {"op", "scope", "count", "private", "reason"}
-            if observers:
-                fields.add(FACTION_DRAW_OBSERVER_FIELD if isinstance(observers[0], CountFactionDraw)
-                           else OPPONENT_DRAW_OBSERVER_FIELD)
+            fields.update(observer_fields)
+            if OPPONENT_DRAW_OBSERVER_FIELD in effect:
+                fields.add(OPPONENT_DRAW_OBSERVER_FIELD)
             if shared:
                 fields.add("controller_count")
             if ((not shared and effect["scope"] != "controller_opponents")
@@ -370,7 +389,7 @@ class DrawWithActionsHandler:
             )
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc
-        faction = (len(actions) == 1 and isinstance(actions[0], CountFactionDraw)
+        faction = (len(actions) == 1 and isinstance(actions[0], (CountFactionDraw, CountDistinctOpponentDraw))
                    and actions[0].controller == context.actor and effect.get("private") is True)
         opponent = (len(actions) == 1 and isinstance(actions[0], ObserveOpponentDraw)
                     and actions[0].controller == context.actor and effect.get("private") is True

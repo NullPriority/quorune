@@ -47,13 +47,27 @@ def controller_basic_land_types(
     return tuple(sorted(basic_types))
 
 
+def controller_active_turn_number(
+    host: EntryConditionMetricHost,
+    destination_controller: str | None,
+) -> int:
+    """Use the entering permanent's controller and the active turn."""
+    if destination_controller is None or host.state.active_player != destination_controller:
+        return 0
+    return host.state.players[destination_controller].turns_begun
+
+
 def entry_condition_metrics(
     host: EntryConditionMetricHost,
     destination_controller: str | None,
 ) -> dict[str, int]:
     """Snapshot closed predicates over already-present phased-in permanents."""
 
-    metrics = {metric.value: 0 for metric in FixedEntryMetric}
+    metrics = {
+        metric.value: 0
+        for metric in FixedEntryMetric
+        if metric is not FixedEntryMetric.CONTROLLER_ACTIVE_TURN_NUMBER
+    }
     active = tuple(host.active_seats)
     if active:
         metrics[FixedEntryMetric.MINIMUM_PLAYER_LIFE.value] = min(
@@ -113,6 +127,7 @@ def entry_condition_metrics(
 
 __all__ = [
     "EntryConditionMetricHost",
+    "controller_active_turn_number",
     "controller_basic_land_types",
     "entry_condition_metrics",
 ]

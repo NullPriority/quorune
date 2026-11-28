@@ -215,6 +215,7 @@ def _pending_usage(item: Any) -> Mapping[str,Any] | None:
 class TriggerUsagePlan:
     live_source: Any | None
     allows_multipliers: bool = False
+    ability_id: str | None = None
 
 
 def _optional_result_available(state: Any, source_identity: str, program_key: str, *, controller: str | None = None) -> bool:
@@ -264,8 +265,9 @@ def commit_optional_result_usage(host: Any, item: Any, actor: str) -> None:
         object_incarnation=binding['logical_object_id'], target=binding['program_key'], target_kind='ability_program')
 
 
-def trigger_usage_plan(state: Any, source: Any, program: Any, pending: Any) -> TriggerUsagePlan | None:
+def trigger_usage_plan(state: Any, source: Any, program: Any, pending: Any, *, grant=None) -> TriggerUsagePlan | None:
     """Read captured use and accepted batch claims without mutating LKI."""
+    from ..ability_fragments import GRANTED_TRIGGER_PROVIDER_VERSION
     from ..activation_usage import trigger_usage_available
     spec=TriggerLimitSpec.from_dict(program.trigger_limit)
     validate_program_trigger_limit(program)
@@ -276,9 +278,14 @@ def trigger_usage_plan(state: Any, source: Any, program: Any, pending: Any) -> T
         return TriggerUsagePlan(None, allows_multipliers=True)
     live=state.cards.get(source.object_id)
     current=live is not None and live.logical_object_id==source.logical_object_id
-    if spec.schema_version==1:
-        return (TriggerUsagePlan(live) if current and trigger_usage_available(live,
-            ability_id=program.ability_id,turn_sequence=state.turn_sequence) else None)
+    if spec.schema_version == 1:
+        ability_id = program.ability_id
+        if grant is not None and grant.schema_version == GRANTED_TRIGGER_PROVIDER_VERSION:
+            if grant.granting_source is None:
+                raise ValueError("A limited ability grant needs its bound provider")
+            ability_id = f"grant:{program.key}:{grant.granting_source.logical_object_id}"
+        return (TriggerUsagePlan(live, ability_id=ability_id) if current and trigger_usage_available(live,
+            ability_id=ability_id, turn_sequence=state.turn_sequence) else None)
     if not trigger_usage_available(source,ability_id=program.ability_id,turn_sequence=state.turn_sequence):return None
     for item in pending:
         claim=_pending_usage(item)

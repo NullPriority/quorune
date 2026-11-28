@@ -9,6 +9,7 @@ from operator import gt, lt
 from typing import Any
 
 from ..affected_permanents import AffectedPermanentSetError, AffectedPermanentSetSpec
+from ..attachment_destruction_model import uses_enchanted_permanent_state
 from ..object_predicate import ObjectQuerySpec
 from ..object_query import ObjectQueryResult
 
@@ -138,7 +139,7 @@ def qualified_destruction_capabilities(query):
     from ..object_predicate import object_query_capabilities
     advanced=(query.numeric_characteristic is not None or query.commander is not None
         or bool(query.colors_none or query.excluded_supertypes or query.any_of)
-        or 'aura' in query.excluded_subtypes
+        or 'aura' in query.excluded_subtypes or uses_enchanted_permanent_state(query)
         or bool(set(query.subtypes_all)&{'aura','equipment'}))
     return tuple(sorted({*((QUALIFIED_DESTRUCTION_CAPABILITY,) if advanced else ()),
         *(('state_query.commander.designation',) if query.commander is not None else ()),
@@ -153,4 +154,8 @@ def qualified_destruction_payload_dependencies(value):
     if is_relative_power_destruction_set(value.get("set")):
         relative_power_destruction_instruction(value)
         return TARGET_RELATIVE_POWER_DESTRUCTION_DEPENDENCIES
-    return qualified_destruction_capabilities(AffectedPermanentSetSpec.from_dict(value['set']).query)
+    query = AffectedPermanentSetSpec.from_dict(value['set']).query
+    capabilities = qualified_destruction_capabilities(query)
+    if value.get('regeneration_prohibited') is True and uses_enchanted_permanent_state(query):
+        return (*capabilities, 'permanent.destroy.regeneration_prohibition')
+    return capabilities

@@ -3,6 +3,10 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass
 
+from .library_search_model import (
+    DISTINCT_PUBLIC_SEARCH_SPLIT_VERSION, PUBLIC_SEARCH_CHOOSER, PUBLIC_SEARCH_SPLIT_VERSION,
+    is_public_search_split,
+)
 from .replacement.immutable import thaw_value
 from typing import Literal
 
@@ -13,14 +17,15 @@ from .rules.library_selection import LibrarySelectionObjectIdentity
 PILE_OPERATION = "public_library_piles"
 PILE_MECHANIC = "public-library-piles"
 PILE_CAPABILITY = "library.select.public_piles"
+PILE_SILVER_CAPABILITY = "library.select.public_pair_marked_exile"
+PILE_SILVER_MECHANIC = "public-library-silver-pair"
+PILE_SILVER_VERSION = 2
+SEARCHED_PAIR_PILE_VERSION = 76
 PILE_RULES = ("404.3", "608.2c", "608.2d", "700.3", "701.20a")
 PILE_FIELDS = frozenset({"op", "player", "schema_version", "look_count", "opponent_role"})
 PILE_NAMES = ("first", "second")
 PILE_STAGES = ("choose_opponent", "divide", "choose_pile", "order_graveyard", "commit")
-PUBLIC_SEARCH_SPLIT_VERSION = 31
-DISTINCT_PUBLIC_SEARCH_SPLIT_VERSION = 32
 DISTINCT_PUBLIC_SEARCH_SPLIT_CAPABILITY = "library.search.distinct_up_to_four_opponent_split"
-PUBLIC_SEARCH_CHOOSER = "public_search_chooser"
 PUBLIC_SEARCH_SPLIT_CAPTURE = "public_search_split_capture"
 SEARCHED_PILE_VERSION = 2
 SEARCHED_PILE_ROLE = "searched_single_card"
@@ -46,13 +51,6 @@ def distinct_public_search_split_effect(chooser="$target.0"):
     }
 
 
-def is_public_search_split(effect):
-    return effect.get("op") == "search" and (
-        effect.get("schema_version") in (PUBLIC_SEARCH_SPLIT_VERSION, DISTINCT_PUBLIC_SEARCH_SPLIT_VERSION)
-        or PUBLIC_SEARCH_CHOOSER in effect
-    )
-
-
 def validate_public_search_split(effect, *, resolved=False):
     chooser = effect.get(PUBLIC_SEARCH_CHOOSER)
     version = effect.get("schema_version")
@@ -65,8 +63,10 @@ def validate_public_search_split(effect, *, resolved=False):
                 distinct_public_search_split_effect(chooser) if distinct else public_search_split_effect(chooser)
             )):
         raise ValueError("Public search split requires one fixed unqualified search and its opponent")
-    if distinct and any(type(value) is not int for value in effect["count"].values()):
-        raise ValueError("Distinct public search requires its exact private zero-to-four choice")
+    if any(type(value) is not int for value in effect["count"].values()):
+        if distinct:
+            raise ValueError("Distinct public search requires its exact private zero-to-four choice")
+        raise ValueError("Public search split requires its exact integer count")
     return chooser
 
 
@@ -79,19 +79,26 @@ class PublicLibraryPileSpec:
     player: str
     look_count: int
     opponent_role: Literal["divider", "chooser"]
+    silver_split: bool = False
+    searched_pair: bool = False
 
     @classmethod
     def from_effect(cls, effect: Mapping, *, resolved: bool = False) -> PublicLibraryPileSpec:
         if set(effect) != PILE_FIELDS or effect["op"] != PILE_OPERATION:
             raise ValueError("Public library piles require the complete bounded descriptor")
-        if (type(effect["schema_version"]) is not int or effect["schema_version"] != 1
-                or type(effect["look_count"]) is not int or effect["look_count"] != 5
-                or effect["opponent_role"] not in ("divider", "chooser")):
+        version = effect["schema_version"]
+        silver_split = version == PILE_SILVER_VERSION
+        searched_pair = resolved and version == SEARCHED_PAIR_PILE_VERSION
+        if (type(version) is not int or version not in (1, PILE_SILVER_VERSION, SEARCHED_PAIR_PILE_VERSION)
+                or type(effect["look_count"]) is not int
+                or effect["look_count"] != (2 if silver_split or searched_pair else 5)
+                or effect["opponent_role"] not in (("chooser",) if silver_split or searched_pair else ("divider", "chooser"))
+                or version == SEARCHED_PAIR_PILE_VERSION and not searched_pair):
             raise ValueError("Unsupported public pile descriptor")
         player = effect["player"]
         if type(player) is not str or not player or (player.startswith("$") if resolved else player != "$controller"):
             raise ValueError("Public library piles have no unbound or arbitrary player")
-        return cls(player, effect["look_count"], effect["opponent_role"])
+        return cls(player, effect["look_count"], effect["opponent_role"], silver_split, searched_pair)
 
 
 @dataclass(frozen=True, slots=True)
@@ -246,6 +253,10 @@ class PublicLibraryPileState:
             raise ValueError("The public library pile continuation is malformed")
 
     def actor(self, spec: PublicLibraryPileSpec) -> str:
+        if spec.silver_split and (len(self.looked) != 2 or self.groups is None
+                or self.groups.top_top_first != self.refs[:1] or self.groups.destination_refs != self.refs[1:]
+                or self.stage not in ("choose_opponent", "choose_pile", "commit")):
+            raise ValueError("The marked library split must preserve two individual cards")
         if self.stage == "choose_opponent":
             if self.opponent is not None or self.chosen is not None or (self.groups is None) != (spec.opponent_role == "divider"):
                 raise ValueError("The opponent choice is out of order")

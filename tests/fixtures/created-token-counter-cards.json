@@ -1875,6 +1875,31 @@
       "released_at": "2024-06-14",
       "toughness": null,
       "type_line": "Enchantment"
+    },
+    {
+      "oracle_id": "a38828be-781e-4340-9c6f-f40b1d34773f",
+      "name": "White Sun's Twilight",
+      "mana_cost": "{X}{W}{W}",
+      "type_line": "Sorcery",
+      "oracle_text": "You gain X life. Create X 1/1 colorless Phyrexian Mite artifact creature tokens with toxic 1 and \"This token can't block.\" If X is 5 or more, destroy all other creatures. (Players dealt combat damage by a creature with toxic 1 also get a poison counter.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-02-10",
+      "cmc": 2.0,
+      "legalities": {
+        "commander": "legal"
+      }
     }
   ],
   "rulings": [
@@ -2321,6 +2346,48 @@
       "published_at": "2020-06-23",
       "source": "wotc",
       "comment": "If you control two Branching Evolutions, the number of +1/+1 counters put on a creature is four times the original number. Three Branching Evolutions multiplies the original number by eight, and so on."
-    }
+    },
+      {
+        "oracle_id": "a38828be-781e-4340-9c6f-f40b1d34773f",
+        "published_at": "2023-02-04",
+        "source": "wotc",
+        "comment": "Damage dealt by a creature with toxic grants the same number of counters regardless of how much damage is dealt. Notably, if a replacement effect modifies the damage in some way (such as that of Gratuitous Violence), the number of counters given remains unchanged."
+      },
+      {
+        "oracle_id": "a38828be-781e-4340-9c6f-f40b1d34773f",
+        "published_at": "2023-02-04",
+        "source": "wotc",
+        "comment": "Toxic doesn't change the amount of combat damage a creature deals. For example, if a 2/2 creature with toxic 1 deals combat damage to a player, that creature will deal 2 damage. The results of that damage are the player loses 2 life and gets a poison counter."
+      },
+      {
+        "oracle_id": "a38828be-781e-4340-9c6f-f40b1d34773f",
+        "published_at": "2023-02-04",
+        "source": "wotc",
+        "comment": "Conversely, replacement effects that apply to the number of counters put on a player can modify the counters placed this way. For example, Vorinclex, Monstrous Raider's last two abilities can apply to counters placed this way."
+      },
+      {
+        "oracle_id": "a38828be-781e-4340-9c6f-f40b1d34773f",
+        "published_at": "2023-02-04",
+        "source": "wotc",
+        "comment": "Any other effects of that damage, such as life gain from lifelink, still apply."
+      },
+      {
+        "oracle_id": "a38828be-781e-4340-9c6f-f40b1d34773f",
+        "published_at": "2023-02-04",
+        "source": "wotc",
+        "comment": "If a creature with toxic deals combat damage to a creature or planeswalker, or if it deals noncombat damage, toxic has no effect and no player gets poison counters."
+      },
+      {
+        "oracle_id": "a38828be-781e-4340-9c6f-f40b1d34773f",
+        "published_at": "2023-02-04",
+        "source": "wotc",
+        "comment": "A player with ten or more poison counters loses the game. This is a state-based action and doesn't use the stack. In other words, it happens immediately and players can't respond to it, just like a player losing the game due to having 0 or less life."
+      },
+      {
+        "oracle_id": "a38828be-781e-4340-9c6f-f40b1d34773f",
+        "published_at": "2023-02-04",
+        "source": "wotc",
+        "comment": "Multiple instances of toxic are cumulative. For example, if a creature has toxic 2 and gains toxic 1 due to another effect, combat damage that creature deals to a player will cause that player to get 3 poison counters."
+      }
   ]
 }

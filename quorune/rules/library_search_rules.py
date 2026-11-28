@@ -101,10 +101,10 @@ def semantic_search_public_minimum(host, seat, effect, options):
 
 
 def optional_search_permissions(host,actor,effect):
-    from ..cast_x_search_model import CAST_X_ZONE_SEARCH_OPERATION, decode_cast_x_zone_search
+    from ..cast_x_search_model import CAST_X_ZONE_SEARCH_OPERATION, decode_zone_search
 
     if effect.get("op") == CAST_X_ZONE_SEARCH_OPERATION:
-        decode_cast_x_zone_search({key: effect[key] for key in ("op", "player", "search")}, actor=actor)
+        decode_zone_search({key: effect[key] for key in ("op", "player", "search")}, actor=actor)
         return {actor: not library_search_constraint(host, actor).prohibited}
     if effect.get('op') == 'search_named_library_or_graveyard':
         from ..named_search_model import decode_named_zone_search
@@ -125,3 +125,35 @@ def apply_library_search_prohibition(host,*,actor,source_id):
     commit_continuous_effect(host.state,effect)
     host._log(actor,'library.search.restricted','Players cannot search libraries this turn.',{'effect_id':effect.effect_id},importance=1)
     return effect.effect_id
+
+
+
+def untap_search_result_after_shuffle(host, context, moved):
+    """Apply the reached controller-land count to the actual search result."""
+    from ..library_search_model import CONDITIONAL_UNTAP_SEARCH_VERSION, FixedCountedLibrarySearchTemplate
+
+    if context.effect.get("schema_version") != CONDITIONAL_UNTAP_SEARCH_VERSION or not moved:
+        return
+    from ..object_predicate import ObjectQuerySpec
+    from ..object_query import object_matches_query
+    from ..tap_state import set_permanent_tapped
+
+    spec = FixedCountedLibrarySearchTemplate.from_effect(context.effect)
+    result, = moved
+    card = host.state.cards.get(result.object_id)
+    if (card is None or card.logical_object_id != result.logical_object_id
+            or card.zone != "battlefield" or card.phased_out):
+        return
+
+    lands = ObjectQuerySpec(zones=("battlefield",), types_all=("land",))
+    land_count = sum(
+        permanent.zone == "battlefield" and not permanent.phased_out
+        and permanent.controller == context.seat
+        and object_matches_query(host._public_object_query_result(permanent), lands)
+        for permanent in host.state.cards.values()
+    )
+    if land_count >= spec.post_shuffle_untap_minimum_lands:
+        set_permanent_tapped(
+            host, card.ref, actor=context.seat, tapped=False,
+            reason=f"{context.item.label} search", logical_object_id=card.logical_object_id,
+        )

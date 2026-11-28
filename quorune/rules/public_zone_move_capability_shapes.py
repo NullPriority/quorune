@@ -11,6 +11,7 @@ from ..affected_permanents import (
     AffectedPermanentSetSpec,
     DEFENDING_PLAYER_UNTAP_SET_FIELD,
     TARGET_PLAYER_CREATURE_UNTAP_SNAPSHOT_FIELD,
+    TARGET_OPPONENT_NONLAND_UNTAP_SNAPSHOT_FIELD,
     decode_target_player_creature_untap_snapshot,
     target_player_creature_snapshot_target_schema,
     PermanentControllerRelation,
@@ -314,10 +315,10 @@ def fixed_owner_zone_move_node_capabilities(
         return ()
     effect = effects[0]
     from .opponent_spell_or_permanent_return import (
-        ENTRY_FIELD, FIELD, SPELL_FIELD, opponent_spell_or_permanent_return_capabilities,
+        ENTRY_FIELD, FIELD, OPPOSING_SPELL_FIELD, SPELL_FIELD, opponent_spell_or_permanent_return_capabilities,
     )
 
-    if {FIELD, ENTRY_FIELD, SPELL_FIELD}.intersection(effect):
+    if {FIELD, ENTRY_FIELD, SPELL_FIELD, OPPOSING_SPELL_FIELD}.intersection(effect):
         return opponent_spell_or_permanent_return_capabilities(effect, target_schema)
     if target_schema == owned_permanent_library_bottom_target_schema():
         expected = {"op": "move", "card": "$target.0", "destination": "library", "position": "bottom"}
@@ -492,6 +493,8 @@ def public_zone_move_set_payload_dependencies(value: Mapping[str, Any]) -> tuple
         if set(value) != {"op", "source", "set"} or value.get("source") != "$source":
             raise ValueError("Nonhistoric return requires the original complete battlefield set effect")
         return ("zone.move.fixed_public_set", "zone.change.destination_replacement", NONHISTORIC_NONLAND_RETURN_CAPABILITY)
+    from .cast_name_graveyard_returns import CAST_NAME_RETURN_CAPABILITY, CAST_NAME_RETURN_VERSION
+
     history = (
         same_turn_graveyard_return_history_query(spec.seat_relation).capability_dependencies
         if spec.schema_version in SAME_TURN_GRAVEYARD_RETURN_VERSIONS else ()
@@ -500,6 +503,7 @@ def public_zone_move_set_payload_dependencies(value: Mapping[str, Any]) -> tuple
         "zone.move.fixed_public_set",
         *history,
         *object_query_capabilities(spec.query),
+        *((CAST_NAME_RETURN_CAPABILITY,) if spec.schema_version == CAST_NAME_RETURN_VERSION else ()),
         *((PUBLIC_GRAVEYARD_POWER_RETURN_CAPABILITY,)
           if spec.schema_version == PUBLIC_GRAVEYARD_POWER_RETURN_VERSION else ()),
         *(("attachment.aura.typed_restriction",) if spec.schema_version in PUBLIC_AURA_ENTRY_VERSIONS
@@ -781,6 +785,12 @@ def fixed_public_zone_move_set_node_capabilities(
         return ()
     if spec.schema_version in PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSIONS:
         return ()
+    from .cast_name_graveyard_returns import CAST_NAME_RETURN_VERSION, CAST_NAMES_VALUE
+
+    if spec.schema_version == CAST_NAME_RETURN_VERSION and (
+        has_followup or spec.cast_spell_names != CAST_NAMES_VALUE
+    ):
+        return ()
     dependencies = (*public_zone_move_set_payload_dependencies(effect), *result_caps)
     if spec.schema_version == TARGETED_SAME_TURN_GRAVEYARD_RETURN_VERSION:
         from ..target_history import GRAVEYARD_BATTLEFIELD_ARRIVAL_FIELD
@@ -892,6 +902,9 @@ def fixed_public_tap_state_set_node_capabilities(
         TARGET_UNSPENT_MANA_FIELD, decode_target_unspent_mana_tap, target_unspent_mana_target_schema,
     )
 
+    if TARGET_OPPONENT_NONLAND_UNTAP_SNAPSHOT_FIELD in effects[0]:
+        from .tap_state_capability_shapes import opponent_nonland_tap_capabilities
+        return opponent_nonland_tap_capabilities(effects[0], target_schema, mechanics)
     if TARGET_PLAYER_CREATURE_UNTAP_SNAPSHOT_FIELD in effects[0]:
         if ("cr-115-targets" not in mechanics or type((target_schema or {}).get("count")) is not int
                 or target_schema != target_player_creature_snapshot_target_schema()):

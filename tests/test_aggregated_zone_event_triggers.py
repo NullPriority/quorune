@@ -438,3 +438,285 @@ class AggregatedZoneTriggerRuntimeTests(unittest.TestCase):
 
 
 if __name__=='__main__':unittest.main()
+
+class CombatSourcePowerCompilerTests(unittest.TestCase):
+    def test_above_base_power_combat_draw_requires_the_exact_occurrence(self):
+        from quorune.permanent_event_state_model import (
+            ABOVE_BASE_POWER_CAPABILITY, ABOVE_BASE_POWER_FIELD, above_base_power_combat_damage_condition,
+            state_qualified_damage_runtime_dependencies,
+        )
+        from quorune.rules.capabilities import CapabilityRegistry
+
+        text = ('Whenever one or more creatures you control each with power greater than its base power '
+                'deals combat damage to a player, draw a card.')
+        registry = load_default_capability_registry()
+        ir = compile_oracle_card(query_record(text), capability_registry=registry, capability_profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual('damage.dealt', node.event)
+        self.assertEqual(text, node.text)
+        self.assertEqual(above_base_power_combat_damage_condition(), node.event_condition)
+        self.assertIn('one_or_more_event_batch', node.runtime_coverage)
+        self.assertNotIn('intervening_condition', node.runtime_coverage)
+        self.assertIn(ABOVE_BASE_POWER_CAPABILITY, node.capability_dependencies)
+        program = SimpleNamespace(event=node.event, active_zone='battlefield', effects=node.effects,
+            event_condition=node.event_condition, target_schema=None, cost_schema=None, handlers=(), trigger_limit=None,
+            coverage=node.runtime_coverage, capability_dependencies=node.capability_dependencies)
+        self.assertIn(ABOVE_BASE_POWER_CAPABILITY, state_qualified_damage_runtime_dependencies(program))
+        from quorune.model import CardInstance
+        from quorune.trigger_discovery import semantic_event_matches
+        observer = CardInstance(object_id='observer', ref='observer', oracle_id='fixture:observer',
+            printed_name='Generic Combat Observer', owner='A', controller='A', zone='battlefield')
+        host = SimpleNamespace(active_seats=tuple('ABCD'), state=SimpleNamespace(cards={}, active_player='A'))
+        event = {'source_controller':'A','source_zone':'battlefield','source_types':['creature'],
+                 'combat':True,'target_kind':'player','player':'B',ABOVE_BASE_POWER_FIELD:True}
+        self.assertTrue(semantic_event_matches(host,program,observer,'damage.dealt',event))
+        for change in ({'source_controller':'C'},{'source_zone':'graveyard'},{'source_types':['artifact']},
+                       {'combat':False},{'target_kind':'permanent'},{ABOVE_BASE_POWER_FIELD:False},
+                       {ABOVE_BASE_POWER_FIELD:None}):
+            with self.subTest(event_change=change):
+                self.assertFalse(semantic_event_matches(host,program,observer,'damage.dealt',{**event,**change}))
+        wider = deepcopy(node.event_condition)
+        comparison, = [value for value in wider['all'] if value['field'] == ABOVE_BASE_POWER_FIELD]
+        comparison['value'] = 1
+        for change in ({'event': 'damage.dealt.self'}, {'event_condition': wider},
+                       {'coverage': (*program.coverage, 'intervening_condition')},
+                       {'effects': ({**node.effects[0], 'count':2},)},
+                       {'coverage': tuple(value for value in program.coverage if value != 'one_or_more_event_batch')}):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                state_qualified_damage_runtime_dependencies(SimpleNamespace(**{**vars(program), **change}))
+        for neighboring in (text.replace('greater than', 'less than'), text.replace('combat damage', 'damage'),
+                            text.replace('a player', 'a permanent'), text.replace('draw a card', 'draw two cards')):
+            with self.subTest(neighboring=neighboring):
+                self.assertNotEqual('exact', compile_oracle_card(query_record(neighboring), capability_registry=registry,
+                                                                capability_profile='commander_review').status)
+        raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_bytes())
+        next(value for value in raw['capabilities'] if value['id']==ABOVE_BASE_POWER_CAPABILITY).update(
+            status='blocked', blockers=['combat source comparison withdrawn'])
+        self.assertNotEqual('exact', compile_oracle_card(query_record(text), capability_registry=CapabilityRegistry(raw),
+                                                        capability_profile='commander_review').status)
+        with patch('quorune.compiler.fixed_public_action_event_bindings._qualified_damage_batch_spec', return_value=None):
+            self.assertNotEqual('exact', compile_oracle_card(query_record(text), capability_registry=registry,
+                                                            capability_profile='commander_review').status)
+
+    def test_combat_power_snapshot_distinguishes_settings_modifiers_and_switches(self):
+        from quorune.continuous_effects import (
+            CharacteristicState, ContinuousEffect, ContinuousOperation, Layer, evaluate_continuous_effects,
+        )
+        from quorune.damage_source import DamageError, DamageSourceSnapshot, damage_source_state_from_context
+        from quorune.permanent_event_state_model import ABOVE_BASE_POWER_FIELD
+
+        def effect(effect_id, layer, operation, value):
+            return ContinuousEffect(effect_id=effect_id, source_id='original', layer=Layer.POWER_TOUGHNESS,
+                sublayer=layer,timestamp=1,operations=(ContinuousOperation(operation,value),),
+                characteristic_defining=layer=='7a')
+
+        cda = effect('definition', '7a', 'set_power_toughness', [8, 4])
+        setter = effect('setting', '7b', 'set_power_toughness', [3, 5])
+        pump = effect('pump', '7c', 'modify_power_toughness', [2, 4])
+        switch = effect('switch', '7d', 'switch_power_toughness', None)
+        for effects, expected in (((cda,), (8, 8)), ((setter,cda), (3, 3)),
+                                  ((pump, setter, cda), (3, 5)), ((switch, pump, setter, cda), (3, 9))):
+            with self.subTest(effects=[value.effect_id for value in effects]):
+                result = evaluate_continuous_effects(CharacteristicState('original',power=1,toughness=1),effects)
+                self.assertEqual(expected,(result.base_power,result.characteristics['power']))
+        old = DamageSourceSnapshot('creature','object','occurrence','A','A',zone='battlefield',types=('creature',))
+        self.assertNotIn('power_above_base',old.to_dict())
+        self.assertIsNone(DamageSourceSnapshot.from_dict(old.to_dict()).power_above_base)
+        for value in (False, True):
+            serialized={**old.to_dict(),'power_above_base':value}
+            self.assertIs(value,DamageSourceSnapshot.from_dict(serialized).power_above_base)
+            self.assertIs(value,damage_source_state_from_context({ABOVE_BASE_POWER_FIELD:value})[ABOVE_BASE_POWER_FIELD])
+        with self.assertRaises(DamageError):
+            DamageSourceSnapshot.from_dict({**old.to_dict(),'power_above_base':1})
+        with self.assertRaises(DamageError):
+            damage_source_state_from_context({ABOVE_BASE_POWER_FIELD:1})
+
+
+class CombatSourcePowerNativeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    session = witnesses.BoundEffectProgramRuntimeTests.session
+    add = witnesses.BoundEffectProgramRuntimeTests.add
+    checkpoint = witnesses.BoundEffectProgramRuntimeTests.checkpoint
+    replay = witnesses.BoundEffectProgramRuntimeTests.replay
+    resolve = witnesses.BoundEffectProgramRuntimeTests.resolve
+    finish_combat = combat_witnesses.IndependentDualSourceEventRuntimeTests.finish_combat
+    order_triggers = counter_witnesses.CounterPlacementEventRuntimeTests.order_triggers
+    from test_self_public_zone_casting import SelfPublicZoneRuntimeTests as _actions
+    prepare = _actions.prepare
+    cast = _actions.cast
+    assert_closed = _actions.assert_closed
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        fixtures = ROOT/'tests/fixtures'
+        path = Path(cls.temporary.name)/'combat-source-power.sqlite3'
+        build_fixture_database([fixtures/name for name in (
+            'aggregated-zone-event-triggers.json', 'activation-result-views-cards.json',
+            'activation-public-state-cards.json', 'block-capacity-cards.json', 'casualty-cards.json',
+            'fixed-overload-cards.json', 'power-toughness-switch-cards.json',
+        )],path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        commander = 'Isamaru, Hound of Konda'
+        cls.deck = DeckDefinition('Combat source power witness',
+            [DeckEntry(commander,1,'commander'), DeckEntry('Plains',30)], [commander])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def ready_observer(self, game, source, *, active='A', actor='A'):
+        self.assert_closed(game, source)
+        game.state.config.semantic_policy = 'trusted_only'
+        self.prepare(game, active=active, actor=actor, mana={'C':5,'G':5,'W':3,'U':3})
+        self.checkpoint(game)
+        if source.zone=='hand':
+            self.cast(game, actor, source)
+            self.assertIsNone(self.resolve(game))
+            self.assertEqual('battlefield', game.state.cards[source.object_id].zone)
+
+    def start_attacks(self, game, attackers, actor='A'):
+        for _ in range(35):
+            decision = game.state.pending_decision
+            if decision.kind == 'combat.attackers':
+                break
+            self.assertEqual('priority', decision.kind)
+            self.assertTrue(game.act(game.pending_principals()[0], {'action_id':'pass'}).ok)
+        else:
+            self.fail('Native combat did not reach attackers')
+        response={'action_id':'attack','attackers':{card.ref:defender for card,defender in attackers}}
+        before=authoritative_state_hash(game.state)
+        self.assertFalse(game.act('pilot:D',response).ok)
+        self.assertEqual(before,authoritative_state_hash(game.state))
+        accepted=game.act('pilot:'+actor,response)
+        self.assertTrue(accepted.ok,accepted.summary)
+
+    def add_attacker(self, game, name='Grizzly Bears', *, ref, seat='A', boosted=False):
+        creature=self.add(game.engine,name,seat=seat,ref=ref)
+        creature.acquired_control_turn_count=-1
+        if boosted:
+            creature.counters['+1/+1']=1
+        return creature
+
+    def stack_draws(self, game, source):
+        return tuple(event for event in game.state.events
+                     if event.code=='stack.trigger' and event.details.get('source')==source.ref)
+
+    def test_kutzil_groups_simultaneous_boosted_sources_by_damaged_player(self):
+        game=self.session(40239801)
+        source=self.add(game.engine,'Kutzil, Malamet Exemplar',zone='hand')
+        boost=self.add(game.engine,'Giant Growth',zone='hand')
+        first=self.add_attacker(game,ref='countered-hit',boosted=True)
+        second=self.add_attacker(game,ref='temporary-pump-hit')
+        third=self.add_attacker(game,ref='separate-player-hit',boosted=True)
+        plain=self.add_attacker(game,ref='unmodified-hit')
+        self.assert_closed(game,boost)
+        self.ready_observer(game,source)
+        self.cast(game,'A',boost,[second.ref])
+        self.assertIsNone(self.resolve(game))
+        hand=len(game.state.players['A'].zones['hand'])
+        self.start_attacks(game,[(first,'B'),(second,'B'),(third,'C'),(plain,'D')])
+        game=self.finish_combat(game,pending_reload=True)
+        self.assertEqual({'B':32,'C':37,'D':38},{seat:game.state.players[seat].life for seat in 'BCD'})
+        self.assertEqual(hand+2,len(game.state.players['A'].zones['hand']))
+        self.assertEqual(2,len(self.stack_draws(game,source)))
+        for viewer in 'BCD':
+            packet=json.dumps(game.packet('pilot:'+viewer,full=True))
+            for object_id in game.state.players['A'].zones['hand']:
+                self.assertNotIn(game.state.cards[object_id].ref,packet)
+        self.replay(game,load=True)
+
+    def test_kutzil_distinguishes_base_setting_cda_and_current_switched_power(self):
+        game=self.session(40239802)
+        source=self.add(game.engine,'Kutzil, Malamet Exemplar')
+        setter=self.add(game.engine,'Scale Up',zone='hand')
+        switch=self.add(game.engine,'Twisted Image',zone='hand')
+        set_only=self.add_attacker(game,ref='set-only')
+        cda=self.add_attacker(game,'Maro',ref='definition-only')
+        switch_only=self.add_attacker(game,'Selesnya Sagittars',ref='switched-power')
+        for card in (setter,switch,cda):
+            self.assert_closed(game,card)
+        self.ready_observer(game,source)
+        self.cast(game,'A',setter,[set_only.ref]);self.assertIsNone(self.resolve(game))
+        self.cast(game,'A',switch,[switch_only.ref]);self.assertIsNone(self.resolve(game))
+        hand=len(game.state.players['A'].zones['hand'])
+        for card, base, effective in ((set_only,6,6),(cda,hand,hand),(switch_only,2,5)):
+            self.assertEqual(base,game.engine._effective_card_data(card,include_base_power=True)['base_power'])
+            self.assertEqual(effective,game.engine._numeric_stat(card.object_id,'power'))
+        self.start_attacks(game,[(set_only,'B'),(cda,'C'),(switch_only,'D')])
+        game=self.finish_combat(game)
+        self.assertEqual((34,40-hand,35),tuple(game.state.players[seat].life for seat in 'BCD'))
+        self.assertEqual(hand+1,len(game.state.players['A'].zones['hand']))
+        self.assertEqual(1,len(self.stack_draws(game,source)))
+        self.replay(game,load=True)
+
+    def test_kutzil_groups_double_strike_in_distinct_steps_and_ignores_foreign_damage(self):
+        for index,actor in enumerate(('A','B')):
+            with self.subTest(actor=actor):
+                game=self.session(40239803+index)
+                source=self.add(game.engine,'Kutzil, Malamet Exemplar')
+                creature=self.add_attacker(game,'Fencing Ace',seat=actor,ref='double-strike',boosted=True)
+                self.assert_closed(game,creature)
+                self.ready_observer(game,source,active=actor,actor=actor)
+                hand=len(game.state.players['A'].zones['hand'])
+                self.start_attacks(game,[(creature,'C')],actor=actor)
+                game=self.finish_combat(game)
+                self.assertEqual(36,game.state.players['C'].life)
+                expected=2 if actor=='A' else 0
+                self.assertEqual(hand+expected,len(game.state.players['A'].zones['hand']))
+                self.assertEqual(expected,len(self.stack_draws(game,source)))
+                self.replay(game,load=True)
+
+    def test_kutzil_preserves_queued_damage_after_the_attacker_departs(self):
+        game=self.session(40239805)
+        source=self.add(game.engine,'Kutzil, Malamet Exemplar')
+        bounce=self.add(game.engine,'Unsummon',zone='hand')
+        self.add(game.engine,'Island',ref='post-damage-response-mana')
+        attacker=self.add_attacker(game,ref='departing-attacker',boosted=True)
+        self.assert_closed(game,bounce)
+        self.ready_observer(game,source)
+        hand=len(game.state.players['A'].zones['hand'])
+        self.start_attacks(game,[(attacker,'B')])
+        for _ in range(35):
+            if self.stack_draws(game,source):
+                break
+            decision=game.state.pending_decision
+            if decision.kind=='combat.blockers':
+                response={'action_id':'block','blocks':{}}
+            else:
+                self.assertEqual('priority',decision.kind)
+                response={'action_id':'pass'}
+            self.assertTrue(game.act(game.pending_principals()[0],response).ok)
+        else:
+            self.fail('Expected a queued combat draw')
+        game=self.replay(game,load=True)
+        self.cast(game,'A',bounce,[attacker.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual('hand',game.state.cards[attacker.object_id].zone)
+        self.assertEqual(hand+1,len(game.state.players['A'].zones['hand']))
+        self.assertEqual(1,len(self.stack_draws(game,source)))
+        self.replay(game,load=True)
+
+    def test_kutzil_printed_cast_prohibition_tracks_its_controllers_turn(self):
+        for index,active in enumerate(('A','B')):
+            with self.subTest(active=active):
+                game=self.session(40239806+index)
+                source=self.add(game.engine,'Kutzil, Malamet Exemplar')
+                bounce=self.add(game.engine,'Unsummon',seat='B',zone='hand')
+                self.assert_closed(game,bounce)
+                self.ready_observer(game,source,active=active,actor='B')
+                actions=game.packet('pilot:B',full=True)['decision']['ctx']['legal']['actions']
+                self.assertEqual(active=='B',any(entry['id']=='cast:'+bounce.ref for entry in actions))
+                command={'action_id':'cast:'+bounce.ref,'targets':[source.ref],'pay':'auto'}
+                before=authoritative_state_hash(game.state)
+                accepted=game.act('pilot:B',command)
+                self.assertEqual(active=='B',accepted.ok,accepted.summary)
+                if active=='B':
+                    self.assertIsNone(self.resolve(game))
+                    self.assertEqual('hand',game.state.cards[source.object_id].zone)
+                else:
+                    self.assertEqual(before,authoritative_state_hash(game.state))
+                self.replay(game,load=True)

@@ -40,6 +40,10 @@ def _unpaid_draw_result(material):
 
 
 def opponent_event_mana_result(binding, body):
+    from .defended_attacker_payment import defended_attacker_payment_result
+
+    if defended := defended_attacker_payment_result(binding, body):
+        return defended
     if binding.active_zone != "battlefield" or body != binding.body:
         return None
     event = binding.event.value

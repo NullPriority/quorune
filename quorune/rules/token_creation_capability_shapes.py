@@ -156,6 +156,12 @@ def token_definition_payload_dependencies(value: Any, mechanics: Sequence[str] =
     explicit definition retain their existing compatibility path.
     """
     from ..fixed_token_production import CREATED_TOKEN_HASTE_FIELD
+    from .linked_exile_owner_tokens import FIELD as LINKED_OWNER_TOKEN_FIELD
+
+    if isinstance(value, Mapping) and LINKED_OWNER_TOKEN_FIELD in value:
+        from .linked_exile_owner_tokens import linked_exile_owner_token_payload_dependencies
+
+        return linked_exile_owner_token_payload_dependencies(value)
 
     if isinstance(value, Mapping) and CREATED_TOKEN_HASTE_FIELD in value:
         if "token_cleanup" in value:
@@ -869,6 +875,8 @@ def _distributed_token_creation_closure(
 def distributed_token_creation_payload_dependencies(effect: Mapping[str, Any]) -> tuple[str, ...]:
     from .qualified_token_creators import project_qualified_token_creators, uses_qualified_token_creators
 
+    from ..fixed_token_production import distributed_source_counter_token_amount
+
     if uses_qualified_token_creators(effect):
         effect = project_qualified_token_creators(effect)
     token = effect.get("token")
@@ -881,6 +889,8 @@ def distributed_token_creation_payload_dependencies(effect: Mapping[str, Any]) -
                 or amount.binding_id is None or amount.coefficient != 1):
             raise FixedTokenProductionError("Distributed token quantity requires a shared source counter amount")
         effect = {**effect, "token": {**token, "quantity": 2}}
+    if distributed_source_counter_token_amount(effect) is not None:
+        effect = {**effect, "token": {**effect["token"], "quantity": 2}}
     return _distributed_token_creation_closure(effect)[1]
 
 
@@ -1081,6 +1091,10 @@ def fixed_token_creation_node_capabilities(
         return ()
     effect = effects[0]
     mechanics = set(mechanic_ids)
+    from .owner_departure_tokens import OWNER_DEPARTURE_TOKEN_FIELD, owner_departure_token_node_capabilities
+
+    if OWNER_DEPARTURE_TOKEN_FIELD in effect:
+        return owner_departure_token_node_capabilities(effects, target_schema)
     if TOKEN_COPY_BATCH_FIELD in effect:
         return _copy_batch_capabilities(effect, target_schema, mechanics)
     if effect.get("op") == SEQUENTIAL_INVESTIGATE_OPERATION:

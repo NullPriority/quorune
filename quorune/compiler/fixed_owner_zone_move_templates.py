@@ -29,6 +29,7 @@ from ..rules.opponent_spell_or_permanent_return import (
     ENTRY_SUBJECT, SUBJECT as OPPONENT_RETURN_SUBJECT, effect as opponent_return_effect,
     entry_effect, entry_target_schema, target_schema as opponent_return_target_schema,
     SPELL_SUBJECT, spell_return_effect, spell_return_target_schema,
+    OPPOSING_SPELL_SUBJECT, spell_effect, spell_target_schema,
 )
 from .direct_target import direct_permanent_target_spec
 from .return_to_hand_templates import _own_graveyard_characteristic_target
@@ -148,6 +149,8 @@ class FixedOwnerZoneMoveTemplate:
     def effects(self) -> tuple[Mapping[str, Any], ...]:
         if self.subject_id == ENTRY_SUBJECT:
             return (entry_effect(),)
+        if self.subject_id == OPPOSING_SPELL_SUBJECT:
+            return (spell_effect(),)
         if self.subject_id == OPPONENT_RETURN_SUBJECT:
             return (opponent_return_effect(),)
         if self.subject_id == SPELL_SUBJECT:
@@ -541,6 +544,11 @@ def _targeted_owner_hand_move(
             reference=FixedOwnerZoneMoveReference.TARGET, destination="hand",
             subject_id=OPPONENT_RETURN_SUBJECT, target_schema=opponent_return_target_schema(),
         )
+    if source_is_permanent is not False and re.fullmatch(
+        r"Return target spell you don['’]t control to its owner['’]s hand\.?", text.strip(), re.I,
+    ):
+        return FixedOwnerZoneMoveTemplate(reference=FixedOwnerZoneMoveReference.TARGET,
+            destination="hand", subject_id=OPPOSING_SPELL_SUBJECT, target_schema=spell_target_schema())
     match = re.fullmatch(
         r"Return target (?P<subject>creature or Vehicle) "
         r"to its owner['’]s hand\.?",

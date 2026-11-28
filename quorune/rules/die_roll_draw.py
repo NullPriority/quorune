@@ -12,7 +12,7 @@ from ..game_hand_size_model import (
     require_no_maximum_for_game_instruction,
 )
 from ..replacement.immutable import FrozenMap
-from .random_selection import publish_resolution_die_roll
+from .night_shift_dice import roll_adjusted_game_die
 
 MECHANIC = "single-d20-draw-game-hand-size"
 CAPABILITY = "random.die.single_d20_draw"
@@ -168,7 +168,5 @@ def bind_die_draw(host, item, effect, *, instruction_pointer: int) -> dict[str, 
         raise ValueError("A single d20 draw requires its resolving source combat occurrence")
     controller = item.controller
     host._require_seat(controller, in_game=True)
-    result = publish_resolution_die_roll(
-        host, controller=controller, stack_ref=item.ref, instruction_pointer=instruction_pointer, sides=SIDES,
-    )
-    return {"op": "draw", "player": controller, "count": result}
+    result = roll_adjusted_game_die(host, item, sides=SIDES, instruction_pointer=instruction_pointer).single_result
+    return {"op": "draw", "player": controller, "count": max(0, result)}

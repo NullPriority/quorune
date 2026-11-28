@@ -33,6 +33,10 @@ def compiled_land_play_permission(host: Any, seat: str, card: Any, *, include_so
         return True
     if card.owner != seat:
         return False
+    from .owned_graveyard_turn_play import owned_graveyard_turn_play_permission
+
+    if owned_graveyard_turn_play_permission(host, seat, card):
+        return True
     if include_source_grants:
         from .casting.turn_cast_grants import current_turn_cast_grants
         if current_turn_cast_grants(host,seat,card,for_land=True):return True
@@ -58,8 +62,11 @@ def compiled_zone_cast_permission(host: Any, seat: str, card: Any, *, include_so
     include_qualified_death: bool = True, include_linked_exile: bool = True) -> bool:
     from .airbend import current_airbend_cast_permission
     from .casting.escape_grants import compiled_granted_escape_permission
+    from .casting.flashback_grants import granted_flashback_permission
     from .graveyard_cast_costs import compiled_paid_graveyard_specs
     if include_source_grants and include_linked_exile and _has_linked_graveyard_exile_permission(host, seat, card):
+        return True
+    if card.zone == "graveyard" and include_source_grants and granted_flashback_permission(host, seat, card):
         return True
     if compiled_paid_graveyard_specs(host, seat, card):
         return True

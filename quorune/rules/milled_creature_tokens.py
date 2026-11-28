@@ -66,12 +66,12 @@ class MilledCreatureTokens:
 
 
 def uses_milled_creature_tokens(effect):
-    from .committed_mill_cards import uses_committed_mill_result
+    from .committed_mill_cards import uses_committed_mill_result, uses_milled_mana_damage
     from .milled_permanent_recovery import uses_milled_permanent_recovery
 
     return (
         isinstance(effect, Mapping) and effect.get("op") == "mill"
-        and "followup" in effect and not uses_committed_mill_result(effect) and not uses_milled_permanent_recovery(effect)
+        and "followup" in effect and not uses_committed_mill_result(effect) and not uses_milled_permanent_recovery(effect) and not uses_milled_mana_damage(effect)
     )
 
 

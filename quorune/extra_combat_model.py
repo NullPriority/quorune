@@ -21,8 +21,22 @@ INSERTED_MAIN_COUNT_FIELD = "inserted_main_phase_count"
 LATER_MAIN_PHASE_FIELD = "later_than_second_main_phase"
 
 
+EXTRA_COMBAT_MAIN_CAPABILITY = "turn.phase.extra_combat_and_main_after_main"
+EXTRA_COMBAT_MAIN_MECHANIC = "fixed-extra-combat-main-after-untap"
+
+
+def main_combat_target():
+    return {"zones": ["battlefield"], "categories": ["permanent"], "types_any": ["creature"], "count": 1}
+
+
+def uses_targeted_main_combat(effect):
+    followup = effect.get(EXTRA_COMBAT_FOLLOWUP_FIELD)
+    return isinstance(followup, Mapping) and "target_card" in followup
+
+
 class ExtraCombatUntap(StrEnum):
     SOURCE = "source"
+    TARGET_CREATURE = "target_creature"
     CONTROLLED_CREATURES = "controlled_creatures"
     GRANTED_COMBAT_CREATURES = "granted_combat_creatures"
     OTHER_CONTROLLED_CREATURES = "other_controlled_creatures"
@@ -32,6 +46,8 @@ class ExtraCombatUntap(StrEnum):
 
 
 def extra_combat_effect(untap: ExtraCombatUntap) -> dict[str, Any]:
+    if untap is ExtraCombatUntap.TARGET_CREATURE:
+        return {"op": "untap", EXTRA_COMBAT_FOLLOWUP_FIELD: {"schema_version": 2, "target_card": "$target.0"}}
     if untap is ExtraCombatUntap.SOURCE:
         return {
             "op": "untap",
@@ -95,6 +111,15 @@ def decode_extra_combat_effect(
     value: Mapping[str, Any], *, resolved: bool = False,
 ) -> ExtraCombatUntap:
     followup = value.get(EXTRA_COMBAT_FOLLOWUP_FIELD) if isinstance(value, Mapping) else None
+    if isinstance(value, Mapping) and uses_targeted_main_combat(value):
+        ref = followup.get("target_card")
+        if (set(value) != {"op", EXTRA_COMBAT_FOLLOWUP_FIELD} or value.get("op") != "untap"
+                or set(followup) != {"schema_version", "target_card"}
+                or type(followup.get("schema_version")) is not int or followup["schema_version"] != 2
+                or type(ref) is not str or not ref
+                or (resolved and ref.startswith("$")) or (not resolved and ref != "$target.0")):
+            raise ValueError("The additional combat and main require one exact target creature")
+        return ExtraCombatUntap.TARGET_CREATURE
     if uses_paid_attacking_combat(value):
         return _decode_immediate_combat_untap(value, followup, ExtraCombatUntap.ATTACKING_CREATURES, "attacking_creatures")
     if uses_controlled_main_combat(value):
@@ -150,6 +175,8 @@ def decode_extra_combat_effect(
 
 def extra_combat_effect_capabilities(value: Mapping[str, Any]) -> tuple[str, ...]:
     untap = decode_extra_combat_effect(value)
+    if untap is ExtraCombatUntap.TARGET_CREATURE:
+        return EXTRA_COMBAT_MAIN_CAPABILITY, "permanent.untap.effect", "target.revalidate_resolution"
     tap_capability = (
         "permanent.untap.effect" if untap is ExtraCombatUntap.SOURCE else "permanent.tap_state.fixed_set"
     )
@@ -165,15 +192,35 @@ def extra_combat_effect_capabilities(value: Mapping[str, Any]) -> tuple[str, ...
 
 
 def extra_combat_node_capabilities(*, effects, target_schema, mechanic_ids) -> tuple[str, ...]:
-    if target_schema is not None or len(effects) != 1 or EXTRA_COMBAT_FOLLOWUP_FIELD not in effects[0]:
+    if len(effects) != 1 or EXTRA_COMBAT_FOLLOWUP_FIELD not in effects[0]:
         return ()
     try:
+        if uses_targeted_main_combat(effects[0]):
+            from .replacement.immutable import FrozenMap
+
+            if target_schema is None or FrozenMap(target_schema) != FrozenMap(main_combat_target()):
+                return ()
+        elif target_schema is not None:
+            return ()
         return extra_combat_effect_capabilities(effects[0])
     except (TypeError, ValueError):
         return ()
 
 
+def is_closed_main_combat_spell(program) -> bool:
+    if ((program.event, program.active_zone) != ("resolve", "stack")
+            or not program.ability_id.startswith("spell:") or program.handlers
+            or program.event_condition is not None):
+        return False
+    required = extra_combat_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
+    return (EXTRA_COMBAT_MAIN_CAPABILITY in required and set(required).issubset(program.capability_dependencies))
+
+
 def uses_other_creature_extra_combat(effect):
+    if uses_targeted_main_combat(effect):
+        return False
     followup = effect.get(EXTRA_COMBAT_FOLLOWUP_FIELD)
     return isinstance(followup, Mapping) and (
         "exclude_source_card" in followup
@@ -208,14 +255,19 @@ class ScheduleExtraCombatIntent:
         if not isinstance(self.untap, ExtraCombatUntap):
             raise ValueError("Extra combat requires a typed untap scope")
         identities = (self.permanent_ref, self.logical_object_id)
-        if (self.permanent_ref is None) != (self.logical_object_id is None) or any(
+        targeted = self.untap is ExtraCombatUntap.TARGET_CREATURE
+        if targeted:
+            if type(self.permanent_ref) is not str or not self.permanent_ref or self.logical_object_id is not None:
+                raise ValueError("The original spell target is bound at resolution")
+        elif (self.permanent_ref is None) != (self.logical_object_id is None) or any(
             value is not None and (type(value) is not str or not value) for value in identities
         ):
             raise ValueError("Extra combat requires paired source-incarnation identities")
-        if self.permanent_ref is not None and self.untap not in {ExtraCombatUntap.SOURCE, ExtraCombatUntap.OTHER_CONTROLLED_CREATURES}:
+        if (self.permanent_ref is not None and not targeted
+                and self.untap not in {ExtraCombatUntap.SOURCE, ExtraCombatUntap.OTHER_CONTROLLED_CREATURES}):
             raise ValueError("Only an extra combat's source untap uses a specific permanent")
         grant_source = (self.grant_source_object_id, self.grant_source_logical_id)
-        if self.untap in {ExtraCombatUntap.GRANTED_COMBAT_CREATURES, ExtraCombatUntap.CONTROLLED_CREATURES_MAIN_PAIR}:
+        if targeted or self.untap in {ExtraCombatUntap.GRANTED_COMBAT_CREATURES, ExtraCombatUntap.CONTROLLED_CREATURES_MAIN_PAIR}:
             if (type(self.grant_stack_ref) is not str or not self.grant_stack_ref
                     or (grant_source[0] is None) != (grant_source[1] is None)
                     or any(value is not None and (type(value) is not str or not value) for value in grant_source)):

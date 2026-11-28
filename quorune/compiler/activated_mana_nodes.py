@@ -597,6 +597,25 @@ def _targeted_activation_result_gate(
     return None
 
 
+def _battlefield_activation_result_gate(effects, active_zone):
+    """Reject these closed result families outside battlefield activations."""
+    from ..control_exchange_model import PERMANENT_CONTROL_EXCHANGE_OPERATION
+    from ..library_bottom_result_model import LIBRARY_BOTTOM_RESULT_OPERATION
+    if active_zone != "battlefield":
+        if any(effect.get("op") == PERMANENT_CONTROL_EXCHANGE_OPERATION for effect in effects):
+            return DependencyGate(blockers=("permanent control exchange requires a battlefield source",))
+        if any(effect.get("op") == LIBRARY_BOTTOM_RESULT_OPERATION for effect in effects):
+            return DependencyGate(blockers=("library-bottom result requires a battlefield source",))
+
+    from ..rules.characteristic_life_exchange import CHARACTERISTIC_LIFE_EXCHANGE_OPERATION
+    from ..rules.temporary_self_copy import is_versioned_self_copy
+    if active_zone != "battlefield" and any(effect.get("op") == CHARACTERISTIC_LIFE_EXCHANGE_OPERATION for effect in effects):
+        return DependencyGate(blockers=("characteristic exchange requires a battlefield source",))
+    if active_zone != "battlefield" and any(is_versioned_self_copy(effect) for effect in effects):
+        return DependencyGate(blockers=("temporary self-copy requires a battlefield source",))
+    return None
+
+
 def _activated_effect_dependency_gate(
     *,
     effects: tuple[Mapping[str, Any], ...],
@@ -608,6 +627,18 @@ def _activated_effect_dependency_gate(
     active_zone: str,
     cost_schema: Mapping[str, Any],
 ) -> DependencyGate:
+    from ..hideaway_model import HIDEAWAY_PLAY_CAPABILITY, HIDEAWAY_PLAY_MECHANIC
+    from ..rules.hideaway_play import hideaway_play_activation_capabilities
+
+    if HIDEAWAY_PLAY_MECHANIC in mechanics:
+        required = hideaway_play_activation_capabilities(
+            effects=effects, target_schema=target_schema, active_zone=active_zone, cost_schema=cost_schema,
+        )
+        if not required:
+            return DependencyGate(blockers=(f"capability:{HIDEAWAY_PLAY_CAPABILITY}",))
+        return explicit_capabilities_gate(
+            required, capability_registry=capability_registry, capability_profile=capability_profile,
+        )
     from ..colored_hand_reveal_model import COLORED_REVEAL_MECHANIC, COLORED_REVEAL_OPERATION
     from ..paid_sacrifice_conditions import is_activation_paid_creature_reference
     from ..delayed_object_model import is_forced_block_status_effect
@@ -639,20 +670,9 @@ def _activated_effect_dependency_gate(
         return explicit_capabilities_gate(required, capability_registry=capability_registry,
             capability_profile=capability_profile)
 
-    from ..control_exchange_model import PERMANENT_CONTROL_EXCHANGE_OPERATION
-    from ..library_bottom_result_model import LIBRARY_BOTTOM_RESULT_OPERATION
-    if active_zone != "battlefield":
-        if any(effect.get("op") == PERMANENT_CONTROL_EXCHANGE_OPERATION for effect in effects):
-            return DependencyGate(blockers=("permanent control exchange requires a battlefield source",))
-        if any(effect.get("op") == LIBRARY_BOTTOM_RESULT_OPERATION for effect in effects):
-            return DependencyGate(blockers=("library-bottom result requires a battlefield source",))
-
-    from ..rules.characteristic_life_exchange import CHARACTERISTIC_LIFE_EXCHANGE_OPERATION
-    from ..rules.temporary_self_copy import is_versioned_self_copy
-    if active_zone != "battlefield" and any(effect.get("op") == CHARACTERISTIC_LIFE_EXCHANGE_OPERATION for effect in effects):
-        return DependencyGate(blockers=("characteristic exchange requires a battlefield source",))
-    if active_zone != "battlefield" and any(is_versioned_self_copy(effect) for effect in effects):
-        return DependencyGate(blockers=("temporary self-copy requires a battlefield source",))
+    battlefield_gate = _battlefield_activation_result_gate(effects, active_zone)
+    if battlefield_gate is not None:
+        return battlefield_gate
 
     capability_shaped_effect = (
         len(effects) == 1
@@ -922,6 +942,10 @@ def _compiled_activated_effect(
     from .library_bottom_result_templates import library_bottom_creature_result_template
     from .fixed_damage_life_sequences import fixed_damage_life_sequence_template
     from .finite_damage_redirection_nodes import finite_damage_redirection_template
+    from ..rules.chosen_damage_redirection import (
+        MECHANIC as CHOSEN_REDIRECTION_MECHANIC, TEMPLATE as CHOSEN_REDIRECTION_TEMPLATE,
+        chosen_damage_redirection_instruction, chosen_damage_redirection_target,
+    )
     from .library_search_templates import (
         dragon_graveyard_copy_search_template, qualified_instant_library_cast_template,
         target_player_basic_land_search_template,
@@ -930,11 +954,18 @@ def _compiled_activated_effect(
 
     from .temporary_self_copy_templates import temporary_self_copy_template
     from .fixed_effect_clause_sequences import fixed_proliferate_sequence_template
+    from .directional_control import directional_control_template
 
+    if rotation := directional_control_template(text, source_name=card_name):
+        return rotation
     if dragon_search := dragon_graveyard_copy_search_template(text, source_name=card_name):
         return dragon_search
     if attachment := loyalty_attachment_template(text, source_name=card_name):
         return attachment
+    from .hideaway_nodes import hideaway_play_template
+
+    if hideaway := hideaway_play_template(text):
+        return hideaway
     if player_search := target_player_basic_land_search_template(text):
         return player_search
     if qualified_cast := qualified_instant_library_cast_template(text):
@@ -943,6 +974,14 @@ def _compiled_activated_effect(
         return proliferate
     if redirection := finite_damage_redirection_template(text):
         return redirection
+    if text.strip().removesuffix(".").casefold() == (
+        "the next time a source of your choice would deal damage to target creature this turn, "
+        "that damage is dealt to this creature instead"
+    ):
+        return (
+            CHOSEN_REDIRECTION_TEMPLATE, (chosen_damage_redirection_instruction(),),
+            chosen_damage_redirection_target(), (CHOSEN_REDIRECTION_MECHANIC,),
+        )
     if copy := temporary_self_copy_template(text, source_name=card_name):
         return copy
     bottom = library_bottom_creature_result_template(text, card_name=card_name)

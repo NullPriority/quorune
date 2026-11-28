@@ -374,6 +374,18 @@ def fixed_library_selection_node_capabilities(
             return window_dependencies(effect)
         except (TypeError, ValueError, KeyError):
             return ()
+    from ..hideaway_model import uses_hideaway_selection
+    if uses_hideaway_selection(effect):
+        from .hideaway_library import hideaway_selection_node_capabilities
+
+        return hideaway_selection_node_capabilities(effects=effects, target_schema=target_schema)
+    from .revealed_legendary_graveyard_treasure import TREASURE_FIELD, revealed_legendary_treasure_capabilities
+
+    if TREASURE_FIELD in effect:
+        try:
+            return revealed_legendary_treasure_capabilities(effect)
+        except (TypeError, ValueError, KeyError):
+            return ()
     if (type(effect.get("schema_version")) is int
             and effect["schema_version"] == PRIVATE_ONE_HAND_ORDERED_BOTTOM_VERSION):
         return (FIXED_LIBRARY_SELECTION_CAPABILITY,) if private_one_hand_ordered_bottom_shape(effect) else ()
@@ -454,6 +466,10 @@ def fixed_library_selection_node_capabilities(
         try:required=library_battlefield_payload_dependencies(effect)
         except (TypeError,ValueError,KeyError):return ()
         return required if effect.get('player')=='$controller' else ()
+    return _ordinary_fixed_library_selection_capabilities(effect)
+
+
+def _ordinary_fixed_library_selection_capabilities(effect):
     version_two=effect.get('schema_version')==2 and type(effect.get('schema_version')) is int
     expected=_EFFECT_FIELDS|{'schema_version','selected_destination'} if version_two else _EFFECT_FIELDS
     if set(effect) != expected or version_two and (effect.get('selected_destination')!='library_top'

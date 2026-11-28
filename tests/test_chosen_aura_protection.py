@@ -188,3 +188,262 @@ class ChosenAuraProtectionTests(unittest.TestCase):
         current=session.state.cards[aura.object_id]
         self.assertEqual(('B','battlefield',body.object_id,'B'),(session.state.active_player,current.zone,current.attached_to,current.annotations.get('chosen_color')))
         self.assertEqual(0,session.state.players['A'].mana_pool.get('W',0));self.replay(session)
+
+class BenevolentBlessingTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    session = ChosenAuraProtectionTests.session
+    add = ChosenAuraProtectionTests.add
+    prepare = ChosenAuraProtectionTests.prepare
+    checkpoint = ChosenAuraProtectionTests.checkpoint
+    resolve = ChosenAuraProtectionTests.resolve
+    replay = ChosenAuraProtectionTests.replay
+    binding = ChosenAuraProtectionTests.binding
+    priority = ChosenAuraProtectionTests.priority
+    cast = ChosenAuraProtectionTests.cast
+    actions = ChosenAuraProtectionTests.actions
+    choose = ChosenAuraProtectionTests.choose
+    attack = controls.AttachedProtectionExceptionTests.attack
+    blockers = controls.AttachedProtectionExceptionTests.blockers
+    block = controls.AttachedProtectionExceptionTests.block
+    advance = controls.AttachedProtectionExceptionTests.advance
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temp = tempfile.TemporaryDirectory()
+        folder = Path(cls.temp.name)
+        fixtures = ROOT / "tests" / "fixtures"
+        base = json.loads((fixtures / "bound-effect-program-cards.json").read_bytes())
+        support = {"Generic Bound Commander", "Generic Bound Plains"}
+        base["cards"] = [row for row in base["cards"] if row["name"] in support]
+        assert {row["name"] for row in base["cards"]} == support
+        base["rulings"] = []
+        base_path = folder / "support.json"
+        base_path.write_text(json.dumps(base), encoding="utf-8")
+        database = folder / "benevolent-blessing.sqlite3"
+        build_fixture_database([base_path, fixtures / "benevolent-blessing-cards.json"], database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        leader = "Generic Bound Commander"
+        cls.deck = DeckDefinition("Already attached protection", [
+            DeckEntry(leader, 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], [leader])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temp.cleanup()
+
+    def attach_for_setup(self, game, attachment, body):
+        from quorune.attachments import attach_objects
+
+        attach_objects(game.state.cards, attachment, body, players=game.state.players,
+                       source_timestamp=game.engine._next_zone_timestamp())
+
+    def reject(self, game, actor, action):
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + actor, action)
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def white_blessing(self, game, aura, body):
+        self.cast(game, "A", aura, [body.ref], {"C": 1, "W": 1})
+        self.assertEqual("replacement.order", self.resolve(game).kind)
+        self.assertEqual(["pilot:A"], list(game.pending_principals()))
+        option = next(row["id"] for row in game.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+                      if row["id"].endswith(":W"))
+        self.reject(game, "B", {"action_id": "choose", "choices": {"replacement": option}})
+        game = self.replay(game, load=True)
+        self.choose(game, "W")
+        current = game.state.cards[aura.object_id]
+        self.assertEqual(("battlefield", body.object_id, "W"),
+                         (current.zone, current.attached_to, current.annotations.get("chosen_color")))
+        return game
+
+    def test_actual_benevolent_blessing_keeps_prior_own_attachments_and_rechecks_control(self):
+        game = self.session(702_160_501)
+        creature = self.add(game.engine, "Grizzly Bears")
+        blessing = self.add(game.engine, "Benevolent Blessing", zone="hand")
+        friend_aura = self.add(game.engine, "Holy Strength", ref="AURA-OURS")
+        friend_gear = self.add(game.engine, "Barbed Spike", ref="GEAR-OURS")
+        other_aura = self.add(game.engine, "Holy Strength", seat="C", ref="AURA-THEIRS")
+        other_gear = self.add(game.engine, "Barbed Spike", seat="C", ref="GEAR-THEIRS")
+        theft = self.add(game.engine, "Steal Artifact", seat="B", zone="hand")
+        target_spell = self.add(game.engine, "Swords to Plowshares", seat="B", zone="hand")
+        private = self.add(game.engine, "Holy Strength", seat="D", zone="hand", ref="PRIVATE-D")
+        for attachment in (friend_aura, friend_gear, other_aura, other_gear):
+            self.attach_for_setup(game, attachment, creature)
+        for original in (blessing, friend_aura, friend_gear, theft, target_spell):
+            result = self.binding(game, original)
+            self.assertTrue(result["strict_capability_ready"], result["blockers"])
+        self.prepare(game, actor="B", active="B", mana={"C": 2, "W": 1, "U": 2})
+        game.state.players["A"].mana_pool.update({"C": 1, "W": 1})
+        self.checkpoint(game)
+        game = self.white_blessing(game, blessing, creature)
+        lookup = game.state.cards
+        self.assertEqual(creature.object_id, lookup[friend_aura.object_id].attached_to)
+        self.assertEqual(creature.object_id, lookup[friend_gear.object_id].attached_to)
+        self.assertEqual("graveyard", lookup[other_aura.object_id].zone)
+        self.assertEqual(("battlefield", None), (lookup[other_gear.object_id].zone, lookup[other_gear.object_id].attached_to))
+        self.priority(game, "B")
+        self.reject(game, "B", {"action_id": "cast:" + target_spell.ref, "targets": [creature.ref], "pay": "auto"})
+        self.cast(game, "B", theft, [friend_gear.ref], {"C": 2, "U": 2})
+        self.assertIsNone(self.resolve(game))
+        friend = game.state.cards[friend_gear.object_id]
+        self.assertEqual(("B", "battlefield", None), (friend.controller, friend.zone, friend.attached_to))
+        self.assertEqual(creature.object_id, game.state.cards[friend_aura.object_id].attached_to)
+        for viewer in "ABC":
+            self.assertNotIn(private.ref, json.dumps(game.packet("pilot:" + viewer, full=True)))
+        self.replay(game, load=True)
+
+    def test_actual_benevolent_blessing_rejects_new_attachment_targets_and_white_blockers(self):
+        game = self.session(702_160_502)
+        creature = self.add(game.engine, "Grizzly Bears")
+        companion = self.add(game.engine, "Grizzly Bears", ref="ORDINARY-ATTACKER")
+        opponent = self.add(game.engine, "Isamaru, Hound of Konda", seat="B")
+        blessing = self.add(game.engine, "Benevolent Blessing", zone="hand")
+        later_aura = self.add(game.engine, "Holy Strength", zone="hand")
+        later_gear = self.add(game.engine, "Barbed Spike", ref="LATER-WHITE-EQUIP")
+        for attacker in (creature, companion):
+            attacker.acquired_control_turn_count = -1
+        self.prepare(game, mana={"C": 5, "W": 2})
+        self.checkpoint(game)
+        game = self.white_blessing(game, blessing, creature)
+        self.priority(game, "A")
+        self.reject(game, "A", {"action_id": "cast:" + later_aura.ref, "targets": [creature.ref], "pay": "auto"})
+        equip, = (offer for offer in self.actions(game) if offer["id"].startswith("activate:" + later_gear.ref + ":"))
+        self.assertEqual({companion.ref}, set(equip["target_schema"]["legal_refs"]))
+        self.reject(game, "A", {"action_id": equip["id"], "targets": [creature.ref], "pay": "auto"})
+        self.attack(game, {creature.ref: "B", companion.ref: "B"})
+        self.blockers(game)
+        self.block(game, {opponent.ref: creature.ref}, valid=False)
+        self.block(game, {opponent.ref: companion.ref})
+        self.replay(game, load=True)
+
+    def test_actual_benevolent_blessing_prevents_matching_combat_damage(self):
+        game = self.session(702_160_503)
+        creature = self.add(game.engine, "Grizzly Bears")
+        attacker = self.add(game.engine, "Isamaru, Hound of Konda", seat="B")
+        attacker.acquired_control_turn_count = -1
+        blessing = self.add(game.engine, "Benevolent Blessing", zone="hand")
+        self.prepare(game, actor="B", active="B")
+        game.state.players["A"].mana_pool.update({"C": 1, "W": 1})
+        self.checkpoint(game)
+        game = self.white_blessing(game, blessing, creature)
+        self.advance(game, lambda s: s.state.pending_decision is not None and s.state.pending_decision.kind == "combat.attackers")
+        attacked = game.act("pilot:B", {"action_id": "attack", "attacks": {attacker.ref: "A"}})
+        self.assertTrue(attacked.ok, attacked.summary)
+        self.blockers(game)
+        blocked = game.act("pilot:A", {"action_id": "block", "blocks": {creature.ref: attacker.ref}})
+        self.assertTrue(blocked.ok, blocked.summary)
+        self.advance(game, lambda s: s.state.phase == "postcombat_main")
+        protected = game.state.cards[creature.object_id]
+        self.assertEqual(("battlefield", 0), (protected.zone, protected.marked_damage))
+        self.assertEqual("graveyard", game.state.cards[attacker.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_benevolent_blessing_same_event_attachment_cutoff_and_new_incarnation(self):
+        from quorune.ability_fragments import ability_fragment_from_dict, protection_specs
+
+        game = self.session(702_160_504)
+        creature = self.add(game.engine, "Grizzly Bears")
+        blessing = self.add(game.engine, "Benevolent Blessing", zone="graveyard", ref="01-PROTECTION")
+        owned = self.add(game.engine, "Holy Strength", zone="graveyard", ref="02-OWN-AURA")
+        foreign = self.add(game.engine, "Holy Strength", seat="B", zone="graveyard")
+        spell = self.add(game.engine, "Open the Vaults", zone="hand", ref="FIRST-RETURN")
+        second = self.add(game.engine, "Open the Vaults", zone="hand", ref="SECOND-RETURN")
+        disenchant = self.add(game.engine, "Disenchant", seat="B", zone="hand")
+        self.prepare(game, mana={"C": 8, "W": 4})
+        game.state.players["B"].mana_pool.update({"C": 1, "W": 1})
+        self.checkpoint(game)
+        self.cast(game, "A", spell, payment={"C": 4, "W": 2})
+        pending = self.resolve(game)
+        self.assertEqual(("replacement.order", ["A"]), (pending.kind, pending.actors))
+        game = self.replay(game, load=True)
+        option = next(row["id"] for row in game.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+                      if row["id"].endswith(":W"))
+        colored = game.act("pilot:A", {"action_id": "choose", "choices": {"replacement": option}})
+        self.assertTrue(colored.ok, colored.summary)
+        pending = self.resolve(game)
+        actors = []
+        while pending is not None and pending.kind == "aura.entry":
+            actor, = pending.actors
+            actors.append(actor)
+            self.assertTrue(all(game.state.cards[card.object_id].zone == "graveyard"
+                                for card in (blessing, owned, foreign)))
+            command = {"action_id": "choose", "aura_target": creature.ref}
+            self.reject(game, "D", command)
+            chosen = game.act("pilot:" + actor, command)
+            self.assertTrue(chosen.ok, chosen.summary)
+            pending = self.resolve(game)
+        self.assertEqual(["A", "A", "B"], actors)
+        self.assertIsNone(pending)
+        source = game.state.cards[blessing.object_id]
+        own = game.state.cards[owned.object_id]
+        self.assertGreater(own.zone_timestamp, source.zone_timestamp)
+        self.assertEqual(creature.object_id, own.attached_to)
+        data = game.engine._effective_card_data(game.state.cards[creature.object_id])
+        spec, = protection_specs(ability_fragment_from_dict(row) for row in data["ability_fragments"])
+        self.assertGreaterEqual(spec.attachment_retention.cutoff, own.zone_timestamp)
+        self.assertEqual("battlefield", own.zone)
+        self.assertEqual("graveyard", game.state.cards[foreign.object_id].zone)
+
+        old = own.logical_object_id
+        self.cast(game, "B", disenchant, [own.ref], {"C": 1, "W": 1})
+        self.assertIsNone(self.resolve(game))
+        current = game.state.cards[owned.object_id]
+        self.assertEqual("graveyard", current.zone)
+        self.assertNotEqual(old, current.logical_object_id)
+        self.cast(game, "A", second, payment={"C": 4, "W": 2})
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("graveyard", game.state.cards[owned.object_id].zone)
+        self.assertEqual("graveyard", game.state.cards[foreign.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_benevolent_blessing_retention_codec_preserves_other_protection(self):
+        from quorune.ability_fragments import ProtectionQualityKind, ProtectionSpec, ability_fragment_to_dict
+        from quorune.compiler.attached_protection_exceptions import attached_protection_exception_handler
+        from quorune.protection import ProtectionSource, ProtectionVerdict, protection_verdict
+        from types import SimpleNamespace
+        from quorune.protection_attachment_exceptions import (
+            CurrentProtectionAttachment, ProtectionAttachmentRetention, attached_protection_runtime_dependencies,
+        )
+
+        scope = ProtectionAttachmentRetention("source@1", "creature@2", "A", 17)
+        current = CurrentProtectionAttachment("equipment@1", "creature@2", "A", 17)
+        spec = ProtectionSpec(ProtectionQualityKind.COLOR, "W", 5, attachment_retention=scope)
+        self.assertEqual(spec, ProtectionSpec.from_dict(spec.to_dict()))
+        data = {"ability_fragments": [ability_fragment_to_dict(spec)]}
+        with self.assertRaisesRegex(ValueError, "live chosen-color handler"):
+            attached_protection_runtime_dependencies(SimpleNamespace(handlers=(data,)))
+        white = ProtectionSource(colors=frozenset({"W"}))
+        self.assertIs(ProtectionVerdict.ALLOWED, protection_verdict(data, white, retaining_attachment=current))
+        for rejected in (None, CurrentProtectionAttachment("equipment@1", "creature@2", "B", 17),
+                         CurrentProtectionAttachment("equipment@1", "creature@2", "A", 18),
+                         CurrentProtectionAttachment("equipment@1", "creature@3", "A", 16)):
+            self.assertIs(ProtectionVerdict.BLOCKED, protection_verdict(data, white, retaining_attachment=rejected))
+        data["ability_fragments"].append(ability_fragment_to_dict(ProtectionSpec(ProtectionQualityKind.COLOR, "W")))
+        self.assertIs(ProtectionVerdict.BLOCKED, protection_verdict(data, white, retaining_attachment=current))
+        parsed = self.db.lookup("Benevolent Blessing", fuzzy=False).oracle_text.splitlines()[-1]
+        self.assertIsNotNone(attached_protection_exception_handler(parsed))
+        for changed in (parsed.replace("you control", "your opponents control"), parsed.replace("already ", "")):
+            self.assertIsNone(attached_protection_exception_handler(changed))
+
+    def test_benevolent_blessing_requires_versioned_grant_and_owner_minimum(self):
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.protection_attachment_exceptions import CONTROLLED_ATTACHMENT_PROTECTION_CAPABILITY
+
+        card = self.db.lookup("Benevolent Blessing", fuzzy=False)
+        with patch("quorune.compiler.attached_protection_exceptions.attached_protection_exception_handler", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(card, capability_registry=self.registry).status)
+        game = self.session(702_160_505)
+        self.add(game.engine, "Benevolent Blessing", zone="hand")
+        program, = (program for program in game.engine.semantics.programs_for_oracle(card.oracle_id)
+                    if CONTROLLED_ATTACHMENT_PROTECTION_CAPABILITY in program.capability_dependencies)
+        deps = tuple(value for value in program.capability_dependencies if value != CONTROLLED_ATTACHMENT_PROTECTION_CAPABILITY)
+        closure = self.registry.closure(deps, profile="commander_review").to_dict() if deps else None
+        stripped = replace(program, capability_dependencies=deps, capability_closure=closure)
+        result = bind_semantic_program_runtime(stripped, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(result["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:" + CONTROLLED_ATTACHMENT_PROTECTION_CAPABILITY, result["blockers"])

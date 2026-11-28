@@ -60,3 +60,19 @@ def turn_damage_prevention_template(text, *, card_name, source_is_permanent):
         (temporary_life_gain_effect("any"), temporary_damage_prevention_prohibition(), *result.effects),
         result.target_schema, (*result.mechanics, "cr-119-life"),
     )
+
+
+def turn_received_damage_watch_template(text, *, source_is_permanent):
+    if source_is_permanent is not False:
+        return None
+    if not re.fullmatch(
+        r"Choose target creature[.] Whenever that creature is dealt damage this turn, "
+        r"it deals that much damage to each other creature and each player[.]",
+        " ".join(text.split()), re.IGNORECASE,
+    ):
+        return None
+    from ..rules.received_damage_watch import WATCHED_DAMAGE_TEMPLATE, watched_damage_schedule, watched_damage_target_schema
+
+    return WATCHED_DAMAGE_TEMPLATE, (watched_damage_schedule(),), watched_damage_target_schema(), (
+        "cr-115-targets", "cr-120-damage", "cr-603-handling-triggered-abilities",
+    )

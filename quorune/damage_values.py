@@ -112,6 +112,7 @@ class DamageProposal:
                 self.source.permanent_state,
                 had_plus_one_counter=self.source.had_plus_one_counter if self.combat else None,
                 had_any_counter=self.source.had_any_counter if self.combat else None,
+                power_above_base=self.source.power_above_base if self.combat else None,
             ),
             **({'source_physical_commander_identities':self.source.physical_commander_identities.to_dict()}
                if self.source.physical_commander_identities is not None else {}),

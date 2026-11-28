@@ -364,8 +364,26 @@ class OptionalTapStateEffectTemplate:
         )
 
 
+@dataclass(frozen=True, slots=True)
+class OptionalEquippedCreatureTapStateTemplate:
+    """One untargeted optional tap-state instruction from Equipment."""
+
+    def compiled(self) -> tuple[
+        str, tuple[Mapping[str, Any], ...], None, tuple[str, ...]
+    ]:
+        from ..rules.tap_state_capability_shapes import optional_equipped_creature_tap_state_effect
+
+        return (
+            "choose-tap-or-untap-equipped-creature-v1",
+            (optional_equipped_creature_tap_state_effect(),),
+            None,
+            ("tap-and-untap",),
+        )
+
+
 TapStateEffectTemplate = (
-    TargetedTapStateEffectTemplate
+    OptionalEquippedCreatureTapStateTemplate
+    | TargetedTapStateEffectTemplate
     | SourceTapStateEffectTemplate
     | AttachedTapStateEffectTemplate
     | OptionalTapStateEffectTemplate
@@ -411,6 +429,9 @@ def targeted_tap_state_effect_template(
             else None
         )
 
+    if (source_attachment_relation is AttachmentReferenceKind.EQUIPPED
+            and re.fullmatch(r"you may tap or untap equipped creature\.?", normalized, re.I)):
+        return OptionalEquippedCreatureTapStateTemplate()
     if (source_attachment_relation is AttachmentReferenceKind.EQUIPPED
             and re.fullmatch(r"untap equipped creature\.?", normalized, re.I)):
         return AttachedTapStateEffectTemplate(

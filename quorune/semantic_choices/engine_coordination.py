@@ -20,6 +20,7 @@ from ..rules.opponent_library_shuffle import (
     admitted_opponent_shuffle_scope, scoped_opponent_shuffle_library,
 )
 from ..counter_state import player_counter_snapshot
+from ..rules.name_stickers import choice_facts as name_sticker_choice_facts
 from ..model import StackItem
 from ..connive import connive_discard_characteristic_ids, bind_connive_instruction
 from .endure import bind_endure_instruction
@@ -232,6 +233,11 @@ class SemanticChoiceCoordinationMixin:
                 kind=item.kind,
                 copy_prohibited=protected,
                 announced_copy_scope=active_copy_scope(self, item, protected=protected),
+                resolving_graveyard_original=(
+                    item is not referenced and item.kind == "spell"
+                    and item.context.get("currently_resolving") is True
+                    and item.context.get("cast_origin") == "graveyard"
+                ),
             )
             for item in items
             for protected in (copy_prohibited(self, item),)
@@ -371,10 +377,14 @@ class SemanticChoiceCoordinationMixin:
             except (ValueError, TypeError, KeyError) as exc:raise SemanticChoiceError(str(exc)) from exc
         if effect.get("op") == ATTACH_CREATED_TOKEN:
             return attached_token_candidate_refs(self, effect)
+        from ..rules.death_battlefield_return import ATTACH_RETURNED_WITH_EQUIPMENT
+
+        if effect.get("op") == ATTACH_RETURNED_WITH_EQUIPMENT:
+            return attached_token_candidate_refs(self, effect, token_result=False)
         if effect.get("op") in {OFFER_ENTRY_AURA_ATTACHMENT, CHOOSE_ENTRY_AURA_RECIPIENT}:
             return attached_token_candidate_refs(self, effect, attachment_kind="aura")
         if effect.get('op') == OPERATION:
-            try:return graveyard_return_candidates(self, actor, effect)
+            try:return graveyard_return_candidates(self, actor, effect, stack_item=stack_item)
             except (ValueError, TypeError, KeyError) as exc:raise SemanticChoiceError(str(exc)) from exc
         if effect.get("op") == "offer_soulbond_pair":
             from ..soulbond_model import SoulbondOpportunity
@@ -665,12 +675,23 @@ class SemanticChoiceCoordinationMixin:
         stack_item: StackItem | None = None,
     ) -> tuple[Mapping[str, Any], ...]:
         from ..discover_model import EXILE_CAST_CHOICE_OPERATIONS
+        from ..resolving_cast_budget_model import OPERATION as BUDGETED_RESOLVING_CAST
+        if effect.get('op') == BUDGETED_RESOLVING_CAST:
+            from ..rules.budgeted_resolving_cast import options
+            return options(self,item=stack_item,actor=actor,effect=effect)
         from ..drawing.captured_hand import CAPTURED_DRAW_CAST_FIELD
         from ..bounded_hand_cast_model import BOUNDED_HAND_CAST_FIELD
         from ..rules.ripple import uses_revealed_library_cast
         from ..rules.qualified_library_cast import OPERATION as QUALIFIED_LIBRARY_CAST, qualified_library_cast_options
         if effect.get("op") == QUALIFIED_LIBRARY_CAST:
             return qualified_library_cast_options(self, item=stack_item, actor=actor, effect=effect)
+        from ..hideaway_model import HIDEAWAY_PLAY_OPERATION
+        if effect.get("op") == HIDEAWAY_PLAY_OPERATION:
+            from ..rules.hideaway_play import hideaway_play_options
+            from .hideaway_play import hideaway_offer_instruction
+
+            hideaway_offer_instruction(effect, actor=actor, stack_ref=stack_item.ref if stack_item else None)
+            return hideaway_play_options(self, item=stack_item, actor=actor, qualified=effect.get("_qualified") is True)
         if uses_revealed_library_cast(effect):
             from ..rules.ripple_casting import ripple_cast_options
             return ripple_cast_options(self,item=stack_item,actor=actor,effect=effect)
@@ -693,6 +714,14 @@ class SemanticChoiceCoordinationMixin:
         if effect.get("op") == GRAVEYARD_COPY_OFFER:
             from .graveyard_copy_cast import graveyard_copy_cast_options
             return graveyard_copy_cast_options(self, item=stack_item, actor=actor, effect=effect)
+
+        from ..rules.discarded_card_cast import DISCARDED_CARD_CAST, _DISCARD_FIELD, discarded_card_cast_options
+
+        if effect.get("op") == DISCARDED_CARD_CAST and _DISCARD_FIELD in effect:
+            try:
+                return discarded_card_cast_options(self, item=stack_item, actor=actor, effect=effect)
+            except (ValueError, TypeError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
 
         if effect.get("op") == GRAVEYARD_CAST_OPERATION:
             from .targeted_graveyard_cast import targeted_graveyard_cast_options
@@ -862,6 +891,9 @@ class SemanticChoiceCoordinationMixin:
         from ..discard_effect_origin import origin_for_resolving_hand_choice
 
         choice_effect = effect or {}
+        from .optional_effect import require_cast_reveal_choice_source
+
+        require_cast_reveal_choice_source(self, stack_item, actor, choice_effect)
         object_rows = (
             self._semantic_choice_object_rows(actor, choice_effect, stack_item=stack_item)
             if default_semantic_choice_registry().requires_object_rows(choice_effect)
@@ -976,6 +1008,7 @@ class SemanticChoiceCoordinationMixin:
                 if choice_effect.get('op') == 'connive' else ()
             ),
             resolution_condition_facts=self._semantic_choice_resolution_condition_facts(actor,choice_effect,stack_item),
+            name_sticker_facts=name_sticker_choice_facts(self,stack_item,choice_effect),
         )
     def _semantic_choice_context(
         self,
@@ -1042,10 +1075,11 @@ class SemanticChoiceCoordinationMixin:
             from ..drawing.captured_hand_casting import bind_captured_draw_offer
             from ..dungeon_runtime import check_dungeon_choice_instruction
             from .life_gain_counted_results import bind_capped_life_gain_draw, bind_life_gain_life_draw
+            from .entrant_x_reflexive import bind_entrant_x_payment
             effect = bind_miracle_cast_instruction(item, effect)
             effect = bind_captured_draw_offer(item, effect)
             from ..rules.departing_x_reflexive import bind_choice as bind_departure_x_choice
-            effect = bind_capped_life_gain_draw(self, item, effect)
+            effect = bind_entrant_x_payment(self, item, bind_capped_life_gain_draw(self, item, effect))
             effect = bind_departure_x_choice(self, item, effect)
             bind_life_gain_life_draw(self, item, effect)
             check_dungeon_choice_instruction(self, item, effect)

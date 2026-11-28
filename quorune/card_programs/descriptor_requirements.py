@@ -70,6 +70,9 @@ def _destruction_regeneration_payload_dependencies(value: Mapping[str, Any]) -> 
 
 def _turn_phase_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     """Validate instructions that schedule or skip ordinary turn boundaries."""
+    from ..rules.main_phase_combats import main_phase_combat_payload_dependencies
+    if combats := main_phase_combat_payload_dependencies(value):
+        return combats
     from ..extra_combat_model import EXTRA_COMBAT_FOLLOWUP_FIELD, extra_combat_effect_capabilities
     if EXTRA_COMBAT_FOLLOWUP_FIELD in value:
         return extra_combat_effect_capabilities(value)
@@ -116,11 +119,32 @@ def _destruction_payload_dependencies(value):
     return qualified_destruction_payload_dependencies(value)
 
 
+def _counter_recipient_choice_and_set_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
+    from ..counter_placement_sets import controlled_nonflying_counter_payload_dependencies
+    from ..counter_placement_targets import controlled_creature_counter_choice_dependencies
+
+    return (controlled_creature_counter_choice_dependencies(value)
+            or controlled_nonflying_counter_payload_dependencies(value))
+
+
+def _delayed_cast_payload_dependencies(value):
+    from ..event_spell_copy_model import (
+        NEXT_CAST_COPY_FIELD, NEXT_CAST_COPY_CAPABILITY, next_cast_copy_payload,
+        SAME_TURN_CAST_KEYWORD_FIELD, SAME_TURN_CAST_KEYWORD_REQUIRED, validate_same_turn_cast_keyword_effect,
+    )
+    if NEXT_CAST_COPY_FIELD in value:
+        next_cast_copy_payload(value)
+        return (NEXT_CAST_COPY_CAPABILITY,)
+    if SAME_TURN_CAST_KEYWORD_FIELD in value:
+        validate_same_turn_cast_keyword_effect(value)
+        return SAME_TURN_CAST_KEYWORD_REQUIRED
+    return ()
+
+
 def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     """Validate the closed payloads of independently owned instructions."""
-    from ..counter_placement_targets import controlled_creature_counter_choice_dependencies
-    if counter_choice := controlled_creature_counter_choice_dependencies(value):
-        return counter_choice
+    if counters := _counter_recipient_choice_and_set_dependencies(value):
+        return counters
     from ..rules.permanent_resolution_choices import permanent_type_destruction_payload_dependencies
     if destruction_choice := permanent_type_destruction_payload_dependencies(value):
         return destruction_choice
@@ -130,6 +154,8 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
         return shared_type
     from ..rules.targeted_graveyard_exile import targeted_graveyard_exile_payload_dependencies
     if graveyard_choice := targeted_graveyard_exile_payload_dependencies(value):return graveyard_choice
+    from ..rules.targeted_search_round import target_pair_search_payload_dependencies
+    if target_round := target_pair_search_payload_dependencies(value):return target_round
     from ..rules.targeted_library_exile import targeted_library_exile_payload_dependencies
     if targeted_search := targeted_library_exile_payload_dependencies(value):return targeted_search
     from ..rules.gravestorm import gravestorm_payload_dependencies
@@ -142,8 +168,8 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
     if paid_alternative := paid_alternative_payload_dependencies(value):return paid_alternative
     from ..rules.colored_hand_reveals import colored_hand_reveal_payload_dependencies
     if reveal := colored_hand_reveal_payload_dependencies(value):return reveal
-    from ..rules.keyword_sacrifice_costs import keyword_sacrifice_payload_dependencies
-    if keyword_price := keyword_sacrifice_payload_dependencies(value):return keyword_price
+    from ..rules.named_sacrifice_costs import qualified_sacrifice_payload_dependencies
+    if qualified_price := qualified_sacrifice_payload_dependencies(value):return qualified_price
     from ..qualified_return_cost_model import qualified_return_cost_payload_dependencies
     if price := qualified_return_cost_payload_dependencies(value):return price
     from ..rules.announced_x_damage_sets import announced_x_damage_set_dependencies
@@ -180,7 +206,6 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
     )
     from ..rules.next_spell_payment import NEXT_SPELL_PAYMENT_OPERATION, next_spell_payment_payload_dependencies
     from ..rules.impulse_access_capability_shapes import declared_impulse_access_dependencies, next_end_step_impulse_dependencies
-    from ..event_spell_copy_model import NEXT_CAST_COPY_FIELD, NEXT_CAST_COPY_CAPABILITY, next_cast_copy_payload
     if impulse := declared_impulse_access_dependencies(value) or next_end_step_impulse_dependencies(value):
         return impulse
     from ..rules.distinct_sacrifices import distinct_sacrifice_payload_dependencies
@@ -203,9 +228,8 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
         raise ValueError("Chosen impulse grants are produced only by an authoritative exile choice")
     if permission := _temporary_play_permission_payload_dependencies(value):
         return permission
-    if NEXT_CAST_COPY_FIELD in value:
-        next_cast_copy_payload(value)
-        return (NEXT_CAST_COPY_CAPABILITY,)
+    if delayed_cast := _delayed_cast_payload_dependencies(value):
+        return delayed_cast
     if is_versioned_next_cast_protection(value):
         return next_cast_protection_payload_dependencies(value)
     if value.get("op") == CAST_CASCADE_OPERATION:
@@ -332,6 +356,13 @@ def _zone_choice_payload_dependencies(value):
 
     if is_payment_round(value):
         return payment_round_payload_dependencies(value)
+
+    from ..rules.opponent_blight import OPPONENT_BLIGHT_CAPABILITY, uses_opponent_blight, validate_opponent_blight_effect
+
+    if uses_opponent_blight(value):
+        validate_opponent_blight_effect(value)
+        return (OPPONENT_BLIGHT_CAPABILITY,)
+
     from ..apnap_object_payment import APNAP_OBJECT_PAYMENT_CAPABILITY, apnap_object_payment_dependencies
     from ..rules.opponent_caster_discard_payment import (
         CASTER_DISCARD_PAYMENT_CAPABILITY, uses_caster_discard_payment, validate_caster_discard_payment,

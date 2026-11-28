@@ -32,3 +32,23 @@ def loyalty_damage_activation_template(ability, text, *, source_name, public_tim
             loyalty_damage_target_schema(variable=True), (LOYALTY_X_DAMAGE_MECHANIC, "cr-115-targets", "cr-120-damage"),
         )
     return None
+
+
+_TURN_CREATURE_COMBAT = re.compile(
+    r"(?P<removal>All creatures lose trample until end of turn\.) "
+    r"If a creature would deal combat damage to a creature this turn, "
+    r"it deals double that damage to that creature instead\.", re.I,
+)
+
+
+def turn_creature_combat_multiplier_template(text):
+    match = _TURN_CREATURE_COMBAT.fullmatch(" ".join(text.split()))
+    if match is None:
+        return None
+    from ..target_combat_damage_multiplier_model import turn_multiplier_instruction
+    from .temporary_keyword_removal_templates import temporary_keyword_removal_template
+
+    _, removal, targets, mechanics = temporary_keyword_removal_template(
+        match["removal"], source_name="this spell", source_is_permanent=False, source_card_types=(),
+    )
+    return "turn-creature-combat-multiplier-v1", (*removal, turn_multiplier_instruction()), targets, mechanics

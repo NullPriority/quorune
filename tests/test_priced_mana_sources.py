@@ -254,6 +254,111 @@ class PricedManaSourceRuntimeTests(unittest.TestCase):
             self.assertEqual(0,sum(session.state.players['A'].mana_pool.values()))
             self.private_replay(session,private)
 
+
+    def test_cataracts_offer_and_manual_payment_share_all_five_color_bundles(self):
+        from itertools import product
+
+        session, source, _, _, private = self.filtering_fixture(
+            "Cascading Cataracts", 71402040, mana={"C": 5},
+        )
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        priced, = (
+            row for row in actions if row["id"].startswith(f"activate:{source.ref}:")
+            and row.get("cost_summary", {}).get("m", {}).get("GENERIC") == 5
+        )
+        modes = priced["choice_schema"]["mana_output"]["options"]
+        expected = {counts for counts in product(range(6), repeat=5) if sum(counts) == 5}
+        self.assertEqual(126, len(modes))
+        self.assertEqual(expected, {tuple(mode["value"].get(color, 0) for color in "WUBRG") for mode in modes})
+        self.assertTrue(all("C" not in mode["value"] for mode in modes))
+        self.assertIn("indestructible", session.engine._combat_keywords(source))
+        self.assertEqual(2, sum(row["id"].startswith(f"activate:{source.ref}:") for row in actions))
+        output = {"W": 2, "U": 1, "B": 1, "G": 1}
+        command = {"action_id": priced["id"], "mana_output": output, "pay": "auto"}
+        before = authoritative_state_hash(session.state)
+        for actor, invalid in (
+            ("D", command),
+            ("A", {**command, "mana_output": {"W": 4, "C": 1}}),
+            ("A", {**command, "mana_output": {"G": 4}}),
+            ("A", {**command, "mana_output": {"G": True, "W": 4}}),
+        ):
+            result = session.act("pilot:" + actor, invalid)
+            self.assertFalse(result.ok, result.summary)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+        self.assertFalse(session.state.stack)
+        self.assertEqual(output, {color: amount for color, amount in session.state.players["A"].mana_pool.items() if amount})
+        self.private_replay(session, private)
+
+    def test_cataracts_paid_plan_funds_a_spell_and_cannot_use_its_own_free_tap(self):
+        for quantity in (4, 5):
+            with self.subTest(quantity=quantity):
+                session, source, spell, target, private = self.filtering_fixture(
+                    "Cascading Cataracts", 71402042 + quantity, mana={"C": quantity},
+                )
+                rows = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                offers = {row["id"] for row in rows}
+                cast = f"cast:{spell.ref}"
+                abilities = session.engine._activated_abilities(source)
+                free, = (a for a in abilities if not sum(a.mana.values()))
+                priced, = (a for a in abilities if a.mana["GENERIC"] == 5)
+                self.assertIn(f"activate:{source.ref}:{free.ability_id}", offers)
+                self.assertEqual(quantity == 5, cast in offers)
+                self.assertEqual(quantity == 5, f"activate:{source.ref}:{priced.ability_id}" in offers)
+                result = session.act("pilot:A", {"action_id": cast, "targets": [target.ref], "pay": "auto"})
+                self.assertEqual(quantity == 5, result.ok, result.summary)
+                self.assertEqual(quantity == 5, session.state.cards[source.object_id].tapped)
+                if quantity == 4:
+                    self.assertEqual("hand", session.state.cards[spell.object_id].zone)
+                    self.assertEqual(4, session.state.players["A"].mana_pool["C"])
+                else:
+                    self.assertEqual("stack", session.state.cards[spell.object_id].zone)
+                    self.assertEqual(0, session.state.players["A"].mana_pool["C"])
+                    self.assertEqual(4, sum(session.state.players["A"].mana_pool.values()))
+                    session = self.replay(session, load=True)
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual(4, session.engine._numeric_stat(target.object_id, "power"))
+                self.private_replay(session, private)
+
+    def test_cataracts_fixed_grammar_and_paid_bundle_mutants_fail_closed(self):
+        from dataclasses import replace
+        from itertools import product
+        from quorune.fixed_mana_abilities import fixed_mana_modes_from_effect, supports_paid_five_color_combination
+        from quorune.oracle_ir import compile_oracle_card
+
+        card = self.db.lookup("Cascading Cataracts", fuzzy=False)
+        body = "Add five mana in any combination of colors."
+        expected = {counts for counts in product(range(6), repeat=5) if sum(counts) == 5}
+
+        def witness():
+            modes = fixed_mana_modes_from_effect(body)
+            self.assertEqual(expected, {tuple(mode.bundle[color] for color in "WUBRG") for mode in modes})
+            return modes
+
+        modes = witness()
+        with patch("quorune.fixed_mana_abilities._five_colored_mana_modes", return_value=modes[:-1]):
+            with self.assertRaises(AssertionError):
+                witness()
+        for changed in (
+            card.oracle_text.replace("five mana", "six mana"),
+            card.oracle_text.replace("combination of colors", "combination of types"),
+        ):
+            self.assertNotEqual("exact", compile_oracle_card(
+                replace(card, oracle_text=changed), capability_registry=self.registry,
+            ).status)
+        session = self.session(71402048)
+        source = self.add(session.engine, card.name)
+        ability, = (a for a in session.engine._activated_abilities(source) if a.mana["GENERIC"] == 5)
+        self.assertTrue(supports_paid_five_color_combination(ability))
+        for malformed in (
+            replace(ability, tap_source=False), replace(ability, life_payment=1),
+            replace(ability, untap_source=True), replace(ability, energy_payment=1),
+            replace(ability, fixed_mana_outputs=modes[:-1]),
+        ):
+            self.assertFalse(supports_paid_five_color_combination(malformed))
+
     def test_original_prism_can_pay_its_filter_cost_explicitly_then_cast_and_replay(self):
         session,source,spell,target,private=self.filtering_fixture('Mana Prism',71402030,mana={'C':1})
         actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']

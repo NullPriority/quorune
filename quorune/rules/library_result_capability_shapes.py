@@ -199,11 +199,11 @@ def library_result_payload_dependencies(value):
     if value.get('op') == EXILE_UNTIL_SAME_NAME_OPERATION:
         validate_exile_until_same_name(value)
         return (EXILE_UNTIL_SAME_NAME_CAPABILITY,)
-    from ..public_library_piles_model import PILE_CAPABILITY, PILE_OPERATION, PublicLibraryPileSpec
+    from ..public_library_piles_model import PILE_CAPABILITY, PILE_OPERATION, PILE_SILVER_CAPABILITY, PublicLibraryPileSpec
 
     if value.get("op") == PILE_OPERATION:
-        PublicLibraryPileSpec.from_effect(value)
-        return (PILE_CAPABILITY,)
+        spec = PublicLibraryPileSpec.from_effect(value)
+        return (PILE_CAPABILITY, PILE_SILVER_CAPABILITY) if spec.silver_split else (PILE_CAPABILITY,)
     from ..library_search_model import is_bargain_search_effect
 
     if is_bargain_search_effect(value):

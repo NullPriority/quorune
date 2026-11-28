@@ -15,6 +15,7 @@ MILL_ADVENTURES_TO_HAND_CAPABILITY = "zone.mill.committed_adventures_to_hand"
 ADVENTURE_MILL_KIND = "all_adventure_to_hand"
 ADVENTURE_MILL_COUNT = 7
 MILL_MOVE_FIELD = "committed_mill_move"
+MILLED_MANA_DAMAGE_KIND = "milled_public_mana_damage"
 
 
 @dataclass(frozen=True, slots=True)
@@ -68,6 +69,57 @@ class MillAdventuresToHand:
             "player": result.player,
             "cards": cards,
         }),))
+
+
+@dataclass(frozen=True, slots=True)
+class MilledManaDamage:
+    """Use the exact committed public Mill set for one announced-opponent result."""
+
+    opponent: str
+
+    def to_dict(self):
+        return {"schema_version": 1, "kind": MILLED_MANA_DAMAGE_KIND, "opponent": self.opponent}
+
+    @classmethod
+    def from_dict(cls, value):
+        if (
+            not isinstance(value, Mapping)
+            or set(value) != {"schema_version", "kind", "opponent"}
+            or type(value["schema_version"]) is not int or value["schema_version"] != 1
+            or value["kind"] != MILLED_MANA_DAMAGE_KIND
+            or type(value["opponent"]) is not str or not value["opponent"]
+        ):
+            raise ValueError("Milled mana-value damage requires one original opponent")
+        return cls(value["opponent"])
+
+    def bind_opponent(self, item):
+        targets = tuple(item.targets)
+        if (
+            item.context.get("targets_revalidated") is not True or len(targets) != 1
+            or type(targets[0]) is not str or not targets[0] or targets[0].startswith("$")
+            or targets[0] == item.controller or self.opponent not in {"$target.0", targets[0]}
+        ):
+            raise ValueError("Milled mana-value damage lost its revalidated opponent")
+        return MilledManaDamage(targets[0])
+
+    def from_committed_result(self, host, result):
+        from ..milling import current_public_milled_cards
+        from ..public_quantity_reductions import public_mana_value
+
+        if self.opponent == result.player or self.opponent not in host.active_seats:
+            return CommittedQuantityFollowup(())
+        amount = sum(public_mana_value(host._effective_card_data(card))
+                     for card in current_public_milled_cards(host, result))
+        if not amount:
+            return CommittedQuantityFollowup(())
+        return CommittedQuantityFollowup((FrozenMap({
+            "op": "damage", "source": "$source", "target": self.opponent, "amount": amount,
+        }),))
+
+
+def uses_milled_mana_damage(effect):
+    followup = effect.get("followup")
+    return isinstance(followup, Mapping) and followup.get("kind") == MILLED_MANA_DAMAGE_KIND
 
 
 def uses_committed_mill_result(effect):

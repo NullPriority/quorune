@@ -9,7 +9,10 @@ clauses remain outside this family. One closed fixed result uses a separate
 version-two descriptor after the selected output.
 """
 
+from collections import Counter
 from dataclasses import dataclass
+from functools import lru_cache
+from itertools import combinations_with_replacement
 import re
 from typing import Any, Mapping
 
@@ -28,6 +31,9 @@ from .fixed_mana_spend_templates import fixed_mana_spend_rule_template
 from .replacement.immutable import FrozenMap, thaw_value
 from .util import normalize_mana_bundle
 from .fixed_mana_results import DISCARD_HAND_MANA_SOURCE, EXERT_MANA_SOURCE, FixedManaResultSpec, GAIN_CONTROLLER_LIFE, PLACE_MANA_POINT_COUNTER
+from .next_cast_library_model import (
+    NEXT_CAST_LIBRARY_ACCESS, NEXT_CAST_LIBRARY_MANA_RESULT_VERSION, printed_next_cast_library_mana,
+)
 from .rules.whole_hand_mana import HANDLER_ID as WHOLE_HAND_MANA_HANDLER_ID, whole_hand_mana_text
 from .rules.forage_mana import HANDLER_ID as FORAGE_MANA_HANDLER_ID, forage_mana_modes, forage_mana_text, has_forage_mana_choice
 from .rules.exert_mana import (
@@ -281,6 +287,19 @@ class FixedActivatedManaAbilitySpec:
                         self.luck_counter_color_choice, self.exile_source_from_hand))):
             raise FixedManaAbilityError("Mana doubling requires its ordinary tap price and no fixed output")
 
+    def _validate_next_cast_library_mana(self):
+        if self.result is None or self.result.kind != NEXT_CAST_LIBRARY_ACCESS:
+            return
+        if (
+            not self.tap_source or not printed_next_cast_library_mana(self.cost_text, self.effect_text)
+            or self.modes != (_symbol_bundle("{W}{U}{B}{R}{G}"),)
+            or self.mana_cost.get("GENERIC") != 4 or sum(self.mana_cost.values()) != 4
+            or any((self.sacrifice_source, self.life_payment, self.choices, self.activation_limit,
+                    self.activation_conditions, self.spend_restriction, self.source_counter_removal_cost,
+                    self.mana_cost_options, self.luck_counter_color_choice, self.exile_source_from_hand))
+        ):
+            raise FixedManaAbilityError("Next-cast library mana requires exactly four mana, a source tap and WUBRG")
+
     def __post_init__(self) -> None:
         self._validate_choices()
         if self.result is not None and not isinstance(self.result,FixedManaResultSpec):
@@ -348,6 +367,7 @@ class FixedActivatedManaAbilitySpec:
         self._validate_exert_price()
         self._validate_whole_hand_mana_price()
         self._validate_mana_doubling()
+        self._validate_next_cast_library_mana()
         if self.result is not None and self.result.schema_version == 3 and (
             self.cost_text != "{T}" or not self.tap_source or any(mana.values()) or len(self.modes) != 1
             or any((self.sacrifice_source, self.life_payment, self.spend_restriction, self.choices,
@@ -597,6 +617,34 @@ def _symbol_bundle(text: str) -> FixedManaMode:
     return FixedManaMode.from_bundle(bundle)
 
 
+@lru_cache(maxsize=1)
+def _five_colored_mana_modes() -> tuple[FixedManaMode, ...]:
+    return tuple(
+        FixedManaMode.from_bundle(Counter(colors))
+        for colors in combinations_with_replacement("WUBRG", 5)
+    )
+
+
+def supports_paid_five_color_combination(ability: Any) -> bool:
+    """Admit only the complete five-generic tap conversion to paid plans."""
+    return (
+        ability.mana_ability and ability.compiled_cost and ability.zones == ("battlefield",)
+        and len(ability.fixed_mana_outputs) == 126
+        and ability.tap_source
+        and dict(ability.mana) == {"GENERIC": 5, **dict.fromkeys(MANA_KEYS, 0)}
+        and ability.loyalty_delta is None and ability.target_schema is None
+        and not any((
+            ability.untap_source, ability.sacrifice_source, ability.discard_source, ability.exile_source,
+            ability.life_payment, ability.energy_payment, ability.random_discard_payment,
+            ability.choices, ability.activation_limit, ability.activation_conditions,
+            ability.mana_cost_options, ability.source_counter_removal_cost, ability.source_counter_placement_cost,
+            ability.sorcery_speed, ability.generic_reduction_per_legendary_creature,
+            ability.fixed_mana_result, ability.mana_spend_restriction,
+        ))
+        and ability.fixed_mana_outputs == _five_colored_mana_modes()
+    )
+
+
 def fixed_mana_modes_from_effect(
     effect_text: str,
 ) -> tuple[FixedManaMode, ...] | None:
@@ -613,6 +661,8 @@ def fixed_mana_modes_from_effect(
         return tuple(
             FixedManaMode.from_bundle({color: 1}) for color in "WUBRGC"
         )
+    if text.casefold() == "add five mana in any combination of colors.":
+        return _five_colored_mana_modes()
     any_color = _ANY_COLOR.fullmatch(text)
     if any_color is not None:
         count = {"one": 1, "two": 2, "three": 3}[
@@ -873,7 +923,12 @@ def compile_fixed_activated_mana_ability(
     modes = fixed_mana_modes_from_effect("Add {C}." if luck_counter_color_choice else base_effect)
     if modes is None:
         output, separator, tail = base_effect.partition(".")
-        result = _fixed_mana_result_from_tail(ability, tail, source_name, output=output, restriction=restriction) if separator else None
+        if printed_next_cast_library_mana(ability.cost_text, effect_text):
+            result = FixedManaResultSpec(
+                NEXT_CAST_LIBRARY_ACCESS, schema_version=NEXT_CAST_LIBRARY_MANA_RESULT_VERSION,
+            )
+        elif separator:
+            result = _fixed_mana_result_from_tail(ability, tail, source_name, output=output, restriction=restriction)
         if result is not None:
             modes = fixed_mana_modes_from_effect(output.strip() + ".")
     if modes is None or not _restricted_modes_are_closed(

@@ -52,6 +52,7 @@ def _flashback_base_options(
     cast_without_mana: bool,
     force_without_mana_cost: bool,
     suppress_source_costs: bool,
+    resolving_graveyard_authority: bool,
 ) -> list[dict[str, Any]]:
     """Add only the currently authorized Flashback casting-cost branch."""
 
@@ -63,12 +64,16 @@ def _flashback_base_options(
     )
     if (
         card.zone == "graveyard"
-        and not cast_without_mana
+        and not cast_without_mana and not resolving_graveyard_authority
         and not compiled_ordinary_zone_cast_permission(host, seat, card)
     ):
         result.clear()
     if flashback is not None and not force_without_mana_cost:
         result.append(flashback.cast_cost_option())
+    if card.zone == "graveyard" and not (suppress_source_costs or cast_without_mana or force_without_mana_cost):
+        from .flashback_grants import granted_flashback_base_options
+
+        result.extend(granted_flashback_base_options(host, seat, card, printed))
     return result
 
 
@@ -82,7 +87,7 @@ def _zone_cast_base_options(
     force_without_mana_cost: bool,
     alternative_base: Mapping[str, Any] | None,
     suppress_source_costs: bool,
-    resolving_exile_authority: bool = False,
+    resolving_paid_zone: str | None = None,
 ) -> list[dict[str, Any]]:
     base = _flashback_base_options(
         host,
@@ -92,6 +97,7 @@ def _zone_cast_base_options(
         cast_without_mana=cast_without_mana,
         force_without_mana_cost=force_without_mana_cost,
         suppress_source_costs=suppress_source_costs,
+        resolving_graveyard_authority=resolving_paid_zone == "graveyard",
     )
     from ...preparation import preparation_cast_permission
     from ...adventure import adventure_cast_permission
@@ -102,7 +108,7 @@ def _zone_cast_base_options(
         and not adventure_cast_permission(host,seat,card)
         and not force_without_mana_cost
         and alternative_base is None
-        and not resolving_exile_authority
+        and resolving_paid_zone != "exile"
     ):
         base.clear()
     common = {

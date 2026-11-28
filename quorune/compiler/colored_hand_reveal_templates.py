@@ -2,7 +2,8 @@
 from collections.abc import Mapping
 from . import regex_working_set as re
 from ..colored_hand_reveal_model import (
-    ColoredHandRevealSpec,ColoredRevealResult,reveal_count,COLORED_REVEAL_MECHANIC,
+    ColoredHandRevealSpec, ColoredRevealResult, MatchingManaValueHandRevealSpec, reveal_count,
+    COLORED_REVEAL_MECHANIC,
 )
 from ..rules.colored_hand_reveals import colored_reveal_result_dependencies
 from ..replacement.immutable import FrozenMap
@@ -25,6 +26,12 @@ def _body(text,count):
 
 
 def colored_hand_reveal_template(text,*,compile_fixed):
+    if " ".join(text.split()).casefold() == (
+        "reveal up to five nonland cards from your hand. for each of those cards that has the same mana value "
+        "as another card revealed this way, create a treasure token."
+    ):
+        return ("matching-nonland-mana-value-reveal-v1", (MatchingManaValueHandRevealSpec().effect(),),
+                None, (COLORED_REVEAL_MECHANIC,))
     match=_HEAD.fullmatch(text.strip())
     if match is None:return None
     a,b=_body(match['body'],2),_body(match['body'],3)

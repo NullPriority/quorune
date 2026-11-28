@@ -1,5 +1,7 @@
 """Closed choices for one controlled creature or one of two permanent types."""
 
+from collections.abc import Mapping
+
 from ..affected_permanents import AffectedPermanentSetSpec
 from ..object_predicate import ObjectQuerySpec
 from ..replacement.immutable import thaw_value
@@ -87,9 +89,68 @@ def permanent_type_destruction_payload_dependencies(value):
     return TYPE_DESTRUCTION_DEPENDENCIES
 
 
-def permanent_resolution_choice_capabilities(*, effects, target_schema, mechanics, cost_schema=None):
-    from ..counter_placement_targets import CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD
+def token_then_vigilance_counter_dependencies(effects, target_schema, mechanics, cost_schema):
+    from ..counter_placement_targets import controlled_creature_counter_choice_dependencies
+    from .fixed_effect_clause_shapes import FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY
+    from .token_creation_capability_shapes import fixed_token_creation_node_capabilities
 
+    if (len(effects) != 2 or target_schema is not None or cost_schema is not None
+            or not {"cr-111-tokens", "cr-122-counters", "vigilance",
+                    "fixed-effect-clause-sequence"} <= set(mechanics)):
+        return ()
+    token, choice = map(thaw_value, effects)
+    characteristics = token.get("characteristics")
+    if (token.get("controller") != "$controller" or type(token.get("quantity")) is not int
+            or token["quantity"] != 1 or not isinstance(characteristics, Mapping)
+            or set(characteristics) != {"type_line", "literal_token_name_version", "colors", "power", "toughness"}
+            or type(characteristics["type_line"]) is not str
+            or not characteristics["type_line"].startswith("Token Creature — ")
+            or "tapped" in token):
+        return ()
+    token_caps = fixed_token_creation_node_capabilities(
+        effects=(token,), target_schema=None, mechanic_ids={"cr-111-tokens"},
+    )
+    try:
+        counter_caps = controlled_creature_counter_choice_dependencies(choice)
+    except (TypeError, ValueError):
+        return ()
+    if not token_caps or not counter_caps:
+        return ()
+    return (FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY, *token_caps, *counter_caps)
+
+
+def uses_token_then_vigilance_choice(effects):
+    from ..counter_placement_targets import (
+        CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD,
+        CONTROLLED_CREATURE_VIGILANCE_COUNTER_CHOICE_VERSION,
+    )
+
+    return any(effect.get(CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD)
+               == CONTROLLED_CREATURE_VIGILANCE_COUNTER_CHOICE_VERSION for effect in effects)
+
+
+def token_then_vigilance_runtime_dependencies(program):
+    if not uses_token_then_vigilance_choice(program.effects):
+        return ()
+    required = permanent_resolution_choice_capabilities(
+        effects=program.effects, target_schema=program.target_schema,
+        mechanics=program.coverage, cost_schema=program.cost_schema,
+    )
+    if not required:
+        raise ValueError("A vigilance counter choice requires one preceding fixed creature-token instruction")
+    return required
+
+
+def permanent_resolution_choice_capabilities(*, effects, target_schema, mechanics, cost_schema=None):
+    from ..counter_placement_targets import (
+        CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD,
+        CONTROLLED_CREATURE_VIGILANCE_COUNTER_CHOICE_VERSION,
+    )
+
+    if uses_token_then_vigilance_choice(effects):
+        if effects[-1].get(CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD) != CONTROLLED_CREATURE_VIGILANCE_COUNTER_CHOICE_VERSION:
+            return ()
+        return token_then_vigilance_counter_dependencies(effects, target_schema, mechanics, cost_schema)
     counter = any(
         effect.get(CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD) == COUNTER_KEYWORDS_VERSION for effect in effects
     )

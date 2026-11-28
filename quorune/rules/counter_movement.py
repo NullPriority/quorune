@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 from ..characteristic_evaluation import type_parts
+from ..fixed_counter_movement_model import SOURCE_GIVES_COUNTERS_THEN_DRAW, SOURCE_RECEIVES_MISSING_KINDS
 from ..counter_placement import (
     CounterPlacementRequest, finish_counter_placement_commit,
     plan_prepared_counter_placement_commit, prepare_counter_placements,
@@ -12,7 +13,14 @@ from ..counter_snapshot import permanent_counter_snapshot
 from ..counter_state import CounterChange, commit_counter_changes, plan_counter_changes
 from ..semantic_runtime.counter_movement_intent import (
     CounterMovementIntent, DistributeSourceCountersIntent, MoveCounterSetIntent,
+    counter_set_controllers_match,
 )
+from .committed_quantity_followups import CommittedQuantityFollowup, fixed_quantity_effect
+
+
+COUNTER_MOVEMENT_DRAW = fixed_quantity_effect({
+    "op": "draw", "player": "$controller", "count": 1, "private": True,
+})
 
 
 def _live_object(by_ref, ref, identity):
@@ -49,8 +57,11 @@ def _single_recipient_requests(host, intent, by_ref, source):
             types, _, _ = type_parts(host._effective_card_data(recipient)["type_line"])
             if "creature" not in types or permanent_counter_snapshot(source.counters) != intent.amounts:
                 return ()
-        elif source.controller != intent.actor or recipient.controller != intent.actor:
+        elif not counter_set_controllers_match(intent.mode, intent.actor, source.controller, recipient.controller):
             return ()
+    if (isinstance(intent, MoveCounterSetIntent) and intent.mode == SOURCE_RECEIVES_MISSING_KINDS
+            and any(recipient.counters.get(kind, 0) > 0 for kind in intent.amounts)):
+        return ()
     return tuple(
         CounterPlacementRequest(
             subject_kind="permanent", subject_id=recipient.object_id,
@@ -60,7 +71,7 @@ def _single_recipient_requests(host, intent, by_ref, source):
     )
 
 
-def execute_counter_movement(host, intent: CounterMovementIntent) -> tuple[str, ...]:
+def execute_counter_movement(host, intent: CounterMovementIntent) -> tuple[str, ...] | CommittedQuantityFollowup:
     """Resolve placement choices before atomically removing and placing counters."""
     by_ref = {card.ref: card for card in host.state.cards.values()}
     source = _live_object(by_ref, intent.from_ref, intent.from_identity)
@@ -73,9 +84,11 @@ def execute_counter_movement(host, intent: CounterMovementIntent) -> tuple[str, 
         return ()
     prepared = prepare_counter_placements(host, requests, selections=intent.replacement_selections)
     placement = plan_prepared_counter_placement_commit(host, prepared)
+    gives_counters_then_draw = isinstance(intent, MoveCounterSetIntent) and intent.mode == SOURCE_GIVES_COUNTERS_THEN_DRAW
     successful = tuple(row for row in placement.rows if row.amount > 0)
     if not successful:
-        return ()
+        # CR 118.11–12: a replacement may change a possible cost after payment began.
+        return CommittedQuantityFollowup((COUNTER_MOVEMENT_DRAW,)) if gives_counters_then_draw else ()
     removal_amounts = (
         ((intent.counter_name, sum(row.requested for row in successful)),)
         if distributing
@@ -103,6 +116,8 @@ def execute_counter_movement(host, intent: CounterMovementIntent) -> tuple[str, 
                   importance=1, changed_objects=[source.object_id])
     finish_counter_placement_commit(
         host, placement, placement.state_plan.transitions, reason=intent.reason)
+    if gives_counters_then_draw:
+        return CommittedQuantityFollowup((COUNTER_MOVEMENT_DRAW,))
     if distributing:
         return tuple(row.display_ref for row in successful)
     return (intent.to_ref,)

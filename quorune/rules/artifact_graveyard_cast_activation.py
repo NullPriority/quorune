@@ -1,4 +1,4 @@
-"""Bind a paid cast window to one selected owned graveyard artifact."""
+"""Bind activated paid casts to their selected owned graveyard card."""
 
 from collections.abc import Mapping
 
@@ -81,6 +81,31 @@ def artifact_graveyard_cast_runtime_dependencies(program):
     ):
         raise ValueError("Artifact graveyard casting lost its exact activation price or target")
     return required
+
+
+def first_paid_graveyard_source_ability_is_closed(ability, cost_schema):
+    return (ability.zones == ("battlefield",) and not ability.mana_ability and ability.sorcery_speed
+            and not ability.activation_conditions and ability.activation_limit is None
+            and has_exact_tap_price(cost_schema))
+
+
+def require_first_paid_graveyard_activation(program):
+    from ..compiler.activated_costs import activated_ability_cost
+    from ..semantic_runtime.activated_abilities import activated_abilities_from_descriptors
+
+    if (len(program.effects) != 1 or (program.event, program.active_zone) != ("activate", "battlefield")
+            or program.event_condition is not None or program.trigger_limit is not None
+            or program.provenance.get("granted_only") or len(program.handlers) != 1
+            or not has_exact_tap_price(program.cost_schema)):
+        raise ValueError("First paid graveyard casting requires one original tap activation at sorcery timing")
+    abilities = activated_abilities_from_descriptors(program.handlers)
+    if len(abilities) != 1:
+        raise ValueError("First paid graveyard casting requires its original ability catalog")
+    ability, = abilities
+    if (ability.builtin_semantic_key != program.key
+            or thaw_value(ability.target_schema) != thaw_value(program.target_schema)
+            or not first_paid_graveyard_source_ability_is_closed(ability, activated_ability_cost(ability))):
+        raise ValueError("First paid graveyard casting lost its timing, price or target")
 
 
 def reviewed_artifact_graveyard_cast_result_matches(current, old):

@@ -121,6 +121,18 @@ _COUNTER_FOR_EACH = re.compile(
 )
 _QUERY_CHARACTERISTIC_PATTERNS = (
     (
+        "where-x",
+        re.compile(
+            r"^Until end of turn, (?P<subject>.+?) "
+            r"(?:(?:gains? (?P<prefix_keywords>.+?) and )?gets?) "
+            r"(?P<power>[+-](?:X|0))/(?P<toughness>[+-](?:X|0))"
+            r"(?P<suffix_keywords> and gains? .+?)?, "
+            r"where X is (?:(?:equal to )?the number of )?"
+            r"(?P<quantity>.+?)\.?$",
+            re.IGNORECASE,
+        ),
+    ),
+    (
         "per-object",
         re.compile(
             r"^Until end of turn, (?P<subject>.+?) "
@@ -677,6 +689,14 @@ def _composed_query_shape_context(effects, mechanics):
 
 def public_query_amount_program_is_closed(program: Any, *, required_dependencies) -> bool:
     """Keep scalar admission with its existing fixed shape and target owners."""
+    from ..rules.damage_capability_shapes import turn_damage_recovery_runtime_dependencies
+
+    try:
+        recovery = turn_damage_recovery_runtime_dependencies(program)
+    except (TypeError, ValueError):
+        return False
+    if recovery:
+        return set(recovery) <= set(required_dependencies) <= set(program.capability_dependencies)
     from ..rules.target_creature_power_results import target_creature_power_node_capabilities
     from ..rules.target_recipient_results import target_characteristic_token_node_capabilities
     from ..rules.prevention_component_shapes import targeted_prevention_result_node_capabilities
@@ -727,7 +747,12 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
         return False
     paid_mana_value = PAID_SACRIFICE_MANA_VALUE_MECHANIC in program.coverage
     if paid_mana_value and fixed_single_sacrifice_price(program.cost_schema) is None:
-        return False
+        from ..rules.activation.paid_characteristic_price import activation_enchantment_pump_is_exact
+
+        if program.event != "activate" or not activation_enchantment_pump_is_exact(
+            effects=program.effects, cost_schema=program.cost_schema, target_schema=program.target_schema,
+        ):
+            return False
     context = public_query_amount_shape_context(program.effects, set(program.coverage),target_schema=program.target_schema)
     if context is None:
         return False
@@ -836,8 +861,11 @@ def public_query_amount_shape_context(
         return scalar
     if DECLARED_EFFECT_AMOUNT_MECHANIC in mechanics:
         from ..rules.milled_creature_tokens import uses_milled_creature_tokens
+        from ..created_token_counter_model import ANNOUNCED_X_CREATE_AND_WIPE
 
-        if len(effects) == 1 and uses_milled_creature_tokens(effects[0]):
+        if len(effects) == 1 and (
+            uses_milled_creature_tokens(effects[0]) or effects[0].get('op') == ANNOUNCED_X_CREATE_AND_WIPE
+        ):
             return tuple(effects), set(mechanics)
         return declared_amount_shape_context(effects, mechanics, target_schema=target_schema)
     if PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC not in mechanics:

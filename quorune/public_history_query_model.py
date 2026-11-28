@@ -7,6 +7,7 @@ from typing import Any
 from .creature_subtypes import canonical_creature_subtype
 from .model import COMMITTED_OCCURRENCE_HISTORY_KINDS, PUBLIC_MOVEMENT_HISTORY_KINDS
 from .turn_history_model import (
+    ARTIFACT_SUBTYPE_ENTRY_EVENT,
     CAST_CREATURE_COUNTERED_EVENT, CREATURE_COUNTER_PLACEMENT_EVENT, DRAWN_HAND_CARD_EVENT, PERMANENT_COUNTER_RECEIVED_EVENT,
     PLUS_ONE_COUNTERS_PLACED_EVENT,
 )
@@ -24,12 +25,16 @@ _OPPONENT_THRESHOLD_REDUCTION = "count_players_at_least_two"
 CREATURE_COUNTER_PLACEMENT_QUERY_VERSION = 10
 CREATURE_COUNTER_PLACEMENT_HISTORY_CAPABILITY = "condition.history.creature_counter_placement"
 NONTOKEN_CREATURE_ENTRY_HISTORY_CAPABILITY = "condition.history.nontoken_creature_entries"
+ARTIFACT_SUBTYPE_ENTRY_QUERY_VERSION = 12
+ARTIFACT_SUBTYPE_ENTRY_HISTORY_CAPABILITY = "condition.history.artifact_subtype_entry"
 OPPONENT_LIFE_LOSS_HISTORY_CAPABILITY = "condition.history.opponent_life_loss_including_departed"
 COMMITTED_OCCURRENCE_HISTORY_CAPABILITY = "condition.history.committed_occurrences"
 TOKEN_CREATION_FACT = "controller_tokens_created_this_turn"
 SPELL_ORIGIN_HISTORY_CAPABILITY='condition.history.spell_origin'
 GRAVEYARD_TYPE_HISTORY_CAPABILITY='condition.history.graveyard_card_types'
 PERMANENT_DEATH_HISTORY_CAPABILITY = "zone.turn_history.permanent_death"
+OWN_GRAVEYARD_CREATURE_DEATH_CAPABILITY = "condition.history.nontoken_creature_graveyard_owner"
+OWN_GRAVEYARD_CREATURE_DEATH_QUERY_VERSION = 11
 PUBLIC_MOVEMENT_HISTORY_CAPABILITY = "condition.history.public_movement"
 _EVENTS=frozenset({'spell_cast','creature_attacked','creature_died','permanent_sacrificed','card_discarded',
     'player_gained_life','player_lost_life','permanent_entered','permanent_left','card_arrived_graveyard',
@@ -61,9 +66,14 @@ class PublicHistoryQuerySpec:
             1, 2, 3, 4, 5, 6, COUNTER_PLACEMENT_HISTORY_QUERY_VERSION, SOURCE_COUNTER_RECEIPT_QUERY_VERSION,
             NONTOKEN_CREATURE_ENTRY_QUERY_VERSION, OPPONENT_EVENT_THRESHOLD_QUERY_VERSION,
             CREATURE_COUNTER_PLACEMENT_QUERY_VERSION,
+            OWN_GRAVEYARD_CREATURE_DEATH_QUERY_VERSION,
+            ARTIFACT_SUBTYPE_ENTRY_QUERY_VERSION,
         }:
             raise ValueError("Unsupported public history query version")
-        if self.event not in _EVENTS or self.relation not in {'controller','any_player','opponents'}:raise ValueError('Unknown history event or principal relation')
+        relations = ({"graveyard_owner"} if self.schema_version == OWN_GRAVEYARD_CREATURE_DEATH_QUERY_VERSION
+                     else {"controller", "any_player", "opponents"})
+        if self.event not in _EVENTS or self.relation not in relations:
+            raise ValueError("Unknown history event or principal relation")
         threshold_query = self.is_opponent_threshold_query
         if self.reduction not in {'count', 'sum_amount', 'max_player_amount', _OPPONENT_THRESHOLD_REDUCTION}:
             raise ValueError('Unknown history reduction')
@@ -92,7 +102,8 @@ class PublicHistoryQuerySpec:
             raise ValueError("Creature damage history requires the exact player recipient and source type")
         typed_arrival=self.event=='card_arrived_graveyard' and any((self.types_all,self.types_any,self.excluded_types))
         if (life or self.event in (COMMITTED_OCCURRENCE_HISTORY_KINDS | {
-                "card_discarded", "card_arrived_exile", "artifact_subtype_sacrificed", CAST_CREATURE_COUNTERED_EVENT})) and any(
+                "card_discarded", "card_arrived_exile", "artifact_subtype_sacrificed",
+                ARTIFACT_SUBTYPE_ENTRY_EVENT, CAST_CREATURE_COUNTERED_EVENT})) and any(
             (self.types_all, self.types_any, self.excluded_types)
         ):
             raise ValueError('This history event does not seal type predicates')
@@ -106,9 +117,14 @@ class PublicHistoryQuerySpec:
         if (self.schema_version==2)!=(typed_arrival or self.origin is not None):
             raise ValueError('Qualified history queries require version2; version1 keeps its original fields')
         death_query = self.event == "permanent_died"
-        if ((death_query and self.schema_version not in (3, 4, 5))
+        if ((death_query and self.schema_version not in (3, 4, 5, OWN_GRAVEYARD_CREATURE_DEATH_QUERY_VERSION))
                 or (not death_query and self.schema_version == 3)):
             raise ValueError("Permanent death queries require their explicit version")
+        if self.schema_version == OWN_GRAVEYARD_CREATURE_DEATH_QUERY_VERSION and (
+            not death_query or self.types_all != ("creature",) or self.token is not False
+            or self.types_any or self.excluded_types or self.creature_subtype is not None
+        ):
+            raise ValueError("The graveyard-owner history query requires nontoken creature deaths")
         if death_query:
             if self.schema_version != 5 and self.creature_subtype is None and self.token is None:
                 raise ValueError("Permanent death queries require a subtype or token predicate")
@@ -122,7 +138,13 @@ class PublicHistoryQuerySpec:
             raise ValueError("Only permanent death queries can filter subtype or token status")
         if type(self.exclude_source) is not bool:
             raise ValueError("History source exclusion must be Boolean")
-        if self.event == "artifact_subtype_sacrificed":
+        artifact_entry = self.event == ARTIFACT_SUBTYPE_ENTRY_EVENT
+        if (self.schema_version == ARTIFACT_SUBTYPE_ENTRY_QUERY_VERSION) != artifact_entry:
+            raise ValueError("Artifact subtype entry requires its exact version")
+        if artifact_entry:
+            if self.artifact_subtype != "food" or self.relation != "controller" or self.exclude_source:
+                raise ValueError("Artifact entry history requires the controller's effective Food")
+        elif self.event == "artifact_subtype_sacrificed":
             from .type_subtype_vocabulary import ARTIFACT_SUBTYPES
 
             if (self.schema_version != 4 or type(self.artifact_subtype) is not str
@@ -190,7 +212,7 @@ class PublicHistoryQuerySpec:
         version = value.get("schema_version") if isinstance(value, Mapping) else None
         if version == 2:
             fields.add("origin")
-        elif version == 3:
+        elif version in (3, OWN_GRAVEYARD_CREATURE_DEATH_QUERY_VERSION):
             fields.update(("creature_subtype", "token"))
         elif version == 4:
             if value.get("event") == "artifact_subtype_sacrificed":
@@ -203,6 +225,8 @@ class PublicHistoryQuerySpec:
             fields.add("token")
         elif version in (COUNTER_PLACEMENT_HISTORY_QUERY_VERSION, SOURCE_COUNTER_RECEIPT_QUERY_VERSION):
             fields.add("source_only")
+        elif version == ARTIFACT_SUBTYPE_ENTRY_QUERY_VERSION:
+            fields.add("artifact_subtype")
         if not isinstance(value, Mapping) or set(value) != fields:
             raise ValueError('Public history queries have a closed field set')
         return cls(**dict(value))
@@ -224,7 +248,11 @@ class PublicHistoryQuerySpec:
             *((PERMANENT_DEATH_HISTORY_CAPABILITY,) if self.event == "permanent_died" else ()),
             *(('condition.history.qualified_death_exclusion',) if self.schema_version==5 else ()),
             *((OPPONENT_LIFE_LOSS_HISTORY_CAPABILITY,) if self.schema_version == 6 else ()),
-            *((PUBLIC_MOVEMENT_HISTORY_CAPABILITY,) if self.event in PUBLIC_MOVEMENT_HISTORY_KINDS or self.exclude_source else ()),
+            *((PUBLIC_MOVEMENT_HISTORY_CAPABILITY,) if self.event in PUBLIC_MOVEMENT_HISTORY_KINDS or self.exclude_source
+              or self.schema_version == OWN_GRAVEYARD_CREATURE_DEATH_QUERY_VERSION else ()),
+            *((OWN_GRAVEYARD_CREATURE_DEATH_CAPABILITY,)
+              if self.schema_version == OWN_GRAVEYARD_CREATURE_DEATH_QUERY_VERSION else ()),
+            *((ARTIFACT_SUBTYPE_ENTRY_HISTORY_CAPABILITY,) if self.event == ARTIFACT_SUBTYPE_ENTRY_EVENT else ()),
             *((SPELL_ORIGIN_HISTORY_CAPABILITY,) if self.event=='spell_cast' and self.origin is not None else ()),
             *((GRAVEYARD_TYPE_HISTORY_CAPABILITY,) if self.event=='card_arrived_graveyard' and any((self.types_all,self.types_any,self.excluded_types)) else ()))
 
@@ -261,6 +289,14 @@ def opponent_event_threshold_query(*, land_entries: bool) -> PublicHistoryQueryS
     )
 
 
+def controller_food_entry_query() -> PublicHistoryQuerySpec:
+    return PublicHistoryQuerySpec(
+        ARTIFACT_SUBTYPE_ENTRY_EVENT,
+        schema_version=ARTIFACT_SUBTYPE_ENTRY_QUERY_VERSION,
+        artifact_subtype="food",
+    )
+
+
 def current_plus_one_counter_placement_query(
     *, source_only: bool = False, was_creature: bool = False,
 ) -> PublicHistoryQuerySpec:
@@ -289,6 +325,26 @@ def current_source_counter_receipt_query() -> PublicHistoryQuerySpec:
 def opponent_life_loss_including_departed_query() -> PublicHistoryQuerySpec:
     return PublicHistoryQuerySpec("player_lost_life", relation="opponents",
                                   reduction="sum_amount", schema_version=6)
+
+
+def current_own_graveyard_creature_death_query() -> PublicHistoryQuerySpec:
+    return PublicHistoryQuerySpec(
+        "permanent_died", relation="graveyard_owner", types_all=("creature",), token=False,
+        schema_version=OWN_GRAVEYARD_CREATURE_DEATH_QUERY_VERSION,
+    )
+
+
+def _matching_own_graveyard_creature_deaths(history, controller):
+    arrivals = tuple(event for event in history.events if event.kind == "permanent_arrived_graveyard"
+                     and event.actor == controller and "creature" in event.types)
+    arrivals_by_incarnation = {event.object_incarnation: event for event in arrivals}
+    deaths = tuple(event for event in history.events if event.kind == "permanent_died"
+                   and event.object_incarnation in arrivals_by_incarnation)
+    if (len(arrivals) != len(arrivals_by_incarnation) or len(arrivals) != len(deaths)
+            or {event.object_incarnation for event in deaths} != set(arrivals_by_incarnation)
+            or any(event.types != arrivals_by_incarnation[event.object_incarnation].types for event in deaths)):
+        return None
+    return tuple(event for event in deaths if event.token is False)
 
 
 def matching_public_history_events(state,controller,spec,*,source_incarnation=None):
@@ -320,6 +376,8 @@ def matching_public_history_events(state,controller,spec,*,source_incarnation=No
     if (PUBLIC_MOVEMENT_HISTORY_CAPABILITY in spec.capability_dependencies
             and getattr(history, "public_movement_history_version", None) != 1):
         return None
+    if spec.schema_version == OWN_GRAVEYARD_CREATURE_DEATH_QUERY_VERSION:
+        return _matching_own_graveyard_creature_deaths(history, controller)
     if (spec.exclude_source or spec.source_only) and (type(source_incarnation) is not str or not source_incarnation):
         return None
     if spec.event=='permanent_left' and history.departure_history_version!=1:return None

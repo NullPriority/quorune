@@ -238,6 +238,23 @@ def _chosen_source_next_instance(
     )
 
 
+def _reflected_source_prevention(normalized, *, card_name):
+    if not card_name:
+        return None
+    name = SourceReferenceSpec(card_name).regex_pattern
+    if re.fullmatch(
+        r"Prevent all damage that would be dealt to you and planeswalkers you control this turn "
+        r"by sources you don['’]t control\. If damage from a creature source is prevented this way, "
+        rf"{name} deals that much damage to that creature\. If damage from a noncreature source "
+        rf"is prevented this way, {name} deals that much damage to the source['’]s controller[.]?",
+        normalized, re.I,
+    ) is None:
+        return None
+    from ..rules.prevention_component_shapes import reflected_source_prevention_effects
+
+    return "fixed-source-reflection-v2", reflected_source_prevention_effects(), None, _rules(None)
+
+
 def _chosen_source_damage_aftermath(
     normalized: str,
 ) -> PreventionTemplate | None:
@@ -902,6 +919,25 @@ def _target_source_next_damage_life_result(text):
     )
 
 
+def _target_source_next_damage_life_aftermath(normalized):
+    if re.fullmatch(
+        r"The next time target creature would deal damage this turn, prevent that damage\. "
+        r"You gain life equal to the damage prevented this way[.]?",
+        normalized, re.I,
+    ) is None:
+        return None
+    from .direct_target import direct_permanent_target_spec
+    from ..rules.prevention_component_shapes import target_source_next_damage_life_aftermath_effect
+
+    schema = direct_permanent_target_spec("target creature").to_target_schema()
+    return (
+        "target-source-next-damage-life-aftermath-v1",
+        (target_source_next_damage_life_aftermath_effect(),),
+        schema,
+        _rules(schema, "cr-119-life"),
+    )
+
+
 def _target_combat_mana_value_toughness_result(text):
     if re.fullmatch(
         r"Prevent all combat damage that would be dealt by target creature this turn\. "
@@ -921,6 +957,7 @@ def _target_combat_mana_value_toughness_result(text):
 
 def _targeted_damage_source_prevention(normalized):
     if result := (_target_source_next_damage_life_result(normalized)
+                  or _target_source_next_damage_life_aftermath(normalized)
                   or _target_combat_mana_value_toughness_result(normalized)):
         return result
     recipient=re.fullmatch(r'prevent all damage that would be dealt to (?P<subject>target .+?) this turn\.?',normalized,re.I)
@@ -1012,6 +1049,8 @@ def fixed_prevention_effect_template(
     )
     if triggered is not None:
         return triggered
+    if reflected := _reflected_source_prevention(normalized, card_name=card_name):
+        return reflected
     for production in _PREVENTION_PRODUCTIONS:
         result = production(normalized)
         if result is not None:

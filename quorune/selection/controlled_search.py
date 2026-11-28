@@ -102,20 +102,15 @@ def controlled_find_recipients(host, decision, *, item, actor, zones, refs, libr
     return tuple(by_ref[winner] for winner in winners)
 
 
-def resolve_controlled_finds(host, decision, *, item, actor, zones, refs, library_owner=None):
-    """Return pending, applied, or unchanged for one original validated search."""
-    recipients = controlled_find_recipients(
-        host, decision, item=item, actor=actor, zones=zones, refs=refs, library_owner=library_owner,
-    )
-    if recipients is None:
-        return "pending"
-    if not recipients:
-        return "unchanged"
+resolve_controlled_find_controllers = controlled_find_recipients
+
+
+def apply_controlled_finds(host, *, actor, zones, refs, controllers):
     cards = [host._resolve_object(actor, ref, zones=set(zones), owned_only=True) for ref in refs]
     from ..opponent_library_exile import grant_controlled_search_exile_play
     from ..zone_transitions import ZoneTransitionOwner
 
-    grants = {card.object_id: recipient for card, recipient in zip(cards, recipients, strict=True)}
+    grants = {card.object_id: controller for card, controller in zip(cards, controllers, strict=True)}
     moved = ZoneTransitionOwner(host).move_cards_simultaneously(
         tuple((card.object_id, "exile") for card in cards),
         reason="Exile cards found in the controlled search",
@@ -126,4 +121,16 @@ def resolve_controlled_finds(host, decision, *, item, actor, zones, refs, librar
     host._log(actor, "library.search.found_exiled", "The found cards were exiled during the search.",
               {"objects": [card.ref for card in result]}, importance=2,
               changed_objects=[card.object_id for card in result])
+
+
+def resolve_controlled_finds(host, decision, *, item, actor, zones, refs, library_owner=None):
+    """Return pending, applied, or unchanged for one original validated search."""
+    controllers = resolve_controlled_find_controllers(
+        host, decision, item=item, actor=actor, zones=zones, refs=refs, library_owner=library_owner,
+    )
+    if controllers is None:
+        return "pending"
+    if not controllers:
+        return "unchanged"
+    apply_controlled_finds(host, actor=actor, zones=zones, refs=refs, controllers=controllers)
     return "applied"

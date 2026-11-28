@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping, Protocol, Sequence, TYPE_CHECKING
 
+from .damage_source import DamageError
 from .replacement.ordering import ReplacementChoiceRequired
 
 if TYPE_CHECKING:
@@ -89,3 +90,26 @@ __all__ = [
     "DamageTransactionResult",
     "PreparedDamageTransaction",
 ]
+
+
+def validate_damage_replacement_journals(prepared) -> None:
+    """Verify both ordered replacement journals against their prepared snapshots."""
+    _validate_replacement_journal(
+        prepared.effects, prepared.events, prepared.journal,
+        "Damage replacement journal does not match its snapshot",
+    )
+    _validate_replacement_journal(
+        prepared.result_effects, prepared.result_events, prepared.result_journal,
+        "Damage-result replacement journal does not match its snapshot",
+    )
+
+
+def _validate_replacement_journal(effects, events, journal, error_message):
+    effect_ids = {effect.effect_id for effect in effects}
+    event_ids = {event.event_id for event in events}
+    for selection in journal:
+        selected_id = str(selection.effect_id or "")
+        if selected_id.startswith("decline:"):
+            continue
+        if selected_id not in effect_ids or selection.event_id not in event_ids:
+            raise DamageError(error_message)

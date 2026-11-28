@@ -1660,7 +1660,7 @@ test("@browser-soak @natural-winner @persistence a trusted browser duel reaches 
     await openGameMenu(host);
     await host.getByTestId("open-public-log").click();
     await expect(host.getByTestId("public-game-log")).toContainText(
-      "B left the game: state-based loss",
+      /Lost the game after reaching -?\d+ life\./i,
       { timeout: durableTransitionTimeout },
     );
     await expect(host.getByTestId("public-game-log")).toContainText(

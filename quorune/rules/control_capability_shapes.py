@@ -102,8 +102,10 @@ def resolution_control_node_capabilities(*,effects,target_schema,mechanic_ids):
     if owned:return owned
     from .recipient_control_shapes import recipient_control_node_capabilities
     from .owner_control_shapes import owner_control_node_capabilities
+    from .directional_control import directional_control_node_capabilities
     return (recipient_control_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
-        or owner_control_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids))
+        or owner_control_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
+        or directional_control_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids))
 
 
 def fixed_control_node_capabilities(

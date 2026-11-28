@@ -161,7 +161,7 @@ def resolve_linked_ability_instruction(host, item, effect, *, actor, reason, spe
         return return_linked_ability_exile(host, source=source, ability_pair=pair, actor=actor, reason=reason,
             replacement_selections=selections, aura_target_refs=effect.get("_aura_target_refs"),
             owner_order=host.apnap_order(), tapped=spec.tapped if spec is not None else False,
-            to_hand=scope is LinkedFadingScope.OPPONENT_HAND)
+            to_hand=spec is not None and spec.linked_ability_returns_to_hand)
     refs = effect["cards"]
     refs = (refs,) if isinstance(refs, str) else refs or ()
     if activation:
@@ -233,13 +233,21 @@ def commit_linked_graveyard_entry(host, prepared, card):
 
 
 def retain_linked_artifact_search_result(host, item, effect, card, *, actor):
-    from .linked_library_imprint_model import uses_linked_artifact_library_instruction
-    from .rules.linked_library_imprint import linked_artifact_library_source
+    from .linked_library_imprint_model import (
+        LINKED_SAGA_LIBRARY_PAIR, uses_linked_artifact_library_instruction, uses_linked_saga_library_instruction,
+    )
+    from .rules.linked_library_imprint import linked_artifact_library_source, linked_saga_library_source
 
-    if not uses_linked_artifact_library_instruction(effect):
+    if not (uses_linked_artifact_library_instruction(effect) or uses_linked_saga_library_instruction(effect)):
         return card
     try:
-        source, pair = linked_artifact_library_source(host, item, effect, actor=actor)
+        if uses_linked_saga_library_instruction(effect):
+            instruction = {key: value for key, value in effect.items()
+                           if key not in {"_search_completion", "_replacement_selections"}}
+            source = linked_saga_library_source(host, item, instruction, actor=actor)
+            pair = LINKED_SAGA_LIBRARY_PAIR
+        else:
+            source, pair = linked_artifact_library_source(host, item, effect, actor=actor)
     except (TypeError, ValueError, KeyError) as exc:
         raise GameRuleError(str(exc)) from exc
     if card.zone == "exile" and not card.is_token and not card.is_spell_copy:

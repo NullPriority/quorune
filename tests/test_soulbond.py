@@ -197,6 +197,7 @@ class SoulbondRuntimeTests(unittest.TestCase):
         path = Path(cls.temporary.name) / 'soulbond.sqlite3'
         build_fixture_database([ROOT / 'tests/fixtures/bound-effect-program-cards.json',
             ROOT / 'tests/fixtures/soulbond-cards.json',
+            ROOT / 'tests/fixtures/targeted-receiving-damage-cards.json',
             ROOT / 'tests/fixtures/fixed-basic-type-setting-cards.json',
             ROOT / 'tests/fixtures/event-player-subject-cards.json',
             ROOT / 'tests/fixtures/conditional-copy-value-cards.json',
@@ -219,7 +220,7 @@ class SoulbondRuntimeTests(unittest.TestCase):
             profile='commander_review')['strict_capability_ready'])
 
     def test_original_soulbond_cards_close_only_with_independent_paired_children(self):
-        boundaries = {'Donna Noble', 'Breathkeeper Seraph', 'Mirage Phalanx'}
+        boundaries = {'Breathkeeper Seraph', 'Mirage Phalanx'}
         fixture = json.loads((ROOT/'tests/fixtures/soulbond-cards.json').read_text(encoding='utf-8'))
         semantics = SemanticRegistry()
         for row in fixture['cards']:
@@ -236,6 +237,54 @@ class SoulbondRuntimeTests(unittest.TestCase):
         method = 'test_own_entry_offers_optional_untargeted_pair_and_grants_both_flying'
         with patch.object(SoulbondPairedGrantHandler, 'lower', return_value=()), self.assertRaises(AssertionError):
             getattr(type(self)(method), method)()
+
+    def test_donna_and_her_partner_create_separate_lethal_damage_triggers_and_replay(self):
+        session = self.session(702_095_050)
+        donna = self.add(session.engine, "Donna Noble", zone="hand", ref="paired-damage-source")
+        partner = self.add(session.engine, "Generic Bound Body", ref="paired-damage-partner")
+        unrelated = self.add(session.engine, "Generic Bound Body", ref="unpaired-damage-recipient")
+        sweep = self.add(session.engine, "Blasphemous Act", zone="hand", ref="paired-damage-sweep")
+        self.prepare(session, mana={"R": 2, "C": 14})
+        self.checkpoint(session)
+        self.cast(session, "A", donna)
+        pairing = self.resolve(session)
+        self.assertEqual("semantic.choice", pairing.kind)
+        chosen = session.act("pilot:A", {"action_id": "choose", "cards": [partner.ref]})
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.assertIsNone(self.resolve(session))
+        source_identity = session.state.cards[donna.object_id].logical_object_id
+
+        self.cast(session, "A", sweep)
+        order = self.resolve(session)
+        self.assertEqual(("trigger.order", ["A"]), (order.kind, order.actors))
+        for creature in (donna, partner, unrelated):
+            self.assertEqual("graveyard", session.state.cards[creature.object_id].zone)
+        self.assertFalse(session.state.soulbond_pairs)
+        triggers = session.packet("pilot:A", full=True)["decision"]["ctx"]["triggers"]
+        self.assertEqual(2, len(triggers))
+        command = {"action_id": "order", "triggers": [row["id"] for row in reversed(triggers)]}
+        outcome = session.act("pilot:A", command)
+        self.assertTrue(outcome.ok, outcome.summary)
+        for player in ("B", "C"):
+            self.assertEqual("semantic.target", session.state.pending_decision.kind)
+            if player == "B":
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:A", {"action_id": "choose", "targets": ["A"]}).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+            targeted = session.act("pilot:A", {"action_id": "choose", "targets": [player]})
+            self.assertTrue(targeted.ok, targeted.summary)
+        self.assertCountEqual([donna.ref, partner.ref], [item.context["target"] for item in session.state.stack])
+        self.assertEqual([13, 13], [item.context["amount"] for item in session.state.stack])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual([40, 27, 27, 40], [session.state.players[seat].life for seat in "ABCD"])
+        for player in ("B", "C"):
+            hit, = [
+                event.details["damage_event"] for event in session.state.events
+                if event.code == "effect.damage" and event.details.get("target") == player
+            ]
+            self.assertEqual((source_identity, 13), (hit["source_logical_object_id"], hit["amount"]))
+        self.replay(session, load=True)
 
     def test_own_entry_offers_optional_untargeted_pair_and_grants_both_flying(self):
         session = self.session(702_095_001)

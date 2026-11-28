@@ -14,6 +14,17 @@ the original source's named +1/+1 counter count. Resolution reads the current
 incarnation while available and uses its captured last-known count after
 departure. A positive count proceeds through the ordinary draw coordinator.
 
+An entering creature's controller can be offered a private draw when that
+creature has strictly greater power than every other current battlefield
+creature. Resolution uses the original entrant's current power and controller
+or their last-known values at departure. The optional draw belongs to that
+player even when another player controls the resolving trigger.
+
+A qualified creature combat-damage occurrence can offer its damage dealer's
+current or departure controller a one-life draw payment. The life intent
+commits first. The original chooser receives one private draw through the
+ordinary draw transaction and its restrictions and replacements.
+
 Represented game draws use one typed boundary. `drawing/model.py` distinguishes
 an instruction to draw N cards from each individual draw event, validates the
 replacement or prohibited result, and pins the affected player, library size,
@@ -110,6 +121,15 @@ and resumes from the exact remaining count without growing the Python call stack
 continues an APNAP batch, draw-step entry, or the exact next spell instruction.
 `drawing/continuation.py` owns that strict immutable Game Record v3 value.
 
+An untargeted spell can draw for each opponent in APNAP order and then draw
+for its controller based on the distinct opponents who drew. An observer follows
+replacement-created draws and records only the actual opposing seats that
+committed a draw. Multiple draws by one opponent contribute once. A redirected
+draw for the controller, Dredge, a prohibited draw, and an empty-library attempt
+contribute zero. The controller's follow-up uses normal draw permissions and
+replacements. Both phases remain within the same resolving stack frame and
+Game Record v3 continuation. The result carries no drawn-card identities.
+
 The Brotherhood instruction attaches an observer to each opponent draw in
 APNAP order. The draw transaction counts actual committed draws for its
 original resolving stack frame, including draws produced by a replacement.
@@ -130,6 +150,19 @@ remain outside this compiled scope.
 Public die results use the resolving stack reference and instruction position
 as their deterministic key. A later roll at that same instruction adds its
 ordinal to the key. The first roll keeps the established key and event fields.
+
+The shared die occurrence planner keeps the original stack instruction key
+for its first sample and distinguishes retained and ignored samples. The
+resolving die helper publishes the existing single-result event. A fixed
+d10 library activation passes its result plus one to the ordinary target
+owner’s library insertion. A pending destination replacement retains the
+bound position, and a shorter library places the target on the bottom.
+
+A current post-roll ability can offer its roller a life-paid unit adjustment
+after retention. The resolving stack frame seals the sample identities and
+payment ledger until the choice resumes. The final signed number is announced
+once, and each retained six can trigger ordinary token creation. Card counts
+use zero when the final number is negative.
 
 A fixed draw and keyword grant samples its controlled countered creatures
 once as the draw instruction begins. The sampled count feeds ordinary draw

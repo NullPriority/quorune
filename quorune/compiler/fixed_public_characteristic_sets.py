@@ -11,7 +11,8 @@ from ..rules.same_name_creature_modifiers import (
     SAME_NAME_STAT_MECHANICS, SameNameCreatureStats, same_name_stat_target_schema,
 )
 from ..rules.target_player_stat_untap import (
-    TARGET_PLAYER_STAT_UNTAP_MECHANICS, TargetPlayerStatUntapSpec, target_player_stat_untap_schema,
+    CONTROLLER_SUBTYPE_STAT_UNTAP_MECHANICS, TARGET_PLAYER_STAT_UNTAP_MECHANICS,
+    ControllerSubtypeStatUntapSpec, TargetPlayerStatUntapSpec, target_player_stat_untap_schema,
 )
 from ..target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
 from .continuous_templates import controlled_characteristic_until_end_of_turn_effect
@@ -34,6 +35,10 @@ _PUBLIC_CREATURE_SET = re.compile(
 )
 _TARGET_PLAYER_STAT_UNTAP = re.compile(
     r"Creatures target player controls get (?P<p>[+-][0-9]+)/(?P<t>[+-][0-9]+) until end of turn\. Untap them\.",
+    re.IGNORECASE,
+)
+_CONTROLLER_SUBTYPE_STAT_UNTAP = re.compile(
+    r"(?P<subject>.+?) you control get (?P<p>[+-][0-9]+)/(?P<t>[+-][0-9]+) until end of turn\. Untap them\.",
     re.IGNORECASE,
 )
 _SAME_NAME_CREATURE_STATS = re.compile(
@@ -143,6 +148,28 @@ def _same_name_creature_stat_template(oracle_line: str):
     spec = SameNameCreatureStats(power, toughness)
     return ("modify-same-name-creature-stats-eot-v1", (spec.to_effect(),),
             same_name_stat_target_schema(), SAME_NAME_STAT_MECHANICS)
+
+
+def controller_subtype_stat_untap_template(oracle_line: str):
+    match = _CONTROLLER_SUBTYPE_STAT_UNTAP.fullmatch(" ".join(oracle_line.split()))
+    if match is None:
+        return None
+    query_result = _public_query(match["subject"] + " you control")
+    if query_result is None:
+        return None
+    query, targets = query_result
+    if targets is not None or query != ObjectQuerySpec(
+        zones=("battlefield",), controller="$controller", subtypes_any=query.subtypes_any,
+    ):
+        return None
+    try:
+        spec = ControllerSubtypeStatUntapSpec(
+            int(match["p"]), int(match["t"]), tuple(sorted(query.subtypes_any)),
+        )
+    except ValueError:
+        return None
+    return ("controller-subtype-stats-then-untap-v1", (spec.to_effect(),), None,
+            CONTROLLER_SUBTYPE_STAT_UNTAP_MECHANICS)
 
 
 def fixed_public_characteristic_set_effect_template(

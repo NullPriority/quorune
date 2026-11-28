@@ -13,6 +13,9 @@ from .stack_spell_name_scan_model import (
 from .rules.bargain_search import BARGAIN_SEARCH_CAST_OPERATION
 from .replacement.immutable import FrozenMap,thaw_value
 from .rules.library_selection import LibrarySelectionObjectIdentity
+from .next_cast_library_model import (
+    NEXT_CAST_LIBRARY_PROGRESS_VERSION, NEXT_CAST_LIBRARY_SCAN_VERSION, valid_exclusive_mana_value,
+)
 from .util import stable_json
 
 DISCOVER_CAPABILITY='library.discover.controller'
@@ -96,8 +99,17 @@ class ExileCastProgress:
     private_search_parent: str | None = None
     name_scan: StackSpellNameScan | None = None
     recorded_card: RecordedDiscoverCard | None = None
+    exclusive_mana_value: int | float | None = None
 
     def __post_init__(self):
+        if self.exclusive_mana_value is not None and (
+            not valid_exclusive_mana_value(self.exclusive_mana_value) or not self.supplier
+            or any(value is not None for value in (
+                self.amount, self.fixed_top_payment, self.copy_parent_ref,
+                self.private_search_parent, self.name_scan,
+            ))
+        ):
+            raise ValueError("Next-cast library scans require their caster's library and sealed mana value")
         if self.name_scan is not None and (
             not isinstance(self.name_scan, StackSpellNameScan)
             or any(value is not None for value in (
@@ -173,6 +185,8 @@ class ExileCastProgress:
 
     @property
     def cast_operation(self):
+        if self.exclusive_mana_value is not None:
+            return None
         if self.name_scan is not None:
             return NAME_SCAN_CAST_OPERATION
         if self.private_search_parent is not None:
@@ -214,6 +228,12 @@ class ExileCastProgress:
         if self.recorded_card is not None:
             search = {'schema_version': DISCOVER_RECORDED_RESULT_PROGRESS_VERSION, 'amount': self.amount,
                       'last_exile_mana_value': self.recorded_card.mana_value}
+        if self.exclusive_mana_value is not None:
+            search = {
+                "schema_version": NEXT_CAST_LIBRARY_PROGRESS_VERSION,
+                "supplier": self.supplier,
+                "exclusive_mana_value": self.exclusive_mana_value,
+            }
         return {**search, 'exiled': [card.to_dict() for card in self.exiled], 'candidate_ref': self.candidate_ref}
 
     @classmethod
@@ -227,6 +247,7 @@ class ExileCastProgress:
         private_search_parent = None
         name_scan = None
         recorded_card = None
+        exclusive_mana_value = None
         if value['schema_version'] == 1 and set(value) == common | {'amount'}:
             amount = value['amount']
             ManaValueLimitSpec(amount)
@@ -255,13 +276,20 @@ class ExileCastProgress:
                 and set(value) == common | {'amount', 'last_exile_mana_value'}):
             amount = value['amount']
             recorded_card = RecordedDiscoverCard(value['last_exile_mana_value'])
+        elif (
+            value["schema_version"] == NEXT_CAST_LIBRARY_PROGRESS_VERSION
+            and set(value) == common | {"supplier", "exclusive_mana_value"}
+            and valid_exclusive_mana_value(value["exclusive_mana_value"])
+        ):
+            amount, supplier = None, value["supplier"]
+            exclusive_mana_value = value["exclusive_mana_value"]
         else:
             raise ValueError('Exile scan progress has a closed versioned shape')
         if not isinstance(value['exiled'], (list, tuple)):
             raise ValueError('Exile scan progress requires an ordered history')
         return cls(amount, tuple(LibrarySelectionObjectIdentity.from_dict(card) for card in value['exiled']),
                    value['candidate_ref'], supplier, payment, copy_parent_ref, private_search_parent, name_scan,
-                   recorded_card)
+                   recorded_card, exclusive_mana_value)
 
 
 DiscoverProgress = ExileCastProgress
@@ -328,6 +356,16 @@ def validate_nonland_scan_effect(effect, *, resolved=False):
 
 
 def validate_qualified_scan_effect(effect, *, resolved=False):
+    if isinstance(effect, Mapping) and effect.get("schema_version") == NEXT_CAST_LIBRARY_SCAN_VERSION:
+        if (
+            not resolved or type(effect["schema_version"]) is not int
+            or set(effect) != {"op", "schema_version", "player", "supplier", "exclusive_mana_value"}
+            or effect["op"] != QUALIFIED_SCAN_OPERATION or type(effect["player"]) is not str
+            or not effect["player"] or effect["player"].startswith("$") or effect["supplier"] != effect["player"]
+            or not valid_exclusive_mana_value(effect["exclusive_mana_value"])
+        ):
+            raise ValueError("Next-cast library access requires the sealed caster and exclusive mana value")
+        return
     if (
         not isinstance(effect, Mapping)
         or set(effect) != {'op', 'schema_version', 'player', 'supplier'}

@@ -44,12 +44,50 @@ def _apply_require_blocking_this_combat(host,effect,*,actor,operation,reason):
     except (TypeError,ValueError) as exc:raise GameRuleError(str(exc)) from exc
 
 
+def _apply_chosen_attack_turn(host, effect, *, actor, operation, reason):
+    from ..rules.chosen_attack_turn import apply_chosen_attack_turn
+
+    return apply_chosen_attack_turn(host, effect, actor=actor)
+
+
 def _apply_locked_action_prohibition(host, effect, *, actor, operation, reason):
     resolve = resolve_detain if operation == DETAIN_OPERATION else resolve_direct_action_prohibition
     try:
         return resolve(host, effect, actor=actor, reason=reason)
     except (TypeError, ValueError) as exc:
         raise GameRuleError(str(exc)) from exc
+
+
+def _apply_hand_count_unblockable(host, effect, *, actor, reason, next_turn):
+    from ..goad_instruction import HAND_COUNT_UNBLOCKABLE_FIELD
+    from ..rules.temporary_attack_requirements import resolving_goad_chapter_source
+    from .objects_stack_and_tokens import _apply_modify_stats_until_end_of_turn
+
+    try:
+        source, refs = resolving_goad_chapter_source(host, effect, actor=actor)
+        if next_turn or len(refs) != 1:
+            raise ValueError("Hand-count unblockable requires its original controlled creature this turn")
+        target = host._resolve_object(actor, refs[0], zones={"battlefield"})
+        if target.controller != actor or target.phased_out or "creature" not in host._effective_type_parts(target)[0]:
+            raise ValueError("Hand-count unblockable lost its current controlled creature")
+        amount = len(host.state.players[actor].zones["hand"])
+        if amount:
+            _apply_modify_stats_until_end_of_turn(host, {
+                "op": "modify_stats_until_end_of_turn", "card": target.ref,
+                "power": amount, "toughness": amount, "_runtime_source": source.to_dict(),
+            }, actor=actor, operation="modify_stats_until_end_of_turn", reason=reason)
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    instruction = {key: value for key, value in effect.items() if key != HAND_COUNT_UNBLOCKABLE_FIELD}
+    return _apply_grant_declaration_restriction_until_end_of_turn(
+        host, instruction, actor=actor, operation="grant_declaration_restriction_until_end_of_turn", reason=reason,
+    )
+
+
+def _apply_counter_attack_truce(host, effect, *, actor, operation, reason):
+    from ..rules.apnap_counter_attack_truce import apply_counter_attack_truce
+
+    return apply_counter_attack_truce(host, effect, actor=actor, reason=reason)
 
 
 def _apply_grant_declaration_restriction_until_end_of_turn(
@@ -61,6 +99,17 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
     reason: str,
 ) -> str | list[str]:
     del operation
+    from ..declaration_rule_effects import SOURCE_CONTROLLED_BLOCK_FIELD
+    if SOURCE_CONTROLLED_BLOCK_FIELD in effect:
+        from ..continuous_effect_state import ResolutionEffectSource
+        from ..rules.temporary_declaration_restrictions import apply_source_controlled_block
+
+        try:
+            source = ResolutionEffectSource.from_effect(effect)
+            item = next((entry for entry in host.state.stack if entry.ref == source.stack_ref), None)
+            return apply_source_controlled_block(host, item, effect, actor=actor, reason=reason)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
     from ..next_turn_effect import split_next_turn_effect
 
     try:
@@ -68,9 +117,12 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
     except ValueError as exc:
         raise GameRuleError(str(exc)) from exc
     expiry_player = actor if next_turn else None
-    from ..rules.temporary_attack_requirements import LIVE_OPPONENT_ATTACK_RULE, commit_live_opponent_attack_rule
+    from ..goad_instruction import HAND_COUNT_UNBLOCKABLE_FIELD
+    if HAND_COUNT_UNBLOCKABLE_FIELD in effect:
+        return _apply_hand_count_unblockable(host, effect, actor=actor, reason=reason, next_turn=next_turn)
+    from ..rules.temporary_attack_requirements import LIVE_OPPONENT_ATTACK_RULES, commit_live_opponent_attack_rule
 
-    if effect.get("restriction") == LIVE_OPPONENT_ATTACK_RULE:
+    if effect.get("restriction") in LIVE_OPPONENT_ATTACK_RULES:
         return commit_live_opponent_attack_rule(host, effect, actor=actor, next_turn=next_turn, reason=reason)
     from ..rules.source_optional_unblockable import is_source_optional_unblockable, prepare_source_optional_unblockable
     if is_source_optional_unblockable(effect):
@@ -190,6 +242,8 @@ HANDLERS = {
     DETAIN_OPERATION: _apply_locked_action_prohibition,
     DIRECT_PROHIBITION_OPERATION: _apply_locked_action_prohibition,
     'require_blocking_this_combat':_apply_require_blocking_this_combat,
+    "commit_apnap_counter_attack_truce": _apply_counter_attack_truce,
+    "schedule_chosen_attack_turn": _apply_chosen_attack_turn,
     "grant_declaration_restriction_until_end_of_turn": (
         _apply_grant_declaration_restriction_until_end_of_turn
     ),

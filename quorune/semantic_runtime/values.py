@@ -377,7 +377,14 @@ def _resolve_shared_entry_return(host, value, item):
         raise SemanticNodeError(str(exc)) from exc
 
 
-def _resolve_cast_fact_mapping(host, value, item):
+def _resolve_event_fact_mapping(host, value, item):
+    from ..rules.source_subtype_progression import uses_ring_damage_outcome
+
+    if uses_ring_damage_outcome(value):
+        return _bind_ring_damage_outcome(host, value, item)
+    from ..rules.attacker_mana_payment import (
+        ATTACKER_PAYER_REFERENCE, is_attacker_payment, original_attacker_controller,
+    )
     from ..rules.cast_trigger_life_payment import CAST_TRIGGER_LIFE_PAYMENT_FIELD, materialize_cast_trigger_life_payment
     from ..rules.opponent_event_mana_payment import (
         materialize_opponent_source_power_payment, uses_opponent_source_power_payment,
@@ -385,6 +392,8 @@ def _resolve_cast_fact_mapping(host, value, item):
     from ..rules.named_cast_win import bind_named_cast_win, uses_named_cast_win
 
     try:
+        if is_attacker_payment(value) and value.get("player") == ATTACKER_PAYER_REFERENCE:
+            return resolve_semantic_value(host, {**value, "player": original_attacker_controller(host, item)}, item)
         if CAST_TRIGGER_LIFE_PAYMENT_FIELD in value:
             return materialize_cast_trigger_life_payment(value, item)
         if uses_opponent_source_power_payment(value) and "source_power" in value:
@@ -397,6 +406,7 @@ def _resolve_cast_fact_mapping(host, value, item):
 
 
 def _resolve_deferred_effect_mapping(host, value, item, deferred_field):
+    from ..rules.committed_mill_cards import MilledManaDamage, uses_milled_mana_damage
     from ..rules.controlled_destruction_source_counters import (
         ControlledDestructionSourceCounters, uses_controlled_destruction_source_counters,
     )
@@ -411,8 +421,33 @@ def _resolve_deferred_effect_mapping(host, value, item, deferred_field):
                 raise ValueError("Destruction reward lost its resolving stack reference")
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc
+    elif uses_milled_mana_damage(value):
+        try:
+            followup = MilledManaDamage.from_dict(followup).bind_opponent(item).to_dict()
+        except ValueError as exc:
+            raise SemanticNodeError(str(exc)) from exc
     preceding_action = {key: child for key, child in value.items() if key != deferred_field}
     return {**_resolve_effect_mapping(host, preceding_action, item), deferred_field: followup}
+
+
+def _bind_ring_damage_outcome(host, value, item):
+    from ..ring_model import RING_TEMPTATION_OPERATION
+    from ..ring_state import current_ring_state
+    from ..rules.source_subtype_progression import ring_damage_outcome_dependencies
+
+    try:
+        ring_damage_outcome_dependencies(value)
+        actor = resolve_semantic_value(host, value["player"], item)
+        victim = resolve_semantic_value(host, value["damaged_player"], item)
+        if (actor != item.controller or actor not in host.state.players or victim not in host.state.players
+                or item.context.get("combat") is not True or item.context.get("target_kind") != "player"):
+            raise ValueError("The Ring damage branch lost its original player-damage occurrence")
+        ring = current_ring_state(host, actor)
+    except (TypeError, ValueError, KeyError) as exc:
+        raise SemanticNodeError(str(exc)) from exc
+    if ring is not None and ring.temptation_count >= 4:
+        return {"op": "lose_game", "player": victim}
+    return {"op": RING_TEMPTATION_OPERATION, "player": actor}
 
 
 def _bind_target_damage(host, value, item):
@@ -451,7 +486,14 @@ def _resolve_counted_source_result(host, value, item):
 
 
 def _resolve_effect_mapping(host, value, item):
-    if (bound := _resolve_cast_fact_mapping(host, value, item)) is not None:
+    from ..rules.cycling_activation_x import TOKEN_FIELD, bind_cycling_x_token
+
+    if TOKEN_FIELD in value:
+        try:
+            return bind_cycling_x_token(host, item, value)
+        except (ValueError, TypeError, KeyError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+    if (bound := _resolve_event_fact_mapping(host, value, item)) is not None:
         return bound
     from ..rules.controlled_return import uses_shared_entry_return
     if uses_shared_entry_return(value):
@@ -614,12 +656,20 @@ def _resolve_granting_attachment_sacrifice(host: SemanticValueHost, item: Any) -
 
 
 def _resolve_wrapped_effect(host, value, item):
+    from ..rules.cast_name_graveyard_returns import bind_cast_name_graveyard_return
+
+    try:
+        value = bind_cast_name_graveyard_return(host, value, item)
+    except (KeyError, TypeError, ValueError) as exc:
+        raise SemanticNodeError(str(exc)) from exc
     if value.get("op") == "place_counters_on_targets":
+        from ..announced_counter_allocation import bind_announced_counter_allocation
         from ..rules.counter_target_set_shapes import bind_paid_white_entry_target_amount, bind_split_two_counter_allocation
 
         try:
             value = bind_paid_white_entry_target_amount(value, item)
             value = bind_split_two_counter_allocation(value, item)
+            value = bind_announced_counter_allocation(value, item)
         except (TypeError, ValueError, KeyError) as exc:
             raise SemanticNodeError(str(exc)) from exc
     from ..rules.entrant_power_branch import bind_entrant_power_branch, uses_entrant_power_branch
@@ -649,11 +699,7 @@ def _resolve_wrapped_effect(host, value, item):
     return token if token is not None else _resolve_effect_mapping(host, value, item)
 
 
-def resolve_semantic_value(
-    host: SemanticValueHost,
-    value: Any,
-    item: Any,
-) -> Any:
+def resolve_semantic_value(host: SemanticValueHost, value: Any, item: Any) -> Any:
     """Resolve transport-safe runtime placeholders against one stack item."""
 
     if isinstance(value, list):
@@ -704,6 +750,13 @@ def resolve_semantic_value(
         from ..rules.attachment_controller_information import resolve_attachment_controller
         try:return resolve_attachment_controller(host,value,item)
         except (TypeError,ValueError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
+    from ..rules.experience_results import resolve_experience_amount, uses_experience_value
+
+    if uses_experience_value(value):
+        try:
+            return resolve_experience_amount(host, value, item)
+        except (KeyError, TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
     if isinstance(value, Mapping) and value.get('kind') in (PUBLIC_QUERY_AMOUNT_KIND, CAST_X_AMOUNT_KIND, SCALAR_AMOUNT_KIND, 'source_entry_x_amount','devoured_entry_creatures_amount','selected_target_count', 'source_entry_designation_predicate','source_entry_designation_scope','source_entry_designation_library_filter','unique_player_maximum','target_player_public_query_amount','per_player_public_query_damage_amount','bound_per_player_public_query_damage_amount','per_player_current_life_damage_amount','bound_per_player_current_life_damage_amount','per_player_public_query_life_loss_amount','bound_per_player_public_query_life_loss_amount','all_player_turn_life_loss_amount','current_controller_life_effect_amount','target_player_greatest_creature_power',
             'postcombat_opponent_life_loss_mana_amount'):
         return _resolve_typed_semantic_value(host, value, item)
@@ -711,6 +764,11 @@ def resolve_semantic_value(
         return _resolve_wrapped_effect(host, value, item)
     if not isinstance(value, str) or not value.startswith("$"):
         return value
+    return _resolve_string_reference(host, value, item)
+
+
+def _resolve_string_reference(host: SemanticValueHost, value: str, item: Any) -> Any:
+    """Resolve stack, source, context and target references in their existing order."""
     if value == "$controller":
         return item.controller
     if value == "$active":
@@ -728,10 +786,7 @@ def resolve_semantic_value(
     if value in ("$source.zone_object", "$source.graveyard_object"):
         zone = "battlefield" if value == "$source.zone_object" else "graveyard"
         object_id = str(getattr(item, "source_object_id", None) or "")
-        logical_object_id = str(
-            getattr(item, "context", {}).get("source_logical_object_id")
-            or ""
-        )
+        logical_object_id = str(getattr(item, "context", {}).get("source_logical_object_id") or "")
         source = host.state.cards.get(object_id)
         if (
             source is None
@@ -779,10 +834,7 @@ def resolve_semantic_value(
         return _resolve_target_group_reference(host, target_group_match, item)
     if value == "$targets":
         return [target for target in item.targets if target is not None]
-    current_controller_match = re.fullmatch(
-        r"\$target\.current_controller[.\[](?P<index>\d+)\]?",
-        value,
-    )
+    current_controller_match = re.fullmatch(r"\$target\.current_controller[.\[](?P<index>\d+)\]?", value)
     if current_controller_match:
         index = int(current_controller_match.group(_INDEX_GROUP))
         if index >= len(item.targets) or item.targets[index] is None:

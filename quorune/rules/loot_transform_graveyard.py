@@ -84,10 +84,14 @@ def bind_loot_transform(host, item, effect):
 def is_closed_loot_transform_or_graveyard_cast_program(program):
     from .artifact_graveyard_cast_activation import artifact_graveyard_cast_runtime_dependencies
     from .loyalty_graveyard_cast import loyalty_graveyard_cast_runtime_dependencies
+    from .graveyard_card_targets import targeted_graveyard_cast_runtime_dependencies
+    from ..targeted_graveyard_cast_model import FIRST_PAID_GRAVEYARD_CAST_CAPABILITY
 
     try:
         required = (*loot_transform_runtime_dependencies(program), *loyalty_graveyard_cast_runtime_dependencies(program),
                     *artifact_graveyard_cast_runtime_dependencies(program))
+        if FIRST_PAID_GRAVEYARD_CAST_CAPABILITY in program.capability_dependencies:
+            required = (*required, *targeted_graveyard_cast_runtime_dependencies(program))
     except (KeyError, TypeError, ValueError):
         return False
     return bool(required) and set(required).issubset(program.capability_dependencies)

@@ -14,17 +14,21 @@ CREW_SADDLE_POWER_BONUS_HANDLER_ID = "ability.static.crew-and-saddle-power-bonus
 
 
 INTRINSIC_ABILITIES_REMOVED = "intrinsic_abilities_removed"
-SAGA_INTRINSIC_ABILITY_VERSION = 1
+SAGA_INTRINSIC_ABILITY_VERSION = 2
 
 
 def saga_intrinsic_ability_version(value):
-    if value is not None and (type(value) is not int or value != SAGA_INTRINSIC_ABILITY_VERSION):
+    if value is not None and (type(value) is not int or value not in {1, SAGA_INTRINSIC_ABILITY_VERSION}):
         raise ValueError("Unsupported Saga intrinsic ability version")
     return value
 
 
 def current_saga_intrinsic_abilities(state):
-    return getattr(state, "saga_intrinsic_ability_version", None) == SAGA_INTRINSIC_ABILITY_VERSION
+    return saga_intrinsic_ability_version(getattr(state, "saga_intrinsic_ability_version", None)) is not None
+
+
+def current_saga_read_ahead_grants(state):
+    return getattr(state, "saga_intrinsic_ability_version", None) == 2
 
 class AbilityFragmentError(ValueError):
     """A typed executable ability fragment is malformed or unsupported."""

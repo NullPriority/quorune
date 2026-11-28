@@ -43,6 +43,10 @@ def participation_rule_matches(spec,modifier,modifier_characteristics,ability_so
         return False
     if rule.source_relation == "owned" and ability_source.owner != modifier.controller:
         return False
+    if rule.source_relation == "controlled_not_owned" and (
+        ability_source.controller != modifier.controller or ability_source.owner == modifier.controller
+    ):
+        return False
     if rule.source_relation=='you' and ability_source.controller!=modifier.controller:return False
     if rule.source_relation=='opponent' and ability_source.controller==modifier.controller:return False
     source = _facts(

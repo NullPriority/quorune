@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping, Protocol, Sequence
 
 from .replacement.immutable import FrozenMap, thaw_value
+from .printed_mana_cost_model import phyrexian_mana_choices
 from .mana_restrictions import ability_mana_spend_context
 
 
@@ -154,9 +155,8 @@ def fixed_complex_activation_mana_options(
         ):
             color = next(part for part in parts if part != "2")
             choices = (("generic", 2), ("mana", color))
-        elif (len(parts) in (2, 3) and parts[-1] == "P"
-                and len(set(parts[:-1])) == len(parts) - 1 and set(parts[:-1]).issubset(_COLORS)):
-            choices = [*(('mana', color) for color in parts[:-1]), ('life', 2)]
+        elif phyrexian := phyrexian_mana_choices(symbol):
+            choices = phyrexian
         elif symbol == "S":
             choices = (("snow", 1),)
         else:

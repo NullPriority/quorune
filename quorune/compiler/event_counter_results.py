@@ -6,6 +6,7 @@ from . import regex_working_set as re
 from ..event_counter_reference import EVENT_ENTRY_OBJECT
 from ..face_up_effect_model import TURN_FACE_UP_EVENT
 from ..transform_timestamp_model import TRANSFORM_EVENT
+from .fixed_counter_controller_effect_sequences import FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC
 from .public_event_closure_variants import ATTACHED_CREATURE_ATTACK_VARIANTS
 
 EVENT_COUNTER_CAPABILITY='counter.producer.fixed_event_object'
@@ -53,6 +54,10 @@ def counter_recipient_control_result(binding, body):
 
 
 def event_counter_threshold_result(binding, body, *, effect_template, card_name):
+    from .life_gain_counted_results import life_gain_counter_reset_result
+
+    if reset := life_gain_counter_reset_result(body, binding=binding):
+        return reset
     if binding.variant != "enchanted_creature_attacks" or binding.event_condition != {
         "field": "source_attachment_target_ref", "op": "eq", "value": "$context.card",
     }:
@@ -212,8 +217,21 @@ def entry_event_counter_result(binding,body,*,effect_template,card_name):
     operation = r'Put .+? counters? on'
     if binding.variant in ATTACHED_CREATURE_ATTACK_VARIANTS:
         operation += r'|Double the number of .+? counters on'
-    match = re.fullmatch(rf'(?P<head>{operation}) (?:it|that creature|that artifact|that permanent)\.', body, re.I)
+    match = re.fullmatch(
+        rf'(?P<head>{operation}) (?P<recipient>it|that creature|that artifact|that permanent)'
+        r'(?P<draw> and draw a card)?\.', body, re.I,
+    )
     if match is None:return None
+    if match["draw"]:
+        from ..rules.fixed_controller_effect_shapes import is_controlled_nontoken_creature_entry
+
+        if (
+            body != binding.body
+            or match["head"].casefold() != "put a +1/+1 counter on"
+            or match["recipient"].casefold() not in {"it", "that creature"}
+            or not is_controlled_nontoken_creature_entry(binding.event.value, binding.active_zone, binding.event_condition)
+        ):
+            return None
     normalized=match['head']+' this creature.'
     from .scalar_effect_amounts import scalar_effect_amount_template
     scalar=scalar_effect_amount_template(normalized,source_name=card_name,event=binding.event.value,
@@ -222,5 +240,12 @@ def entry_event_counter_result(binding,body,*,effect_template,card_name):
     if compiled[0] is None or compiled[2] is not None or len(compiled[1])!=1:return None
     effect=compiled[1][0]
     if effect.get('op')!='place_counters' or effect.get('card') not in ('$source','$source.zone_object'):return None
-    return ('fixed-entry-event-object-counter-v1',({**effect,'card':EVENT_ENTRY_OBJECT if entry else '$event.counter_object'},),None,
-        (*compiled[3],EVENT_COUNTER_MECHANIC)),True
+    counter = {**effect, 'card': EVENT_ENTRY_OBJECT if entry else '$event.counter_object'}
+    counter_mechanics = (*compiled[3], EVENT_COUNTER_MECHANIC)
+    if match["draw"]:
+        from .draw_templates import fixed_draw_effect_template
+
+        _, draws, _, draw_mechanics = fixed_draw_effect_template("Draw a card.")
+        return ("fixed-entry-event-object-counter-draw-v1", (counter, *draws), None,
+                (FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC, *counter_mechanics, *draw_mechanics)), True
+    return ("fixed-entry-event-object-counter-v1", (counter,), None, counter_mechanics), True

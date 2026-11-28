@@ -200,7 +200,7 @@
           "oracle_id": "02393093-e970-40a0-848b-9cd758450cbb",
           "published_at": "2018-01-19",
           "source": "wotc",
-          "comment": "There are many important moments in the story, but the most crucial—called \"story spotlights\"—are shown on cards. These cards have the Planeswalker symbol in their text box; this symbol has no effect on gameplay. You can read more about these events in the official Magic fiction at http://www.mtgstory.com."
+          "comment": "There are many important moments in the story, but the most crucial\u2014called \"story spotlights\"\u2014are shown on cards. These cards have the Planeswalker symbol in their text box; this symbol has no effect on gameplay. You can read more about these events in the official Magic fiction at http://www.mtgstory.com."
         }
       ]
     },
@@ -255,7 +255,7 @@
           "oracle_id": "b5d856a3-0305-4c3b-b447-99570d6e8195",
           "published_at": "2018-10-05",
           "source": "wotc",
-          "comment": "If some, but not all, targets for Vivid Revival become illegal, the remaining targets are returned to your hand and Vivid Revival is exiled. If all of its targets become illegal, Vivid Revival doesn’t resolve and it’s put into your graveyard."
+          "comment": "If some, but not all, targets for Vivid Revival become illegal, the remaining targets are returned to your hand and Vivid Revival is exiled. If all of its targets become illegal, Vivid Revival doesn\u2019t resolve and it\u2019s put into your graveyard."
         }
       ]
     },
@@ -327,6 +327,71 @@
           "comment": "Because delve isn't an alternative cost, it can be used in conjunction with alternative costs, such as flashback. It can also be used to pay for additional costs that include generic mana."
         }
       ]
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{G}",
+      "name": "All Suns' Dawn",
+      "oracle_id": "a97d9a72-2e47-491b-b1db-9829a9abbbd7",
+      "oracle_text": "For each color, return up to one target card of that color from your graveyard to your hand. Exile All Suns' Dawn.",
+      "power": null,
+      "toughness": null,
+      "type_line": "Sorcery"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "a97d9a72-2e47-491b-b1db-9829a9abbbd7",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "All Suns\u2019 Dawn can have from zero to five targets, one for each color."
+    },
+    {
+      "oracle_id": "a97d9a72-2e47-491b-b1db-9829a9abbbd7",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "You can target two blue-and-white multicolored cards by choosing one as the blue card and one as the white card."
+    },
+    {
+      "oracle_id": "a97d9a72-2e47-491b-b1db-9829a9abbbd7",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "You choose the color each target must be when you choose it as a target, so if the card you targeted as a blue card is red when All Suns\u2019 Dawn resolves, the card is an illegal target, even if the spell doesn\u2019t target another red card."
     }
   ]
 }

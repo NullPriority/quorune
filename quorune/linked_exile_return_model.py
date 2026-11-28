@@ -43,6 +43,7 @@ def conditional_exile_cast_target_schema():
         "zones": ["battlefield"], "categories": ["permanent"], "count": 1,
         "types_any": ["artifact", "creature"], "source_exclusion": True,
     }
+LINKED_BEHOLD_HAND_RETURN_VERSION = 17
 CONTROLLER_LIBRARY_TOP_HAND_CAPABILITY = "zone.linked_exile_return.private_library_top_to_hand"
 CONTROLLER_LIBRARY_TOP_HAND_BINDING = "blink:controller-library-top-to-hand"
 LINKED_TYPE_ENTRY_COUNTER_VERSIONS = (LINKED_TYPE_ENTRY_COUNTERS_VERSION, LINKED_CREATURE_ENTRY_COUNTER_VERSION)
@@ -56,6 +57,11 @@ LINKED_PUBLIC_SET_VERSIONS = (
 LINKED_FADING_HAND_BINDING = "linked_fading_hand_binding"
 LINKED_ABILITY_TIMING = "linked_ability"
 LINKED_ABILITY_BINDING_PREFIX = "ability-exile:"
+
+
+def is_linked_behold_hand_return_spec(spec):
+    return (isinstance(spec, Mapping) and spec.get("schema_version") == LINKED_BEHOLD_HAND_RETURN_VERSION
+            and spec.get("timing") == LINKED_ABILITY_TIMING)
 
 
 @dataclass(frozen=True, slots=True)
@@ -124,10 +130,10 @@ def validate_linked_instruction(effect: Mapping[str, Any]) -> None:
     spec = LinkedExileReturnSpec.from_dict(effect.get("spec"))
     linked_ability = spec.timing == LINKED_ABILITY_TIMING
     phases = {"exile", "return"}
-    if spec.schema_version == LINKED_RETURN_SUBTYPE_COUNTER_VERSION:
+    if spec.returns_with_subtype_counter:
         phases.add(LINKED_RETURN_SUBTYPE_COUNTER_PHASE)
     if phase == "return" and (
-        (linked_ability and spec.fading_scope is not LinkedFadingScope.OPPONENT_HAND)
+        (linked_ability and not spec.linked_ability_returns_to_hand)
         or is_exiled_target_search_return(effect)
     ):
         allowed.add("_aura_target_refs")
@@ -146,6 +152,8 @@ def validate_linked_instruction(effect: Mapping[str, Any]) -> None:
         ):
             raise ValueError("Private library exile requires its own controller and link")
     if phase == "exile":
+        if spec.linked_behold_hand_return:
+            raise ValueError("A linked Behold exile must be paid during casting")
         if "cards" not in effect:
             raise ValueError("Linked exile requires a selected object set")
         cards = effect["cards"]
@@ -251,6 +259,7 @@ class LinkedExileReturnSpec:
             LINKED_TRANSFORMED_OWNER_RETURN_VERSION,
             LINKED_RETURN_SUBTYPE_COUNTER_VERSION,
             CONDITIONAL_EXILE_CAST_VERSION,
+            LINKED_BEHOLD_HAND_RETURN_VERSION,
         }:
             raise ValueError("Unsupported linked exile/return schema")
         if type(self.transformed) is not bool:
@@ -260,7 +269,15 @@ class LinkedExileReturnSpec:
             raise ValueError("Unsupported linked return timing")
         if type(self.announced_opponents) is not bool:
             raise ValueError("Announced opponent exile requires its typed marker")
-        if self.schema_version == CONTROLLER_LIBRARY_TOP_HAND_VERSION:
+        if self.linked_behold_hand_return:
+            if (self.controller != "owner" or self.tapped
+                    or self.entry_counters or self.keywords or self.transformed or self.announced_opponents
+                    or any(scope is not None for scope in (self.public_end_step_scope,
+                        self.batch_departure_scope, self.fading_scope, self.same_name_scope,
+                        self.selected_departure_scope))):
+                raise ValueError("Linked Behold exile requires a source departure and the owner's hand")
+            version = LINKED_BEHOLD_HAND_RETURN_VERSION
+        elif self.schema_version == CONTROLLER_LIBRARY_TOP_HAND_VERSION:
             if (
                 self.timing != "controller_next_end_step" or self.controller != "owner"
                 or self.tapped or self.entry_counters or self.keywords or self.transformed
@@ -386,6 +403,18 @@ class LinkedExileReturnSpec:
             ))
         ):
             raise ValueError("Next-combat return requires its exact owned creature return and temporary haste")
+
+    @property
+    def linked_behold_hand_return(self):
+        return self.schema_version == LINKED_BEHOLD_HAND_RETURN_VERSION and self.timing == LINKED_ABILITY_TIMING
+
+    @property
+    def returns_with_subtype_counter(self):
+        return self.schema_version == LINKED_RETURN_SUBTYPE_COUNTER_VERSION and self.timing == "immediate"
+
+    @property
+    def linked_ability_returns_to_hand(self):
+        return self.fading_scope is LinkedFadingScope.OPPONENT_HAND or self.linked_behold_hand_return
 
     @property
     def public_set_scope(self):

@@ -26,16 +26,26 @@ RECRUITING_LIBRARY_SEARCH_VERSION = 12
 SUBTYPE_GRAVEYARD_SEARCH_VERSION = 37
 SUBTYPE_GRAVEYARD_SEARCH_CAPABILITY = "library.search.optional_subtype_to_graveyard"
 ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION = 14
+ANY_NUMBER_SUBTYPE_BATTLEFIELD_VERSION = 60
+ANY_NUMBER_SUBTYPE_BATTLEFIELD_CAPABILITY = "library.search.any_number_subtype_battlefield"
+ANY_NUMBER_CREATURE_BATTLEFIELD_VERSION = 76
+ANY_NUMBER_CREATURE_BATTLEFIELD_VERSIONS = (
+    ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION, ANY_NUMBER_CREATURE_BATTLEFIELD_VERSION,
+)
+ANY_NUMBER_CREATURE_BATTLEFIELD_CAPABILITY = "library.search.any_number_creatures_to_battlefield"
 EXILED_TARGET_SEARCH_VERSION = 16
+SACRIFICE_BOUND_CREATURE_SEARCH_VERSION = 62
 FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_VERSION = 17
 CREATURE_SUBSET_MANA_VALUE_SEARCH_VERSION = 23
 SIMULTANEOUS_CREATURE_SEARCH_VERSIONS = {
-    ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION, FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_VERSION,
-    CREATURE_SUBSET_MANA_VALUE_SEARCH_VERSION,
+    SACRIFICE_BOUND_CREATURE_SEARCH_VERSION,
+    *ANY_NUMBER_CREATURE_BATTLEFIELD_VERSIONS, FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_VERSION,
+    CREATURE_SUBSET_MANA_VALUE_SEARCH_VERSION, ANY_NUMBER_SUBTYPE_BATTLEFIELD_VERSION,
 }
 COMMITTED_ATTACKING_EXILE_SEARCH_VERSION = 18
 TARGET_NAME_MULTIZONE_EXILE_VERSION = 19
 LINKED_ARTIFACT_SEARCH_VERSION = 22
+LINKED_SAGA_LIBRARY_SEARCH_VERSION = 64
 TARGET_PLAYER_BASIC_LAND_SEARCH_VERSION = 21
 TARGET_PLAYER_BASIC_LAND_SEARCH_CAPABILITY = "library.search.target_player.basic_to_battlefield_tapped"
 TARGET_PLAYER_BASIC_LAND_SEARCH_MECHANIC = "fixed-target-player-basic-land-search"
@@ -56,8 +66,13 @@ DRAGON_GRAVEYARD_COPY_SEARCH_VERSION = 27
 CAST_X_ZONE_SEARCH_VERSION = 28
 PRIVATE_SEARCH_PLAY_VERSION = 29
 TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION = 30
+CONDITIONAL_UNTAP_SEARCH_VERSION = 63
+CONDITIONAL_UNTAP_SEARCH_FIELD = "post_shuffle_untap_minimum_lands"
+CONDITIONAL_UNTAP_SEARCH_CAPABILITY = "library.search.untap_result_after_shuffle"
+CONDITIONAL_UNTAP_SEARCH_MECHANIC = "conditional-untap-library-search"
 SEARCHED_LAND_UNTAP_VERSION = 38
 SEARCHED_LAND_UNTAP_CAPABILITY = "library.search.basic_land_after_shuffle_untap"
+TARGET_OPPONENT_EXILE_LIFE_SEARCH_VERSION = 31
 FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_CAPABILITY = "library.search.fixed_creature_battlefield_group"
 TARGET_NAME_SEARCH_SNAPSHOT = "_target_name_search_snapshot"
 TARGET_NAME_PERMANENT_TYPES = ("artifact", "battle", "creature", "enchantment", "land", "planeswalker")
@@ -76,12 +91,25 @@ LEGACY_MANA_COST_0_OR_1_SEARCH_PREDICATE = "mana_cost_0_or_1"
 _MANA_VALUE_BOUNDS = frozenset({"equal", "minimum", "maximum"})
 
 
+PUBLIC_SEARCH_SPLIT_VERSION = 31
+DISTINCT_PUBLIC_SEARCH_SPLIT_VERSION = 32
+PUBLIC_SEARCH_CHOOSER = "public_search_chooser"
+
+
+def is_public_search_split(effect):
+    version = effect.get("schema_version")
+    return effect.get("op") == "search" and (
+        PUBLIC_SEARCH_CHOOSER in effect
+        or (version == PUBLIC_SEARCH_SPLIT_VERSION
+            and "searching_player" not in effect and "library_player" not in effect)
+    )
+
 def semantic_search_maximum(effect, minimum, option_count):
     from .named_search_model import LITERAL_NAME_ANY_NUMBER_SEARCH_VERSION
 
     if effect.get("schema_version") in (
         LITERAL_NAME_ANY_NUMBER_SEARCH_VERSION, RECRUITING_LIBRARY_SEARCH_VERSION,
-        ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION, TARGET_NAME_MULTIZONE_EXILE_VERSION,
+        *ANY_NUMBER_CREATURE_BATTLEFIELD_VERSIONS, ANY_NUMBER_SUBTYPE_BATTLEFIELD_VERSION, TARGET_NAME_MULTIZONE_EXILE_VERSION,
         SUBTYPE_GRAVEYARD_SEARCH_VERSION,
         CREATURE_SUBSET_MANA_VALUE_SEARCH_VERSION,
     ):
@@ -167,6 +195,13 @@ class SemanticSearchResultPublication:
     nonrevealing_printed_cost_search: bool
 
 
+def search_result_move_options(effect, *, seat, viewers, destination, reveal):
+    if effect.get("schema_version") == LINKED_SAGA_LIBRARY_SEARCH_VERSION:
+        return {"private_library_exile_viewer": seat, "private_replacement_journal": True,
+                "semantic_events": True}
+    return {"reveal_to": viewers if reveal else None, "semantic_events": destination == "battlefield"}
+
+
 def project_semantic_search_result_publication(
     effect: Mapping[str, Any],
     *,
@@ -189,7 +224,7 @@ def project_semantic_search_result_publication(
         "count": len(moved),
         "revealed": reveal,
     }
-    name_multizone = effect.get("schema_version") == TARGET_NAME_MULTIZONE_EXILE_VERSION
+    name_multizone = effect.get("schema_version") in (TARGET_NAME_MULTIZONE_EXILE_VERSION, SACRIFICE_BOUND_CREATURE_SEARCH_VERSION)
     searched_land_untap = effect.get("schema_version") == SEARCHED_LAND_UNTAP_VERSION
     if effect.get("schema_version") in (6, CAST_X_ZONE_SEARCH_VERSION) or name_multizone:
         public_details["searched_zones"] = list(effect["zone"])
@@ -212,9 +247,13 @@ def project_semantic_search_result_publication(
     qualified_graveyard_search = (
         effect.get("schema_version") == QUALIFIED_LIBRARY_SEARCH_VERSION and destination_spec == "graveyard"
     )
+    targeted_exile_life = (
+        effect.get("schema_version") == TARGET_OPPONENT_EXILE_LIFE_SEARCH_VERSION
+        and not is_public_search_split(effect)
+    )
     actual_public_zones = nonrevealing_printed_cost_search or qualified_graveyard_search or (
         public_choice
-        and effect.get("schema_version") in {
+        and (targeted_exile_life or effect.get("schema_version") in {
             9,
             *SIMULTANEOUS_CREATURE_SEARCH_VERSIONS,
             COMMITTED_ATTACKING_EXILE_SEARCH_VERSION, COMMITTED_LAND_SEARCH_VERSION,
@@ -223,12 +262,12 @@ def project_semantic_search_result_publication(
             TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION,
             TARGET_PLAYER_BASIC_LAND_SEARCH_VERSION,
             LINKED_ARTIFACT_SEARCH_VERSION,
-            BARGAIN_SEARCH_VERSION, PRIVATE_SEARCH_PLAY_VERSION,
+            LINKED_SAGA_LIBRARY_SEARCH_VERSION, BARGAIN_SEARCH_VERSION, PRIVATE_SEARCH_PLAY_VERSION,
             PAID_ARTIFACT_SEARCH_VERSION,
             PAID_CREATURE_SEARCH_VERSION,
             CAST_X_ZONE_SEARCH_VERSION,
             SEARCHED_LAND_UNTAP_VERSION,
-        }
+        })
     )
     public_cards = public_order
     if nonrevealing_printed_cost_search:
@@ -242,7 +281,7 @@ def project_semantic_search_result_publication(
 
     restrict_public_results = nonrevealing_printed_cost_search or qualified_graveyard_search or (
         public_choice and (name_multizone or searched_land_untap or effect.get("schema_version") in {
-            PAID_ARTIFACT_SEARCH_VERSION, PAID_CREATURE_SEARCH_VERSION, CAST_X_ZONE_SEARCH_VERSION,
+            ANY_NUMBER_SUBTYPE_BATTLEFIELD_VERSION, PAID_ARTIFACT_SEARCH_VERSION, PAID_CREATURE_SEARCH_VERSION, CAST_X_ZONE_SEARCH_VERSION,
         })
     )
     public_count = len(moved)
@@ -256,13 +295,17 @@ def project_semantic_search_result_publication(
 
     public_changed_objects = public_cards if (
         restrict_public_results or (public_choice and is_bargain_search_effect(effect))
-        or effect.get("schema_version") in (DRAGON_GRAVEYARD_COPY_SEARCH_VERSION, TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION)
+        or targeted_exile_life
+        or effect.get("schema_version") in (
+            DRAGON_GRAVEYARD_COPY_SEARCH_VERSION, TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION,
+            LINKED_SAGA_LIBRARY_SEARCH_VERSION,
+        )
     ) else public_order
     private_details = {
         **public_details,
         **allocation_details,
         **({"count": len(moved)} if (name_multizone or searched_land_untap or nonrevealing_printed_cost_search
-           or qualified_graveyard_search or effect.get("schema_version") == CAST_X_ZONE_SEARCH_VERSION) else {}),
+           or qualified_graveyard_search or effect.get("schema_version") in (CAST_X_ZONE_SEARCH_VERSION, ANY_NUMBER_SUBTYPE_BATTLEFIELD_VERSION)) else {}),
         "objects": [card.ref for card in moved],
     }
     return SemanticSearchResultPublication(
@@ -556,18 +599,27 @@ class SubtypeGraveyardSearchSpec:
 
 @dataclass(frozen=True, slots=True)
 class AnyNumberCreatureSubtypeSearch:
-    subtype: str
+    subtype: str | None = None
+    creature_only: bool = True
 
     def __post_init__(self):
-        if type(self.subtype) is not str or canonical_creature_subtype(self.subtype) != self.subtype:
+        if (type(self.creature_only) is not bool or (self.subtype is None and not self.creature_only)
+                or self.subtype is not None and (type(self.subtype) is not str
+                    or canonical_creature_subtype(self.subtype) != self.subtype)):
             raise ValueError("An any-number search requires one canonical creature subtype")
 
     def effect(self):
+        version = ANY_NUMBER_CREATURE_BATTLEFIELD_VERSION
+        selector = {"types_any": ["creature"]} if self.creature_only else {}
+        if self.subtype is not None:
+            selector["subtypes_any"] = [self.subtype]
+            version = (ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION if self.creature_only
+                       else ANY_NUMBER_SUBTYPE_BATTLEFIELD_VERSION)
         return {
             "op": "search",
-            "schema_version": ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION,
+            "schema_version": version,
             "zone": "library",
-            "selector": {"types_any": ["creature"], "subtypes_any": [self.subtype]},
+            "selector": selector,
             "count": {"minimum": 0, "maximum": "all_eligible"},
             "destination": "battlefield",
             "reveal": False,
@@ -578,11 +630,15 @@ class AnyNumberCreatureSubtypeSearch:
     def from_effect(cls, effect):
         if not isinstance(effect, Mapping):
             raise ValueError("An any-number search requires its typed instruction")
-        selector = effect.get("selector")
-        subtypes = selector.get("subtypes_any") if isinstance(selector, Mapping) else None
-        if not isinstance(subtypes, (list, tuple)) or len(subtypes) != 1:
-            raise ValueError("An any-number search requires one canonical creature subtype")
-        spec = cls(subtypes[0])
+        if effect.get("schema_version") == ANY_NUMBER_CREATURE_BATTLEFIELD_VERSION:
+            spec = cls()
+        else:
+            selector = effect.get("selector")
+            subtypes = selector.get("subtypes_any") if isinstance(selector, Mapping) else None
+            if not isinstance(subtypes, (list, tuple)) or len(subtypes) != 1:
+                raise ValueError("An any-number search requires one canonical creature subtype")
+            creature_only = effect.get("schema_version") != ANY_NUMBER_SUBTYPE_BATTLEFIELD_VERSION
+            spec = cls(subtypes[0], creature_only=creature_only)
         if (
             FrozenMap(effect) != FrozenMap(spec.effect())
             or type(effect["schema_version"]) is not int
@@ -594,8 +650,14 @@ class AnyNumberCreatureSubtypeSearch:
         return spec
 
     def compiled(self):
+        if self.subtype is None:
+            template = "creature-any-number-library-battlefield-v1"
+        elif self.creature_only:
+            template = "creature-subtype-any-number-library-battlefield-v1"
+        else:
+            template = "subtype-any-number-library-battlefield-v1"
         return (
-            "creature-subtype-any-number-library-battlefield-v1", (self.effect(),), None,
+            template, (self.effect(),), None,
             (FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID,),
         )
 
@@ -770,19 +832,23 @@ class SearchedLandUntapSearch:
 def is_counted_library_search(effect: Mapping[str, Any]) -> bool:
     from .named_search_model import LITERAL_NAME_ANY_NUMBER_SEARCH_VERSION, LITERAL_NAME_BATTLEFIELD_SEARCH_VERSION
 
+    from .conditional_search_model import OPTIONAL_CONDITIONAL_SEARCH_VERSION
+
     selector = effect.get("selector")
     return SHARED_LAND_TYPE_SEARCH_FIELD in effect or effect.get("schema_version") in (
-        2, 3, 4, 5, QUERY_BOUND_SEARCH_VERSION, TARGET_NAME_LIBRARY_SEARCH_VERSION,
+        2, 3, 4, 5, OPTIONAL_CONDITIONAL_SEARCH_VERSION, QUERY_BOUND_SEARCH_VERSION, TARGET_NAME_LIBRARY_SEARCH_VERSION,
         LITERAL_NAME_ANY_NUMBER_SEARCH_VERSION, LITERAL_NAME_BATTLEFIELD_SEARCH_VERSION, RECRUITING_LIBRARY_SEARCH_VERSION,
-        ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION, EXILED_TARGET_SEARCH_VERSION,
+        *ANY_NUMBER_CREATURE_BATTLEFIELD_VERSIONS, ANY_NUMBER_SUBTYPE_BATTLEFIELD_VERSION,
+        EXILED_TARGET_SEARCH_VERSION,
         FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_VERSION, COMMITTED_ATTACKING_EXILE_SEARCH_VERSION,
         COMMITTED_LAND_SEARCH_VERSION, TARGET_PLAYER_BASIC_LAND_SEARCH_VERSION, SUBTYPE_GRAVEYARD_SEARCH_VERSION,
         CREATURE_SUBSET_MANA_VALUE_SEARCH_VERSION,
         PRIVATE_SEARCH_RANDOM_DISCARD_VERSION,
+        SACRIFICE_BOUND_CREATURE_SEARCH_VERSION,
         BARGAIN_SEARCH_VERSION,
         PAID_ARTIFACT_SEARCH_VERSION, PAID_CREATURE_SEARCH_VERSION,
-        SEARCHED_LAND_UNTAP_VERSION,
-    ) or (
+        SEARCHED_LAND_UNTAP_VERSION, CONDITIONAL_UNTAP_SEARCH_VERSION,
+    ) or CONDITIONAL_UNTAP_SEARCH_FIELD in effect or (
         isinstance(selector, Mapping) and SEARCH_ALTERNATIVES in selector
     )
 
@@ -794,6 +860,16 @@ def counted_search_bound_dependencies(effect: Mapping[str, Any]) -> tuple[str, .
     if effect.get("schema_version") == SEARCHED_LAND_UNTAP_VERSION:
         SearchedLandUntapSearch.from_effect(effect)
         return FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, SEARCHED_LAND_UNTAP_CAPABILITY
+    if (
+        effect.get("schema_version") == CONDITIONAL_UNTAP_SEARCH_VERSION
+        or CONDITIONAL_UNTAP_SEARCH_FIELD in effect
+    ):
+        FixedCountedLibrarySearchTemplate.from_effect(effect)
+        return (
+            FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,
+            CONDITIONAL_UNTAP_SEARCH_CAPABILITY,
+            "permanent.untap.effect",
+        )
     if effect.get("schema_version") == TARGET_NAME_LIBRARY_SEARCH_VERSION:
         return TargetNameLibrarySearchSpec.from_effect(effect).capabilities()
     if effect.get("schema_version") == PRIVATE_SEARCH_RANDOM_DISCARD_VERSION:
@@ -806,9 +882,12 @@ def counted_search_bound_dependencies(effect: Mapping[str, Any]) -> tuple[str, .
     if effect.get("schema_version") in (LITERAL_NAME_ANY_NUMBER_SEARCH_VERSION, LITERAL_NAME_BATTLEFIELD_SEARCH_VERSION):
         decode_literal_library_search(effect)
         return (FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,)
-    if effect.get("schema_version") == ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION:
-        AnyNumberCreatureSubtypeSearch.from_effect(effect)
-        return (FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,)
+    if effect.get("schema_version") in (*ANY_NUMBER_CREATURE_BATTLEFIELD_VERSIONS, ANY_NUMBER_SUBTYPE_BATTLEFIELD_VERSION):
+        spec = AnyNumberCreatureSubtypeSearch.from_effect(effect)
+        if spec.subtype is None:
+            return FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, ANY_NUMBER_CREATURE_BATTLEFIELD_CAPABILITY
+        return ((FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,) if spec.creature_only
+                else (FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, ANY_NUMBER_SUBTYPE_BATTLEFIELD_CAPABILITY))
     if (
         effect.get("schema_version") == CREATURE_SUBSET_MANA_VALUE_SEARCH_VERSION
         or CREATURE_SUBSET_MANA_VALUE_FIELD in effect
@@ -849,8 +928,8 @@ def counted_search_bound_dependencies(effect: Mapping[str, Any]) -> tuple[str, .
     if effect.get('schema_version') == 5:
         from .search_allocation_model import SearchAllocationSpec
         return SearchAllocationSpec.from_effect(effect).capabilities()
-    if effect.get('schema_version')==4:
-        from .conditional_search_model import ConditionalSearchSpec
+    from .conditional_search_model import ConditionalSearchSpec, OPTIONAL_CONDITIONAL_SEARCH_VERSION
+    if effect.get("schema_version") in (4, OPTIONAL_CONDITIONAL_SEARCH_VERSION):
         return ConditionalSearchSpec.from_effect(effect).capabilities()
     if SHARED_LAND_TYPE_SEARCH_FIELD in effect:
         FixedCountedLibrarySearchTemplate.from_effect(effect)
@@ -1006,6 +1085,7 @@ class FixedCountedLibrarySearchTemplate:
     enters_tapped: bool = False
     different_names: bool = False
     shared_land_type: bool = False
+    post_shuffle_untap_minimum_lands: int | None = None
 
     def __post_init__(self) -> None:
         if type(self.count) is not int or not 1 <= self.count <= 10:
@@ -1026,6 +1106,14 @@ class FixedCountedLibrarySearchTemplate:
         if self.shared_land_type and (self.count != 2 or not self.optional_count or self.destination != "battlefield"
                 or self.reveal or not self.enters_tapped or FrozenMap(self.selector) != _SHARED_LAND_TYPE_SEARCH_SELECTOR):
             raise ValueError("Shared land type requires the complete up-to-two basic-land search and tapped entry")
+        threshold = self.post_shuffle_untap_minimum_lands
+        if threshold is not None and (
+            type(threshold) is not int or not 1 <= threshold <= 10
+            or self.count != 1 or self.optional_count or self.destination != "battlefield"
+            or not self.enters_tapped or self.reveal
+            or FrozenMap(self.selector) != FrozenMap({"types": ["land"], "supertypes": ["basic"]})
+        ):
+            raise ValueError("Conditional untap requires one mandatory tapped basic-land search")
         if self.enters_tapped and self.destination != "battlefield":
             raise ValueError("Only battlefield search results may enter tapped")
         if not counted_search_selector_is_closed(self.selector, destination=self.destination):
@@ -1077,6 +1165,9 @@ class FixedCountedLibrarySearchTemplate:
             value[DIFFERENT_NAME_SEARCH_FIELD] = True
         if self.shared_land_type:
             value[SHARED_LAND_TYPE_SEARCH_FIELD] = True
+        if self.post_shuffle_untap_minimum_lands is not None:
+            value["schema_version"] = CONDITIONAL_UNTAP_SEARCH_VERSION
+            value[CONDITIONAL_UNTAP_SEARCH_FIELD] = self.post_shuffle_untap_minimum_lands
         return value
 
     def compiled(self) -> tuple[str, tuple[dict[str, Any], ...], None, tuple[str, ...]]:
@@ -1084,6 +1175,8 @@ class FixedCountedLibrarySearchTemplate:
         mechanics = (FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID,)
         if self.disjunctive:
             mechanics = (*mechanics, DISJUNCTIVE_LIBRARY_SEARCH_MECHANIC_ID)
+        if self.post_shuffle_untap_minimum_lands is not None:
+            mechanics = (*mechanics, CONDITIONAL_UNTAP_SEARCH_MECHANIC)
         return (
             f"fixed-counted-library-search-v{effect['schema_version']}", (effect,), None, mechanics,
         )
@@ -1093,8 +1186,8 @@ class FixedCountedLibrarySearchTemplate:
         if isinstance(effect, Mapping) and effect.get('schema_version') == 5:
             from .search_allocation_model import SearchAllocationSpec
             return SearchAllocationSpec.from_effect(effect).search
-        if isinstance(effect,Mapping) and effect.get('schema_version')==4:
-            from .conditional_search_model import ConditionalSearchSpec
+        from .conditional_search_model import ConditionalSearchSpec, OPTIONAL_CONDITIONAL_SEARCH_VERSION
+        if isinstance(effect, Mapping) and effect.get("schema_version") in (4, OPTIONAL_CONDITIONAL_SEARCH_VERSION):
             return ConditionalSearchSpec.from_effect(effect).search
         fields = {
             "op", "schema_version", "zone", "selector", "count", "destination",
@@ -1102,10 +1195,13 @@ class FixedCountedLibrarySearchTemplate:
         }
         if (
             not isinstance(effect, Mapping)
-            or set(effect) not in (fields, fields | {"enters_tapped_override"}, fields | {DIFFERENT_NAME_SEARCH_FIELD},
-                                  fields | {"enters_tapped_override", SHARED_LAND_TYPE_SEARCH_FIELD})
+            or set(effect) not in (
+                fields, fields | {"enters_tapped_override"}, fields | {DIFFERENT_NAME_SEARCH_FIELD},
+                fields | {"enters_tapped_override", SHARED_LAND_TYPE_SEARCH_FIELD},
+                fields | {"enters_tapped_override", CONDITIONAL_UNTAP_SEARCH_FIELD},
+            )
             or type(effect.get("schema_version")) is not int
-            or effect["schema_version"] not in (2, 3)
+            or effect["schema_version"] not in (2, 3, CONDITIONAL_UNTAP_SEARCH_VERSION)
         ):
             raise ValueError("Counted search instruction fields are incomplete or unknown")
         count = effect["count"]
@@ -1124,6 +1220,7 @@ class FixedCountedLibrarySearchTemplate:
             enters_tapped=effect.get("enters_tapped_override", False),
             different_names=effect.get(DIFFERENT_NAME_SEARCH_FIELD, False),
             shared_land_type=effect.get(SHARED_LAND_TYPE_SEARCH_FIELD, False),
+            post_shuffle_untap_minimum_lands=effect.get(CONDITIONAL_UNTAP_SEARCH_FIELD),
         )
         if value.effect() != thaw_value(effect):
             raise ValueError("Counted search instruction contradicts its typed contract")

@@ -7,6 +7,9 @@ from typing import Any, Mapping
 from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from ..flashback import (
     FixedManaFlashbackSpec,
+    FixedSacrificeFlashbackSpec,
+    SACRIFICE_FLASHBACK_CAPABILITY_ID,
+    SACRIFICE_FLASHBACK_HANDLER_ID,
     FlashbackError,
     FLASHBACK_CAPABILITY_ID,
     FLASHBACK_HANDLER_ID,
@@ -32,7 +35,9 @@ class FixedManaFlashbackHandler:
     )
     capability_dependencies: tuple[str, ...] = (FLASHBACK_CAPABILITY_ID,)
 
-    def validate(self, descriptor: Mapping[str, Any]) -> FixedManaFlashbackSpec:
+    def validate(
+        self, descriptor: Mapping[str, Any],
+    ) -> FixedManaFlashbackSpec | FixedSacrificeFlashbackSpec:
         exact_fields(
             descriptor,
             {
@@ -46,6 +51,7 @@ class FixedManaFlashbackHandler:
         )
         if (
             descriptor["handler_id"] != self.handler_id
+            or type(descriptor["schema_version"]) is not int
             or descriptor["schema_version"] != self.schema_version
             or descriptor["event"] != self.event
         ):
@@ -55,7 +61,9 @@ class FixedManaFlashbackHandler:
         if descriptor[REQUIRES_COMPLETE_CARD_PROGRAM_FIELD] is not True:
             raise SemanticNodeError("Flashback requires complete-card admission")
         try:
-            return FixedManaFlashbackSpec.from_dict(descriptor["flashback"])
+            spec_type = (FixedSacrificeFlashbackSpec if self.handler_id == SACRIFICE_FLASHBACK_HANDLER_ID
+                         else FixedManaFlashbackSpec)
+            return spec_type.from_dict(descriptor["flashback"])
         except FlashbackError as exc:
             raise SemanticNodeError(str(exc)) from exc
 
@@ -63,7 +71,7 @@ class FixedManaFlashbackHandler:
         self,
         descriptor: Mapping[str, Any],
         context: object,
-    ) -> tuple[FixedManaFlashbackSpec, ...]:
+    ) -> tuple[FixedManaFlashbackSpec | FixedSacrificeFlashbackSpec, ...]:
         del context
         return (self.validate(descriptor),)
 
@@ -93,14 +101,22 @@ class HarmonizeCastHandler:
 
 
 class FixedManaFlashbackRegistry(
-    RuntimeComponentRegistry[object, FixedManaFlashbackSpec | HarmonizeSpec]
+    RuntimeComponentRegistry[object, FixedManaFlashbackSpec | FixedSacrificeFlashbackSpec | HarmonizeSpec]
 ):
     pass
 
 
 @lru_cache(maxsize=1)
 def default_fixed_mana_flashback_registry() -> FixedManaFlashbackRegistry:
-    registry = FixedManaFlashbackRegistry((FixedManaFlashbackHandler(), HarmonizeCastHandler()))
+    registry = FixedManaFlashbackRegistry((
+        FixedManaFlashbackHandler(),
+        FixedManaFlashbackHandler(
+            handler_id=SACRIFICE_FLASHBACK_HANDLER_ID,
+            family=SACRIFICE_FLASHBACK_CAPABILITY_ID,
+            capability_dependencies=(SACRIFICE_FLASHBACK_CAPABILITY_ID,),
+        ),
+        HarmonizeCastHandler(),
+    ))
     registry.require_registered_capabilities(load_default_capability_registry())
     return registry.freeze()
 

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from ..rules.entrant_x_reflexive import ENTRANT_X_PAYMENT_VERSION
+
 from dataclasses import dataclass, replace
 from typing import Any, Mapping, Sequence
 
@@ -1303,7 +1305,7 @@ class FixedEffectOptionalPaymentHandler(OptionalPaymentHandler):
         if effect.get('schema_version')==5:
             from .commander_learn import prepare_commander_learn
             return prepare_commander_learn(effect,context)
-        if effect.get('schema_version')==4:
+        if effect.get('schema_version') in {4, ENTRANT_X_PAYMENT_VERSION}:
             from .reflexive_payment import prepare_reflexive_payment
             return prepare_reflexive_payment(effect,context)
         if effect.get('schema_version')==3:
@@ -1365,7 +1367,7 @@ class FixedEffectOptionalPaymentHandler(OptionalPaymentHandler):
         if continuation.effect.get('schema_version')==5:
             from .commander_learn import complete_commander_learn
             return complete_commander_learn(continuation,response,query)
-        if continuation.effect.get('schema_version')==4:
+        if continuation.effect.get('schema_version') in {4, ENTRANT_X_PAYMENT_VERSION}:
             from .reflexive_payment import complete_reflexive_payment
             return complete_reflexive_payment(continuation,response,query)
         if continuation.effect.get('schema_version')==3:

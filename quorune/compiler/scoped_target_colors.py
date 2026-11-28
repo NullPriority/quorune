@@ -34,7 +34,7 @@ def _color_clause(text,compile_leaf):
     if prefixed:material=material[len('Until end of turn, '):]
     temporary=material.casefold().endswith(' until end of turn')
     if temporary:material=material[:-len(' until end of turn')]
-    match=re.fullmatch(r'Target (?P<subject>creature|permanent|spell) (?P<body>.+)',material,re.I)
+    match=re.fullmatch(r'Target (?P<subject>artifact creature|creature|permanent|spell) (?P<body>.+)',material,re.I)
     if match is None:return None
     body=match['body'];color=re.search(r'\bbecomes (?P<color>white|blue|black|red|green|colorless)(?P<add> in addition to its other colors)?(?P<time> until end of turn)?\b',body,re.I)
     if color is None:return None

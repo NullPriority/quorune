@@ -325,34 +325,7 @@ class FixedPublicAlternativeCostSpec:
             raise FixedPublicAlternativeCostError(
                 "Fixed alternative cost requires a typed condition"
             )
-        requirements = dict(self.mana_requirements)
-        if (
-            tuple(key for key, _ in self.mana_requirements) != _MANA_KEYS
-            or len(requirements) != len(_MANA_KEYS)
-            or any(
-                type(amount) is not int or amount < 0
-                for amount in requirements.values()
-            )
-        ):
-            raise FixedPublicAlternativeCostError(
-                "Fixed alternative-cost mana vector is malformed"
-            )
-        if self.cost_text is not None:
-            normalized_cost = str(self.cost_text).upper()
-            parsed, complex_symbols = mana_cost_to_vector(normalized_cost)
-            if (
-                _ORDINARY_MANA.fullmatch(normalized_cost) is None
-                or complex_symbols
-                or parsed != requirements
-            ):
-                raise FixedPublicAlternativeCostError(
-                    "Fixed alternative-cost text does not match its mana"
-                )
-            object.__setattr__(self, "cost_text", normalized_cost)
-        elif any(requirements.values()):
-            raise FixedPublicAlternativeCostError(
-                "Fixed alternative-cost mana requires source text"
-            )
+        requirements = self._validated_mana_price()
         if self.schema_version == LIFE_AND_BLUE_HAND_EXILE_PRICE_VERSION:
             if (
                 self.kind is not FixedPublicAlternativeCostKind.PLAIN
@@ -469,6 +442,37 @@ class FixedPublicAlternativeCostSpec:
                 thaw_value(value) for value in self.additional_costs
             ],
         }
+
+    def _validated_mana_price(self) -> dict[str, int]:
+        requirements = dict(self.mana_requirements)
+        if (
+            tuple(key for key, _ in self.mana_requirements) != _MANA_KEYS
+            or len(requirements) != len(_MANA_KEYS)
+            or any(
+                type(amount) is not int or amount < 0
+                for amount in requirements.values()
+            )
+        ):
+            raise FixedPublicAlternativeCostError(
+                "Fixed alternative-cost mana vector is malformed"
+            )
+        if self.cost_text is not None:
+            normalized_cost = str(self.cost_text).upper()
+            parsed, complex_symbols = mana_cost_to_vector(normalized_cost)
+            if (
+                _ORDINARY_MANA.fullmatch(normalized_cost) is None
+                or complex_symbols
+                or parsed != requirements
+            ):
+                raise FixedPublicAlternativeCostError(
+                    "Fixed alternative-cost text does not match its mana"
+                )
+            object.__setattr__(self, "cost_text", normalized_cost)
+        elif any(requirements.values()):
+            raise FixedPublicAlternativeCostError(
+                "Fixed alternative-cost mana requires source text"
+            )
+        return requirements
 
     @classmethod
     def from_dict(

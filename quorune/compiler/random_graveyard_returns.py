@@ -4,7 +4,25 @@ from __future__ import annotations
 
 from . import regex_working_set as re
 from ..creature_subtypes import canonical_creature_subtype
-from ..rules.random_graveyard_returns import OPERATION,MECHANIC,RandomGraveyardReturnSpec
+from ..rules.random_graveyard_returns import (
+    OPERATION, MECHANIC, EXILE_CAST_MECHANIC, EXILE_CAST_TEMPLATE, RandomGraveyardReturnSpec, random_exile_cast_instruction,
+)
+
+
+_EXILE_CAST = re.compile(
+    r"Exile an instant or sorcery card with mana value (?P<maximum>0|[1-9][0-9]?) or less "
+    r"from your graveyard at random\. You may cast it without paying its mana cost\. "
+    r"If that spell would be put into a graveyard, exile it instead\.", re.I,
+)
+
+
+def random_graveyard_exile_cast_template(text):
+    match = _EXILE_CAST.fullmatch(" ".join(text.split()))
+    if match is None:
+        return None
+    spec = RandomGraveyardReturnSpec("instant or sorcery card", schema_version=2,
+                                   maximum_mana_value=int(match["maximum"]))
+    return EXILE_CAST_TEMPLATE, (random_exile_cast_instruction("$controller", spec),), None, (EXILE_CAST_MECHANIC,)
 
 
 def random_graveyard_return_template(text):

@@ -711,6 +711,21 @@ def _resolution_body(
     }:
         if node.event == "unresolved" or ", " not in text:
             return None
+        if node.event == "saga.chapter.3":
+            from ..read_ahead import saga_chapter_line
+            from .saga_chapter_nodes import _same_turn_noncreature_keyword
+
+            chapter = saga_chapter_line(text)
+            if chapter is not None and chapter.chapters == (3,):
+                installer = _same_turn_noncreature_keyword(chapter.body)
+                if installer is not None:
+                    # The chapter installs a trigger. Its later cast imposes the target.
+                    if node.exact and (stable_json(node.effects) != stable_json(installer[1])
+                                       or node.target_schema is not None):
+                        raise TargetEffectAssuranceError(
+                            f"delayed Saga installer differs from source lowering: {record.oracle_id}:{node.node_id}"
+                        )
+                    return chapter.body
         return text.split(", ", 1)[1]
     if node.kind in {
         "activated_ability",

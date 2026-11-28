@@ -8,6 +8,7 @@ from ..attachments import (
     attach_objects,
     attach_to_player,
     attachment_target_ref,
+    current_protection_attachment,
     detach_object,
 )
 from ..model import CardInstance
@@ -89,12 +90,16 @@ def _protection_allows_attachment(
     target: CardInstance,
     *, controller: str,
 ) -> bool:
+    from ..protection_attachment_exceptions import simultaneous_attachment_protection_sources
+
     aura_data = host._effective_card_data(aura)
     verdict = protection_verdict(
         host._effective_card_data(target),
         ProtectionSource.from_characteristics(aura_data),
         source_player=controller,
         retaining_aura=aura.logical_object_id if aura.zone=='battlefield' and aura.attached_to==target.object_id else None,
+        retaining_attachment=current_protection_attachment(host.state.cards, aura, target),
+        simultaneous_sources=simultaneous_attachment_protection_sources(host.state, aura),
     )
     return verdict is ProtectionVerdict.ALLOWED
 
@@ -178,7 +183,6 @@ _REANIMATING_AURA_DEPARTURE = "aura.reanimation.source_departure"
 def reanimate_graveyard_attachment(host, aura, *, actor, reason, effect):
     """Return the Aura's enchanted card and bind its actual battlefield arrival."""
     from ..errors import GameRuleError
-    from ..trigger_processing import schedule_delayed_trigger
 
     spec = host._compiled_enchant_spec(aura)
     if not isinstance(spec, LinkedGraveyardCreatureEnchantSpec) or spec.link_annotation != effect.get("link_annotation"):
@@ -191,6 +195,12 @@ def reanimate_graveyard_attachment(host, aura, *, actor, reason, effect):
         or creature.ref not in legal_aura_target_refs(host, aura, spec, controller=aura.controller, as_target=False)
     ):
         return None
+    return return_linked_graveyard_creature(host, aura, creature, spec, actor=actor, reason=reason, effect=effect)
+
+
+def return_linked_graveyard_creature(host, aura, creature, spec, *, actor, reason, effect):
+    from ..trigger_processing import schedule_delayed_trigger
+
     previous_incarnation = creature.zone_change_counter
     returned = host.move_card(
         creature.object_id,

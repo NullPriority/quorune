@@ -90,6 +90,22 @@ def fixed_token_creator_scope(effect: Mapping[str, Any]) -> FixedTokenCreatorSco
     return scope
 
 
+def distributed_source_counter_token_amount(effect: Mapping[str, Any]):
+    """Decode the shared source-counter quantity in the all-player token slot."""
+    from .scalar_effect_amount_model import SCALAR_AMOUNT_KIND, ScalarAmountOrigin, ScalarEffectAmountSpec
+
+    token = effect.get("token")
+    quantity = token.get("quantity") if isinstance(token, Mapping) else None
+    if not isinstance(quantity, Mapping) or quantity.get("kind") != SCALAR_AMOUNT_KIND:
+        return None
+    spec = ScalarEffectAmountSpec.from_dict(quantity)
+    if (fixed_token_creator_scope(effect) is not FixedTokenCreatorScope.EACH_PLAYER
+            or spec.origin is not ScalarAmountOrigin.SOURCE or not spec.counter_name
+            or not spec.binding_id or spec.coefficient != 1):
+        raise FixedTokenProductionError("Distributed scalar tokens require one bound source counter count")
+    return spec
+
+
 CREATED_TOKEN_HASTE_FIELD = "created_token_haste_version"
 CREATED_TOKEN_HASTE_CAPABILITY = "token.creation.fixed_temporary_haste"
 CREATED_TOKEN_HASTE_LIFELINK_CAPABILITY = "token.creation.fixed_temporary_haste_lifelink"
@@ -203,6 +219,14 @@ def predefined_token_identity(
     }
 
 
+def treasure_token_identity(*, legacy_name: bool = False) -> tuple[str, dict[str, Any]]:
+    return predefined_token_identity("Treasure", {
+        "type_line": "Token Artifact — Treasure",
+        "oracle_text": "{T}, Sacrifice this token: Add one mana of any color.",
+        "activated_ability_profile": "tap_sac_any_color_mana_v1",
+    }, legacy_name=legacy_name)
+
+
 def historical_unnamed_token_view(
     name: object, definition: Mapping[str, Any],
 ) -> tuple[str, dict[str, Any]] | None:
@@ -257,6 +281,16 @@ def food_token_effect(quantity: int) -> dict[str, Any]:
         "quantity": _fixed_count(quantity, label="Food"),
         "characteristics": characteristics,
     }
+
+
+def treasure_token_effect(quantity: int) -> dict[str, Any]:
+    name, characteristics = predefined_token_identity("Treasure", {
+        "type_line":"Token Artifact — Treasure",
+        "display_text":"{T}, Sacrifice this token: Add one mana of any color.",
+        "activated_ability_profile":"tap_sac_any_color_mana_v1",
+    })
+    return {"op":"create_token", "controller":"$controller", "name":name,
+            "quantity":_fixed_count(quantity, label="Treasure"), "characteristics":characteristics}
 
 
 def gold_token_effect() -> dict[str, Any]:

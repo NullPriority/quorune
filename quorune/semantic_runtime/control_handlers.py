@@ -14,6 +14,7 @@ from ..control_exchange_model import (
 )
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .control_intents import (
+    DirectionalControlIntent,
     GainControlIntent, GainControlSetIntent, GainSpellControlIntent,
     ExchangePermanentControlIntent, GiveControlIntent, GiveControlSetIntent, RestoreOwnerControlIntent,
 )
@@ -104,6 +105,15 @@ class FixedControlSetHandler:
             TWO_CONTROLLER_CREATURE_TRANSFER_FIELD, two_controller_creature_transfer_query,
             validate_two_controller_creature_transfer,
         )
+        from ..rules.directional_control import FIELD as DIRECTIONAL_CONTROL_FIELD, validate_directional_control_result
+
+        if DIRECTIONAL_CONTROL_FIELD in effect:
+            try:
+                direction = validate_directional_control_result(effect)
+                intent = DirectionalControlIntent(context.actor, direction, _source(context), context.default_reason)
+            except (TypeError, ValueError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            return IntentPlan(self.operation, self.handler_id, (intent,))
 
         from ..rules.targeted_control_set import (
             TARGETED_CONTROL_SET_RECEIVERS, TARGETED_CONTROL_SET_STEPS, TARGETED_CONTROL_SET_VERSION,
@@ -195,13 +205,21 @@ class RecipientControlHandler:
     def lower(self,effect,context):
         from ..recipient_control_model import validate_recipient_control_effect
         try:
-            validate_recipient_control_effect(effect,allow_reason=True,resolved=True)
+            if effect.get("schema_version") == 5:
+                from ..rules.source_control_reflexive import source_control_reflexive_parts
+
+                source_control_reflexive_parts(effect, allow_reason=True, resolved=True)
+            else:
+                validate_recipient_control_effect(effect,allow_reason=True,resolved=True)
             recipient=effect['controller'];card=effect['card']
             if recipient is not None:context.query.require_known_seat(recipient)
             source=_source(context)
             if card is None or recipient is None or recipient not in context.query.active_seats:
                 return IntentPlan(self.operation,self.handler_id,(),result_shape='by_player')
-            intent=GiveControlIntent(context.actor,card,recipient,source,effect.get('reason',context.default_reason))
+            from .control_intents import ReflexiveSourceControlIntent
+
+            intent_type = ReflexiveSourceControlIntent if effect["schema_version"] == 5 else GiveControlIntent
+            intent = intent_type(context.actor, card, recipient, source, effect.get("reason", context.default_reason))
         except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
         return IntentPlan(self.operation,self.handler_id,(intent,))
 

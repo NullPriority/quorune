@@ -25,7 +25,7 @@ import {
 } from "./choices";
 import type { DecisionPacket, JsonValue, LegalAction } from "./generated/protocol";
 import { asList, asRecord, cardName, CardInspector, CardTile } from "./CardSurface";
-import { ingestPacket, type ProjectedView } from "./protocol";
+import { canFollowProjection, ingestPacket, type ProjectedView } from "./protocol";
 import { PRIORITY_STOPS, type PriorityStop } from "./tableAutomation";
 import { actionTitle, activationCostLabel, canMinimizeChoice, cardActionCost, choiceSubmitLabel, decisionDetail, decisionHeading, isRoutineCast, needsActivationConfirmation, orderedTableSeats, phyrexianCastCostLabels, publicEventSummary, visibleActionLabel } from "./tablePresentation";
 import { AutomationControls, ManaHelp, ManaPoolStatus } from "./TableStatus";
@@ -40,7 +40,7 @@ import { projectedCardSeat, SeatLabel, tableSeat } from "./SeatLabel";
 import { GameMenu } from "./GameMenu";
 import { SetupScreen } from "./SetupScreen";
 import { RecentActivity } from "./RecentActivity";
-import { TableCardViewer } from "./TableCardViewer";
+import { PinnedTableViewer, TableCardViewer, usePinnedTableViewer } from "./TableCardViewer";
 import { projectedPublicEvents, TableMotion } from "./TableMotion";
 import { Lobby, Welcome } from "./Lobby";
 import type { SavedDeckSelection } from "./PlayLibrary";
@@ -109,6 +109,7 @@ function GameView({ gameId, userId, system, onExit, onRoom }: {
   const [detachedInspectionRef, setDetachedInspectionRef] = useState("");
   const boardsWindow = useCompanionWindow("Quorune opponent boards", "width=1200,height=850");
   const [inspectedCard, setInspectedCard] = useState<JsonValue | null>(null);
+  const { pinned: keyboardPinnedCard, close: closeKeyboardPinnedCard } = usePinnedTableViewer(view, visibleCards, inspectedCard);
   const [focusedStackId, setFocusedStackId] = useState("");
   const [stackMinimized, setStackMinimized] = useState(false);
   const [railOpen, setRailOpen] = useState(false);
@@ -312,8 +313,14 @@ function GameView({ gameId, userId, system, onExit, onRoom }: {
             if (stopped || socket !== stream || stream.readyState !== WebSocket.OPEN) return;
             const next = await ingestPacket(streamView, message.packet!);
             if (stopped || socket !== stream || stream.readyState !== WebSocket.OPEN) return;
-            if (viewRef.current && next.principal !== viewRef.current.principal) {
+            if (!canFollowProjection(viewRef.current, next)) {
               throw new Error("The reconnected projection belongs to another player.");
+            }
+            if (viewRef.current && viewRef.current.principal !== next.principal) {
+              setInspectedCard(null);
+              setPinnedCardRef(null);
+              setZoneBrowser(null);
+              setCardContext(null);
             }
             const refreshEvents = !streamView || next.state.event !== streamView.state.event;
             if (!streamView) {
@@ -983,15 +990,7 @@ function GameView({ gameId, userId, system, onExit, onRoom }: {
           {compactInspector}
         </section>
       )}
-      {!isSpectator && !handCollapsed && <section className="hand-panel" data-testid="hand-panel" data-resizable="true" onPointerUp={(event) => {
-        const panel = event.currentTarget;
-        // Native resizing writes an inline pixel height. A card click does not.
-        const height = Number.parseFloat(panel.style.height);
-        if (Number.isFinite(height)) {
-          panel.style.removeProperty("height");
-          setTablePreference("handPanelHeight", Math.max(MIN_HAND_PANEL_HEIGHT, Math.min(MAX_HAND_PANEL_HEIGHT, Math.round(height))));
-        }
-      }}>
+      {!isSpectator && !handCollapsed && <section className="hand-panel" data-testid="hand-panel" data-resizable="true">
         <header><h2>Your hand</h2><div className="hand-panel-controls">
           <span className="zone-count">{hand.length} cards</span>{!cardContext && compactInspector}
           <button type="button" className="link-button" onClick={() => setHandManuallyCollapsed(true)}>Collapse</button>
@@ -1015,6 +1014,7 @@ function GameView({ gameId, userId, system, onExit, onRoom }: {
         )}
         <HandRail cards={hand} artFocused={tablePreferences.handArtFocused} zoneOffers={zoneOffers} view={view} selection={publicSelection}
           selectedRef={selectedCardRef} actionsForCard={actionsForCard} onIntent={selectCardActions}
+          onResize={(height) => setTablePreference("handPanelHeight", Math.max(MIN_HAND_PANEL_HEIGHT, Math.min(MAX_HAND_PANEL_HEIGHT, height)))}
           onInspect={setInspectedCard} onDrag={(ref) => { draggedCardRef.current = ref ?? ""; }} onDrop={handleCardDrop} />
       </section>}
       </div>}
@@ -1126,6 +1126,7 @@ function GameView({ gameId, userId, system, onExit, onRoom }: {
         selection={publicSelection} selectedCardRef={selectedCardRef} actionsForCard={actionsForCard}
         actionDisabled={actionDisabled} onClose={() => setZoneBrowser(null)}
         onIntent={(actions, card) => { setZoneBrowser(null); selectCardActions(actions, card); }} />}
+      {keyboardPinnedCard && <PinnedTableViewer value={keyboardPinnedCard} view={view} onClose={closeKeyboardPinnedCard} />}
       {pinnedCardRef && (
         <div className="choice-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setPinnedCardRef(null); }}>
           <section ref={previewDialogRef} className="choice-dialog card-preview-dialog" data-seat={inspectionSeat} role="dialog" aria-modal="true" aria-label={`Card viewer: ${pinnedCard ? cardName(pinnedCard) : "Card no longer visible"}`}>
@@ -1167,7 +1168,7 @@ function GameView({ gameId, userId, system, onExit, onRoom }: {
                 <SeatLabel seat={decisionSeat} />
                 <h2 id="choice-dialog-title">{minimizeInsteadOfCancel && view.decision ? decisionHeading(view.decision) : actionTitle(selectedAction)}</h2>
                 <p id="choice-dialog-description">{selectedAction.action === "activate" ? <ManaText text={activationCostLabel(selectedAction)} />
-                  : selectedAction.action === "concede" ? "Leave this game. Play continues for any remaining players."
+                  : selectedAction.action === "concede" ? "Leave as a player and stay to watch the table."
                     : selectedAction.action === "cast" ? <ManaText text={cardActionCost([selectedAction]) || "Review the spell’s choices."} />
                       : currentChoiceDetail || String(view.decision?.ctx.prompt ?? "")}</p>
               </div>

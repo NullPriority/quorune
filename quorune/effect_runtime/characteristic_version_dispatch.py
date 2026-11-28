@@ -21,6 +21,11 @@ def apply_versioned_characteristic_effect(host,effect,*,actor,reason):
         from .captured_draw_keyword_grant import apply_captured_draw_keyword_grant
 
         return True, apply_captured_draw_keyword_grant(host, effect, actor=actor, reason=reason)
+    from ..rules.source_subtype_progression import PROGRESSION_FIELD
+    if PROGRESSION_FIELD in effect:
+        from .source_subtype_progression import apply_source_subtype_progression
+
+        return True, apply_source_subtype_progression(host, effect, actor=actor, reason=reason)
     version=effect.get('schema_version')
     from ..rules.creature_subtype_set_results import is_creature_subtype_set_result
     from ..resolution_color_model import TARGET_COLOR_VERSIONS

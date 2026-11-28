@@ -315,6 +315,202 @@ class SelectedCounterCostRuntimeTests(unittest.TestCase):
 from inherited_composition_fixture import InheritedNativeFixture
 
 
+class QuillspikeNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "quillspike.sqlite3"
+        fixtures = ROOT / "tests/fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "all-counter-self-cost-cards.json",
+            fixtures / "all-kind-counter-cards.json",
+            fixtures / "ability-source-counter-cards.json",
+            fixtures / "controlled-counter-cost-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Quillspike witnesses", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def quillspike_offer(self, session, source):
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        current = session.state.cards[source.object_id]
+        return next((action for action in actions if action["id"].startswith(f"activate:{current.ref}:")), None)
+
+    def payment(self, action, payer, color):
+        option, = (option for option in action["cost_options"] if option["requirements"].get(color) == 1)
+        return {"action_id": action["id"], "cost_cards": [payer.ref], "cost_option": option["id"],
+                "pay": "manual", "payment": {color: 1}}
+
+    def assert_stats(self, session, card, expected):
+        self.assertEqual((expected, expected), tuple(
+            session.engine._numeric_stat(card.object_id, field) for field in ("power", "toughness")
+        ))
+
+    def test_quillspike_price_compiler_and_runtime_reject_incomplete_shapes(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+
+        card = self.db.lookup("Quillspike")
+        for text in (
+            card.oracle_text.replace("{B/G}", "{B/R}"),
+            card.oracle_text.replace("{B/G}", "{1}{B/G}"),
+            card.oracle_text.replace("Remove a -1/-1 counter", "Remove two -1/-1 counters"),
+            card.oracle_text.replace("a creature you control", "another creature you control"),
+        ):
+            with self.subTest(text=text):
+                changed = replace(card, oracle_text=text)
+                ir = compile_oracle_card(changed, capability_registry=self.registry,
+                                         capability_profile="commander_review")
+                self.assertNotEqual("exact", ir.status)
+        session = self.session(741198)
+        source = self.add(session.engine, "Quillspike")
+        program, = session.engine.semantics.programs_for_oracle(source.oracle_id)
+        cost = dict(program.cost_schema)
+        one_option = tuple(cost["mana_cost_options"][:1])
+        invalid = replace(program, cost_schema={**cost, "mana_cost_options": one_option})
+        result = bind_semantic_program_runtime(invalid, capability_registry=self.registry,
+                                               profile="commander_review")
+        self.assertFalse(result["strict"], result)
+
+    def test_actual_quillspike_pays_both_hybrid_arms_and_adds_repeated_bonuses_until_cleanup(self):
+        session = self.session(741200)
+        source = self.add(session.engine, "Quillspike")
+        self.add(session.engine, "Glorious Anthem")
+        source.counters["-1/-1"] = 1
+        payer = self.add(session.engine, "Generic Bound Body", ref="borrowed-counter-payer")
+        payer.owner, payer.tapped = "B", True
+        payer.counters["-1/-1"] = 1
+        rival = self.add(session.engine, "Generic Bound Body", seat="B", ref="rival-counter-payer")
+        rival.counters["-1/-1"] = 1
+        wrong = self.add(session.engine, "Generic Bound Body", ref="wrong-counter-payer")
+        wrong.counters["+1/+1"] = 1
+        land = self.add(session.engine, "Generic Bound Plains", ref="noncreature-counter-payer")
+        land.counters["-1/-1"] = 1
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"B": 1, "G": 1})
+        self.checkpoint(session)
+        self.assert_stats(session, source, 1)
+        action = self.quillspike_offer(session, source)
+        self.assertCountEqual([source.ref, payer.ref], action["choice_schema"]["cost_cards"]["legal_refs"])
+        self.assertFalse(action.get("target_schema"))
+        command = self.payment(action, source, "B")
+        before = authoritative_state_hash(session.state)
+        for changes in (
+            {"cost_cards": [rival.ref]}, {"cost_cards": [wrong.ref]}, {"cost_cards": [land.ref]},
+            {"cost_cards": [source.ref, payer.ref]}, {"payment": {"W": 1}},
+        ):
+            rejected = session.act("pilot:A", {**command, **changes})
+            self.assertFalse(rejected.ok, rejected.summary)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertFalse(session.state.stack[-1].targets)
+        self.assertEqual(0, session.state.cards[source.object_id].counters.get("-1/-1", 0))
+        self.assert_stats(session, source, 2)
+        self.assertEqual(0, session.state.players["A"].mana_pool["B"])
+        self.assertEqual(1, session.state.players["A"].mana_pool["G"])
+
+        action = self.quillspike_offer(session, source)
+        self.assertEqual([payer.ref], action["choice_schema"]["cost_cards"]["legal_refs"])
+        command = self.payment(action, payer, "G")
+        before = authoritative_state_hash(session.state)
+        stale = session.act("pilot:A", {**command, "cost_cards": [source.ref]})
+        self.assertFalse(stale.ok, stale.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(2, len(session.state.stack))
+        self.assertTrue(all(not item.targets for item in session.state.stack))
+        donor = session.state.cards[payer.object_id]
+        self.assertEqual(("B", "A", "battlefield", True, 0), (
+            donor.owner, donor.controller, donor.zone, donor.tapped, donor.counters.get("-1/-1", 0),
+        ))
+        self.assertEqual(0, sum(session.state.players["A"].mana_pool.values()))
+        session = self.replay(session, load=True)
+        self.resolve_top(session)
+        self.assert_stats(session, source, 5)
+        self.resolve_top(session)
+        self.assert_stats(session, source, 8)
+        turn = session.state.turn_sequence
+        self.until(session, lambda game: game.state.turn_sequence > turn)
+        self.assert_stats(session, source, 2)
+        self.replay(session, load=True)
+
+    def test_actual_quillspike_preserves_the_selected_creature_from_mana_sacrifice(self):
+        for pool in (False, True):
+            with self.subTest(pool=pool):
+                session = self.session(741205 + pool)
+                source = self.add(session.engine, "Quillspike")
+                self.add(session.engine, "Glorious Anthem")
+                cantor = self.add(session.engine, "Wild Cantor")
+                cantor.counters["-1/-1"] = 1
+                other = self.add(session.engine, "Generic Bound Body", ref="other-minus-payer")
+                other.counters["-1/-1"] = 1
+                self.assert_closed(session, source)
+                self.assert_closed(session, cantor)
+                self.prepare(session, mana={"B": int(pool)})
+                self.checkpoint(session)
+                action = self.quillspike_offer(session, source)
+                refs = action["choice_schema"]["cost_cards"]["legal_refs"]
+                self.assertCountEqual([cantor.ref, other.ref] if pool else [other.ref], refs)
+                command = self.payment(action, cantor, "G")
+                before = authoritative_state_hash(session.state)
+                invalid = dict(command, mana=[{"source": cantor.ref, "bundle": {"G": 1}}])
+                result = session.act("pilot:A", invalid)
+                self.assertFalse(result.ok, result.summary)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                if not pool:
+                    auto = {key: value for key, value in command.items() if key != "payment"}
+                    result = session.act("pilot:A", {**auto, "pay": "auto"})
+                    self.assertFalse(result.ok, result.summary)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                command.pop("payment")
+                command.update(pay="auto", cost_cards=[cantor.ref if pool else other.ref])
+                if pool:
+                    command["cost_option"] = self.payment(action, cantor, "B")["cost_option"]
+                result = session.act("pilot:A", command)
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual("battlefield" if pool else "graveyard", session.state.cards[cantor.object_id].zone)
+                self.assertEqual(0, session.state.cards[cantor.object_id if pool else other.object_id].counters.get("-1/-1", 0))
+                self.assertIsNone(self.resolve(session))
+                self.assert_stats(session, source, 5)
+                self.replay(session, load=True)
+
+    def test_actual_quillspike_paid_result_never_modifies_its_returned_incarnation(self):
+        session = self.session(741210)
+        source = self.add(session.engine, "Quillspike")
+        self.add(session.engine, "Vedalken Orrery")
+        donor = self.add(session.engine, "Generic Bound Body")
+        donor.counters["-1/-1"] = 1
+        bounce = self.add(session.engine, "Unsummon", seat="B", zone="hand")
+        self.add(session.engine, "Island", seat="B")
+        self.assert_closed(session, source)
+        old = source.logical_object_id
+        self.prepare(session, mana={"B": 1, "G": 1, "C": 2})
+        self.checkpoint(session)
+        action = self.quillspike_offer(session, source)
+        command = self.payment(action, donor, "B")
+        activated = session.act("pilot:A", command)
+        self.assertTrue(activated.ok, activated.summary)
+        self.cast(session, "B", bounce, [source.ref])
+        self.resolve_top(session)
+        self.assertEqual("hand", session.state.cards[source.object_id].zone)
+        self.assertEqual(1, len(session.state.stack))
+        self.cast(session, "A", source)
+        self.resolve_top(session)
+        returned = session.state.cards[source.object_id]
+        self.assertEqual("battlefield", returned.zone)
+        self.assertNotEqual(old, returned.logical_object_id)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assert_stats(session, source, 1)
+        self.assertEqual(0, session.state.cards[donor.object_id].counters.get("-1/-1", 0))
+        self.assertEqual(0, sum(session.state.players["A"].mana_pool.values()))
+        self.replay(session, load=True)
+
+
 class DistributedCounterCostRuntimeTests(InheritedNativeFixture, unittest.TestCase):
     @classmethod
     def setUpClass(cls):

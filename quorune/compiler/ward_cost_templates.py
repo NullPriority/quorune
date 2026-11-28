@@ -56,3 +56,20 @@ def quoted_fixed_life_ward_spec(text: str) -> WardSpec | None:
 
 
 __all__ = ["fixed_ward_spec", "quoted_fixed_life_ward_spec"]
+
+
+def quoted_other_creature_life_ward(subject: str, text: str):
+    """Lower the fixed-life Ward fragment granted to other controlled creatures."""
+    if subject.casefold() != "other creatures you control":
+        return None
+    quoted = re.fullmatch(r'"(Ward[—-]Pay [^"]+ life\.)"', text, flags=re.IGNORECASE)
+    ward = fixed_ward_spec(quoted[1]) if quoted is not None else None
+    if ward is None or ward.life_payment is None:
+        return None
+    from ..ability_fragments import ability_fragment_to_dict
+
+    granted = ((f"Ward—Pay {ward.life_payment} life",), (ability_fragment_to_dict(ward),))
+    return granted, ward.capability_id
+
+
+__all__ = ["fixed_ward_spec", "quoted_other_creature_life_ward"]

@@ -43,7 +43,7 @@ const attackAction: LegalAction = {
     })),
   }] },
 };
-type Mode = "trigger" | "graveyard" | "combat" | "bulk" | "board" | "priority" | "costs";
+type Mode = "trigger" | "graveyard" | "combat" | "bulk" | "board" | "priority" | "costs" | "entry-type";
 
 function OptionalActivation() {
   const [turn, setTurn] = useState(1);
@@ -72,6 +72,23 @@ function OptionalActivation() {
 function Surface({ mode }: { mode: Mode }) {
   const dialog = useRef<HTMLElement>(null);
   if (mode === "priority") return <OptionalActivation />;
+  if (mode === "entry-type") {
+    const action: LegalAction = { id: "choose", action: "choose", form: { v: 1, fields: [{
+      name: "replacement", control: "select", required: true,
+      options: [{ value: "A87:brushwagg", label: "A87: choose creature type brushwagg" },
+        { value: "A87:elf", label: "A87: choose creature type elf" }],
+    }] } };
+    const choiceView = {
+      ...view, decision: { ...view.decision!, kind: "replacement.order", legal_actions: [action],
+        ctx: { prompt: "Choose a creature type.", entry_creature_types: {
+          "A87:brushwagg": { label: "Brushwagg", preferred: false },
+          "A87:elf": { label: "Elf", preferred: true },
+        } } },
+    };
+    return <div className="game-shell"><ContextualDecision action={action} view={choiceView}
+      disabled={false} submitting={false} labelFor={(ref) => ref}
+      onSubmit={(_action, choices) => { document.body.dataset.chosenType = String(choices.replacement); }} /></div>;
+  }
   if (mode === "bulk") return <ContextualDecision action={attackAction} view={{
     ...view, state: { players: { A: { life: 40 }, B: { life: 40 } } },
     decision: { ...view.decision!, kind: "combat.attackers", legal_actions: [attackAction] },

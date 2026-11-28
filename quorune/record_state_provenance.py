@@ -411,7 +411,7 @@ def validate_state_versions(
 
     saga_version = format_value.get("saga_intrinsic_ability_version", 0)
     if (
-        type(saga_version) is not int or saga_version not in {0, SAGA_INTRINSIC_ABILITY_VERSION}
+        type(saga_version) is not int or saga_version not in {0, 1, SAGA_INTRINSIC_ABILITY_VERSION}
         or saga_version != (saga_intrinsic_ability_version(getattr(state, "saga_intrinsic_ability_version", None)) or 0)
     ):
         raise ValueError("Saga intrinsic ability provenance does not match the initial checkpoint")

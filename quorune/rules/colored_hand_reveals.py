@@ -2,7 +2,8 @@
 from collections.abc import Mapping
 from ..colored_hand_reveal_model import (
     COLORED_REVEAL_OPERATION as OP,COLORED_REVEAL_CAPABILITY as CAP,
-    COLORED_REVEAL_MECHANIC as MECHANIC,decode_colored_hand_reveal,
+    COLORED_REVEAL_MECHANIC as MECHANIC, MATCHED_MANA_REVEAL_CAPABILITY,
+    MatchingManaValueHandRevealSpec, decode_colored_hand_reveal,
 )
 from ..replacement.immutable import thaw_value
 from ..mana import MANA_COLORS
@@ -36,6 +37,14 @@ def _fixed_mana_and_tap(cost):
 
 
 def colored_reveal_result_dependencies(spec):
+    if isinstance(spec, MatchingManaValueHandRevealSpec):
+        from ..fixed_token_production import treasure_token_effect
+        from .committed_quantity_followups import fixed_followup_capabilities
+
+        required = fixed_followup_capabilities(treasure_token_effect(1))
+        if not required:
+            raise ValueError("Matching mana values require the canonical Treasure definition")
+        return tuple(sorted({CAP, MATCHED_MANA_REVEAL_CAPABILITY, *required}))
     effect=spec.result.materialize(2);schema=thaw_value(spec.result.target_schema) if spec.result.target_schema is not None else None
     op=effect['op']
     if op=='damage':
@@ -59,7 +68,8 @@ def colored_hand_reveal_node_capabilities(*,effects,target_schema,mechanic_ids):
     if MECHANIC not in mechanic_ids or len(effects)!=1 or effects[0].get('op')!=OP:return ()
     try:
         spec=decode_colored_hand_reveal(effects[0])
-        if thaw_value(spec.result.target_schema)!=thaw_value(target_schema):return ()
+        expected_schema = None if isinstance(spec, MatchingManaValueHandRevealSpec) else spec.result.target_schema
+        if thaw_value(expected_schema)!=thaw_value(target_schema):return ()
         return colored_reveal_result_dependencies(spec)
     except (TypeError,ValueError,KeyError):return ()
 
@@ -70,7 +80,7 @@ def colored_hand_reveal_activation_capabilities(*, effects, target_schema, mecha
     required = colored_hand_reveal_node_capabilities(
         effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
     )
-    if not required:
+    if not required or MATCHED_MANA_REVEAL_CAPABILITY in required:
         return ()
     return (*required, ACTIVATED_COLORED_REVEAL_CAPABILITY)
 
@@ -78,7 +88,17 @@ def colored_hand_reveal_activation_capabilities(*, effects, target_schema, mecha
 def colored_hand_reveal_program_dependencies(program):
     found = [effect for effect in program.effects if isinstance(effect, Mapping) and effect.get("op") == OP]
     if not found:
+        if MATCHED_MANA_REVEAL_CAPABILITY in program.capability_dependencies:
+            raise ValueError("Matching mana values require their complete top-level chapter instruction")
         return ()
+    spec = decode_colored_hand_reveal(found[0])
+    if isinstance(spec, MatchingManaValueHandRevealSpec):
+        if (len(program.effects) != 1 or len(found) != 1 or program.event != "saga.chapter.3"
+                or program.active_zone != "battlefield" or "saga_chapter_dispatch" not in program.coverage
+                or program.target_schema is not None or program.cost_schema is not None
+                or program.handlers or program.event_condition is not None):
+            raise ValueError("Matching mana values require the exact original Saga chapter")
+        return colored_reveal_result_dependencies(spec)
     if program.event == "activate" and str(program.ability_id).startswith("ability:ab"):
         required = colored_hand_reveal_activation_capabilities(
             effects=program.effects, target_schema=program.target_schema, mechanic_ids=(MECHANIC,),
@@ -90,7 +110,6 @@ def colored_hand_reveal_program_dependencies(program):
     if (len(program.effects) != 1 or len(found) != 1 or program.event != "resolve"
             or program.active_zone != "stack" or not str(program.ability_id).startswith("spell:")):
         raise ValueError("Colored hand reveal requires its ordinary resolving spell or activation frame")
-    spec = decode_colored_hand_reveal(found[0])
     if thaw_value(spec.result.target_schema) != thaw_value(program.target_schema):
         raise ValueError("Reveal result target schema changed")
     return colored_reveal_result_dependencies(spec)

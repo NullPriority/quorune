@@ -36,6 +36,16 @@ export function skipsOptionalActivation(action: AutoPassAction, window: AutoPass
     && (window.passWithOptionalActivations === true || isIgnoredActivation(action, window.ignoredActivations));
 }
 
+function isRoutineManaOffer(action: AutoPassAction): boolean {
+  return action.action === "activate" && action.mana_ability === true && !action.form
+    && (!action.cost_summary || Object.keys(action.cost_summary).every((key) => key === "tap"));
+}
+
+export function hasPriorityResponse(actions: readonly AutoPassAction[]): boolean {
+  return actions.some((action) => !["pass", "concede"].includes(action.action)
+    && !isRoutineManaOffer(action));
+}
+
 export function findSafeAutoPass<T extends AutoPassAction>(
   actions: readonly T[],
   window: AutoPassWindow = {},
@@ -46,16 +56,49 @@ export function findSafeAutoPass<T extends AutoPassAction>(
     && ["precombat_main", "postcombat_main"].includes(window.phase ?? "");
   const pass = actions.find((action) => action.action === "pass") ?? null;
   if (!pass) return null;
-  if (activeEmptyMain && !window.allowActiveMain && !actions.some((action) => skipsOptionalActivation(action, window))) {
+  if (activeEmptyMain && !window.allowActiveMain
+      && !actions.some((action) => isRoutineManaOffer(action) || skipsOptionalActivation(action, window))) {
     return null;
   }
-  const hasMeaningfulAction = actions.some(
-    (action) => !["pass", "concede"].includes(action.action)
-      && !skipsOptionalActivation(action, window)
-      && !(action.mana_ability === true && !action.form
-        && (!action.cost_summary || Object.keys(action.cost_summary).every((key) => key === "tap"))),
-  );
-  return hasMeaningfulAction ? null : pass;
+  return hasPriorityResponse(actions.filter((action) => !skipsOptionalActivation(action, window))) ? null : pass;
+}
+
+// The projected stack is top-first. Only removing a prefix can resolve the
+// captured stack without introducing, reordering, or changing its objects.
+export function remainsOfCapturedStack(captured: readonly string[], current: readonly string[]): boolean {
+  const offset = captured.length - current.length;
+  return offset >= 0 && current.every((item, index) => captured[offset + index] === item);
+}
+
+export function ownSpellResponseHold(top: { kind?: unknown; ctl?: unknown } | undefined,
+    seat: string | undefined, offers: readonly AutoPassAction[]): boolean {
+  return Boolean(seat && top?.kind === "spell" && top.ctl === seat && hasPriorityResponse(offers));
+}
+
+export type SourcePriorityYieldOffer = { id: string; targeted: boolean };
+
+export function readSourcePriorityYieldOffer(value: unknown): SourcePriorityYieldOffer | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  const offer = value as Record<string, unknown>;
+  if (typeof offer.id !== "string" || !/^[0-9a-f]{64}$/.test(offer.id)
+      || typeof offer.targeted !== "boolean") return undefined;
+  return { id: offer.id, targeted: offer.targeted };
+}
+
+export function sourcePriorityYieldStatus(scope: string | undefined, offer: SourcePriorityYieldOffer | undefined,
+    decisionKind: string | undefined, actions: readonly AutoPassAction[], waitingSourceItem = false) {
+  if (!scope) return "inactive";
+  if (decisionKind && decisionKind !== "priority") return "choice";
+  if (scope !== offer?.id) return waitingSourceItem ? "changed" : "inactive";
+  if (offer.targeted) return "targeted";
+  if (decisionKind !== "priority") return "inactive";
+  if (hasPriorityResponse(actions)) return "response";
+  return actions.some((action) => action.action === "pass") ? "ready" : "inactive";
+}
+
+export function priorityHoldForScope(passTurn: boolean, externalHold: boolean, ordinaryHold?: string): string | undefined {
+  if (externalHold) return "Loop shortcut";
+  return passTurn ? undefined : ordinaryHold;
 }
 
 export type PriorityActivity = {

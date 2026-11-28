@@ -46,6 +46,31 @@ class PublicLibraryPileCompilerTests(unittest.TestCase):
     def compile(self, record):
         return compile_oracle_card(record, capability_registry=self.registry, capability_profile="commander_review")
 
+    def test_same_search_version_accepts_only_its_complete_persisted_payload(self):
+        from quorune.errors import GameRuleError
+        from quorune.public_library_piles_model import distinct_public_search_split_effect, is_public_search_split
+        from quorune.rules.affected_library_search_batch import (
+            SEARCH_BATCH_FIELD, ExileLandSearchBatch, is_exile_land_search,
+        )
+        from quorune.selection.search_descriptor_validation import validate_semantic_search_descriptor
+
+        split = distinct_public_search_split_effect("B")
+        compensation = ExileLandSearchBatch("stack", "A", (("B", 1, "0" * 64),)).next_instruction()
+        self.assertEqual(split["schema_version"], compensation["schema_version"])
+        self.assertTrue(is_public_search_split(split))
+        self.assertFalse(is_exile_land_search(split))
+        self.assertFalse(is_public_search_split(compensation))
+        self.assertTrue(is_exile_land_search(compensation))
+        validate_semantic_search_descriptor(split)
+        validate_semantic_search_descriptor(compensation)
+        for malformed in (
+            {key: value for key, value in split.items() if key != "public_search_chooser"},
+            {key: value for key, value in compensation.items() if key != SEARCH_BATCH_FIELD},
+            {**split, SEARCH_BATCH_FIELD: compensation[SEARCH_BATCH_FIELD]},
+        ):
+            with self.assertRaises(GameRuleError):
+                validate_semantic_search_descriptor(malformed)
+
     def test_distinct_search_split_has_closed_printed_and_persisted_dialects(self):
         from dataclasses import replace
         import json

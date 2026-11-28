@@ -1,7 +1,10 @@
 """Count distinct matching arrivals through the canonical trigger aggregation."""
 from collections.abc import Mapping
+import hashlib
 
 from ..event_counter_reference import event_object_identity
+from ..errors import GameRuleError
+from ..util import stable_json
 
 MATCHED_ARRIVAL_COUNT = "$event.matched_arrival_count"
 MATCHED_ARRIVAL_CONTEXT = "matched_arrival_incarnations"
@@ -99,3 +102,35 @@ def coalesce_trigger_aggregation(item, pending):
             existing.context[MATCHED_ARRIVAL_CONTEXT] = (*values, new_member)
         found = True
     return found
+
+
+def capture_trigger_aggregation_context(stack_context, program, source, event, context):
+    """Capture the source and occurrence identity for one aggregate trigger."""
+    if "one_or_more_event_batch" in program.coverage:
+        try:
+            stack_context.update(matching_arrival_member_context(program, event, context))
+        except ValueError as exc:
+            raise GameRuleError(str(exc)) from exc
+        aggregation_scope = (
+            {"damaged_player": context.get("player")}
+            if event == "damage.dealt"
+            else {}
+        )
+        if event == 'creature.attacks':
+            from .attack_batches import attack_batch_aggregation_scope, declared_attack_counter_context
+            try:
+                aggregation_scope = attack_batch_aggregation_scope(program, context)
+                stack_context.update(declared_attack_counter_context(program, source, context))
+            except (ValueError, TypeError) as exc:
+                raise GameRuleError(str(exc)) from exc
+        stack_context["one_or_more_aggregation_id"] = hashlib.sha256(
+            stable_json(
+                {
+                    "event": event,
+                    "event_id": context.get("event_id"),
+                    **aggregation_scope,
+                    "source_logical_object_id": source.logical_object_id,
+                    "source_ability_id": program.key,
+                }
+            ).encode("utf-8")
+        ).hexdigest()

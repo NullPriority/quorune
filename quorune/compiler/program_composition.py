@@ -366,6 +366,59 @@ def _validated_group_identity(
     return first, composed_spell, ability_id
 
 
+def _source_admission_context(nodes, ir):
+    """Read the source requirements shared by complete program producers."""
+    from ..stack_spell_copy_model import STACK_SPELL_COPY_MECHANIC
+    copy_requires_complete_source = any(STACK_SPELL_COPY_MECHANIC in node.mechanics
+        or 'stack.copy.fixed_qualified_target' in node.capability_dependencies for node in nodes)
+    from ..face_up_effect_model import FACE_UP_EFFECT_MECHANIC
+    face_up_requires_complete_source = any(FACE_UP_EFFECT_MECHANIC in node.mechanics for node in nodes)
+    from ..spell_text_variants import SpellTextVariantKind
+    from ..rules.fuse_model import FUSE_HANDLER
+    fuse_source = next((h['fuse'] for f in ir.faces for n in f.nodes for h in n.handlers if h.get('handler_id')==FUSE_HANDLER),None)
+    text_variant_requires_complete_source = fuse_source is not None or any(kind.boundary in node.runtime_coverage for node in nodes for kind in SpellTextVariantKind)
+    from ..preparation_model import PREPARATION_RESULT_MECHANIC
+    preparation_requires_complete_source = any(PREPARATION_RESULT_MECHANIC in node.mechanics for node in nodes)
+    from ..rules.graveyard_self_return import GRAVEYARD_SELF_ENTRY_MECHANIC
+    graveyard_entry_requires_complete_source = any(GRAVEYARD_SELF_ENTRY_MECHANIC in node.mechanics for node in nodes)
+    from ..paid_alternative_cast_model import PAID_ALTERNATIVE_CAST_MECHANIC
+    paid_alternative_requires_complete_source=any(PAID_ALTERNATIVE_CAST_MECHANIC in node.mechanics for node in nodes)
+    from ..source_entry_cast_information import PAID_WHITE_ENTRY_TARGET_MECHANIC
+    paid_white_requires_complete_source = any(PAID_WHITE_ENTRY_TARGET_MECHANIC in node.mechanics for node in nodes)
+    from ..stack_target_change_model import POWER_ADJUSTED_RETARGET_ROLL, STACK_TARGET_CHANGE_FIELDS, is_stack_target_change_payment
+    stack_change_requires_complete_source = any(
+        POWER_ADJUSTED_RETARGET_ROLL in effect or STACK_TARGET_CHANGE_FIELDS.intersection(effect)
+        or is_stack_target_change_payment(effect)
+        for node in nodes for effect in node.effects
+    )
+    from ..target_combat_damage_multiplier_model import turn_multiplier_instruction
+    turn_multiplier_requires_complete_source = any(
+        effect == turn_multiplier_instruction() for node in nodes for effect in node.effects
+    )
+    from ..cast_origin_replacement import CAST_REPLACEMENT_VERSIONS
+    cast_replacement_requires_complete_source = any(
+        effect.get("op") == "apply_if_public_condition"
+        and effect.get("schema_version") in CAST_REPLACEMENT_VERSIONS
+        for node in nodes for effect in node.effects
+    )
+    from ..rules.discarded_card_exile import uses_discarded_card_exile
+    discard_exile_requires_complete_source = any(
+        uses_discarded_card_exile(effect) for node in nodes for effect in node.effects
+    )
+    from ..rules.enchanted_departure_return import ENCHANTED_DEPARTURE_RETURN_MECHANIC
+    attached_departure_requires_complete_source = any(ENCHANTED_DEPARTURE_RETURN_MECHANIC in node.mechanics for node in nodes)
+    requires_declared_source = (face_up_requires_complete_source or copy_requires_complete_source
+                                or discard_exile_requires_complete_source
+                                or attached_departure_requires_complete_source
+                                or cast_replacement_requires_complete_source
+                                or turn_multiplier_requires_complete_source
+                                or stack_change_requires_complete_source
+                                or text_variant_requires_complete_source or preparation_requires_complete_source
+                                or graveyard_entry_requires_complete_source or paid_alternative_requires_complete_source
+                                or paid_white_requires_complete_source)
+    return fuse_source, requires_declared_source
+
+
 def _node_group_provenance(
     *,
     face: Any,
@@ -410,48 +463,7 @@ def _node_group_provenance(
         for node in nodes
     ]
     from .permanent_additional_cost_nodes import PERMANENT_ADDITIONAL_COST_COVERAGE
-    from ..stack_spell_copy_model import STACK_SPELL_COPY_MECHANIC
-    copy_requires_complete_source = any(STACK_SPELL_COPY_MECHANIC in node.mechanics
-        or 'stack.copy.fixed_qualified_target' in node.capability_dependencies for node in nodes)
-    from ..face_up_effect_model import FACE_UP_EFFECT_MECHANIC
-    face_up_requires_complete_source = any(FACE_UP_EFFECT_MECHANIC in node.mechanics for node in nodes)
-    from ..spell_text_variants import SpellTextVariantKind
-    from ..rules.fuse_model import FUSE_HANDLER
-    fuse_source = next((h['fuse'] for f in ir.faces for n in f.nodes for h in n.handlers if h.get('handler_id')==FUSE_HANDLER),None)
-    text_variant_requires_complete_source = fuse_source is not None or any(kind.boundary in node.runtime_coverage for node in nodes for kind in SpellTextVariantKind)
-    from ..preparation_model import PREPARATION_RESULT_MECHANIC
-    preparation_requires_complete_source = any(PREPARATION_RESULT_MECHANIC in node.mechanics for node in nodes)
-    from ..rules.graveyard_self_return import GRAVEYARD_SELF_ENTRY_MECHANIC
-    graveyard_entry_requires_complete_source = any(GRAVEYARD_SELF_ENTRY_MECHANIC in node.mechanics for node in nodes)
-    from ..paid_alternative_cast_model import PAID_ALTERNATIVE_CAST_MECHANIC
-    paid_alternative_requires_complete_source=any(PAID_ALTERNATIVE_CAST_MECHANIC in node.mechanics for node in nodes)
-    from ..source_entry_cast_information import PAID_WHITE_ENTRY_TARGET_MECHANIC
-    paid_white_requires_complete_source = any(PAID_WHITE_ENTRY_TARGET_MECHANIC in node.mechanics for node in nodes)
-    from ..stack_target_change_model import STACK_TARGET_CHANGE_FIELDS, is_stack_target_change_payment
-    stack_change_requires_complete_source = any(
-        STACK_TARGET_CHANGE_FIELDS.intersection(effect) or is_stack_target_change_payment(effect)
-        for node in nodes for effect in node.effects
-    )
-    from ..cast_origin_replacement import CAST_REPLACEMENT_VERSIONS
-    cast_replacement_requires_complete_source = any(
-        effect.get("op") == "apply_if_public_condition"
-        and effect.get("schema_version") in CAST_REPLACEMENT_VERSIONS
-        for node in nodes for effect in node.effects
-    )
-    from ..rules.discarded_card_exile import uses_discarded_card_exile
-    discard_exile_requires_complete_source = any(
-        uses_discarded_card_exile(effect) for node in nodes for effect in node.effects
-    )
-    from ..rules.enchanted_departure_return import ENCHANTED_DEPARTURE_RETURN_MECHANIC
-    attached_departure_requires_complete_source = any(ENCHANTED_DEPARTURE_RETURN_MECHANIC in node.mechanics for node in nodes)
-    requires_declared_source = (face_up_requires_complete_source or copy_requires_complete_source
-                                or discard_exile_requires_complete_source
-                                or attached_departure_requires_complete_source
-                                or cast_replacement_requires_complete_source
-                                or stack_change_requires_complete_source
-                                or text_variant_requires_complete_source or preparation_requires_complete_source
-                                or graveyard_entry_requires_complete_source or paid_alternative_requires_complete_source
-                                or paid_white_requires_complete_source)
+    fuse_source, requires_declared_source = _source_admission_context(nodes, ir)
     requires_complete_card_program = requires_declared_source or any(PERMANENT_ADDITIONAL_COST_COVERAGE in node.runtime_coverage for node in nodes) or any(
         descriptor_requires_complete_card_program(handler)
         for node in nodes
@@ -693,6 +705,10 @@ def programs_from_generated_ir(
             )
             if program is not None:
                 programs.append(program)
+    if record.layout == "transform" and len(ir.faces) > 1:
+        from .activated_ability_catalog import qualify_colliding_activation_faces
+
+        programs = qualify_colliding_activation_faces(programs)
     from .fuse_programs import with_fused_programs
     return with_fused_programs(programs, capability_registry=capability_registry, capability_profile=capability_profile)
 

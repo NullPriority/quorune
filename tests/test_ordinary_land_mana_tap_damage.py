@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
+from unittest.mock import patch
 
 from common import ROOT
 from inherited_composition_fixture import InheritedNativeFixture
@@ -275,6 +276,256 @@ class OrdinarySourceManaTapDamageTests(InheritedNativeFixture, unittest.TestCase
 
     def source_triggers(self, game):
         return [item for item in game.state.stack if item.context.get("event") == SOURCE_MANA_TAP_EVENT]
+
+
+    def orchard(self, game, *, seat="A"):
+        source = self.add(game.engine, "Forbidden Orchard", seat=seat)
+        self.assert_closed(game, source)
+        game.state.config.semantic_policy = "trusted_only"
+        return source
+
+    def orchard_recipient(self, game, target):
+        self.assertEqual("semantic.target", game.state.pending_decision.kind)
+        previous = authoritative_state_hash(game.state)
+        decisions = (("D", [target]), ("A", ["A"]), ("A", ["B", "C"]))
+        for actor, targets in decisions:
+            result = game.act("pilot:" + actor, {"action_id": "choose", "targets": targets})
+            self.assertFalse(result.ok, result.summary)
+            self.assertEqual(previous, authoritative_state_hash(game.state))
+        self.target(game, "A", [target])
+        trigger, = self.source_triggers(game)
+        self.assertEqual([target], trigger.targets)
+        return trigger
+
+    def test_orchard_paid_mana_precedes_its_separate_target_and_selected_token(self):
+        import json
+
+        game = self.session(106_121_021)
+        source = self.orchard(game)
+        other = self.add(game.engine, "Forest")
+        hidden = self.add(game.engine, "Stifle", seat="D", zone="hand", ref="orchard-hidden")
+        self.prepare(game)
+        self.checkpoint(game)
+        self.activate(game, "A", other, ability="intrinsic_forest")
+        self.assertFalse(self.source_triggers(game))
+        self.activate(game, "A", source, ability="ab1", mana_output={"U": 1})
+        self.assertEqual((1, 1), tuple(game.state.players["A"].mana_pool[color] for color in "GU"))
+        self.assertTrue(game.state.cards[source.object_id].tapped)
+        self.assertFalse(any(permanent.is_token for permanent in game.state.cards.values()))
+        self.assertNotIn(hidden.ref, json.dumps(game.packet("pilot:A", full=True)))
+        game = self.replay(game, load=True)
+        trigger = self.orchard_recipient(game, "C")
+        self.assertEqual((source.object_id, "A", source.logical_object_id),
+                         (trigger.source_object_id, trigger.controller, trigger.context["card_object_identity"]))
+        game = self.replay(game, load=True)
+        self.resolve_top(game)
+        token, = (permanent for permanent in game.state.cards.values() if permanent.is_token)
+        self.assertEqual(("C", "C", "battlefield", "Spirit Token"),
+                         (token.owner, token.controller, token.zone, token.printed_name))
+        characteristics = game.engine._effective_card_data(token)
+        self.assertEqual(([], "1", "1"),
+                         (characteristics["colors"], str(characteristics["power"]), str(characteristics["toughness"])))
+        self.assertTrue(characteristics["type_line"].endswith("Spirit"))
+        self.assertEqual(1, game.state.players["A"].mana_pool["U"])
+        self.replay(game, load=True)
+
+    def test_orchard_automatic_payment_queues_the_counterable_trigger_above_the_paid_spell(self):
+        game = self.session(106_121_023)
+        source = self.orchard(game)
+        paid = self.add(game.engine, "Silence", zone="hand")
+        answer = self.add(game.engine, "Stifle", seat="B", zone="hand")
+        for card in (paid, answer):
+            self.assert_closed(game, card)
+        self.prepare(game)
+        game.state.players["B"].mana_pool["U"] = 1
+        self.checkpoint(game)
+        self.cast_for(game, "A", paid)
+        self.assertTrue(game.state.cards[source.object_id].tapped)
+        self.assertFalse(any(game.state.players["A"].mana_pool.values()))
+        self.assertEqual(paid.object_id, game.state.stack[0].card_object_id)
+        trigger = self.orchard_recipient(game, "B")
+        self.assertEqual(trigger.ref, game.state.stack[-1].ref)
+        game = self.replay(game, load=True)
+        self.cast_for(game, "B", answer, [trigger.ref])
+        self.resolve_top(game)
+        self.assertEqual([paid.object_id], [item.card_object_id for item in game.state.stack])
+        self.assertFalse(any(permanent.is_token for permanent in game.state.cards.values()))
+        self.resolve_top(game)
+        self.replay(game, load=True)
+
+    def test_orchard_ordinary_tap_does_not_produce_the_token_trigger(self):
+        game = self.session(106_121_024)
+        source = self.orchard(game)
+        self.add(game.engine, "Forest")
+        tapper = self.add(game.engine, "Icy Manipulator")
+        self.assert_closed(game, tapper)
+        self.prepare(game)
+        self.checkpoint(game)
+        self.activate(game, "A", tapper, targets=[source.ref], pay="auto")
+        self.resolve_top(game)
+        self.assertTrue(game.state.cards[source.object_id].tapped)
+        self.assertFalse(self.source_triggers(game))
+        self.assertFalse(any(permanent.is_token for permanent in game.state.cards.values()))
+        self.replay(game, load=True)
+
+    def test_orchard_compiler_and_runtime_require_the_exact_source_and_opponent_target(self):
+        from unittest.mock import patch
+        from quorune.triggered_mana_model import SOURCE_MANA_TAP_TOKEN_CAPABILITY
+
+        card = self.db.lookup("Forbidden Orchard", fuzzy=False)
+        profile = "commander_review"
+        binding, semantics = register_card(self.db, self.registry, card.name)
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+        trigger, = (program for program in semantics.programs_for_oracle(card.oracle_id)
+                    if program.event == SOURCE_MANA_TAP_EVENT)
+        self.assertEqual(source_mana_tap_condition(), trigger.event_condition)
+        self.assertEqual("opponent", trigger.target_schema["player_relation"])
+        self.assertIn(SOURCE_MANA_TAP_TOKEN_CAPABILITY, trigger.capability_dependencies)
+        stripped = tuple(dependency for dependency in trigger.capability_dependencies
+                         if dependency != SOURCE_MANA_TAP_TOKEN_CAPABILITY)
+        for changed in (
+            replace(trigger, event_condition={"field": "player", "op": "eq", "value": "$source.controller"}),
+            replace(trigger, target_schema={**trigger.target_schema, "player_relation": "any"}),
+            replace(trigger, effects=[{**trigger.effects[0], "quantity": True}]),
+            replace(trigger, capability_dependencies=stripped,
+                    capability_closure=self.registry.closure(stripped, profile=profile).to_dict()),
+        ):
+            with self.subTest(changed=changed):
+                self.assertFalse(bind_semantic_program_runtime(
+                    changed, capability_registry=self.registry, profile=profile,
+                )["strict"])
+        for changed in (
+            card.oracle_text.replace("target opponent", "target player"),
+            card.oracle_text.replace("1/1", "2/2"),
+            card.oracle_text.replace("for mana", "during your turn"),
+        ):
+            with self.subTest(changed=changed):
+                self.assertNotEqual("exact", compile_oracle_card(
+                    replace(card, oracle_text=changed), capability_registry=self.registry,
+                ).status)
+        with patch("quorune.compiler.fixed_public_action_event_bindings._source_mana_tap_token_spec",
+                   return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(card, capability_registry=self.registry).status)
+
+    def test_orchard_requires_original_mana_tap_and_exact_target_token_result(self):
+        from quorune.fixed_token_production import fixed_token_player_target_schema
+        from quorune.triggered_mana_model import SOURCE_MANA_TAP_TARGET_TOKEN_CAPABILITY, source_mana_tap_spirit_effect
+
+        name = "Forbidden Orchard"
+        card = self.db.lookup(name, fuzzy=False)
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        ir = compile_oracle_card(card, **options)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        mana, trigger = ir.faces[0].nodes
+        self.assertEqual(("mana_ability", "activate"), (mana.kind, mana.event))
+        self.assertEqual(SOURCE_MANA_TAP_EVENT, trigger.event)
+        self.assertIn(SOURCE_MANA_TAP_TARGET_TOKEN_CAPABILITY, trigger.capability_dependencies)
+        self.assertEqual(source_mana_tap_condition(), trigger.event_condition)
+        self.assertEqual(fixed_token_player_target_schema("opponent"), trigger.target_schema)
+        self.assertEqual((source_mana_tap_spirit_effect(),), tuple(trigger.effects))
+        admitted, semantics = register_card(self.db, self.registry, name)
+        self.assertTrue(admitted["strict_capability_ready"], admitted["blockers"])
+        runtime, = semantics.programs_for_oracle(card.oracle_id, event=SOURCE_MANA_TAP_EVENT)
+        invalid = replace(runtime, target_schema=fixed_token_player_target_schema("any"))
+        self.assertFalse(bind_semantic_program_runtime(
+            invalid, capability_registry=self.registry, profile="commander_review",
+        )["strict"])
+        for text in (
+            card.oracle_text.replace("for mana", "during your turn"),
+            card.oracle_text.replace("target opponent", "target player"),
+            card.oracle_text.replace("a 1/1 colorless Spirit", "a 2/2 white Spirit"),
+        ):
+            self.assertNotEqual("exact", compile_oracle_card(replace(card, oracle_text=text), **options).status)
+        with patch("quorune.compiler.fixed_public_action_event_bindings._source_mana_tap_target_token_spec", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(card, **options).status)
+
+    def orchard(self, game):
+        land = self.add(game.engine, "Forbidden Orchard")
+        self.assert_closed(game, land)
+        game.state.config.semantic_policy = "trusted_only"
+        return land
+
+    def choose_orchard_opponent(self, game, opponent):
+        decision = game.state.pending_decision
+        self.assertEqual(("semantic.target", ["A"]), (decision.kind, decision.actors))
+        before = authoritative_state_hash(game.state)
+        action = {"action_id": "choose", "targets": [opponent]}
+        self.assertFalse(game.act("pilot:B", action).ok)
+        self.assertFalse(game.act("pilot:A", {"action_id": "choose", "targets": ["A"]}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        result = game.act("pilot:A", action)
+        self.assertTrue(result.ok, result.summary)
+
+    def assert_spirit(self, game, opponent):
+        token, = (card for card in game.state.cards.values() if card.is_token and card.zone == "battlefield")
+        self.assertEqual((opponent, opponent), (token.owner, token.controller))
+        data = game.engine._effective_card_data(token)
+        self.assertEqual("Creature — Spirit", data["type_line"])
+        self.assertEqual([], list(data["colors"]))
+        self.assertEqual((1, 1), tuple(game.engine._numeric_stat(token.object_id, stat)
+                                       for stat in ("power", "toughness")))
+
+    def test_orchard_explicit_mana_leaves_one_ordinary_opponent_target_and_replays(self):
+        game = self.session(106_121_006)
+        land = self.orchard(game)
+        self.prepare(game, mana={})
+        self.checkpoint(game)
+        self.activate(game, "A", land, ability="ab1", mana_output={"U": 1})
+        self.assertEqual(1, game.state.players["A"].mana_pool["U"])
+        self.assertTrue(game.state.cards[land.object_id].tapped)
+        self.assertFalse(any(card.is_token for card in game.state.cards.values()))
+        game = self.replay(game, load=True)
+        self.choose_orchard_opponent(game, "C")
+        trigger, = self.source_triggers(game)
+        self.assertEqual((land.object_id, ["C"]), (trigger.source_object_id, trigger.targets))
+        self.resolve_top(game)
+        self.assert_spirit(game, "C")
+        self.replay(game, load=True)
+
+    def test_orchard_payment_finishes_spell_then_places_target_and_other_trigger_apnap(self):
+        game = self.session(106_121_007)
+        land = self.orchard(game)
+        manabarbs = self.add(game.engine, MANABARBS, seat="B")
+        spell = self.add(game.engine, "Silence", zone="hand")
+        for card in (manabarbs, spell):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={})
+        self.checkpoint(game)
+        self.cast_for(game, "A", spell)
+        self.assertEqual("stack", game.state.cards[spell.object_id].zone)
+        self.assertEqual(spell.object_id, game.state.stack[0].card_object_id)
+        self.assertTrue(game.state.cards[land.object_id].tapped)
+        self.assertFalse(any(game.state.players["A"].mana_pool.values()))
+        self.assertFalse(any(card.is_token for card in game.state.cards.values()))
+        self.choose_orchard_opponent(game, "D")
+        paid, orchard, other = game.state.stack
+        self.assertEqual((spell.object_id, land.object_id, manabarbs.object_id),
+                         (paid.card_object_id, orchard.source_object_id, other.source_object_id))
+        self.assertEqual((SOURCE_MANA_TAP_EVENT, LAND_MANA_TAP_EVENT),
+                         (orchard.context["event"], other.context["event"]))
+        game = self.replay(game, load=True)
+        self.resolve_top(game)
+        self.assertEqual(39, game.state.players["A"].life)
+        self.assertFalse(any(card.is_token for card in game.state.cards.values()))
+        self.resolve_top(game)
+        self.assert_spirit(game, "D")
+        self.resolve_top(game)
+        self.assertEqual("graveyard", game.state.cards[spell.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_orchard_an_ordinary_tap_creates_no_trigger_and_replays(self):
+        game = self.session(106_121_008)
+        land = self.orchard(game)
+        tapper = self.add(game.engine, "Icy Manipulator")
+        self.assert_closed(game, tapper)
+        self.prepare(game, mana={"C": 1})
+        self.checkpoint(game)
+        self.activate(game, "A", tapper, targets=[land.ref], pay="auto")
+        self.resolve_top(game)
+        self.assertTrue(game.state.cards[land.object_id].tapped)
+        self.assertFalse(self.source_triggers(game))
+        self.assertFalse(any(card.is_token for card in game.state.cards.values()))
+        self.replay(game, load=True)
 
     def test_actual_druid_printed_mana_stays_after_responding_to_its_separate_trigger(self):
         import json

@@ -2282,6 +2282,53 @@
         "vintage": "legal"
       },
       "cmc": 2.0
+    },
+    {
+      "oracle_id": "3dc364f3-3094-4660-80ca-9418588c7fde",
+      "name": "Mithril Coat",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Legendary Artifact — Equipment",
+      "oracle_text": "Flash\nIndestructible\nWhen Mithril Coat enters, attach it to target legendary creature you control.\nEquipped creature has indestructible.\nEquip {3}",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Indestructible",
+        "Equip",
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-08-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
   ],
   "rulings": [
@@ -2896,6 +2943,24 @@
       "published_at": "2023-02-04",
       "source": "wotc",
       "comment": "Koth's emblem is colorless. Notably, this means that protection from red won't stop a permanent or player from being the target of the emblem's ability, nor will it prevent the damage being dealt. Replacement effects that care about damage from a red source don't apply to it."
+    },
+    {
+      "oracle_id": "3dc364f3-3094-4660-80ca-9418588c7fde",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Mithril Coat doesn't enter the battlefield attached to a creature. Instead, the Equipment enters the battlefield and then a triggered ability attaches it to a creature. You may cast Mithril Coat even if you don't control any creatures."
+    },
+    {
+      "oracle_id": "3dc364f3-3094-4660-80ca-9418588c7fde",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Attaching an Equipment with its enters-the-battlefield triggered ability isn't the same as using its equip ability. You don't pay mana for the attachment, and the timing restrictions for equip abilities don't apply."
+    },
+    {
+      "oracle_id": "3dc364f3-3094-4660-80ca-9418588c7fde",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "If the target creature becomes an illegal target, the Equipment remains on the battlefield unattached."
     }
   ]
 }

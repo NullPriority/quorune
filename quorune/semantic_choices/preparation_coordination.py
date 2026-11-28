@@ -202,6 +202,23 @@ def continue_semantic_preparation(
             raise SemanticChoiceError(
                 "Semantic preparation intent disappeared before replacement resume"
             )
+    if intents and start_index == 0 and preparation.request is None and preparation.auto_continue is not None:
+        from ..semantic_runtime.intents import CopyStackItemIntent
+        from ..selection.prepared_spell_copy_batch import begin_prepared_spell_copy_batch
+        from .model import SemanticChoiceCompletion
+
+        if all(isinstance(intent, CopyStackItemIntent) for intent in intents):
+            item = next((row for row in host.state.stack if row.ref == continuation.stack_ref), None)
+            completion = SemanticChoiceCompletion(
+                intents=intents, prepend_effects=preparation.auto_continue.resolved_effects({}),
+            )
+            if item is not None and begin_prepared_spell_copy_batch(host, item, continuation, actor, {}, completion):
+                return False
+    if not intents and start_index == 0 and preparation.request is None and preparation.auto_continue is not None:
+        from ..selection.prepared_spell_copy_batch import begin_repeated_spell_copy_batch
+
+        if begin_repeated_spell_copy_batch(host, actor, continuation, preparation):
+            return False
     committed_results={}
     for index in range(start_index, len(intents)):
         intent = intents[index]
@@ -264,8 +281,13 @@ def continue_semantic_preparation(
                 from .damage_library_cast_order import prepare_damage_library_graveyard_order
                 from .public_library_piles import prepare_public_pile_graveyard_order
 
-                prepare_order = (prepare_damage_library_graveyard_order if uses_damage_library_cast_selection(continuation.effect)
-                                 else prepare_public_pile_graveyard_order)
+                if intent.committed_graveyard_treasure:
+                    from .revealed_legendary_graveyard_treasure import prepare_legendary_treasure_graveyard_order
+
+                    prepare_order = prepare_legendary_treasure_graveyard_order
+                else:
+                    prepare_order = (prepare_damage_library_graveyard_order if uses_damage_library_cast_selection(continuation.effect)
+                                     else prepare_public_pile_graveyard_order)
             elif "_committed_token_sweep" in continuation.effect:
                 from .token_sweep import prepare_token_sweep_order
 
@@ -311,6 +333,20 @@ def continue_semantic_preparation(
     return True
 
 
+def _reprepare_saved_choice(host, item, actor, handler, effect):
+    if effect.get("op") != "fixed_library_selection" or effect.get("schema_version") != 3:
+        return handler.prepare(effect, host._semantic_choice_context(item, actor, effect))
+    choice_fields = {
+        "_choice_actor", "_effective_maximum", "_effective_minimum",
+        "_eligible_groups", "_looked_objects", "_stack_label",
+    }
+    instruction = {key: value for key, value in effect.items() if key not in choice_fields}
+    prepared = handler.prepare(instruction, host._semantic_choice_context(item, actor, instruction))
+    if prepared.continuation_effect != effect:
+        raise SemanticChoiceError("Battlefield library selection changed its saved choice frame")
+    return prepared
+
+
 def resume_semantic_preparation(
     host: SemanticPreparationCoordinationHost,
     restored: ReplacementContinuation,
@@ -339,10 +375,7 @@ def resume_semantic_preparation(
             continuation.semantic_frame.to_dict(), item
         )
         actor = restored.semantic_choice_actor
-        preparation = handler.prepare(
-            continuation.effect,
-            host._semantic_choice_context(item, actor, continuation.effect),
-        )
+        preparation = _reprepare_saved_choice(host, item, actor, handler, continuation.effect)
         continue_semantic_preparation(
             host,
             continuation=continuation,

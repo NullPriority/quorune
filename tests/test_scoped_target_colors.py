@@ -22,7 +22,7 @@ from scripts.build_test_database import build_fixture_database,compact_ci_fixtur
 
 NAMES=('Dwarven Song',"Sea Kings' Blessing",'Touch of Darkness','Sylvan Paradise',"Heaven's Gate",'Aurora Griffin',
     'Disciple of Kangee','Viridescent Wisps','Niveous Wisps','Cerulean Wisps','Singe','Indigo Faerie','Ersatz Gnomes',
-    'Metathran Transport','Fylamarid','Crimson Wisps','Cloudchaser Kestrel','Aphotic Wisps',"Traitor's Clutch")
+    'Metathran Transport','Fylamarid','Crimson Wisps','Cloudchaser Kestrel','Aphotic Wisps',"Traitor's Clutch",'Grand Architect')
 
 
 class ScopedColorCompilerTests(unittest.TestCase):
@@ -70,7 +70,8 @@ class ScopedColorNativeTests(InheritedNativeFixture,unittest.TestCase):
     def setUpClass(cls):
         names={*NAMES,'Sliver Hivelord','Generic Bound Plains','Grizzly Bears','Counterspell','Fusion Elemental',
             'Dragonfire Blade','Thoughtlace','Unsummon','Island','Forest','Fervor','Ornithopter','Boreal Elemental','Incite'}
-        paths=(*compact_ci_fixture_paths(root=ROOT),ROOT/'tests/fixtures/bound-effect-program-cards.json')
+        paths=(*compact_ci_fixture_paths(root=ROOT),ROOT/'tests/fixtures/bound-effect-program-cards.json',
+            ROOT/'tests/fixtures/temporary-target-interaction-cards.json')
         docs=[json.loads(p.read_text(encoding='utf-8')) for p in paths]
         cards={r['name']:r for d in docs for r in d['cards'] if r['name'] in names};assert set(cards)==names,names-set(cards)
         ids={r['oracle_id'] for r in cards.values()}
@@ -144,6 +145,38 @@ class ScopedColorNativeTests(InheritedNativeFixture,unittest.TestCase):
                 self.finish_turn(s);self.assertEqual({'G'},self.colors(s,body))
                 self.assertEqual((2,2),tuple(s.engine._numeric_stat(body.object_id,k) for k in ('power','toughness')))
                 self.finish(s,private)
+
+    def test_actual_grand_architect_color_requires_both_types_and_expires(self):
+        from quorune.record import authoritative_state_hash
+
+        def controls(s, source, bear):
+            flyer = self.add(s.engine, "Ornithopter")
+            equipment = self.add(s.engine, "Dragonfire Blade")
+            return flyer, equipment
+
+        s, source, bear, _private, (target, equipment) = self.scene(
+            "Grand Architect", controls, zone="battlefield",
+        )
+        rows = s.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        choice = next(row for row in rows if row["id"].startswith("activate:" + source.ref + ":"))
+        before = authoritative_state_hash(s.state)
+        for invalid in (bear, equipment):
+            result = s.act("pilot:A", {"action_id":choice["id"],"targets":[invalid.ref],"pay":"auto"})
+            self.assertFalse(result.ok)
+            self.assertEqual(before, authoritative_state_hash(s.state))
+        self.assertEqual(set(), self.colors(s, target))
+        self.activate(s, source, target.ref)
+        s = self.replay(s, load=True)
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual({"U"}, self.colors(s, target))
+        self.assertEqual(1, s.engine._numeric_stat(target.object_id,"power"))
+        self.assertEqual({"artifact","creature"}, set(s.engine._public_object_query_result(
+            s.state.cards[target.object_id], _maximum_layer=None,
+        ).types))
+        self.finish_turn(s)
+        self.assertEqual(set(), self.colors(s, target))
+        self.assertEqual(0, s.engine._numeric_stat(target.object_id,"power"))
+        self.replay(s, load=True)
 
     def test_actual_additive_and_replacing_colors_follow_timestamps_and_change_equip_quotes(self):
         def before(s,source,body):return {'griffin':self.add(s.engine,'Aurora Griffin'),'blade':self.add(s.engine,'Dragonfire Blade')}

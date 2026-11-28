@@ -37,6 +37,8 @@ class OptionalDrawAttackRestrictionTests(InheritedNativeFixture, unittest.TestCa
             fixtures / "announced-destruction-controller-tokens-cards.json",
             fixtures / "target-player-sequence-cards.json",
             fixtures / "event-spell-copy-cards.json",
+            fixtures / "fixed-distributed-token-cards.json",
+            fixtures / "draw-step-exempt-multiplier-cards.json",
         ], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -44,6 +46,96 @@ class OptionalDrawAttackRestrictionTests(InheritedNativeFixture, unittest.TestCa
             DeckEntry("Generic Bound Commander", 1, "commander"),
             DeckEntry("Generic Bound Plains", 30),
         ], ["Generic Bound Commander"])
+
+    def _tempt_game(self, seed, *, replacements=False):
+        game = self.session(seed)
+        source = self.add(game.engine, "Tempt with Bunnies", zone="hand")
+        if replacements:
+            for name in ("Teferi's Ageless Insight", "Anointed Procession"):
+                self.assert_closed(game, self.add(game.engine, name, seat="B"))
+        self.assert_closed(game, source)
+        self.prepare(game, mana={"C": 2, "W": 1})
+        self.checkpoint(game)
+        libraries = self.libraries(game)
+        self.cast(game, "A", source)
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        return game, libraries
+
+    def _tempt_tokens(self, game):
+        return [card for card in game.state.cards.values() if card.is_token and card.zone == "battlefield"]
+
+    def _tempt_choose(self, game, actor, answer, previous):
+        pending = game.state.pending_decision
+        self.assertEqual(("semantic.choice", [actor]), (pending.kind, pending.actors))
+        packet = game.packet(f"pilot:{actor}", full=True)["decision"]
+        self.assertEqual([{"player": seat, "choice": choice} for seat, choice in previous], packet["ctx"]["previous_choices"])
+        result = game.act(f"pilot:{actor}", {"action_id": "choose", "choice": answer})
+        self.assertTrue(result.ok, result.summary)
+
+    def test_tempt_public_order_simultaneous_rewards_and_exact_repetitions_replay(self):
+        game, libraries = self._tempt_game(2000001, replacements=True)
+        after_initial = self.libraries(game)
+        self.assertEqual(libraries["A"][:-1], after_initial["A"])
+        self.assertEqual([libraries[seat] for seat in "BCD"], [after_initial[seat] for seat in "BCD"])
+        self.assertEqual(["A"], [card.controller for card in self._tempt_tokens(game)])
+        before = authoritative_state_hash(game.state)
+        for actor, body in (("C", {"choice": "accept"}), ("B", {"choice": "accept", "beneficiary": "B"})):
+            self.assertFalse(game.act(f"pilot:{actor}", {"action_id": "choose", **body}).ok)
+            self.assertEqual(before, authoritative_state_hash(game.state))
+        game = self.replay(game, load=True)
+        self._tempt_choose(game, "B", "accept", ())
+        self.assertEqual(after_initial, self.libraries(game))
+        game = self.replay(game, load=True)
+        self._tempt_choose(game, "C", "decline", (("B", "accept"),))
+        self.assertEqual(after_initial, self.libraries(game))
+        self.assertEqual(["A"], [card.controller for card in self._tempt_tokens(game)])
+        self._tempt_choose(game, "D", "accept", (("B", "accept"), ("C", "decline")))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual({"A": 3, "B": 2, "C": 0, "D": 1},
+                         {seat: len(libraries[seat]) - len(current) for seat, current in self.libraries(game).items()})
+        tokens = self._tempt_tokens(game)
+        self.assertEqual({"A": 3, "B": 2, "C": 0, "D": 1},
+                         {seat: sum(card.controller == seat for card in tokens) for seat in "ABCD"})
+        self.assertEqual(1, len({card.zone_timestamp for card in tokens if card.controller in {"B", "D"}}))
+        self.assertEqual(3, len({card.zone_timestamp for card in tokens if card.controller == "A"}))
+        for token in tokens:
+            data = game.engine._effective_card_data(token)
+            self.assertEqual("Rabbit Token", data["name"])
+            self.assertEqual(["W"], data["colors"])
+            self.assertEqual((1, 1), tuple(game.engine._numeric_stat(token.object_id, f) for f in ("power", "toughness")))
+        self.replay(game, load=True)
+
+    def test_tempt_all_declines_leave_only_the_original_pair(self):
+        game, libraries = self._tempt_game(2000002)
+        previous = []
+        for seat in "BCD":
+            self._tempt_choose(game, seat, "decline", previous)
+            previous.append((seat, "decline"))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual({seat: libraries[seat][:-1] if seat == "A" else libraries[seat] for seat in "ABCD"},
+                         self.libraries(game))
+        self.assertEqual(["A"], [card.controller for card in self._tempt_tokens(game)])
+        self.replay(game, load=True)
+
+    def test_tempt_rejects_missing_ordered_draw_and_authority(self):
+        from test_controller_creature_keyword_absence import register_card
+        from quorune.rules.tempt_draw_token import CAPABILITY
+
+        report, semantics = register_card(self.db, self.registry, "Tempt with Bunnies")
+        self.assertTrue(report["strict_capability_ready"], report["blockers"])
+        record = self.db.lookup("Tempt with Bunnies", fuzzy=False)
+        program, = semantics.programs_for_oracle(record.oracle_id)
+        first, token, offer = program.effects
+        deps = tuple(cap for cap in program.capability_dependencies if cap != CAPABILITY)
+        for invalid in (
+            replace(program, effects=(token, first, offer)),
+            replace(program, effects=(first, token, {**offer, "beneficiary": "$context.player"})),
+            replace(program, capability_dependencies=deps,
+                    capability_closure=self.registry.closure(deps, profile="commander_review").to_dict()),
+        ):
+            self.assertFalse(bind_semantic_program_runtime(
+                invalid, capability_registry=self.registry, profile="commander_review",
+            )["strict"])
 
     def begin_end_step_draws(self, game, source):
         self.until(game, lambda g: g.state.step == "end_step" and any(
@@ -446,3 +538,193 @@ class OptionalDrawAttackRestrictionTests(InheritedNativeFixture, unittest.TestCa
         self.assertEqual(library[:-1], self.libraries(game)["A"])
         self.assertEqual({}, self.restrictions(game))
         self.replay(game, load=True)
+
+
+class ApnapCounterAttackTruceTests(InheritedNativeFixture, unittest.TestCase):
+    source_name = "Counter Payment Test Advisor"
+    prepare_defenders = OptionalDrawAttackRestrictionTests.prepare_defenders
+    expect_attack_targets = OptionalDrawAttackRestrictionTests.expect_attack_targets
+
+    @classmethod
+    def source_fixture(cls):
+        return {"cards": [{
+            "name": cls.source_name, "oracle_id": "7b404a8a-7d92-428e-9b33-3c750c05a193",
+            "type_line": "Creature — Advisor", "mana_cost": "{2}{W}", "cmc": 3,
+            "color_identity": ["W"], "power": "1", "toughness": "4",
+            "oracle_text": "At the beginning of your upkeep, each player may put two +1/+1 counters on "
+                           "a creature they control. If a player does, creatures that player controls "
+                           "can't attack you or planeswalkers you control until your next turn.",
+        }]}
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        path = Path(cls.temporary.name) / "apnap-counter-truce.sqlite3"
+        fixture = path.with_suffix(".json")
+        fixture.write_text(json.dumps({**cls.source_fixture(), "schema_version": 1}), encoding="utf-8")
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "optional-draw-attack-restriction-cards.json",
+            fixtures / "counter-prohibition-cards.json",
+            fixtures / "counter-replacement-cards.json",
+            fixtures / "counter-doubling-cards.json",
+            fixtures / "counter-placement-event-cards.json",
+            fixture,
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("APNAP counter payment", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def begin_upkeep(self, game, source):
+        from quorune.engine import TURN_STEPS
+
+        engine = game.engine
+        engine.state.active_player = "A"
+        engine.state.started = True
+        engine.state.phase = "beginning"
+        engine.state.step = "upkeep"
+        engine.state.phase_index = TURN_STEPS.index(("beginning", "upkeep"))
+        engine._enter_step()
+        engine.pump()
+        triggers = [item for item in game.state.stack if item.source_object_id == source.object_id]
+        self.assertEqual(1, len(triggers))
+        self.assertEqual([], triggers[0].targets)
+        self.checkpoint(game)
+
+    def choose(self, game, seat, refs, prior):
+        decision = game.packet(f"pilot:{seat}", full=True)["decision"]
+        self.assertEqual("choice.apnap", game.state.pending_decision.kind)
+        self.assertEqual([seat], game.state.pending_decision.actors)
+        self.assertEqual(prior, decision["ctx"]["prior_public_choices"])
+        self.assertEqual(0, decision["ctx"]["minimum"])
+        self.assertIsNone(game.packet("spectator", full=True)["decision"])
+        result = game.act(f"pilot:{seat}", {"action_id": "choose", "cards": refs})
+        self.assertTrue(result.ok, result.summary)
+
+    def counter(self, game, card):
+        return game.state.cards[card.object_id].counters.get("+1/+1", 0)
+
+    def test_apnap_counter_truce_has_exact_scope_and_rejects_raw_results(self):
+        from quorune.errors import GameRuleError
+        from quorune.rules.apnap_counter_attack_truce import COMMIT, FIELD, counter_attack_truce_program_dependencies
+        from quorune.stack_resolution import arbiter_resolution_effects
+
+        game = self.session(101419)
+        source = self.add(game.engine, self.source_name)
+        self.assert_closed(game, source)
+        card = self.db.lookup(self.source_name)
+        ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        program, = [value for value in game.engine.semantics.programs_for_oracle(card.oracle_id)
+                    if value.event == "step.begin"]
+        effect, = program.effects
+        self.assertTrue(counter_attack_truce_program_dependencies(program))
+        for modified in (
+            replace(program, event_condition=None),
+            replace(program, effects=({**effect, FIELD: True},)),
+            replace(program, effects=({**effect, "players": "opponents"},)),
+            replace(program, effects=({**effect, "op": COMMIT, "placements": []},)),
+        ):
+            result = bind_semantic_program_runtime(modified, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(result["strict"], result)
+        for raw in (effect, {"op": COMMIT, "placements": []}):
+            with self.assertRaisesRegex(GameRuleError, "server-issued APNAP counter choices"):
+                arbiter_resolution_effects([raw])
+
+    def test_apnap_counter_truce_choices_replacement_duration_and_replay(self):
+        game = self.session(101420)
+        for seat in "ABCD":
+            for object_id in game.state.players[seat].zones["hand"][:3]:
+                game.engine.move_card(object_id, "library", log=False, reason="Initial hand fixture")
+        source = self.add(game.engine, self.source_name)
+        first = self.add(game.engine, "Generic Bound Body", ref="truce-a-body")
+        second = self.add(game.engine, "Generic Bound Body", seat="B", ref="truce-b-body")
+        later = self.add(game.engine, "Generic Bound Body", seat="B", zone="hand", ref="truce-b-later")
+        self.add(game.engine, "Generic Bound Body", seat="C", ref="truce-c-body")
+        self.add(game.engine, "Hardened Scales", seat="B")
+        self.add(game.engine, "Branching Evolution", seat="B")
+        self.add(game.engine, "Generic Bound Plains", seat="B", ref="truce-b-mana")
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        secret = self.add(game.engine, "Generic Bound Growth", seat="D", zone="hand", ref="truce-private-card")
+        walker, _, battle = self.prepare_defenders(game)
+        self.assert_closed(game, source)
+        game.engine.state.players["B"].mana_pool.update({"U": 1})
+        game.engine.turn_steps.schedule_extra_turn("B", source="Counter payment fixture")
+        self.begin_upkeep(game, source)
+        self.priority(game, "B")
+        self.cast_for(game, "B", bounce, [source.ref])
+        self.resolve_top(game)
+        self.assertEqual("hand", game.state.cards[source.object_id].zone)
+        self.assertEqual("choice.apnap", self.resolve(game).kind)
+
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:B", {"action_id": "choose", "cards": [second.ref]}).ok)
+        self.assertFalse(game.act("pilot:A", {"action_id": "choose", "cards": [second.ref]}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        self.choose(game, "A", [first.ref], {})
+        self.assertEqual(0, self.counter(game, first))
+        self.assertNotIn(secret.ref, json.dumps(game.packet("pilot:B", full=True)))
+        self.assertIn(secret.ref, json.dumps(game.packet("pilot:D", full=True)))
+        game = self.replay(game, load=True)
+        self.choose(game, "B", [second.ref], {"A": [first.ref]})
+        self.assertEqual((0, 0), (self.counter(game, first), self.counter(game, second)))
+        self.choose(game, "C", [], {"A": [first.ref], "B": [second.ref]})
+        self.assertEqual("replacement.order", game.state.pending_decision.kind)
+        self.assertEqual((0, 0), (self.counter(game, first), self.counter(game, second)))
+        game = self.replay(game, load=True)
+        offset = len(game.state.events)
+        while game.state.pending_decision.kind == "replacement.order":
+            principal = game.pending_principals()[0]
+            option = game.packet(principal, full=True)["decision"]["ctx"]["options"][0]["id"]
+            result = game.act(principal, {"action_id": "choose", "replacement": option})
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual(2, self.counter(game, first))
+        self.assertIn(self.counter(game, second), {5, 6})
+        self.assertEqual(["A", "B"], [event.actor for event in game.state.events[offset:]
+                                      if event.code == "counter.add"])
+        restriction, = [effect for effect in game.state.continuous_effects
+                        if isinstance(effect, ResolvedNextTurnAttackRestriction)]
+        self.assertEqual(("B", "A", "A"), (restriction.restricted_player, restriction.protected_player,
+                                             restriction.expires_on_next_turn_of))
+
+        first_turn = game.state.turn_sequence
+        self.until(game, lambda current: current.state.active_player == "B" and
+                   current.state.phase == "precombat_main" and current.state.pending_decision.kind == "priority")
+        self.cast_for(game, "B", later)
+        self.resolve_top(game)
+        for turn in range(2):
+            self.until(game, lambda current: current.state.active_player == "B" and
+                       current.state.turn_sequence > first_turn and current.state.pending_decision.kind == "combat.attackers")
+            first_turn = game.state.turn_sequence
+            self.expect_attack_targets(game, second, legal=("C", "D", battle.ref), barred=("A", walker.ref))
+            if turn == 1:
+                self.expect_attack_targets(game, later, legal=("C", "D", battle.ref), barred=("A", walker.ref))
+            before = authoritative_state_hash(game.state)
+            for target in ("A", walker.ref):
+                result = game.act("pilot:B", {"action_id": "attack", "attackers": {second.ref: target}})
+                self.assertFalse(result.ok)
+                self.assertEqual(before, authoritative_state_hash(game.state))
+            result = game.act("pilot:B", {"action_id": "attack", "attackers": {second.ref: "C"}})
+            self.assertTrue(result.ok, result.summary)
+        self.until(game, lambda current: current.state.active_player == "A")
+        self.assertFalse(any(isinstance(effect, ResolvedNextTurnAttackRestriction) for effect in game.state.continuous_effects))
+        self.assertEqual("battlefield", game.state.cards[later.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_apnap_counter_truce_prohibited_choices_are_skipped(self):
+        game = self.session(101421)
+        source = self.add(game.engine, self.source_name)
+        self.add(game.engine, "Solemnity")
+        self.add(game.engine, "Generic Bound Body", seat="B")
+        self.begin_upkeep(game, source)
+        self.assertIsNone(self.resolve(game))
+        self.assertFalse(any(isinstance(effect, ResolvedNextTurnAttackRestriction) for effect in game.state.continuous_effects))
+        self.replay(game)
+
+    def test_apnap_counter_truce_attack_commit_mutation_is_killed(self):
+        with patch("quorune.rules.apnap_counter_attack_truce.apply_until_protected_turn_attack_restrictions"):
+            with self.assertRaises((AssertionError, ValueError)):
+                self.test_apnap_counter_truce_choices_replacement_duration_and_replay()

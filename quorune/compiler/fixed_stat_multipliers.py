@@ -23,6 +23,10 @@ _BODY = re.compile(
 _CONTROLLED_SET = re.compile(r"each (?P<other>other )?(?P<kind>[^.,]+?) you control", re.I)
 _ATTACK_RESULT = re.compile(rf"(?P<action>double|triple) its (?P<stat>{_STAT}) until end of turn\.?", re.I)
 _FIRST_STRIKE_TAIL = " and it gains first strike"
+_CONTROLLED_DOUBLING_TRAMPLE = re.compile(
+    r"Choose target creature you control\. Until end of turn, double its power and toughness and it gains trample\.?",
+    re.I,
+)
 
 
 def _compiled_multiplier(action, stat, selection, schema=None, *, first_strike=False):
@@ -47,6 +51,12 @@ def attack_occurrence_multiplier_template(text):
 def fixed_stat_multiplier_effect_template(
     text, *, source_name, source_is_permanent, source_card_types, source_attachment_relation=None,
 ):
+    if _CONTROLLED_DOUBLING_TRAMPLE.fullmatch(text.strip()):
+        schema = direct_permanent_target_spec("target creature you control").to_target_schema()
+        template, (effect,), schema, mechanics = _compiled_multiplier(
+            "double", "power and toughness", {"card": "$target.0"}, schema,
+        )
+        return template, ({**effect, "grant_trample": True},), schema, (*mechanics, "trample")
     body = text.strip().removesuffix(".")
     prefix, suffix = "until end of turn, ", " until end of turn"
     if body.casefold().startswith(prefix):

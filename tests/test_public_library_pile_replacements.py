@@ -117,6 +117,174 @@ class PublicLibraryPileReplacementTests(InheritedNativeFixture, unittest.TestCas
         self.assertEqual(set(desired_order), set(offered_order),
                          "The graveyard order offer must use actual simultaneous arrivals")
 
+    def dihada_scene(self, seed, cards, *, replacement=(), loyalty=5):
+        game = self.session(seed)
+        source = self.add(game.engine, "Dihada, Binder of Wills", ref="source-dihada")
+        source.counters["loyalty"] = loyalty
+        for name, seat in replacement:
+            self.assert_closed(game, self.add(game.engine, name, seat=seat))
+        # Seal a short known top for the full public-choice transcript.
+        for object_id in tuple(game.state.players["A"].zones["library"]):
+            game.engine.move_card(object_id, "hand", reason="Set a short library", log=False)
+        top = [self.add(game.engine, name, zone="library", ref=ref) for name, ref in cards]
+        for card in top:
+            card.known_to = []
+            card.revealed_to = []
+        self.assert_closed(game, source)
+        return game, source, top
+
+    def dihada_activate(self, game, source, delta, *, targets=()):
+        self.priority(game, "A")
+        source = game.state.cards[source.object_id]
+        ability, = (ability for ability in game.engine._activated_abilities(source)
+                    if ability.loyalty_delta == delta)
+        command = {"action_id": f"activate:{source.ref}:{ability.ability_id}", "targets": list(targets)}
+        self.reject(game, "B", command)
+        accepted = game.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+
+    def dihada_choice(self, game):
+        decision = game.state.pending_decision
+        self.assertEqual(("semantic.choice", ["A"]), (decision.kind, decision.actors))
+        choose = next(row for row in game.packet("pilot:A", full=True)["decision"]["ctx"]["legal_actions"]
+                      if row["id"] == "choose")
+        self.assertEqual("cards", choose["choice_schema"]["field"])
+        return choose["choice_schema"]
+
+    def dihada_treasures(self, game):
+        return [card for card in game.state.cards.values() if card.zone == "battlefield"
+                and card.controller == "A" and card.is_token and "Treasure" in card.printed_name]
+
+    def test_dihada_actual_graveyard_subset_orders_and_pays_only_committed_arrivals(self):
+        game, source, top = self.dihada_scene(60603501, (
+            ("Forest", "dihada-land"), ("Grizzly Bears", "dihada-creature"),
+            ("Lightning Bolt", "dihada-instant"), ("Isamaru, Hound of Konda", "dihada-legend"),
+        ), replacement=((REPLACEMENT, "B"),))
+        land, creature, spell, legendary = top
+        outside = self.add(game.engine, "Isamaru, Hound of Konda", zone="graveyard", ref="old-legend")
+        hidden = self.add(game.engine, "Plains", seat="C", zone="hand", ref="unrevealed-foreign-hand")
+        self.prepare(game)
+        self.checkpoint(game)
+        self.dihada_activate(game, source, -3)
+        self.assertEqual(2, game.state.cards[source.object_id].counters["loyalty"])
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        first = self.dihada_choice(game)
+        self.assertEqual([legendary.ref], first["legal_refs"])
+        for actor in ("pilot:B", "spectator"):
+            packet = game.packet(actor, full=True)
+            self.assertIsNone(packet["decision"])
+            self.assertNotIn(hidden.ref, json.dumps(packet))
+        visible = game.packet("pilot:B", full=True)["state"]["players"]["A"].get("known_top", [])
+        self.assertEqual([card.ref for card in reversed(top)], [row["id"] for row in visible])
+        for refs in ([creature.ref], [outside.ref], [legendary.ref, legendary.ref]):
+            self.reject(game, "A", {"action_id": "choose", "cards": refs})
+        game = self.replay(game, load=True)
+        self.submit(game, "A", cards=[legendary.ref])
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        order = self.dihada_choice(game)
+        self.assertEqual({land.ref, spell.ref}, set(order["legal_refs"]))
+        self.assertFalse(self.dihada_treasures(game))
+        self.reject(game, "A", {"action_id": "choose", "cards": [spell.ref, creature.ref]})
+        self.reject(game, "B", {"action_id": "choose", "cards": [spell.ref, land.ref]})
+        game = self.replay(game, load=True)
+        self.submit(game, "A", cards=[spell.ref, land.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual([outside.object_id, spell.object_id, land.object_id], game.state.players["A"].zones["graveyard"])
+        self.assertEqual("exile", game.state.cards[creature.object_id].zone)
+        self.assertEqual("hand", game.state.cards[legendary.object_id].zone)
+        self.assertEqual(2, len(self.dihada_treasures(game)))
+        self.replay(game)
+
+    def test_dihada_choose_all_and_empty_under_competing_public_replacements(self):
+        for take_all in (True, False):
+            with self.subTest(take_all=take_all):
+                names = (("Isamaru, Hound of Konda", "legend-one"), ("Isamaru, Hound of Konda", "legend-two"))
+                replaced = () if take_all else (("Rest in Peace", "B"), ("Leyline of the Void", "C"))
+                game, source, top = self.dihada_scene(60603502 + take_all, names, replacement=replaced)
+                self.prepare(game)
+                self.checkpoint(game)
+                self.dihada_activate(game, source, -3)
+                self.assertEqual("semantic.choice", self.resolve(game).kind)
+                self.assertEqual({card.ref for card in top}, set(self.dihada_choice(game)["legal_refs"]))
+                self.submit(game, "A", cards=[card.ref for card in top] if take_all else [])
+                pending = self.resolve(game)
+                if not take_all:
+                    self.assertEqual("replacement.order", pending.kind)
+                    game = self.replay(game, load=True)
+                    for _ in range(len(top)):
+                        self.assertEqual("replacement.order", game.state.pending_decision.kind)
+                        options = game.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+                        self.submit(game, "A", replacement=options[0]["id"])
+                        pending = self.resolve(game)
+                self.assertIsNone(pending)
+                self.assertFalse(self.dihada_treasures(game))
+                expected = "hand" if take_all else "exile"
+                self.assertTrue(all(game.state.cards[card.object_id].zone == expected for card in top))
+                self.assertEqual(2, game.state.cards[source.object_id].counters["loyalty"])
+                self.replay(game)
+
+    def test_dihada_existing_loyalty_abilities_and_commander_setup_remain_native(self):
+        from quorune.deck import DeckLoader
+        from quorune.session import CommanderSession
+
+        name = "Dihada, Binder of Wills"
+        deck = DeckDefinition("Dihada Commander fixture", [DeckEntry(name, 1, "commander"), DeckEntry("Plains", 99)], [name])
+        self.assertEqual([], DeckLoader(self.db).validate_commander_deck(deck))
+        created = CommanderSession.create(self.db, {"A": deck, "B": self.deck}, first_player="A", seed=60603510)
+        command, = [created.state.cards[oid] for oid in created.state.players["A"].zones["command"]]
+        self.assertEqual((name, "A", True), (command.printed_name, command.owner, command.is_commander))
+
+        game, source, _top = self.dihada_scene(60603511, ())
+        legendary = self.add(game.engine, "Isamaru, Hound of Konda", ref="loyalty-legendary-creature")
+        self.prepare(game)
+        self.checkpoint(game)
+        self.dihada_activate(game, source, 2, targets=[legendary.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(7, game.state.cards[source.object_id].counters["loyalty"])
+        self.assertTrue({"vigilance", "lifelink", "indestructible"} <= set(game.engine._combat_keywords(game.state.cards[legendary.object_id])))
+        self.replay(game)
+
+        game, source, _top = self.dihada_scene(60603512, (), loyalty=12)
+        creature = self.add(game.engine, "Grizzly Bears", seat="B", ref="ultimate-creature")
+        ring = self.add(game.engine, "Sol Ring", seat="B", ref="ultimate-artifact")
+        land = self.add(game.engine, "Plains", seat="B", ref="ultimate-land")
+        for card in (creature, ring, land):
+            card.tapped = True
+        self.prepare(game)
+        self.checkpoint(game)
+        self.dihada_activate(game, source, -11)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(1, game.state.cards[source.object_id].counters["loyalty"])
+        for card in (creature, ring):
+            moved = game.state.cards[card.object_id]
+            self.assertEqual(("A", "B", False), (moved.controller, moved.owner, moved.tapped))
+        self.assertIn("haste", game.engine._combat_keywords(game.state.cards[creature.object_id]))
+        land = game.state.cards[land.object_id]
+        self.assertEqual(("B", True), (land.controller, land.tapped))
+        self.replay(game)
+
+    def test_dihada_exact_public_legendary_treasure_shape_is_required(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.revealed_legendary_graveyard_treasure import (
+            revealed_legendary_treasure_capabilities, revealed_legendary_treasure_effect,
+        )
+
+        record = self.db.lookup("Dihada, Binder of Wills", fuzzy=False)
+        compiler = lambda candidate: compile_oracle_card(
+            candidate, capability_registry=self.registry, capability_profile="commander_review",
+        )
+        self.assertEqual("exact", compiler(record).status)
+        with patch("quorune.compiler.fixed_library_selection_templates.RevealedLegendaryTreasureTemplate.compiled",
+                   return_value=(None, (), None, ())):
+            self.assertNotEqual("exact", compiler(record).status)
+        self.assertNotEqual("exact", compiler(replace(
+            record, oracle_text=record.oracle_text.replace("Reveal the top four", "Reveal the top three"),
+        )).status)
+        with self.assertRaises(ValueError):
+            revealed_legendary_treasure_capabilities({**revealed_legendary_treasure_effect(), "public_reveal": False})
+
     def test_fact_or_fiction_omits_order_after_two_of_three_arrivals_are_exiled(self):
         game, spell, cards, hidden, private, anchor = self.prepare_scene(spell_name=sealed.CARD, seed=40430431)
         self.stage(game, "B", "divide", "piles")

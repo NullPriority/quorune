@@ -2,13 +2,14 @@ from __future__ import annotations
 
 from bisect import bisect_right
 import copy
+import hashlib
 import json
 from dataclasses import dataclass, field
 from itertools import islice
 from typing import Any, Callable, Iterable, Mapping, Sequence
 
-from .announced_damage import ANNOUNCED_DAMAGE_CONTEXT
-from .carddb import CardDatabase, CardRecord
+from .announced_counter_allocation import public_target_allocation_shares
+from .carddb import CardDatabase
 from .characteristic_evaluation import evaluate_card_characteristics
 from .choice_forms import build_action_form
 from .permissions import CapabilityManager, current_turn_controller, decision_context_for_capability
@@ -109,6 +110,7 @@ class StateProjector:
         hand_visibility_resolver: Callable[[str], bool] | None = None,
         goading_players_resolver: Callable[[CardInstance], tuple[str, ...]] | None = None,
         stack_effects_resolver: Callable[[str], Sequence[Mapping[str, Any]]] | None = None,
+        stack_program_resolver: Callable[[str], Any] | None = None,
         land_entry_life_resolver: Callable[[CardRecord], int] | None = None,
     ):
         self.card_db = card_db
@@ -122,6 +124,7 @@ class StateProjector:
         self.hand_visibility_resolver = hand_visibility_resolver
         self.goading_players_resolver = goading_players_resolver
         self.stack_effects_resolver = stack_effects_resolver
+        self.stack_program_resolver = stack_program_resolver
         self.land_entry_life_resolver = land_entry_life_resolver
 
     @staticmethod
@@ -521,6 +524,13 @@ class StateProjector:
             from .commander_zones import present_commander_replacement_options
 
             present_commander_replacement_options(context, decision.continuation)
+            if capability.actor and principal == f"pilot:{capability.actor}":
+                from .choice_forms import present_creature_type_entry_options
+
+                present_creature_type_entry_options(
+                    context, decision.continuation, state=self.state,
+                    card_db=self.card_db, actor=capability.actor,
+                )
         labels: dict[str, str] = {}
         if decision.kind == "state.commander_zone" and context.get("origin") in {"graveyard", "exile"}:
             origin = context["origin"]
@@ -699,6 +709,51 @@ class StateProjector:
                 return True
         return False
 
+    def _source_priority_yield(self, item: StackItem, principal: str) -> dict[str, Any] | None:
+        """Offer local consent for the pilot's current public self-exile trigger."""
+
+        pilot_seat = self.seat_for(principal)
+        if (pilot_seat not in self.state.players or not self.state.players[pilot_seat].in_game
+                or item.controller != pilot_seat or item.kind != "triggered_ability"
+                or item.targets or item.modes or not item.source_object_id or not item.semantic_key
+                or item.context.get("trigger_target_selection_pending")
+                or "target_schema_override" in item.context or "dynamic_effects" in item.context
+                or self.stack_program_resolver is None):
+            return None
+        source = self.state.cards.get(item.source_object_id)
+        if (source is None or source.zone != "battlefield" or source.controller != pilot_seat
+                or source.phased_out or source.face_down
+                or item.context.get("source_logical_object_id") != source.logical_object_id
+                or not self._card_visible(source, "spectator")):
+            return None
+        from .replacement.immutable import freeze_value, thaw_value
+        from .rules.cast_or_attack_source_exile import cast_or_attack_source_exile_runtime_dependencies
+        from .selection.target_query import current_spell_target_subjects
+
+        program = self.stack_program_resolver(item.semantic_key)
+        if (program is None or program.key != item.semantic_key
+                or program.trust_level != "trusted" or program.requires_arbiter):
+            return None
+        try:
+            required = cast_or_attack_source_exile_runtime_dependencies(program)
+        except (ValueError, TypeError, KeyError):
+            return None
+        if not required or not set(required) <= set(program.capability_dependencies):
+            return None
+        if item.context.get("event") not in {"spell.cast", "creature.attacks"}:
+            return None
+        # Preserve an existing target stop even after a response is revalidated.
+        targeted = any(source.ref in waiting.targets or any(
+            subject is source for subject in current_spell_target_subjects(self, waiting)
+        ) for waiting in self.state.stack)
+        # The scope lasts for this physical card in this game. Its exposure
+        # still requires the currently live trigger's exact source incarnation.
+        scope = stable_json(thaw_value(freeze_value((
+            self.state.game_id, pilot_seat, source.object_id, program.key, program.version,
+            program.event_condition, program.effects,
+        ))))
+        return {"id": hashlib.sha256(scope.encode("utf-8")).hexdigest(), "targeted": targeted}
+
     def _stack_snapshot(self, principal: str) -> list[dict[str, Any]]:
         stack: list[dict[str, Any]] = []
         for item in reversed(self.state.stack):
@@ -733,12 +788,9 @@ class StateProjector:
                         key: visible_source[key] for key in ("cid", "n", "face", "printing")
                         if key in visible_source
                     })
-            allocation = item.context.get(ANNOUNCED_DAMAGE_CONTEXT)
-            if isinstance(allocation, Mapping) and not hidden_face_down:
-                shares = allocation.get("shares")
-                if (isinstance(shares, (list, tuple)) and len(shares) == len(item.targets)
-                        and all(type(share) is int and share > 0 for share in shares)):
-                    row["damage_shares"] = list(shares)
+                row.update(public_target_allocation_shares(item))
+                if not stack and (scope := self._source_priority_yield(item, principal)) is not None:
+                    row["source_priority_yield"] = scope
             if card is not None:
                 row.update(
                     {
@@ -832,6 +884,15 @@ class StateProjector:
                 ),
                 "cmd": self._zone(p.zones["command"], principal),
             }
+            from .rules.name_stickers import access as name_sticker_access
+            from .rules.name_sticker_sheets import NAME_STICKER_SHEETS
+
+            sticker_access = name_sticker_access(p)
+            if sticker_access is not None:
+                summary["sticker_sheets"] = {
+                    key: [NAME_STICKER_SHEETS[sheet][0] for sheet in sticker_access[key]]
+                    for key in ("registered", "chosen")
+                }
             if p.dungeon_journey is not None:
                 summary["dungeon_journey"] = p.dungeon_journey.to_dict()
             generic_counters = _generic_player_counter_rows(p)
@@ -1078,10 +1139,16 @@ class StateProjector:
             return f"{card} stayed in {zone}."
         if event.code in {"zone.move", "permanent.destroyed", "state.creatures_died", "choice.sacrifice", "cost.sacrifice"}:
             return self._zone_event_summary(event)
+        if event.code == "combat.attack":
+            attack = self._attack_event_summary(event)
+            if attack:
+                return attack
         if event.code == "combat.damage":
             damage = self._combat_event_summary(event)
             if damage:
                 return damage
+        if event.code == "player.eliminated":
+            return self._departure_event_summary(event)
         if (
             event.summary == event.code == "library.top.reveal"
             and set(event.details) == {"player", "card"}
@@ -1195,6 +1262,8 @@ class StateProjector:
         if event.code == "combat.damage":
             refs = [ref for hit in (details.get("damage_events") or ())[:3] if isinstance(hit, Mapping)
                     for ref in (hit.get("source"), hit.get("target"))]
+        elif event.code == "combat.attack":
+            refs = [ref for pair in self._attack_targets(event) for ref in pair]
         elif event.code == "permanent.destroyed":
             refs = [details.get("object"), *(ref for ref, _ in self._combat_hits_before(event, details.get("object"))[:4])]
         elif event.code in {"state.creatures_died", "choice.sacrifice"}:
@@ -1222,6 +1291,48 @@ class StateProjector:
                     **({"tok": 1} if card.is_token else {}),
                 }
         return [rows[ref] for ref in ordered if ref in rows]
+
+    def _attack_targets(self, event: Event) -> list[tuple[str, str]]:
+        attackers = event.details.get("attackers")
+        if not isinstance(attackers, Mapping):
+            return []
+        return [(source, target) for source, target in islice(attackers.items(), 3)
+                if isinstance(source, str) and isinstance(target, str)]
+
+    def _attack_event_summary(self, event: Event) -> str:
+        attacks = self._attack_targets(event)
+        if not attacks:
+            return ""
+        lines = [
+            f"{self._cast_target_label(source)} toward {self._cast_target_label(target)}"
+            for source, target in attacks
+        ]
+        total = len(event.details["attackers"])
+        if total > len(lines):
+            count = total - len(lines)
+            lines.append(f"{count} more {'attacker' if count == 1 else 'attackers'}")
+        return "Attacked with " + "; ".join(lines) + "."
+
+    def _departure_event_summary(self, event: Event) -> str:
+        reason = event.details.get("reason")
+        if reason == "conceded":
+            return "Conceded the game."
+        player = self.state.players.get(event.actor)
+        if reason != "state-based loss" or player is None or player.in_game:
+            return event.summary
+        lost_to = []
+        if player.life <= 0:
+            lost_to.append(f"reaching {player.life} life")
+        if player.poison >= self.state.config.poison_to_lose:
+            lost_to.append(f"having {player.poison} poison counters")
+        if player.attempted_empty_draw:
+            lost_to.append("trying to draw from an empty library")
+        for damage_key, amount in sorted(player.commander_damage_received.items()):
+            if amount >= self.state.config.commander_damage_to_lose:
+                source = commander_damage_source(self.state, damage_key)
+                name = f" from {source.printed_name}" if source is not None else ""
+                lost_to.append(f"taking {amount} commander damage{name}")
+        return "Lost the game after " + "; ".join(lost_to) + "." if lost_to else event.summary
 
     def _combat_event_summary(self, event: Event) -> str:
         hits = []
@@ -1328,7 +1439,10 @@ class StateProjector:
         )
         snapshot = cursor.snapshot if cached else self._snapshot(principal)
         current_view_hash = cursor.view_hash if cached else view_hash(snapshot)
-        full = force_full or cursor.snapshot is None or cursor.packet_no == 0
+        principal_changed = (
+            cursor.observation_principal is not None and cursor.observation_principal != principal
+        )
+        full = force_full or principal_changed or cursor.snapshot is None or cursor.packet_no == 0
         if full:
             payload: dict[str, Any] = {
                 "v": PROTOCOL_VERSION,
@@ -1358,10 +1472,11 @@ class StateProjector:
 
         decision = payload["decision"]
         previews = decision["ctx"].get("preview_cards", []) if decision is not None else []
-        events = self._events(principal, cursor.event_id)
+        events = self._events(principal, 0 if principal_changed else cursor.event_id)
         activity_cards = [card for row in events for card in row.get("cards", ())]
         visible = self._visible_oracles(previews, activity_cards) if cached else self._visible_oracles(snapshot, previews, activity_cards)
-        new_oracles = sorted(visible - cursor.seen_oracles)
+        seen_oracles = set() if principal_changed else cursor.seen_oracles
+        new_oracles = sorted(visible - seen_oracles)
         if new_oracles:
             payload["defs"] = [self._definition(oracle_id) for oracle_id in new_oracles]
         if events:
@@ -1373,6 +1488,7 @@ class StateProjector:
         cursor.observation_principal = principal
         cursor.view_hash = current_view_hash
         cursor.event_id = self.state.event_sequence
+        cursor.seen_oracles = seen_oracles
         cursor.seen_oracles.update(visible)
         cursor.packet_no += 1
         payload["pkt"] = cursor.packet_no

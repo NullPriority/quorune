@@ -82,6 +82,152 @@ class DistinctTurnTriggerModeTests(InheritedNativeFixture, unittest.TestCase):
     def _mode_events(self, session):
         return [row for row in session.state.turn_history.events if row.kind == TRIGGER_MODE_CHOSEN_EVENT]
 
+    def _flashback(self, session, card):
+        self.priority(session, "A")
+        row = self.action(session, "A", card)
+        self.assertIn("flashback", [option["id"] for option in row["cost_options"]])
+        accepted = session.act("pilot:A", {"action_id": row["id"], "cost_option": "flashback", "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+
+    def _artefact_activation(self, session, seat, source, target):
+        self.priority(session, seat)
+        action = next(row for row in session.packet("pilot:" + seat, full=True)["decision"]["ctx"]["legal"]["actions"]
+                      if row["id"].startswith(f"activate:{source.ref}:"))
+        accepted = session.act("pilot:" + seat, {"action_id": action["id"], "targets": [target], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve_top(session)
+
+    def test_judgment_batches_actual_departures_and_copies_or_counters_committed_modes(self):
+        session = self.session(1669001)
+        engine = session.engine
+        source = self.add(engine, "Teval's Judgment")
+        flashback = self.add(engine, "Think Twice", zone="graveyard")
+        first = self.add(engine, "Generic Bound Plains", zone="graveyard", ref="judgment-first-land")
+        second = self.add(engine, "Generic Bound Plains", zone="graveyard", ref="judgment-second-land")
+        foreign = self.add(engine, "Generic Bound Plains", seat="C", zone="graveyard", ref="judgment-other-land")
+        late = self.add(engine, "Reach Through Mists", zone="hand")
+        self.add(engine, "Island", ref="judgment-late-island")
+        resonator = self.add(engine, "Strionic Resonator")
+        crypts = [self.add(engine, "Tormod's Crypt", seat="B", ref=f"judgment-crypt-{i}") for i in range(3)]
+        disallow = self.add(engine, "Disallow", seat="B", zone="hand")
+        for i in range(2):
+            self.add(engine, "Island", seat="B", ref=f"judgment-payment-{i}")
+        self.add(engine, "Sol Ring", seat="B")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 4, "U": 2})
+        self.checkpoint(session)
+
+        self._artefact_activation(session, "B", crypts[0], "C")
+        self.assertEqual("exile", session.state.cards[foreign.object_id].zone)
+        self.assertEqual(0, self.trigger_count(session, source))
+        self._flashback(session, flashback)
+        self._assert_modes(session, MODES)
+        self._reject(session, ["mode_3"], seat="B")
+        self._choose(session, "mode_3")
+        zombie, = [item for item in session.state.stack if item.source_object_id == source.object_id]
+        self.assertEqual([3], [row.amount for row in self._mode_events(session)])
+
+        self._artefact_activation(session, "B", crypts[1], "A")
+        self.assertTrue(all(session.state.cards[c.object_id].zone == "exile" for c in (first, second)))
+        self._assert_modes(session, MODES[:2])
+        self._reject(session, ["mode_3"])
+        session = self.replay(session, load=True)
+        self._choose(session, "mode_2")
+        self.assertEqual(2, self.trigger_count(session, source))
+        treasure, = [item for item in session.state.stack if item.modes == ["mode_2"]]
+
+        self._artefact_activation(session, "A", resonator, zombie.ref)
+        self.assertEqual(["mode_3"], session.state.stack[-1].modes)
+        self.assertNotEqual(zombie.ref, session.state.stack[-1].ref)
+        self.assertEqual([3, 2], [row.amount for row in self._mode_events(session)])
+        self.cast(session, "B", disallow, [treasure.ref])
+        self.settle(session)
+        tokens = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertCountEqual(["Zombie Druid Token", "Zombie Druid Token"], [card.printed_name for card in tokens])
+        for token in tokens:
+            data = session.engine._effective_card_data(token)
+            self.assertEqual({"zombie", "druid"}, session.engine._type_parts(data["type_line"])[1])
+            self.assertEqual(("B",), tuple(data["colors"]))
+            self.assertEqual((2, 2), tuple(session.engine._numeric_stat(token.object_id, stat) for stat in ("power", "toughness")))
+
+        self.cast(session, "A", late)
+        self.settle(session)
+        self._artefact_activation(session, "B", crypts[2], "A")
+        self._assert_modes(session, MODES[:1])
+        self._reject(session, ["mode_2"])
+        hand = len(session.state.players["A"].zones["hand"])
+        self._choose(session, "mode_1")
+        self.settle(session)
+        self.assertEqual(hand + 1, len(session.state.players["A"].zones["hand"]))
+        self.assertEqual([3, 2, 1], [row.amount for row in self._mode_events(session)])
+        self.replay(session, load=True)
+
+    def test_judgment_new_turn_restores_committed_modes(self):
+        session = self.session(1669002)
+        engine = session.engine
+        source = self.add(engine, "Teval's Judgment")
+        cards = [self.add(engine, "Think Twice", zone="graveyard", ref=f"judgment-flash-{i}") for i in range(2)]
+        self.add(engine, "Sol Ring")
+        self.add(engine, "Island")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 2, "U": 1})
+        self.checkpoint(session)
+        self._flashback(session, cards[0])
+        self._assert_modes(session, MODES)
+        self._choose(session, "mode_2")
+        self.settle(session)
+        self.assertEqual([2], [row.amount for row in self._mode_events(session)])
+        previous = session.state.turn_sequence
+        for _ in range(4):
+            self.until(session, lambda game: (
+                game.state.turn_sequence > previous or game.state.pending_decision.kind == "cleanup.discard"
+            ))
+            if session.state.turn_sequence > previous:
+                break
+            principal, = session.pending_principals()
+            context = session.packet(principal, full=True)["decision"]["ctx"]
+            selected = [card["id"] for card in context["hand"][:context["count"]]]
+            result = session.act(principal, {"action_id": "discard", "cards": selected})
+            self.assertTrue(result.ok, result.summary)
+        self.assertGreater(session.state.turn_sequence, previous)
+        self.assertEqual([], self._mode_events(session))
+        self._flashback(session, cards[1])
+        self._assert_modes(session, MODES)
+        self._choose(session, "mode_2")
+        self.settle(session)
+        self.assertEqual([2], [row.amount for row in self._mode_events(session)])
+        self.assertEqual(2, sum(c.is_token and c.printed_name == "Treasure Token" for c in session.state.cards.values()))
+        self.replay(session, load=True)
+
+    def test_judgment_requires_the_grouped_owned_departure_context(self):
+        from quorune.rules.event_subscriptions import GRAVEYARD_DEPARTURE_LOOKBACK_EVENT
+
+        original = self.db.lookup("Teval's Judgment", fuzzy=False)
+        ir = compile_oracle_card(original, capability_registry=self.registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        trigger, = ir.faces[0].nodes
+        self.assertEqual(GRAVEYARD_DEPARTURE_LOOKBACK_EVENT, trigger.event)
+        self.assertEqual(2, trigger.target_schema[DISTINCT_TURN_TRIGGER_MODES_FIELD])
+        self.assertIn("one_or_more_event_batch", trigger.runtime_coverage)
+        for mutation in (
+            original.oracle_text.replace("your graveyard", "an opponent's graveyard"),
+            original.oracle_text.replace("one or more cards", "one or more creature cards"),
+            original.oracle_text.replace("Draw a card.", "Target player draws a card."),
+        ):
+            changed = compile_oracle_card(replace(original, oracle_text=mutation), capability_registry=self.registry)
+            self.assertNotEqual("exact", changed.status)
+
+        session = self.session(1669003)
+        source = self.add(session.engine, "Teval's Judgment")
+        self.assert_closed(session, source)
+        program, = session.engine.semantics.programs_for_oracle(source.oracle_id)
+        for mutation in (
+            replace(program, target_schema={**program.target_schema, DISTINCT_TURN_TRIGGER_MODES_FIELD: 1}),
+            replace(program, coverage=tuple(marker for marker in program.coverage if marker != "one_or_more_event_batch")),
+        ):
+            verified = bind_semantic_program_runtime(mutation, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(verified["strict"], verified)
+
     def test_greeters_simultaneous_creatures_consume_three_modes_during_placement(self):
         session = self.session(60337001)
         source = self.add(session.engine, ALLIANCE_NAME, zone="hand")

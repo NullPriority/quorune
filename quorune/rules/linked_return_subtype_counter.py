@@ -11,7 +11,7 @@ from ..linked_exile_return_model import (
     ExiledObjectIdentity, LINKED_EXILE_RETURN_CAPABILITY, LINKED_EXILE_RETURN_MECHANIC,
     LINKED_EXILE_RETURN_OPERATION, LINKED_RETURN_OPERATION,
     LINKED_RETURN_SUBTYPE_COUNTER_PHASE, LINKED_RETURN_SUBTYPE_COUNTER_VERSION,
-    LinkedExileReturnSpec,
+    LinkedExileReturnSpec, is_linked_behold_hand_return_spec,
 )
 from ..replacement.immutable import thaw_value
 
@@ -47,7 +47,8 @@ def uses_linked_subtype_counter(effect):
     return (
         effect.get("binding_id") == _LINKED_SUBTYPE_COUNTER_BINDING
         or effect.get("phase") == LINKED_RETURN_SUBTYPE_COUNTER_PHASE
-        or isinstance(spec, Mapping) and spec.get("schema_version") == LINKED_RETURN_SUBTYPE_COUNTER_VERSION
+        or (isinstance(spec, Mapping) and spec.get("schema_version") == LINKED_RETURN_SUBTYPE_COUNTER_VERSION
+            and not is_linked_behold_hand_return_spec(spec))
     )
 
 

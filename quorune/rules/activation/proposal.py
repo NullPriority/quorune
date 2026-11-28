@@ -362,7 +362,11 @@ def _collect_activation_payment(host, actor, source, ability, response, targets)
     else:
         from .x_costs import activation_requirements, validate_activation_x_payment
         requirements, announced_x = activation_requirements(host, actor, source, ability, response, targets=targets)
-        if announced_x is not None:
+        from ..announced_artifact_sacrifice_return import has_announced_artifact_sacrifice
+        if has_announced_artifact_sacrifice(ability):
+            from .announced_artifact_payment import validate_announced_artifact_payment
+            validate_announced_artifact_payment(host, actor, source, ability, response, requirements, announced_x)
+        elif announced_x is not None:
             try: validate_activation_x_payment(host,actor,source,ability,requirements)
             except ValueError as exc: raise ActivationProposalError(str(exc),status='unpayable',reason='activation_x_unpayable') from exc
     waterbend_details={}
@@ -376,13 +380,13 @@ def _collect_activation_payment(host, actor, source, ability, response, targets)
         if payment is None:raise ActivationProposalError('Waterbend payment is not payable',status='unpayable',reason='waterbend_unpayable')
         requirements,_,waterbend,_=payment;waterbend_details['waterbend_payment']=waterbend.to_dict()
     from .variable_colored_reveal import variable_colored_reveal_proposal_details
-    from .announced_subtype_sacrifice import announced_subtype_sacrifice_proposal_details
+    from .announced_selected_zone_cost import announced_selected_zone_cost_details
     from .commander_identity_life import commander_identity_life_details
 
     details = {
         **waterbend_details,
         **variable_colored_reveal_proposal_details(host, actor, ability, announced_x, response),
-        **announced_subtype_sacrifice_proposal_details(host, actor, source, ability, announced_x, response),
+        **announced_selected_zone_cost_details(host, actor, source, ability, announced_x, response),
         **commander_identity_life_details(host, actor, ability),
     }
     return requirements, announced_x, mana_option, details
@@ -764,9 +768,20 @@ def _build_priced_activation_offer(
         if selected.loyalty_x:
             x_choice["maximum"] = source.counters.get("loyalty", 0)
         choice_schema = {**(choice_schema or {}), "x": x_choice}
-        from .announced_subtype_sacrifice import variable_object_activation_offer
+        from .announced_selected_zone_cost import variable_object_activation_offer
 
         choice_schema.update(variable_object_activation_offer(host, seat, selected, hint, choice_schema["x"]))
+    from ..announced_artifact_sacrifice_return import has_announced_artifact_sacrifice
+
+    if has_announced_artifact_sacrifice(selected):
+        choice, = hint["choose_cost"]
+        maximum = choice_schema["x"]["maximum"]
+        choice.update(minimum=1, maximum=maximum)
+        choice_schema["cost_cards"] = {
+            "type": "object_ref_array", "legal_refs": choice["legal_refs"], "zone": "battlefield",
+            "minimum": 1, "maximum": maximum, "distinct": True,
+            "count_parameter": "x", "label": "Sacrifice X artifacts you control",
+        }
     if not offer_price.mana_cost_options:
         from .pricing import activation_price_choice_schema
         price_choices=activation_price_choice_schema(host,seat,source,offer_price)

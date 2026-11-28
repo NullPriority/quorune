@@ -8,6 +8,7 @@ from .errors import GameRuleError
 from .fixed_mana_results import GAIN_CONTROLLER_LIFE, PLACE_MANA_POINT_COUNTER
 from .life_state import LifeStateError, pay_life_cost
 from .rules.activation_counter_cost import SourceCounterRemovalCost
+from .rules.next_cast_library_access import NEXT_CAST_LIBRARY_ACCESS
 
 
 class ManaModeEffectHost(Protocol):
@@ -62,6 +63,11 @@ class SkipActorUntap:
 
 
 @dataclass(frozen=True, slots=True)
+class ArmNextCastLibraryAccess:
+    effect_index: int
+
+
+@dataclass(frozen=True, slots=True)
 class RemoveManaSourceCounters:
     effect_index: int
     cost: SourceCounterRemovalCost
@@ -80,7 +86,7 @@ class PlaceManaPointCounter:
 
 ManaModeEffect: TypeAlias = (DealDamageToController | PayLife | GainControllerLife | SacrificeManaSource
                              | ExileHandManaSource | ExertManaSource | SkipActorUntap | RemoveManaSourceCounters | SacrificeDepletedManaSource
-                             | PlaceManaPointCounter)
+                             | PlaceManaPointCounter | ArmNextCastLibraryAccess)
 
 
 def _exact_fields(
@@ -148,6 +154,11 @@ def _decode_skip_untap(effect: Mapping[str, Any], index: int) -> ManaModeEffect:
     return SkipActorUntap(index)
 
 
+def _decode_next_cast_library_access(effect: Mapping[str, Any], index: int) -> ManaModeEffect:
+    _exact_fields(effect, {"op"}, message="Next-cast library mana requires only its operation")
+    return ArmNextCastLibraryAccess(index)
+
+
 def _decode_counter_cost(effect,index):
     from .rules.activation_counter_cost import SourceCounterRemovalCost
     _exact_fields(effect,{'op','cost'},message='Mana counter costs require only their operation and typed cost')
@@ -181,6 +192,7 @@ _MODE_EFFECT_DECODERS: Mapping[
     "exile_hand_source": _decode_hand_exile,
     "exert_mana_source": _decode_exert_mana,
     'skip_actor_untap': _decode_skip_untap,
+    NEXT_CAST_LIBRARY_ACCESS: _decode_next_cast_library_access,
     'remove_source_counters': _decode_counter_cost,
     'sacrifice_if_no_counters': _decode_counter_depletion,
 }
@@ -420,6 +432,10 @@ def apply_mana_mode_effects(
             from .rules.exert_mana import apply_mana_exert
 
             apply_mana_exert(host, source, actor=seat)
+        elif isinstance(effect, ArmNextCastLibraryAccess):
+            from .rules.next_cast_library_access import arm_next_cast_library_access
+
+            arm_next_cast_library_access(host, seat, source)
         elif isinstance(effect,SkipActorUntap):
             from .tap_state import prohibit_next_player_untap
             if source is None:raise GameRuleError('Next-actor untap mana result requires its original source')

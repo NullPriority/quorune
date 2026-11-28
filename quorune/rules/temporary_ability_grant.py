@@ -156,6 +156,11 @@ def temporary_quoted_grant_node_capabilities(*, effects, target_schema, mechanic
         return ()
     grant = effects[0]
     from .blocked_damage_cast import grant_dependencies, represents_grant
+    from .grantor_damage_redirection import grantor_redirect_grant_capabilities
+
+    grantor = grantor_redirect_grant_capabilities(grant, target_schema, cost_schema)
+    if grantor is not None:
+        return grantor
     from .commander_lifelink import commander_lifelink_node_capabilities
 
     if represents_grant(grant):

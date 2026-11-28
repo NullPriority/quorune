@@ -51,8 +51,18 @@ from .declaration_rule_effects import (
 )
 from .trigger_batches import PendingTriggerBatch, TriggerBatchError
 from .extra_combat_model import (
-    EXTRA_COMBAT_PHASES_FIELD, INSERTED_MAIN_COUNT_FIELD, MAIN_PHASE_COMBATS_FIELD, MainPhaseCombatSchedule,
-    decode_extra_combat_phases, decode_inserted_main_phase_count, decode_main_phase_combat_schedule,
+    EXTRA_COMBAT_PHASES_FIELD,
+    INSERTED_MAIN_COUNT_FIELD,
+    MAIN_PHASE_COMBATS_FIELD,
+    MainPhaseCombatSchedule as LegacyMainPhaseCombatSchedule,
+    decode_extra_combat_phases,
+    decode_inserted_main_phase_count,
+    decode_main_phase_combat_schedule as decode_legacy_main_phase_combat_schedule,
+)
+from .rules.main_phase_combat_model import (
+    SCHEDULE_FIELD,
+    MainPhaseCombatSchedule,
+    decode_main_phase_combat_schedule,
 )
 from .additional_beginning_model import (
     ADDITIONAL_BEGINNING_FIELD, AdditionalBeginningPhases, decode_additional_beginning,
@@ -712,6 +722,10 @@ class DelayedTrigger:
                 "Delayed-trigger referred-object IDs must be nonempty strings"
             )
         self.referred_object_ids = list(dict.fromkeys(values))
+        from .received_damage_model import RECEIVED_DAMAGE_WATCH_FIELD, ReceivedDamageWatch
+
+        if RECEIVED_DAMAGE_WATCH_FIELD in self.stack_template:
+            ReceivedDamageWatch.from_trigger(self)
         if isinstance(self.condition, dict) and "next_cast_copy" in self.condition:
             from .event_spell_copy_model import next_cast_copy_trigger_spec
 
@@ -720,6 +734,14 @@ class DelayedTrigger:
             from .delayed_combat_draw_model import validate_watched_combat_draw_trigger
 
             validate_watched_combat_draw_trigger(self)
+        if isinstance(self.condition, dict) and "next_cast_library_access" in self.condition:
+            from .next_cast_library_model import validate_next_cast_library_trigger
+
+            validate_next_cast_library_trigger(self)
+        from .turn_creature_cast_draw_model import TURN_CREATURE_CAST_DRAW_FIELD, validate_turn_creature_cast_draw_trigger
+
+        if isinstance(self.condition, dict) and TURN_CREATURE_CAST_DRAW_FIELD in self.condition:
+            validate_turn_creature_cast_draw_trigger(self)
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
@@ -918,6 +940,7 @@ class GameConfig:
     max_players: int = 6
     trace_level: str = "standard"
     priority_special_actions_version: int | None = 1
+    identical_trigger_order_version: int | None = 1
 
     def effective_profile(self, player_count: int) -> str:
         if self.profile != "auto":
@@ -942,18 +965,21 @@ class GameConfig:
 
     def to_dict(self) -> dict[str, Any]:
         result = asdict(self)
-        if self.priority_special_actions_version is None:
-            result.pop("priority_special_actions_version")
+        for field_name in ("priority_special_actions_version", "identical_trigger_order_version"):
+            if result[field_name] is None:
+                result.pop(field_name)
         return result
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "GameConfig":
-        if "priority_special_actions_version" not in data:
-            return cls(**data, priority_special_actions_version=None)
-        version = data["priority_special_actions_version"]
-        if type(version) is not int or version != 1:
-            raise ValueError("Unsupported priority special actions version")
-        return cls(**data)
+        version_errors = {
+            "priority_special_actions_version": "Unsupported priority special actions version",
+            "identical_trigger_order_version": "Unsupported identical trigger order version",
+        }
+        for field_name, error in version_errors.items():
+            if field_name in data and (type(data[field_name]) is not int or data[field_name] != 1):
+                raise ValueError(error)
+        return cls(**({field_name: None for field_name in version_errors} | data))
 
 
 def unearth_leave_replacement_version(value: Any) -> int | None:
@@ -998,8 +1024,9 @@ def read_scheduled_turn_fields(data: dict[str, Any]) -> dict[str, Any]:
     return {
         "extra_turns": [TurnEntry.from_dict(turn) for turn in data.get("extra_turns", [])],
         "extra_combat_phases": decode_extra_combat_phases(data),
-        "main_phase_extra_combats": decode_main_phase_combat_schedule(data),
-        "inserted_main_phase_count": decode_inserted_main_phase_count(data),
+        "main_phase_extra_combats": decode_legacy_main_phase_combat_schedule(data),
+        "main_phase_combat_schedule": decode_main_phase_combat_schedule(data),
+        INSERTED_MAIN_COUNT_FIELD: decode_inserted_main_phase_count(data),
         "additional_beginning_phases": decode_additional_beginning(data),
         "scheduled_turn_skips": decode_scheduled_turn_skips(
             data.get("scheduled_turn_skips", ()), data["players"],
@@ -1034,7 +1061,8 @@ class GameState:
     soulbond_pairs: tuple[SoulbondPair, ...] | None = None
     extra_turns: list[TurnEntry] = field(default_factory=list)
     extra_combat_phases: int = field(default=0, kw_only=True)
-    main_phase_extra_combats: MainPhaseCombatSchedule | None = field(default=None, kw_only=True)
+    main_phase_extra_combats: LegacyMainPhaseCombatSchedule | None = field(default=None, kw_only=True)
+    main_phase_combat_schedule: MainPhaseCombatSchedule | None = field(default=None, kw_only=True)
     inserted_main_phase_count: int = field(default=0, kw_only=True)
     additional_beginning_phases: AdditionalBeginningPhases | None = field(default=None, kw_only=True)
     scheduled_turn_skips: list[ScheduledTurnSkip] = field(default_factory=list)
@@ -1189,6 +1217,7 @@ class GameState:
             **({INSERTED_MAIN_COUNT_FIELD: self.inserted_main_phase_count} if self.inserted_main_phase_count else {}),
             **({MAIN_PHASE_COMBATS_FIELD: self.main_phase_extra_combats.to_dict()}
                if self.main_phase_extra_combats is not None else {}),
+            **({SCHEDULE_FIELD: self.main_phase_combat_schedule.to_dict()} if self.main_phase_combat_schedule else {}),
             **({ADDITIONAL_BEGINNING_FIELD: self.additional_beginning_phases.to_dict()}
                if self.additional_beginning_phases is not None else {}),
             **(

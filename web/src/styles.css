@@ -519,7 +519,9 @@ p { line-height: 1.65; }
 .stack-panel > header strong { font: 600 .8rem var(--mono); }
 .stack-items { max-height: 24vh; display: grid; gap: .4rem; min-height: 72px; overflow: auto; padding-top: .55rem; }
 .stack-items .card-tile { width: 100%; }
+.activity-panel > header { flex-wrap: wrap; gap: .35rem .7rem; }
 .activity-panel ol { max-height: 22vh; display: grid; gap: .65rem; margin: .7rem 0 0; padding: 0; overflow: auto; list-style: none; }
+.activity-panel-expanded ol { max-height: 48vh; }
 .activity-panel li { display: grid; gap: .15rem; padding-bottom: .6rem; border-bottom: 1px solid #222f27; color: #b9c4bb; font-size: .68rem; line-height: 1.4; }
 .activity-panel li span { color: var(--accent); font: 500 .55rem var(--mono); }
 .activity-panel li.empty-activity { color: var(--faint); }
@@ -736,7 +738,6 @@ p { line-height: 1.65; }
   .stop-control { width: 100%; grid-template-columns: 1fr; }
   .stop-control input, .stop-control button { grid-column: 1; grid-row: auto; }
   .table-sidebar { grid-template-columns: 1fr; }
-  .activity-panel { display: none; }
   .player-board { min-height: 220px; }
   .hand-card { width: 142px; min-height: 196px; }
   .decision-panel { align-items: stretch; flex-direction: column; }

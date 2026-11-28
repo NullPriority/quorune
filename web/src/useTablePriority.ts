@@ -6,7 +6,9 @@ import type { ChoiceValues } from "./choices";
 import type { LegalAction } from "./generated/protocol";
 import type { ProjectedView } from "./protocol";
 import {
-  activationStopSignature, findSafeAutoPass, isIgnoredActivation, priorityActivityHold,
+  activationStopSignature, findSafeAutoPass, hasPriorityResponse, isIgnoredActivation, ownSpellResponseHold,
+  priorityActivityHold, priorityHoldForScope, readSourcePriorityYieldOffer, remainsOfCapturedStack,
+  sourcePriorityYieldStatus,
   selectedPriorityStop, skipsOptionalActivation, type EmptyPriorityHolds, type PriorityActivity,
 } from "./tableAutomation";
 import { priorityStopsForTurn, type TablePreferences } from "./tablePreferences";
@@ -90,22 +92,52 @@ export function useTablePriority({ gameId, view, active, online, blocked, extern
   const [yieldedTurn, setYieldedTurn] = useState<number | null>(null);
   const [firstMainTurn, setFirstMainTurn] = useState<number | null>(null);
   const [holdAfterCancel, setHoldAfterCancel] = useState(false);
+  const [stackYield, setStackYield] = useState<{ turn: number; stack: readonly string[]; firstWindow: string } | null>(null);
+  const [priorityPause, setPriorityPause] = useState<string | null>(null);
+  const [sourceYield, setSourceYield] = useState<{ gameId: string; scope: string } | null>(null);
   const [ignored, setIgnored] = useState<{ turn: number; offers: ReadonlyMap<string, string> }>();
   const [skippedForGame, setSkippedForGame] = useState<ReadonlyMap<string, string>>(() => new Map());
   const acknowledged = useRef<PriorityActivity | null>(null);
   const lastAutomaticPass = useRef("");
+  const yieldedSourceItems = useRef(new Set<string>());
   const turn = asRecord(view?.state.turn);
   const number = Number(turn.seq ?? 0);
   const phase = String(turn.phase ?? "");
   const decision = view?.decision;
+  const priority = decision?.kind === "priority";
+  const offers = decision?.legal_actions ?? [];
+  const explicitPass = offers.find((action) => action.action === "pass");
   const activity = useMemo(() => publicPriorityActivity(view), [view]);
+  const stack = useMemo(() => asList(view?.state.stack).map(asRecord), [view]);
+  const stackFacts = useMemo(() => stack.map((item) => JSON.stringify(item)), [stack]);
+  const decisionKey = priority ? [decision.id, view?.viewRevision].join("/") : "";
+  const ownSeat = decision?.actor ?? view?.principal.split(":").at(-1);
+  const stackInScope = stackYield !== null && stackYield.turn === number && stackFacts.length > 0
+    && remainsOfCapturedStack(stackYield.stack, stackFacts);
+  const firstStackWindow = stackInScope && decisionKey === stackYield?.firstWindow;
+  const stackInterruption = stackYield && (decision && !priority ? "Required choice"
+    : stackFacts.length > 0 && !stackInScope ? "Stack changed"
+    : stackInScope && priority && !firstStackWindow && hasPriorityResponse(offers) ? "Response available"
+    : undefined);
+  const resolvingStack = stackInScope && !stackInterruption;
+  const canResolveStack = priority && Boolean(explicitPass) && !blocked && !externalHold && stackFacts.length > 0;
   const armed = yieldedTurn !== null && yieldedTurn === number;
   const firstMainRequested = firstMainTurn === number;
   const beforeFirstMain = number > 0 && phase === "beginning";
   const advancingToFirstMain = firstMainRequested && beforeFirstMain;
   const holdingFirstMain = firstMainRequested && phase === "precombat_main";
   const activelyPassing = armed || advancingToFirstMain;
-  const offers = decision?.legal_actions ?? [];
+  const selectedSourceScope = sourceYield?.gameId === gameId ? sourceYield.scope : undefined;
+  const sourceYieldOffer = readSourcePriorityYieldOffer(stack[0]?.source_priority_yield);
+  const sourceStatus = sourcePriorityYieldStatus(selectedSourceScope, sourceYieldOffer, decision?.kind, offers,
+    activity.stack.some((ref) => yieldedSourceItems.current.has(ref)));
+  const sourcePassing = sourceStatus === "ready";
+  const sourcePause = sourceStatus === "targeted" ? "Source became a target"
+    : sourceStatus === "response" ? "Response available"
+    : sourceStatus === "choice" ? "Required choice"
+    : sourceStatus === "changed" ? "Stack changed" : undefined;
+  const canYieldSource = !blocked && !externalHold && !activelyPassing && !resolvingStack
+    && sourcePriorityYieldStatus(sourceYieldOffer?.id, sourceYieldOffer, decision?.kind, offers) === "ready";
   const ignoredOffers = new Map(ignored?.turn === number ? ignored.offers : undefined);
   for (const offer of offers) {
     if (isIgnoredActivation(offer, skippedForGame)) ignoredOffers.set(offer.id, activationStopSignature(offer));
@@ -117,47 +149,103 @@ export function useTablePriority({ gameId, view, active, online, blocked, extern
   if (firstMainRequested) serverStops.add("precombat_main");
   const sync = useEmptyPriorityHolds(gameId, turn.fast_empty_priority === true && view?.principal !== "spectator", active && online, {
     steps: [...serverStops],
-    preserve_empty: preserveEmpty || externalHold || holdAfterCancel || (!preferences.autoPass && !activelyPassing)
+    preserve_empty: preserveEmpty || externalHold || holdAfterCancel || Boolean(priorityPause)
+      || !preferences.autoPass || activelyPassing || stackYield !== null || Boolean(selectedSourceScope)
       || preferences.holdNewStack || preferences.holdGraveyard,
   });
 
-  const priority = decision?.kind === "priority";
   const combat = asRecord(view?.state.combat);
-  const held = priority ? (holdingFirstMain ? "First main phase" : undefined) ?? selectedPriorityStop(phase, String(turn.step ?? ""), Boolean(combat.first_strike_step),
-    Number(combat.damage_step ?? 0), relevantStops,
-    turn.next_player === view?.principal.split(":").at(-1), Object.keys(asRecord(combat.atk)).length > 0)
-    ?? (externalHold ? "Loop shortcut" : holdAfterCancel ? "Pass turn canceled" : priorityActivityHold(acknowledged.current ?? activity, activity, {
-      stack: preferences.holdNewStack, graveyard: preferences.holdGraveyard,
-    })) : undefined;
+  const ordinaryHold = (holdingFirstMain ? "First main phase" : undefined)
+    ?? selectedPriorityStop(phase, String(turn.step ?? ""), Boolean(combat.first_strike_step),
+      Number(combat.damage_step ?? 0), relevantStops,
+      turn.next_player === view?.principal.split(":").at(-1), Object.keys(asRecord(combat.atk)).length > 0)
+    ?? (holdAfterCancel ? "Pass turn canceled" : stackInterruption || sourcePause || priorityPause
+      || (!firstStackWindow && ownSpellResponseHold(stack[0], ownSeat, offers) ? "Response to your spell" : undefined)
+      || priorityActivityHold(acknowledged.current ?? activity, activity, {
+        stack: preferences.holdNewStack && !sourcePassing, graveyard: preferences.holdGraveyard,
+      }));
+  const held = priority ? priorityHoldForScope(armed, externalHold, ordinaryHold) : undefined;
   const window = {
-    activePlayer: String(turn.active ?? ""), phase, principalSeat: decision?.actor ?? view?.principal.split(":").at(-1),
+    activePlayer: String(turn.active ?? ""), phase, principalSeat: ownSeat,
     stackDepth: activity.stack.length, ignoredActivations: ignoredOffers,
     passWithOptionalActivations: preferences.passWithOptionalActivations,
   };
-  const pass = activelyPassing ? offers.find((action) => action.action === "pass") : findSafeAutoPass(offers, window);
+  const pass = activelyPassing || resolvingStack || sourcePassing ? explicitPass : findSafeAutoPass(offers, window);
 
   useEffect(() => {
     if (view && !acknowledged.current) acknowledged.current = activity;
     if (yieldedTurn !== null && !armed) setYieldedTurn(null);
+    if (armed && decision && !priority) {
+      setYieldedTurn(null);
+      setPriorityPause("Required choice");
+      return;
+    }
     if (firstMainTurn !== null && (!firstMainRequested || !beforeFirstMain && !holdingFirstMain)) setFirstMainTurn(null);
-    if (!active || !online || blocked || !sync.synced || (!preferences.autoPass && !activelyPassing)
+    if (sourceYield && sourceYield.gameId !== gameId) setSourceYield(null);
+    if (sourcePause) {
+      setSourceYield(null);
+      setPriorityPause(sourcePause);
+      return;
+    }
+    if (stackYield && (!stackInScope || stackInterruption)) {
+      setStackYield(null);
+      if (stackInterruption) setPriorityPause(stackInterruption);
+      return;
+    }
+    if (!active || !online || blocked || !sync.synced
+      || (!preferences.autoPass && !activelyPassing && !resolvingStack && !sourcePassing)
       || !priority || !pass || held) return;
-    const key = `${decision.id}/${view?.viewRevision}`;
-    if (lastAutomaticPass.current === key) return;
-    const ignoredIds = offers.filter((action) => skipsOptionalActivation(action, {
+    if (lastAutomaticPass.current === decisionKey) return;
+    const ignoredIds = resolvingStack || sourcePassing ? [] : offers.filter((action) => skipsOptionalActivation(action, {
       ...window, passWithOptionalActivations: activelyPassing || window.passWithOptionalActivations,
     })).map((action) => action.id);
-    if (act(pass, activelyPassing || ignoredIds.length ? {
+    if (act(pass, activelyPassing || resolvingStack || sourcePassing || ignoredIds.length ? {
       pass_turn_sequence: number,
       ...(ignoredIds.length ? { ignored_activation_ids: ignoredIds } : {}),
     } : {})) {
-      lastAutomaticPass.current = key;
+      lastAutomaticPass.current = decisionKey;
       acknowledged.current = activity;
+      if (sourcePassing) yieldedSourceItems.current = new Set(activity.stack.filter(
+        (ref, index) => index === 0 || yieldedSourceItems.current.has(ref),
+      ));
     }
   });
 
-  function toggleTurnYield() {
+  function toggleSourceYield() {
+    if (selectedSourceScope) {
+      setSourceYield(null);
+      setPriorityPause("Source yield canceled");
+    } else if (canYieldSource && sourceYieldOffer) {
+      acknowledged.current = activity;
+      setPriorityPause(null);
+      setHoldAfterCancel(false);
+      setSourceYield({ gameId, scope: sourceYieldOffer.id });
+      yieldedSourceItems.current = new Set(activity.stack.slice(0, 1));
+    }
+  }
+
+  function toggleStackResolve() {
+    if (resolvingStack) {
+      setStackYield(null);
+      setPriorityPause("Resolve stack canceled");
+      return;
+    }
+    if (!canResolveStack) return;
+    setSourceYield(null);
+    acknowledged.current = activity;
+    setHoldAfterCancel(false);
+    setPriorityPause(null);
+    setYieldedTurn(null);
     setFirstMainTurn(null);
+    setStackYield({ turn: number, stack: stackFacts, firstWindow: decisionKey });
+  }
+
+  function toggleTurnYield() {
+    if (!activelyPassing && decision && !priority) return;
+    setSourceYield(null);
+    setFirstMainTurn(null);
+    setStackYield(null);
+    setPriorityPause(null);
     if (activelyPassing) {
       setYieldedTurn(null);
       setHoldAfterCancel(true);
@@ -170,14 +258,18 @@ export function useTablePriority({ gameId, view, active, online, blocked, extern
 
   function advanceToFirstMain() {
     if (!beforeFirstMain) return;
+    setSourceYield(null);
     acknowledged.current = activity;
     setHoldAfterCancel(false);
     setYieldedTurn(null);
+    setStackYield(null);
+    setPriorityPause(null);
     setFirstMainTurn(number);
   }
 
   function acknowledgeManualPass() {
     if (holdingFirstMain) setFirstMainTurn(null);
+    setPriorityPause(null);
     acknowledged.current = activity;
     setHoldAfterCancel(false);
     if (!preferences.autoPass || held) return;
@@ -195,15 +287,22 @@ export function useTablePriority({ gameId, view, active, online, blocked, extern
   }
 
   function resetYield() {
+    setSourceYield(null);
     setFirstMainTurn(null);
     setYieldedTurn(null);
     setHoldAfterCancel(false);
+    setStackYield(null);
+    setPriorityPause(null);
     lastAutomaticPass.current = "";
+    yieldedSourceItems.current.clear();
   }
 
   return {
     armed, advancingToFirstMain, canAdvanceToFirstMain: beforeFirstMain && !advancingToFirstMain,
     advanceToFirstMain, held, turnNumber: number, toggleTurnYield, acknowledgeManualPass, resetYield,
+    canResolveStack, resolvingStack, toggleStackResolve,
+    canArmPassTurn: !decision || priority,
+    canYieldSource, sourceYieldEnabled: Boolean(selectedSourceScope), toggleSourceYield,
     openingHoldsPending: number === 0 && !sync.synced && !sync.error,
     waitingOnRequiredChoice: activelyPassing && Boolean(decision && !priority),
     isSkippingActivation: (action: LegalAction) => isIgnoredActivation(action, skippedForGame),

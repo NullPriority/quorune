@@ -3,7 +3,10 @@ from __future__ import annotations
 """Choose a currently owned physical commander and move through the zone owner."""
 
 from ..replacement.immutable import FrozenMap, thaw_value
-from ..rules.commander_return_choice import COMMANDER_RETURN_FIELD, is_commander_return_effect
+from ..rules.commander_return_choice import (
+    COMMANDER_RETURN_FIELD, is_commander_battlefield_entry_effect, is_commander_return_effect,
+)
+from ..rules.selected_commander_entry import selected_commander_entry_effect
 from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent
 from .model import AutoContinue, ObjectChoice, SemanticChoiceCompletion, SemanticChoiceError, SemanticChoicePreparation, SemanticChoiceRequest
 
@@ -29,10 +32,11 @@ def _movement(actor, reference, label):
 
 def prepare_commander_return(effect, context):
     actor = context.actor
-    if not is_commander_return_effect(effect, actor=actor) or actor != context.stack_controller:
+    optional_entry = is_commander_battlefield_entry_effect(effect, actor=actor)
+    if (not optional_entry and not is_commander_return_effect(effect, actor=actor)) or actor != context.stack_controller:
         raise SemanticChoiceError("Commander return belongs to the controller of the resolving ability")
     rows = _eligible_commanders(context.query, actor)
-    if len(rows) < 2:
+    if not rows or not optional_entry and len(rows) == 1:
         intents = (_movement(actor, rows[0].ref, context.stack_label),) if rows else ()
         return SemanticChoicePreparation(
             request=None, continuation_effect=FrozenMap(effect), preparation_intents=intents,
@@ -40,10 +44,12 @@ def prepare_commander_return(effect, context):
         )
     return SemanticChoicePreparation(
         request=SemanticChoiceRequest(
-            prompt="Choose one of your commanders to put into your hand.",
+            prompt=("You may put one of your commanders onto the battlefield." if optional_entry
+                    else "Choose one of your commanders to put into your hand."),
             choice=ObjectChoice(
                 field_name="objects", legal_refs=tuple(row.ref for row in rows), zones=("command",),
-                minimum=1, maximum=1, visibility="public", owner_relation="actor",
+                minimum=0 if optional_entry else 1, maximum=1, optional=optional_entry,
+                visibility="public", owner_relation="actor",
             ),
             public_context=FrozenMap({
                 "stack": context.stack_ref, "operation": effect["op"],
@@ -61,17 +67,26 @@ def complete_commander_return(continuation, response, query):
     effect = continuation.effect
     actor = continuation.semantic_frame.controller
     fields = {"op", "player", COMMANDER_RETURN_FIELD}
-    if (set(effect) != fields | {"_return_candidates", "_stack_label"}
-            or not is_commander_return_effect({key: effect[key] for key in fields}, actor=actor)
+    if set(effect) != fields | {"_return_candidates", "_stack_label"}:
+        raise SemanticChoiceError("Commander return continuation has invalid fields")
+    base = {key: effect[key] for key in fields}
+    optional_entry = is_commander_battlefield_entry_effect(base, actor=actor)
+    if (not optional_entry and not is_commander_return_effect(base, actor=actor)
             or actor not in query.active_seats
             or type(effect["_stack_label"]) is not str or not effect["_stack_label"]):
         raise SemanticChoiceError("Commander return continuation lost its resolving controller")
     rows = _eligible_commanders(query, actor)
     current = tuple((row.ref, row.logical_object_id) for row in rows)
-    if len(rows) < 2 or thaw_value(effect["_return_candidates"]) != thaw_value(current):
+    if (len(rows) < (1 if optional_entry else 2)
+            or thaw_value(effect["_return_candidates"]) != thaw_value(current)):
         raise SemanticChoiceError("The offered commanders changed before selection")
-    objects = response.get("objects")
+    objects = response.get("objects", ()) if optional_entry else response.get("objects")
+    if optional_entry and isinstance(objects, (list, tuple)) and not objects:
+        return SemanticChoiceCompletion()
     if (not isinstance(objects, (list, tuple)) or len(objects) != 1
             or type(objects[0]) is not str or objects[0] not in {row.ref for row in rows}):
         raise SemanticChoiceError("Choose exactly one of your offered commanders")
+    if optional_entry:
+        selected = selected_commander_entry_effect(objects[0], dict(current)[objects[0]], actor)
+        return SemanticChoiceCompletion(prepend_effects=(FrozenMap(selected),))
     return SemanticChoiceCompletion(intents=(_movement(actor, objects[0], effect["_stack_label"]),))

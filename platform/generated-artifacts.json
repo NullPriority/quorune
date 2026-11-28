@@ -163,7 +163,7 @@
         "rules-derived"
       ],
       "outputs": [
-        "coverage/compact-ci-card-dependencies.json",
+        "coverage/compact-ci-card-dependencies.json.gz",
         "coverage/compact-ci-card-dependencies.md"
       ],
       "check": [

@@ -307,6 +307,356 @@ class DamageTriggeredExtraCombatTests(InheritedNativeFixture, unittest.TestCase)
         self.assertTrue(control["strict_capability_ready"], control["blockers"])
 
 
+FULL_THROTTLE = "Full Throttle"
+FULL_THROTTLE_TEXT = (
+    "After this main phase, there are two additional combat phases.\n"
+    "At the beginning of each combat this turn, untap all creatures that attacked this turn."
+)
+
+
+class MainPhaseCombatNativeTests(InheritedNativeFixture, unittest.TestCase):
+    _started_combats = staticmethod(DamageTriggeredExtraCombatTests._started_combats)
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        folder = Path(cls.temporary.name)
+        support = {
+            "activation-restriction-material-cards.json": {"Grizzly Bears", "Cloudshift"},
+            "bound-effect-program-cards.json": {"Generic Bound Plains", "Generic Bound Growth"},
+            "source-attack-alone-cards.json": {"Isamaru, Hound of Konda"},
+            "ability-source-counter-cards.json": {"Vedalken Orrery"},
+            "additional-beginning-originals-cards.json": {"Sphinx of the Second Sun"},
+            "external-entry-tapped-cards.json": {"Thalia, Heretic Cathar"},
+            "per-opponent-attacking-token-cards.json": {"Adeline, Resplendent Cathar"},
+            "self-public-zone-cards.json": {"Mountain"},
+        }
+        parts = [FIXTURES / "damage-triggered-extra-combat-cards.json"]
+        for name, names in support.items():
+            document = json.loads((FIXTURES / name).read_bytes())
+            document["cards"] = [row for row in document["cards"] if row["name"] in names]
+            assert names == {row["name"] for row in document["cards"]}, name
+            ids = {row["oracle_id"] for row in document["cards"]}
+            document["rulings"] = [row for row in document.get("rulings", ()) if row["oracle_id"] in ids]
+            part = folder / name
+            part.write_text(json.dumps(document), encoding="utf-8")
+            parts.append(part)
+        path = folder / "main-phase-combats.sqlite3"
+        build_fixture_database(parts, path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Main-phase combat", [
+            DeckEntry("Isamaru, Hound of Konda", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Isamaru, Hound of Konda"])
+
+    def spell(self, game, seat, *, flash=False, lands=False):
+        source = self.add(game.engine, FULL_THROTTLE, seat=seat, zone="hand")
+        self.assert_closed(game, source)
+        if flash:
+            orrery = self.add(game.engine, "Vedalken Orrery", seat=seat)
+            self.assert_closed(game, orrery)
+        if lands:
+            for index in range(6):
+                self.add(game.engine, "Mountain", seat=seat, ref=f"throttle-payment-{seat}-{index}")
+        return source
+
+    def test_seize_main_groups_and_beginning_phases_keep_lifo_and_the_original_successor(self):
+        from quorune.rules.main_phase_combat_model import MainPhaseCombatSchedule
+
+        game = self.session(4821947)
+        source = self.add(game.engine, "Seize the Day", zone="hand")
+        sphinx = self.add(game.engine, "Sphinx of the Second Sun")
+        orrery = self.add(game.engine, "Vedalken Orrery")
+        original_target = self.add(game.engine, "Grizzly Bears", ref="seize-early-target")
+        other_creature = self.add(game.engine, "Grizzly Bears", ref="seize-untargeted")
+        original_target.tapped = True
+        other_creature.tapped = True
+        original_target.acquired_control_turn_count = -1
+        for card in (source, sphinx, orrery):
+            self.assert_closed(game, card)
+        for index in range(4):
+            self.add(game.engine, "Mountain", ref=f"seize-sphinx-payment-{index}")
+        self.prepare(game)
+        self.checkpoint(game)
+        turn = game.state.turn_sequence
+        self.until(game, lambda current: current.state.phase == "postcombat_main"
+                   and bool(current.state.stack)
+                   and current.state.stack[-1].source_object_id == sphinx.object_id
+                   and current.state.priority_player == "A")
+        self.cast(game, "A", source, [original_target.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertFalse(game.state.cards[original_target.object_id].tapped)
+        self.assertTrue(game.state.cards[other_creature.object_id].tapped)
+        self.assertEqual(MainPhaseCombatSchedule("postcombat_main", ("beginning", "combat", "main")),
+                         game.state.main_phase_combat_schedule)
+        game = self.replay(game, load=True)
+        self.until(game, lambda current: current.state.phase == "beginning"
+                   and current.state.step == "upkeep")
+        self.assertEqual(turn, game.state.turn_sequence)
+        self.until(game, lambda current: current.state.pending_decision is not None
+                   and current.state.pending_decision.kind == "combat.attackers")
+        self.assertEqual(turn, game.state.turn_sequence)
+        self.attack(game, [])
+        self.until(game, lambda current: current.state.phase == "postcombat_main")
+        self.until(game, lambda current: current.state.phase == "ending" and current.state.step == "end_step")
+        self.assertEqual(turn, game.state.turn_sequence)
+        self.assertIsNone(game.state.main_phase_combat_schedule)
+        self.replay(game, load=True)
+
+    def test_actual_seize_hand_and_flashback_insert_two_pairs_and_replay(self):
+        from quorune.rules.main_phase_combat_model import MainPhaseCombatSchedule
+
+        s=self.session(4821950)
+        e=s.engine
+        spell=self.add(e,"Seize the Day",zone="hand")
+        helper=self.add(e,"Grizzly Bears")
+        helper.acquired_control_turn_count=-1
+        helper.tapped=True
+        for idx in range(5):
+            self.add(e,"Generic Bound Plains",ref=f"seize-cost-{idx}")
+        for idx in range(2):
+            self.add(e,"Mountain",ref=f"seize-red-{idx}")
+        self.assert_closed(s,spell)
+        self.prepare(s)
+        self.checkpoint(s)
+        active_turn=s.state.turn_sequence
+        self.cast(s,"A",spell,[helper.ref])
+        self.assertIsNone(self.resolve(s))
+        self.assertFalse(s.state.cards[helper.object_id].tapped)
+        self.assertEqual(MainPhaseCombatSchedule("precombat_main", ("combat", "main")),
+                         s.state.main_phase_combat_schedule)
+        s=self.replay(s,load=True)
+        self.until(s,lambda g:g.state.phase=="postcombat_main"
+                   and g.state.pending_decision is not None
+                   and g.state.pending_decision.kind=="priority"
+                   and g.state.priority_player=="A")
+        self.assertEqual(1,len(self._started_combats(s,active_turn)))
+        rows=s.packet("pilot:A",full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer=next(row for row in rows if row.get("card")==spell.ref)
+        alternative=next(row for row in offer["cost_options"] if "flashback" in row["id"])
+        result=s.act("pilot:A",{"action_id":offer["id"],"cost_option":alternative["id"],"targets":[helper.ref],"pay":"auto"})
+        self.assertTrue(result.ok,result.summary)
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual("exile",s.state.cards[spell.object_id].zone)
+        retained = s.state.main_phase_combat_schedule
+        s=self.replay(s,load=True)
+        self.assertEqual(retained,s.state.main_phase_combat_schedule)
+        for inserted in (True, False):
+            self.until(s,lambda g:g.state.pending_decision is not None
+                       and g.state.pending_decision.kind=="combat.attackers")
+            self.assertEqual(active_turn,s.state.turn_sequence)
+            self.assertEqual(inserted,s.state.main_phase_combat_schedule is not None)
+            result=s.act("pilot:A",{"action_id":"attack","attackers":{}})
+            self.assertTrue(result.ok,result.summary)
+            self.until(s,lambda g:g.state.phase=="postcombat_main")
+        self.until(s,lambda g:g.state.phase=="ending" and g.state.step=="end_step")
+        self.assertIsNone(s.state.main_phase_combat_schedule)
+        self.replay(s,load=True)
+
+    def untap_trigger(self, game, *, controller):
+        self.until(game, lambda g: bool(g.state.stack and g.state.stack[-1].context.get("delayed_trigger_ref")))
+        item = game.state.stack[-1]
+        self.assertEqual(("combat", "beginning_combat"), (game.state.phase, game.state.step))
+        self.assertEqual((controller, "triggered_ability", []), (item.controller, item.kind, item.targets))
+        return item
+
+    def finish_a_combat_without_attacking(self, game):
+        self.attack(game, [])
+        self.until(game, lambda g: g.state.step == "end_combat")
+
+    def test_actual_opponent_main_adds_two_combats_and_untaps_declared_incarnations(self):
+        from quorune.rules.main_phase_combat_model import MainPhaseCombatSchedule
+
+        game = self.session(50081201)
+        source = self.spell(game, "B", flash=True)
+        adeline = self.add(game.engine, "Adeline, Resplendent Cathar", ref="throttle-token-maker")
+        thalia = self.add(game.engine, "Thalia, Heretic Cathar", seat="B", ref="throttle-tapped-entry")
+        blink = self.add(game.engine, "Cloudshift", zone="hand")
+        self.add(game.engine, "Generic Bound Plains")
+        private = self.add(game.engine, "Generic Bound Growth", seat="D", zone="hand", ref="throttle-hidden-ref")
+        staying = self.add(game.engine, "Grizzly Bears", ref="throttle-stays")
+        returning = self.add(game.engine, "Grizzly Bears", ref="throttle-blinks")
+        owned_by_caster = self.add(game.engine, "Grizzly Bears", seat="B", ref="throttle-caster-bear")
+        staying.acquired_control_turn_count = returning.acquired_control_turn_count = -1
+        owned_by_caster.tapped = True
+        for card in (adeline, thalia, blink):
+            self.assert_closed(game, card)
+        self.prepare(game)
+        game.state.players["B"].mana_pool.update({"C": 4, "R": 2})
+        self.checkpoint(game)
+        turn = game.state.turn_sequence
+        turn_id = game.state.current_turn.turn_id
+        self.cast_for(game, "B", source)
+        self.assertEqual([], game.state.stack[-1].targets)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(MainPhaseCombatSchedule("precombat_main", ("combat", "combat")), game.state.main_phase_combat_schedule)
+        self.assertEqual("B", game.state.delayed_triggers[-1].controller)
+        game = self.replay(game, load=True)
+
+        self.untap_trigger(game, controller="B")
+        first = game.state.combat.damage_sequence_id
+        self.assertEqual("A", game.state.active_player)
+        self.resolve_top(game)
+        self.attack(game, [(staying, "B"), (returning, "C")])
+        self.assertIsNone(self.resolve(game))
+        self.until(game, lambda g: g.state.step == "end_combat")
+        tokens = [card for card in game.state.cards.values() if card.zone == "battlefield" and card.is_token]
+        self.assertEqual(3, len(tokens))
+        self.assertTrue(all(card.tapped for card in tokens))
+        original_identity = game.state.cards[returning.object_id].logical_object_id
+        self.cast_for(game, "A", blink, [returning.ref])
+        self.assertIsNone(self.resolve(game))
+        reentered = game.state.cards[returning.object_id]
+        self.assertNotEqual(original_identity, reentered.logical_object_id)
+        self.assertTrue(reentered.tapped)
+
+        self.untap_trigger(game, controller="B")
+        second = game.state.combat.damage_sequence_id
+        self.assertTrue(game.state.cards[staying.object_id].tapped)
+        self.assertNotIn(private.ref, json.dumps(game.packet("pilot:B", full=True)))
+        game = self.replay(game, load=True)
+        self.resolve_top(game)
+        self.assertFalse(game.state.cards[staying.object_id].tapped)
+        self.assertTrue(game.state.cards[returning.object_id].tapped)
+        self.assertTrue(game.state.cards[owned_by_caster.object_id].tapped)
+        self.assertTrue(all(game.state.cards[card.object_id].tapped for card in tokens))
+        self.finish_a_combat_without_attacking(game)
+        self.untap_trigger(game, controller="B")
+        third = game.state.combat.damage_sequence_id
+        self.assertEqual(3, len({first, second, third}))
+        self.assertIsNone(game.state.main_phase_combat_schedule)
+        self.assertEqual(("A", turn_id, turn), (game.state.active_player, game.state.current_turn.turn_id, game.state.turn_sequence))
+        self.resolve_top(game)
+        self.finish_a_combat_without_attacking(game)
+        self.until(game, lambda g: g.state.phase == "postcombat_main")
+        self.assertEqual(turn, game.state.turn_sequence)
+        self.until(game, lambda g: g.state.turn_sequence > turn)
+        self.assertFalse(game.state.delayed_triggers[-1].active)
+        self.replay(game, load=True)
+
+    def test_actual_outside_main_only_creates_the_future_trigger(self):
+        game = self.session(50081202)
+        source = self.spell(game, "B", flash=True, lands=True)
+        blood = self.add(game.engine, BLOOD)
+        bear = self.add(game.engine, "Grizzly Bears")
+        blood.acquired_control_turn_count = bear.acquired_control_turn_count = -1
+        self.assert_closed(game, blood)
+        self.prepare(game)
+        self.checkpoint(game)
+        turn = game.state.turn_sequence
+        self.attack(game, [(blood, "C"), (bear, "D")])
+        self.until(game, lambda g: self.trigger_count(g, blood) == 1)
+        first_combat = game.state.combat.damage_sequence_id
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(1, game.state.extra_combat_phases)
+        self.until(game, lambda g: g.state.step == "end_combat")
+        self.cast_for(game, "B", source)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(1, game.state.extra_combat_phases)
+        self.assertIsNone(game.state.main_phase_combat_schedule)
+        self.assertEqual(1, len(self._started_combats(game, turn)))
+        self.assertTrue(game.state.cards[bear.object_id].tapped)
+        game = self.replay(game, load=True)
+        self.untap_trigger(game, controller="B")
+        self.assertNotEqual(first_combat, game.state.combat.damage_sequence_id)
+        self.assertEqual(0, game.state.extra_combat_phases)
+        self.resolve_top(game)
+        self.assertFalse(game.state.cards[bear.object_id].tapped)
+        self.finish_a_combat_without_attacking(game)
+        self.until(game, lambda g: g.state.phase == "postcombat_main")
+        self.assertEqual(turn, game.state.turn_sequence)
+        self.replay(game, load=True)
+
+    def test_actual_postcombat_orders_current_boundary_phases_by_creation(self):
+        for earlier_beginning in (False, True):
+            with self.subTest(earlier_beginning=earlier_beginning):
+                game = self.session(50081210 + earlier_beginning)
+                source = self.spell(game, "A", flash=True, lands=True)
+                sphinx = self.add(game.engine, "Sphinx of the Second Sun")
+                self.assert_closed(game, sphinx)
+                self.prepare(game)
+                self.checkpoint(game)
+                turn = game.state.turn_sequence
+                self.until(game, lambda g: g.state.phase == "postcombat_main" and self.trigger_count(g, sphinx) == 1)
+                if earlier_beginning:
+                    self.resolve_top(game)
+                self.cast_for(game, "A", source)
+                self.resolve_top(game)
+                if not earlier_beginning:
+                    self.resolve_top(game)
+                expected = ("combat", "combat", "beginning") if earlier_beginning else ("beginning", "combat", "combat")
+                self.assertEqual(expected, game.state.main_phase_combat_schedule.pending)
+                game = self.replay(game, load=True)
+                first_schedule_event = len(game.state.events)
+                for _ in range(2):
+                    self.untap_trigger(game, controller="A")
+                    self.resolve_top(game)
+                    self.finish_a_combat_without_attacking(game)
+                self.until(game, lambda g: g.state.step == "end_step")
+                self.assertEqual(turn, game.state.turn_sequence)
+                self.assertIsNone(game.state.main_phase_combat_schedule)
+                self.assertIsNone(game.state.additional_beginning_phases)
+                steps = [row.step for row in game.state.events[first_schedule_event:] if row.code == "step.begin"
+                         and row.step in {"untap", "beginning_combat", "main", "end_step"}]
+                self.assertEqual([*({"combat": "beginning_combat", "beginning": "untap"}[phase] for phase in expected),
+                                  "end_step"], steps)
+                self.replay(game, load=True)
+
+    def test_exact_whole_spell_rejects_changed_scope_and_withdrawn_authority(self):
+        from dataclasses import replace
+
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.compiler import main_phase_combats
+        from quorune.rules.main_phase_combat_model import (
+            ATTACK_UNTAP_CAPABILITY, MAIN_COMBAT_CAPABILITY, SCHEDULE_FIELD, attack_untap_effect, main_phase_combat_effect,
+        )
+        from quorune.rules.main_phase_combats import main_phase_combat_node_capabilities, main_phase_combat_payload_dependencies
+        from test_granted_skulk import record
+
+        sample = record(FULL_THROTTLE_TEXT, "Sorcery")
+        oracle = compile_oracle_card(sample, capability_registry=self.registry)
+        self.assertEqual("exact", oracle.status, oracle.material_residuals)
+        node, = oracle.faces[0].nodes
+        self.assertEqual((0, len(FULL_THROTTLE_TEXT)), (node.span.start, node.span.end))
+        self.assertEqual((main_phase_combat_effect(),), node.effects)
+        for text in (
+            FULL_THROTTLE_TEXT.replace("two additional", "three additional"),
+            FULL_THROTTLE_TEXT.replace("this main phase", "this combat phase"),
+            FULL_THROTTLE_TEXT.replace("all creatures that attacked", "creatures you control that attacked"),
+            FULL_THROTTLE_TEXT.splitlines()[0],
+        ):
+            self.assertNotEqual("exact", compile_oracle_card(replace(sample, oracle_text=text), capability_registry=self.registry).status)
+        with patch.object(main_phase_combats, "compile_main_phase_combat_face", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(sample, capability_registry=self.registry).status)
+        for invalid in ({**main_phase_combat_effect(), "count": 2}, attack_untap_effect()):
+            self.assertEqual((), main_phase_combat_node_capabilities((invalid,), None, None))
+        other_combat_instructions = (
+            {"op": "set_public_tap_state", "tapped": False, EXTRA_COMBAT_FOLLOWUP_FIELD:
+                {"schema_version": 2, "exclude_source_card": "$source.zone_object"}},
+            {"op": "set_public_tap_state", "tapped": False, EXTRA_COMBAT_FOLLOWUP_FIELD:
+                {"schema_version": 3, "own_combat_only": True}},
+        )
+        for effect in other_combat_instructions:
+            self.assertEqual((), main_phase_combat_payload_dependencies(effect))
+            self.assertIsNone(main_phase_combat_node_capabilities((effect,), None, None))
+        game = self.session(50081203)
+        raw = game.state.to_dict()
+        self.assertNotIn(SCHEDULE_FIELD, raw)
+        for invalid in (True, {"main_phase": "combat", "pending": ["combat"], "active_phase": None},
+                        {"main_phase": "precombat_main", "pending": ["beginning"], "active_phase": None}):
+            with self.assertRaises(ValueError):
+                GameState.from_dict({**raw, SCHEDULE_FIELD: invalid})
+        source = self.spell(game, "A")
+        program, = game.engine.semantics.programs_for_oracle(source.oracle_id)
+        for missing in (MAIN_COMBAT_CAPABILITY, ATTACK_UNTAP_CAPABILITY):
+            deps = tuple(cap for cap in program.capability_dependencies if cap != missing)
+            mutant = replace(program, capability_dependencies=deps,
+                             capability_closure=self.registry.closure(deps, profile=PROFILE).to_dict())
+            bound = bind_semantic_program_runtime(mutant, capability_registry=self.registry, profile=PROFILE)
+            self.assertFalse(bound["strict"])
+            self.assertIn(f"capability:undeclared_runtime_dependency:{missing}", bound["blockers"])
+
+
 if __name__ == "__main__":
     unittest.main()
 

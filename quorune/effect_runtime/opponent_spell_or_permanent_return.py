@@ -6,6 +6,8 @@ from ..rules.opponent_spell_or_permanent_return import (
     COPY_RETURN_FIELD,
     ENTRY_FIELD,
     FIELD,
+    OPPOSING_SPELL_FIELD,
+    OWNER_HAND_RETURN_FIELDS,
     SPELL_FIELD,
     opponent_spell_or_permanent_return_runtime_dependencies,
 )
@@ -33,9 +35,13 @@ def _target_card(host, ref, actor, *, opponent_only, spell_only=False, stack_onl
 
 
 def apply_opponent_spell_or_permanent_return(host, effect, *, actor, reason):
-    from_entry = ENTRY_FIELD in effect
-    after_copy = COPY_RETURN_FIELD in effect
-    field = SPELL_FIELD if SPELL_FIELD in effect else ENTRY_FIELD if from_entry else COPY_RETURN_FIELD if after_copy else FIELD
+    variants = OWNER_HAND_RETURN_FIELDS.intersection(effect)
+    if len(variants) != 1:
+        raise GameRuleError("Owner-hand return requires exactly one move scope")
+    field, = variants
+    from_entry = field == ENTRY_FIELD
+    from_cast = field == OPPOSING_SPELL_FIELD
+    after_copy = field == COPY_RETURN_FIELD
     fields = {"op", "card", "destination", field}
     if (set(effect) - {"reason", "_runtime_source", "_replacement_selections"} != fields
             or type(effect[field]) is not int or effect[field] != 1 or effect["destination"] != "hand"):
@@ -46,9 +52,10 @@ def apply_opponent_spell_or_permanent_return(host, effect, *, actor, reason):
         raise GameRuleError(str(exc)) from exc
     item = next((item for item in host.state.stack if item.ref == source.stack_ref), None)
     ref = effect["card"]
-    kinds = {"triggered_ability"} if from_entry else {"spell", "spell_copy"}
+    kinds = {"triggered_ability"} if from_entry or from_cast else {"spell", "spell_copy"}
     if (item is None or item.kind not in kinds or item.controller != actor
             or from_entry and item.context.get("event") != "permanent.enter"
+            or from_cast and item.context.get("event") != "spell.cast"
             or item.context.get("currently_resolving") is not True
             or item.context.get("targets_revalidated") is not True
             or type(ref) is not str or ref == source.stack_ref or tuple(item.targets) != (ref,)):
@@ -56,9 +63,14 @@ def apply_opponent_spell_or_permanent_return(host, effect, *, actor, reason):
     try:
         program = host.semantics.get(item.semantic_key)
         if program is None or not opponent_spell_or_permanent_return_runtime_dependencies(program):
-            raise ValueError("Opponent spell-or-permanent return lost its original program")
+            raise ValueError("Owner-hand return lost its original program")
+        if from_cast:
+            modes = program.target_schema["modes"]
+            if len(item.modes) != 1 or OPPOSING_SPELL_FIELD not in modes[item.modes[0]]["effects"][0]:
+                raise ValueError("Owner-hand spell return lost its chosen mode")
     except (ValueError, TypeError, KeyError) as exc:
         raise GameRuleError(str(exc)) from exc
-    card = _target_card(host, ref, actor, opponent_only=field == FIELD, spell_only=field == SPELL_FIELD, stack_only=after_copy)
+    card = _target_card(host, ref, actor, opponent_only=field in {FIELD, OPPOSING_SPELL_FIELD},
+                        spell_only=field in {SPELL_FIELD, OPPOSING_SPELL_FIELD}, stack_only=after_copy)
     return commit_resolved_zone_movement(host, card, effect, destination="hand", reason=reason,
                                         transition_kind=ZoneTransitionKind.ORDINARY)

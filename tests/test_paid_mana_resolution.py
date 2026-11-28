@@ -47,6 +47,25 @@ class PaidManaResolutionTests(unittest.TestCase):
         return [c for c in session.state.cards.values() if c.controller==seat and c.zone=='battlefield'
             and 'food' in session.engine._type_parts(session.engine._effective_card_data(c)['type_line'])[1]]
 
+    def test_independent_paid_colors_bind_each_untargeted_result(self):
+        from dataclasses import replace
+        from test_qualified_zone_event_queries import query_record
+
+        text = ("Prevent all combat damage that would be dealt this turn if {W} was spent to cast this spell. "
+                "Each player loses 1 life for each attacking creature they control if {B} was spent to cast this spell.")
+        card = replace(query_record(text), type_line="Instant")
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        result = compile_oracle_card(card, **options)
+        self.assertEqual("exact", result.status, result.material_residuals)
+        node, = result.faces[0].nodes
+        self.assertEqual(("W", "B"), tuple(effect["cast_fact"]["mana_type"] for effect in node.effects))
+        white, black = (wrapper["effects"][0] for wrapper in node.effects)
+        self.assertEqual("combat", white["damage_kind"])
+        self.assertEqual("all_active_players", black["scope"])
+        for variant in (text.replace("{B}", "{W}"), text.replace("attacking creature", "blocking creature")):
+            with self.subTest(variant=variant):
+                self.assertTrue(compile_oracle_card(replace(card, oracle_text=variant), **options).material_residuals)
+
     def test_actual_foreboding_fruit_gives_caster_food_and_target_private_draw(self):
         session=self.session(748100);source=self.add(session.engine,'Foreboding Fruit',zone='hand')
         private=self.add(session.engine,'Generic Bound Growth',seat='C',zone='hand')

@@ -9,10 +9,27 @@ from .zone_transitions import ZoneTransitionOwner
 
 
 def execute_discover_cleanup(host,intent):
-    require_discover_resolution(host, actor=intent.actor, stack_ref=intent.stack_ref, progress=intent.progress)
+    item = require_discover_resolution(host, actor=intent.actor, stack_ref=intent.stack_ref, progress=intent.progress)
     cards=require_discover_exile(host,intent.progress,actor=intent.actor,include_candidate=False)
     supplier = intent.progress.supplier
     name_scan = intent.progress.name_scan
+    if intent.progress.exclusive_mana_value is not None and intent.progress.candidate is not None:
+        from .errors import GameRuleError
+        from .impulse_access import grant_temporary_cast_permission
+        from .impulse_access_model import ImpulseAccessDuration, TemporaryCastPermissionGrant
+
+        *_, candidate = require_discover_exile(host, intent.progress, actor=intent.actor)
+        if supplier != intent.actor or candidate.face_down:
+            raise GameRuleError("Next-cast access requires the caster's original face-up exile result")
+        prior = candidate.annotations.get("temporary_play_permission") or {}
+        if prior.get("source") != item.ref:
+            grant_temporary_cast_permission(
+                host, card=candidate, reason="Next-cast library access",
+                grant=TemporaryCastPermissionGrant(
+                    intent.actor, ImpulseAccessDuration.END_OF_TURN, None, True, item.ref,
+                ),
+                exclusive_free_cast=True,
+            )
     purpose = 'countered-spell-different-name' if name_scan is not None else (
         'exile-until-instant-or-sorcery' if supplier is not None else 'discover'
     )

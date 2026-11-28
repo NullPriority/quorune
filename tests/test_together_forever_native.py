@@ -5,12 +5,18 @@ import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
+from unittest.mock import patch
 
 from common import ROOT
 from inherited_composition_fixture import InheritedNativeFixture
 from quorune.card_programs.binding import bind_semantic_program_runtime
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition, DeckEntry
+from quorune.delayed_object_model import (
+    TARGET_DEATH_BATTLEFIELD_CAPABILITY, TARGET_DEATH_BATTLEFIELD_VERSION,
+    TARGET_DEATH_RETURN_GRAVEYARD_OWNER, target_death_return_target_schema,
+    validate_target_death_return_effect,
+)
 from quorune.oracle_ir import compile_oracle_card
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import load_default_capability_registry
@@ -85,6 +91,97 @@ class TogetherForeverNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.accept(game, "A", {"action_id": offer["id"], "targets": [watched.ref], "pay": "auto"})
         self.assertIsNone(self.resolve(game))
         self.assertEqual(1, sum(trigger.active for trigger in game.state.delayed_triggers))
+
+    def test_saffi_native_owns_the_graveyard_and_returns_the_exact_death_once(self):
+        game = self.session(60377101)
+        engine = game.engine
+        source = self.add(engine, "Saffi Eriksdotter")
+        watched = self.add(engine, "Grizzly Bears", ref="saffi-watched-owned")
+        first = self.add(engine, "Murder", seat="C", zone="hand", ref="saffi-removal-first")
+        second = self.add(engine, "Murder", seat="C", zone="hand", ref="saffi-removal-second")
+        hidden = self.add(engine, "Grizzly Bears", seat="B", zone="hand", ref="saffi-hidden")
+        self.start(game, source, first, second, mana={}, other_mana={"C": {"C": 2, "B": 4}})
+        offer = self.activation_offer(game, "A", source)
+        self.assertIn(source.ref, offer["target_schema"]["legal_refs"])
+        denied = {"action_id": offer["id"], "targets": [hidden.ref], "pay": "auto"}
+        self.reject(game, "A", denied)
+        self.reject(game, "B", {**denied, "targets": [watched.ref]})
+        self.arm(game, source, watched)
+        self.assertEqual("graveyard", self.current(game, source).zone)
+        watcher, = [row for row in game.state.delayed_triggers if row.active]
+        self.assertEqual("A", watcher.condition[TARGET_DEATH_RETURN_GRAVEYARD_OWNER])
+        game = self.replay(game, load=True)
+
+        self.cast(game, "C", first, [watched.ref])
+        self.resolve_top(game)
+        departed = self.current(game, watched)
+        self.assertEqual("graveyard", departed.zone)
+        death_incarnation = departed.logical_object_id
+        trigger, = game.state.stack
+        self.assertEqual(("triggered_ability", "A", []), (trigger.kind, trigger.controller, trigger.targets))
+        self.assertEqual(TARGET_DEATH_BATTLEFIELD_VERSION, trigger.context["dynamic_effects"][0]["schema_version"])
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        returned = self.current(game, watched)
+        self.assertEqual(("battlefield", "A"), (returned.zone, returned.controller))
+        self.assertNotEqual(death_incarnation, returned.logical_object_id)
+        self.cast(game, "C", second, [returned.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("graveyard", self.current(game, watched).zone)
+        self.assertFalse(any(row.active for row in game.state.delayed_triggers))
+        self.replay(game, load=True)
+
+    def test_saffi_native_self_target_fails_and_foreign_graveyard_never_qualifies(self):
+        for own_target in (True, False):
+            with self.subTest(self_target=own_target):
+                game = self.session(60377104 + own_target)
+                source = self.add(game.engine, "Saffi Eriksdotter")
+                watched = source if own_target else self.add(game.engine, "Grizzly Bears", seat="B", ref="foreign-watched")
+                spell = self.add(game.engine, "Murder", zone="hand", seat="C")
+                self.start(game, source, spell, mana={}, other_mana={"C": {"C": 1, "B": 2}})
+                offer = self.activation_offer(game, "A", source)
+                self.assertIn(watched.ref, offer["target_schema"]["legal_refs"])
+                self.accept(game, "A", {"action_id": offer["id"], "targets": [watched.ref], "pay": "auto"})
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual("graveyard", self.current(game, source).zone)
+                if own_target:
+                    self.assertFalse(game.state.delayed_triggers)
+                else:
+                    self.cast(game, "C", spell, [watched.ref])
+                    self.assertIsNone(self.resolve(game))
+                    self.assertIn(watched.object_id, game.state.players["B"].zones["graveyard"])
+                    sequence = game.state.turn_sequence
+                    self.until(game, lambda current: current.state.turn_sequence > sequence)
+                    self.assertFalse(any(row.active for row in game.state.delayed_triggers))
+                self.replay(game, load=True)
+
+    def test_saffi_compiler_retains_exact_source_price_and_owned_graveyard_scope(self):
+        source = self.db.lookup("Saffi Eriksdotter", fuzzy=False)
+        options = {"capability_registry": self.registry, "capability_profile": PROFILE}
+
+        def closed():
+            result = compile_oracle_card(source, **options)
+            self.assertEqual("exact", result.status, result.material_residuals)
+            node, = [node for face in result.faces for node in face.nodes if node.event == "activate"]
+            self.assertEqual(target_death_return_target_schema(battlefield=True), node.target_schema)
+            self.assertIn(TARGET_DEATH_BATTLEFIELD_CAPABILITY, node.capability_dependencies)
+            self.assertTrue(node.cost["sacrifice_source"])
+            return node
+
+        node = closed()
+        for old, new in (
+            ("Sacrifice Saffi Eriksdotter", "Sacrifice another creature"),
+            ("your graveyard", "a graveyard"),
+            ("this turn", "this game"),
+            ("to the battlefield", "to your hand"),
+        ):
+            result = compile_oracle_card(replace(source, oracle_text=source.oracle_text.replace(old, new)), **options)
+            self.assertNotEqual("exact", result.status)
+        with self.assertRaises(ValueError):
+            validate_target_death_return_effect({**node.effects[0], "schema_version": 9}, compiled=True)
+        with patch("quorune.compiler.delayed_object_templates.target_death_return_activation_template", return_value=None):
+            with self.assertRaises(AssertionError):
+                closed()
 
     def test_complete_original_binds_support_and_the_counter_targeted_activation(self):
         admitted, semantics = register_card(self.db, self.registry, "Together Forever")

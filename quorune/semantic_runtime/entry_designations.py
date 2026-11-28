@@ -12,6 +12,8 @@ from ..entry_designations import (
     COUNTED_CREATURE_TYPE_ENTRY_HANDLER_ID,
     COUNTED_ENTRY_OPPONENT_DEPENDENCIES,
     COUNTED_ENTRY_OPPONENT_HANDLER_ID,
+    ENTRY_CONTROL_OPPONENT_CAPABILITY,
+    ENTRY_CONTROL_OPPONENT_HANDLER_ID,
     ENTRY_DESIGNATION_CAPABILITY,
     ENTRY_DESIGNATION_HANDLER_ID,
     ENTRY_OPPONENT_FIELD,
@@ -254,6 +256,22 @@ class EntryPlayerDesignationHandler(EntryOpponentDesignationHandler):
     handler_id: str = ENTRY_PLAYER_HANDLER_ID
     schema_version: int = 2
     family: str = "replacement.zone.linked_entry_player"
+
+
+@dataclass(frozen=True, slots=True)
+class EntryControlOpponentHandler(EntryOpponentDesignationHandler):
+    handler_id: str = ENTRY_CONTROL_OPPONENT_HANDLER_ID
+    schema_version: int = 3
+    family: str = "replacement.zone.entry_control_opponent"
+    rule_references: tuple[str, ...] = ("109.5", "614.12", "614.12a", "616.1b")
+    capability_dependencies: tuple[str, ...] = (ENTRY_CONTROL_OPPONENT_CAPABILITY,)
+
+    def _choice_effect(self, subject, choice):
+        return replace(
+            super(EntryControlOpponentHandler, self)._choice_effect(subject, choice),
+            replacement_class=ReplacementClass.ENTERS_CONTROL,
+            label=f"{subject.object_ref}: enter under {choice.seat}'s control",
+        )
 
 
 def _controlled_entry_creatures(host, controller):

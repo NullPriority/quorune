@@ -104,6 +104,10 @@ def owner_library_position_node_capabilities(*, effects, target_schema, mechanic
 
 
 def owner_library_position_runtime_dependencies(program):
+    from .ordered_source_owner_hand_entry import ordered_source_owner_hand_entry_dependencies
+
+    if required := ordered_source_owner_hand_entry_dependencies(program):
+        return required
     from .effect_shape_walkers import nested_effects
     marked = [effect for effect in nested_effects((*program.effects, *getattr(program, 'handlers', ())))
               if _is_draw_source_owner_top_move(effect)]

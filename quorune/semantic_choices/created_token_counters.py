@@ -1,7 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from ..created_token_counter_model import CREATE_THEN_COUNTER,COUNTER_CREATED,DEPENDENCIES,validate_created_token_counter
+from ..created_token_counter_model import (
+    ANNOUNCED_X_CREATE_AND_WIPE, CREATED_TOKEN_WIPE_CAPABILITY, CREATE_THEN_COUNTER,
+    COUNTER_CREATED, DEPENDENCIES, DESTROY_EXCEPT_CREATED,
+    validate_announced_x_token_wipe, validate_created_token_counter,
+)
+from ..affected_permanents import AffectedPermanentSetSpec
+from ..continuous_effect_model import ContinuousObjectIdentity
+from ..object_predicate import ObjectQuerySpec
 from ..replacement.immutable import FrozenMap
 from ..rules.attachment_actions import (
     ATTACH_CREATED_TOKEN,
@@ -9,7 +16,8 @@ from ..rules.attachment_actions import (
     CREATED_TOKEN_ATTACHMENT_DEPENDENCIES,
     validate_created_token_attachment,
 )
-from ..semantic_runtime.intents import CreateTokenIntent,PlaceCountersIntent
+from ..rules.death_battlefield_return import ATTACH_RETURNED_WITH_EQUIPMENT, DEATH_EQUIPMENT_RETURN_DEPENDENCIES
+from ..semantic_runtime.intents import CreateTokenIntent, DestroyPermanentSetIntent, LifeChangeIntent, PlaceCountersIntent
 from .model import (
     AutoContinue,
     IntentResultObjects,
@@ -21,9 +29,9 @@ from .model import (
 )
 
 
-def _create_token_intent(token, actor, label):
+def _create_token_intent(token, actor, label, *, quantity=1):
     return CreateTokenIntent(
-        actor=actor, controller=actor, name=token["name"], quantity=1,
+        actor=actor, controller=actor, name=token["name"], quantity=quantity,
         characteristics=FrozenMap(token["characteristics"]), tapped=token.get("tapped", False),
         reason=label,
     )
@@ -79,7 +87,7 @@ def _battlefield_object(query, ref):
     return row if row is not None and not row.phased_out else None
 
 
-def _attachment_offer(effect, query):
+def _attachment_offer(effect, query, *, token_result):
     refs = effect["cards"]
     if not isinstance(refs, (list, tuple)) or any(type(ref) is not str or not ref for ref in refs) or len(set(refs)) != len(refs):
         raise SemanticChoiceError("Created attachment subjects must be distinct references")
@@ -87,7 +95,7 @@ def _attachment_offer(effect, query):
     if len(eligible) != len(set(eligible)) or not set(eligible) <= set(refs):
         raise SemanticChoiceError("Attachment choice includes a non-created object")
     rows = tuple(_battlefield_object(query, ref) for ref in eligible)
-    if any(row is None or not row.token for row in rows):
+    if any(row is None or row.token != token_result for row in rows):
         raise SemanticChoiceError("Created attachment subject is unavailable")
     return tuple(_object_identity(row) for row in rows)
 
@@ -112,6 +120,7 @@ class CreatedTokenAttachmentHandler:
     mutation_path: tuple[str, ...] = ("CreateTokenIntent", "attach")
     replay_fixture: str = "created-token-equipment-choice"
     test_modules: tuple[str, ...] = ("tests.test_fixed_attachment_actions",)
+    token_result: bool = True
 
     def _prepare_creation(self, effect, context):
         try:
@@ -151,7 +160,7 @@ class CreatedTokenAttachmentHandler:
             "incarnation": context.source_logical_object_id,
         }
         if (
-            set(effect) != _ATTACH_FIELDS or effect["op"] != ATTACH_CREATED_TOKEN
+            set(effect) != _ATTACH_FIELDS or effect["op"] != self.operation
             or type(effect["player"]) is not str or effect["player"] != context.actor
             or effect["source"] != context.source_ref or effect["source_identity"] != parent_identity
         ):
@@ -164,7 +173,7 @@ class CreatedTokenAttachmentHandler:
             )
         if source.controller != context.actor or context.actor not in context.query.active_seats:
             raise SemanticChoiceError("Equipment controller changed before the attachment choice")
-        offered = _attachment_offer(effect, context.query)
+        offered = _attachment_offer(effect, context.query, token_result=self.token_result)
         if len(offered) < 2:
             return SemanticChoicePreparation(
                 request=None, continuation_effect=FrozenMap(effect),
@@ -175,7 +184,7 @@ class CreatedTokenAttachmentHandler:
             )
         return SemanticChoicePreparation(
             request=SemanticChoiceRequest(
-                prompt="Choose a created creature to equip.",
+                prompt="Choose a created creature to equip." if self.token_result else "Choose a returned creature to equip.",
                 choice=ObjectChoice(
                     field_name="objects", legal_refs=tuple(row["ref"] for row in offered),
                     zones=("battlefield",),
@@ -186,7 +195,8 @@ class CreatedTokenAttachmentHandler:
 
     def complete(self, continuation, response, query):
         effect = continuation.effect
-        if self.operation != ATTACH_CREATED_TOKEN or set(effect) != _ATTACH_FIELDS | {"_offered"}:
+        if (self.operation not in {ATTACH_CREATED_TOKEN, ATTACH_RETURNED_WITH_EQUIPMENT}
+                or effect.get("op") != self.operation or set(effect) != _ATTACH_FIELDS | {"_offered"}):
             raise SemanticChoiceError("Created attachment choice has a closed continuation")
         source = _battlefield_object(query, effect["source"])
         parent = query.resolution_source
@@ -197,7 +207,7 @@ class CreatedTokenAttachmentHandler:
             or source.controller != effect["player"] or source.controller not in query.active_seats
         ):
             raise SemanticChoiceError("Equipment identity or controller changed")
-        offered = _attachment_offer(effect, query)
+        offered = _attachment_offer(effect, query, token_result=self.token_result)
         if offered != effect["_offered"] or len(offered) < 2:
             raise SemanticChoiceError("Created attachment choices changed")
         selected = response.get("objects", response.get("cards"))
@@ -212,8 +222,87 @@ class CreatedTokenAttachmentHandler:
 CREATED_TOKEN_ATTACHMENT_HANDLERS = (
     CreatedTokenAttachmentHandler(CREATE_AND_ATTACH, "choice.token.create-then-attach.v1"),
     CreatedTokenAttachmentHandler(ATTACH_CREATED_TOKEN, "choice.token.attach-created-results.v1"),
+    CreatedTokenAttachmentHandler(
+        ATTACH_RETURNED_WITH_EQUIPMENT, "choice.attachment.death-return-results.v1",
+        capability_dependencies=DEATH_EQUIPMENT_RETURN_DEPENDENCIES,
+        replay_fixture="death-returned-equipment-choice",
+        test_modules=("tests.test_event_card_return",),
+        token_result=False,
+    ),
 )
 
 
-CREATED_TOKEN_COUNTER_HANDLERS=(CreatedTokenCounterHandler(CREATE_THEN_COUNTER,'choice.token.create-then-counters.v1'),
-    CreatedTokenCounterHandler(COUNTER_CREATED,'choice.token.counter-created-results.v1'))
+@dataclass(frozen=True, slots=True)
+class AnnouncedXCreatedTokenWipeHandler:
+    operation: str
+    handler_id: str
+    schema_version: int = 1
+    rule_references: tuple[str, ...] = ('107.3a', '111.3', '608.2c', '701.8a', '704.4')
+    capability_dependencies: tuple[str, ...] = (CREATED_TOKEN_WIPE_CAPABILITY,)
+    continuation_fields: tuple[str, ...] = (
+        'schema_version', 'controller', 'source', 'amount', 'minimum', 'token', 'token_mechanics', 'cards', 'stack',
+    )
+    private_data: tuple[str, ...] = ()
+    projected_fields: tuple[str, ...] = ()
+    mutation_path: tuple[str, ...] = ('LifeChangeIntent', 'CreateTokenIntent', 'DestroyPermanentSetIntent')
+    replay_fixture: str = 'announced-x-created-token-destruction'
+    test_modules: tuple[str, ...] = ('tests.test_created_token_counters',)
+
+    def prepare(self, effect, context):
+        actor = context.actor
+        if (effect.get('op') != self.operation or effect.get('controller') != actor
+                or actor != context.stack_controller or actor not in context.query.active_seats
+                or effect.get('source') != context.source_ref):
+            raise SemanticChoiceError('Creation and destruction require the same resolving controller and source')
+        if self.operation == DESTROY_EXCEPT_CREATED:
+            return self._destruction(effect, context)
+        try:
+            validate_announced_x_token_wipe(effect, resolved=True)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+        x = effect['amount']
+        if x == 0:
+            return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect),
+                auto_continue=AutoContinue(reason='The announced X is zero.'))
+        continuation = AutoContinue(reason='The announced X is below the destruction threshold.')
+        if x >= effect['minimum']:
+            following = FrozenMap({'op': DESTROY_EXCEPT_CREATED, 'schema_version': 1, 'controller': actor,
+                'source': context.source_ref, 'stack': context.stack_ref, 'cards': []})
+            continuation = AutoContinue(reason='Retain the actual creations for simultaneous destruction.',
+                prepend_effects=(following,), objects_from_result=IntentResultObjects(1, 0))
+        return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect),
+            preparation_intents=(LifeChangeIntent(actor, actor, x, context.stack_label, context.source_ref),
+                _create_token_intent(effect['token'], actor, context.stack_label, quantity=x)), auto_continue=continuation)
+
+    def _destruction(self, effect, context):
+        fields = {'op', 'schema_version', 'controller', 'source', 'stack', 'cards'}
+        if (set(effect) != fields or type(effect['schema_version']) is not int or effect['schema_version'] != 1
+                or context.stack_ref != effect['stack']):
+            raise SemanticChoiceError('Destruction requires the original token result continuation')
+        refs = effect['cards']
+        if (not isinstance(refs, (list, tuple)) or any(type(ref) is not str or not ref for ref in refs)
+                or len(set(refs)) != len(refs)):
+            raise SemanticChoiceError('The committed creation result must contain distinct token references')
+        identities = []
+        for ref in refs:
+            card = context.query.object(ref, zones=('battlefield',))
+            if card is not None:
+                if not card.token:
+                    raise SemanticChoiceError('A committed token result cannot name a nontoken permanent')
+                identities.append(ContinuousObjectIdentity(card.object_id, card.logical_object_id))
+        creatures = AffectedPermanentSetSpec(query=ObjectQuerySpec(zones=('battlefield',), types_all=('creature',)))
+        return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect),
+            preparation_intents=(DestroyPermanentSetIntent(actor=context.actor, spec=creatures, reason=context.stack_label,
+                source_ref=context.source_ref, excluded_created_tokens=tuple(identities)),),
+            auto_continue=AutoContinue(reason='Destroy all other creatures together.'))
+
+    def complete(self, continuation, response, query):
+        raise SemanticChoiceError('The creating spell and destruction require no player-selected targets')
+
+
+CREATED_TOKEN_COUNTER_HANDLERS = (
+    CreatedTokenCounterHandler(CREATE_THEN_COUNTER, 'choice.token.create-then-counters.v1'),
+    CreatedTokenCounterHandler(COUNTER_CREATED, 'choice.token.counter-created-results.v1'),
+    AnnouncedXCreatedTokenWipeHandler(ANNOUNCED_X_CREATE_AND_WIPE, 'choice.token.announced-x-create-and-wipe.v1'),
+    AnnouncedXCreatedTokenWipeHandler(DESTROY_EXCEPT_CREATED, 'choice.token.destroy-except-created.v1'),
+)

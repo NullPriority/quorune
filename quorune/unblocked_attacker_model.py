@@ -5,6 +5,23 @@ UNBLOCKED_ATTACKER_EVENT='creature.unblocked'
 UNBLOCKED_ATTACKER_CAPABILITY='trigger.event.unblocked_attacker'
 UNBLOCKED_ATTACKER_VARIANT='source_attacks_unblocked'
 CURRENT_UNBLOCKED_ATTACKER_EVENT_VERSION = 2
+UNBLOCKED_PLAYER_ATTACK_EVENT = "combat.player_attacked_unblocked"
+UNBLOCKED_PLAYER_ATTACK_VARIANT = "opponent_attacks_controller_unblocked"
+UNBLOCKED_ATTACKER_PLAYER = "$context.attacking_player"
+
+
+def unblocked_player_attack_condition():
+    return {"field": "defender", "op": "eq", "value": "$source.controller"}
+
+
+def unblocked_source_control_effects(count):
+    from .recipient_control_model import recipient_control_effect
+
+    return (
+        {"op": "draw", "player": UNBLOCKED_ATTACKER_PLAYER, "count": count, "private": True},
+        recipient_control_effect(card="$source.zone_object", controller=UNBLOCKED_ATTACKER_PLAYER),
+        {"op": "untap", "card": "$source.zone_object"},
+    )
 
 
 def unblocked_attacker_event_version(value):

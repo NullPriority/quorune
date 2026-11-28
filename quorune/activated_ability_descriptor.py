@@ -8,16 +8,38 @@ activation limits, and executable outputs.  Domain models may depend on this
 shape contract without importing that rules implementation.
 """
 
+import re
 from typing import Any, Mapping
 
 from .cumulative_counter_upkeep import CounterPlacementCostSpec
+from .util import ORDINARY_FIXED_MANA_PATTERN, mana_cost_to_vector
 
+
+SOURCE_LIBRARY_BOTTOM_FIELD = "source_library_bottom"
+SOURCE_LIBRARY_BOTTOM_OFFER = "bottom_library_self"
+SOURCE_LIBRARY_BOTTOM_CAPABILITY = "activation.source_zone_change.owner_library_bottom"
+SOURCE_LIBRARY_BOTTOM_TEXT = "put this creature on the bottom of its owner's library"
 
 ABILITY_LOCAL_MANA_REDUCTION_FIELD = "ability_local_mana_reduction"
 SOURCE_COUNTER_PLACEMENT_FIELD = "source_counter_placement_cost"
 SOURCE_COUNTER_PLACEMENT_OFFER_FIELD = "place_source_counter"
 SOURCE_COUNTER_PLACEMENT_COST = CounterPlacementCostSpec("-1/-1", "source")
 SOURCE_COUNTER_PLACEMENT_CAPABILITY = "activation.source_counter_placement.fixed"
+
+
+def normalize_source_library_bottom_cost(text: str) -> str:
+    return " ".join(text.casefold().replace("’", "'").split())
+
+
+def source_library_bottom_mana_price(text: str) -> dict[str, int] | None:
+    match = re.fullmatch(
+        rf"(?P<mana>{ORDINARY_FIXED_MANA_PATTERN}), \{{T\}}, {SOURCE_LIBRARY_BOTTOM_TEXT}",
+        normalize_source_library_bottom_cost(text), re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    mana, _ = mana_cost_to_vector(match["mana"])
+    return mana
 
 
 def decode_source_counter_placement_cost(value: Any) -> CounterPlacementCostSpec:
@@ -63,7 +85,7 @@ ACTIVATED_ABILITY_DESCRIPTOR_FIELDS = frozenset(
     }
 )
 _OPTIONAL_DESCRIPTOR_FIELDS = frozenset(
-    {ABILITY_LOCAL_MANA_REDUCTION_FIELD, "announced_energy_reanimation", "variable_colored_reveal_price", "announced_x_symbols", "announced_x_minimum", "loyalty_x", "boast", "forecast", "fixed_mana_result", "granting_attachment_payment", "mana_cost_options", "mill_library_cost", "power_up", "random_discard_payment", "reconfigure", "saddle_threshold", SOURCE_COUNTER_PLACEMENT_FIELD, "source_counter_removal_cost", "waterbend"}
+    {ABILITY_LOCAL_MANA_REDUCTION_FIELD, "announced_energy_reanimation", "activation_grantor", SOURCE_LIBRARY_BOTTOM_FIELD, "variable_colored_reveal_price", "announced_x_symbols", "announced_x_minimum", "loyalty_x", "boast", "forecast", "fixed_mana_result", "granting_attachment_payment", "mana_cost_options", "mill_library_cost", "power_up", "random_discard_payment", "reconfigure", "saddle_threshold", SOURCE_COUNTER_PLACEMENT_FIELD, "source_counter_removal_cost", "waterbend"}
 )
 
 _SEQUENCE_FIELDS = (
@@ -102,6 +124,13 @@ def validate_activated_ability_descriptor(value: Any) -> Mapping[str, Any]:
         raise ValueError("unsupported activated ability schema version")
     if "announced_energy_reanimation" in value and value["announced_energy_reanimation"] is not True:
         raise ValueError("The optional announced energy reanimation marker must be true")
+    if "activation_grantor" in value and (
+        type(value["activation_grantor"]) is not str or not value["activation_grantor"].strip()
+        or value["activation_grantor"].startswith("$")
+    ):
+        raise ValueError("An activation grantor requires one bound player")
+    if SOURCE_LIBRARY_BOTTOM_FIELD in value and value[SOURCE_LIBRARY_BOTTOM_FIELD] is not True:
+        raise ValueError("Optional source library-bottom marker must be true")
     if 'loyalty_x' in value and value['loyalty_x'] is not True:
         raise ValueError('Optional variable loyalty marker must be true')
     if 'reconfigure' in value and value['reconfigure'] is not True:

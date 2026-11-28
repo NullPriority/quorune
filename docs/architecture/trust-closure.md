@@ -71,6 +71,11 @@ attack restriction, and do not require optional attack payments. The resolved
 entry follows its recipient's battlefield incarnation through every combat of
 the turn and expires through ordinary cleanup.
 
+An untargeted current-turn requirement on opponents' creatures uses the
+resolving ability's controller and live battlefield membership. Later
+eligible creatures join the requirement until cleanup. The declaration solver
+keeps every legal defender available.
+
 ## Closure layers
 
 An intrinsic Ascend spell declaration is checked independently before binding

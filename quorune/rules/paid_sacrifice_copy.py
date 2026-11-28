@@ -7,10 +7,7 @@ from ..errors import StateInvariantError
 from ..model import StackItem
 from ..replacement.immutable import thaw_value
 from ..zone_trigger_events import ZoneTransitionKind
-from .casting_additional_costs import (
-    CAST_COPY_SACRIFICE_PRICE_VERSION, FixedZoneChangeAdditionalCost,
-    damage_qualified_sacrifice_predicate, fixed_zone_change_cost_candidates,
-)
+from .casting.optional_creature_payments import controlled_creature_payment, expand_counted_creature_payment_options
 
 
 CAPABILITY = "stack.copy.cast_paid_creature_count"
@@ -84,30 +81,13 @@ def is_closed_paid_sacrifice_copy_program(program):
 
 
 def fixed_creature_copy_price(count):
-    return FixedZoneChangeAdditionalCost(
-        operation="sacrifice_one", choice_field="sacrifice_cards",
-        predicate=damage_qualified_sacrifice_predicate(),
-        schema_version=CAST_COPY_SACRIFICE_PRICE_VERSION, count=count,
-    )
+    return controlled_creature_payment(count)
 
 
 def expand_paid_sacrifice_copy_options(host, seat, source, options, schema):
     if not validate_cast_copy_cost_schema(schema):
         return options
-    candidates = fixed_zone_change_cost_candidates(
-        host, actor=seat, cost=fixed_creature_copy_price(1), exclude_object_id=source.object_id,
-    )
-    paid = [
-        {
-            **option,
-            "id": f"{option['id']}{_OPTION_MARKER}{count}",
-            "label": f"{option.get('label') or 'Cast'} and sacrifice {count} creature{'s' if count != 1 else ''}",
-            "_additional_option_costs": [*option.get("_additional_option_costs", ()),
-                                         fixed_creature_copy_price(count).to_descriptor()],
-        }
-        for option in options for count in range(1, len(candidates) + 1)
-    ]
-    return [*options, *paid]
+    return expand_counted_creature_payment_options(host, seat, source, options, marker=_OPTION_MARKER)
 
 
 def _required_paid_count(option_id):

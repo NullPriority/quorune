@@ -15,7 +15,9 @@ PAYMENT = FixedEffectPaymentSpec("mana", requirements={"GENERIC": 2, "W": 0, "U"
 
 
 def marks_activation_copy_payment(effect):
-    return effect.get("op") == OPERATION and effect.get("schema_version") == PAYMENT_VERSION
+    # Entrant-X has its own reflexive program on the same v19 operation.
+    return (effect.get("op") == OPERATION and effect.get("schema_version") == PAYMENT_VERSION
+            and "reflexive_program" not in effect)
 
 
 def nonmana_activation_condition():

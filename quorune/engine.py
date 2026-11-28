@@ -89,7 +89,6 @@ from .crew import (
     pay_crew_cost,
 )
 from .combat_constraints import (
-    selected_options,
     DeclarationConstraintError,
     DeclarationProblem,
     DeclarationRequirement,
@@ -101,9 +100,7 @@ from .commander_zones import (
     CommanderZoneError,
     pending_commander_zone_state_choices,
 )
-from .declaration_costs import (
-    DeclarationCost,
-)
+from .declaration_costs import DeclarationCost, lock_declaration_payment
 from .declaration_condition_runtime import fixed_declaration_condition_verdict
 from .declaration_requirement_runtime import (
     typed_attacker_requirements,
@@ -286,7 +283,11 @@ from .rules.activation import (
 )
 from .rules.action_catalog import build_priority_action_catalog
 from .rules.protected_attack_payments import (
-    declaration_mana_cost, protected_attack_payment_costs, source_controls_planeswalker,
+    declaration_mana_cost,
+    protected_attack_payment_costs,
+    source_controls_planeswalker,
+    offered_attack_declaration_costs,
+    pay_attack_declaration_costs,
 )
 from .cast_event_type_model import physical_card_event_context
 from .rules.event_subscriptions import LAND_PLAY_EVENT
@@ -568,6 +569,15 @@ class CommanderEngine(
             },
             importance=3,
         )
+        from .rules.name_stickers import access
+        from .rules.name_sticker_sheets import NAME_STICKER_SHEETS
+
+        for seat in state.turn_order:
+            sheets = access(state.players[seat])
+            if sheets is not None:
+                names = {key: [NAME_STICKER_SHEETS[sheet][0] for sheet in sheets[key]]
+                         for key in ("registered", "chosen")}
+                engine._log(seat, "sticker.sheets", f"{seat} revealed their sticker sheets.", names, importance=2)
         for seat in state.turn_order:
             engine.draw(
                 seat,
@@ -1232,6 +1242,7 @@ class CommanderEngine(
         discard_effect_origin: DiscardEffectOrigin | None = None,
         putting_player: str | None = None,
         discard_batch_member: bool = False,
+        origin_copy_snapshot: Mapping[str, Any] | None = None,
     ) -> None:
         """Game Record v3 compatibility facade for normalized zone events."""
 
@@ -1250,6 +1261,7 @@ class CommanderEngine(
                     source_zones=departure_source_zones,
                     source_characteristics=departure_source_characteristics,
                     putting_player=putting_player,
+                    copy_snapshot=origin_copy_snapshot,
                 ),
                 destination=destination,
                 reason=reason,
@@ -1630,28 +1642,47 @@ class CommanderEngine(
             self._perform_mulligan_redraws(list(mulliganers))
             return
 
+        from .rules.mulligan_redraw import MULLIGAN_REDRAW_ACTION, MULLIGAN_REDRAW_OFFER, hand_redraw_offer
+
         seat = actor_list[index]
+        actions = ["keep", "mulligan"]
+        continuation = {
+            "round": round_no,
+            "actors": actor_list,
+            "index": index,
+            "mulliganers": list(mulliganers),
+        }
+        if (offer := hand_redraw_offer(self, seat)) is not None:
+            actions.append(MULLIGAN_REDRAW_ACTION)
+            continuation[MULLIGAN_REDRAW_OFFER] = offer
         self.permissions.issue(
             kind="mulligan.declare",
             role="pilot",
             actors=[seat],
-            allowed_actions=["keep", "mulligan"],
+            allowed_actions=actions,
             payload_by_actor={seat: self._mulligan_hand_payload(seat)},
             simultaneous=False,
-            continuation={
-                "round": round_no,
-                "actors": actor_list,
-                "index": index,
-                "mulliganers": list(mulliganers),
-            },
+            continuation=continuation,
         )
 
     def _complete_mulligan_declaration(self, decision: Any) -> None:
+        from .rules.mulligan_redraw import MULLIGAN_REDRAW_ACTION, MULLIGAN_REDRAW_OFFER, commit_hand_redraw
+
         seat = decision.actors[0]
         response = decision.responses[seat]
         action = response["action"]
         player = self.state.players[seat]
         mulliganers = list(decision.continuation.get("mulliganers") or [])
+
+        if action == MULLIGAN_REDRAW_ACTION:
+            commit_hand_redraw(self, seat, decision.continuation.get(MULLIGAN_REDRAW_OFFER))
+            self._issue_mulligan_declaration(
+                actors=decision.continuation["actors"],
+                index=decision.continuation["index"],
+                mulliganers=mulliganers,
+                round_no=decision.continuation["round"],
+            )
+            return
 
         if action == "keep":
             player.kept_hand = True
@@ -4111,9 +4142,12 @@ class CommanderEngine(
             return f"{card.ref} is not a creature"
         if "battle" in card_types:
             return f"{card.ref} cannot attack because it is a Battle"
+        from .rules.chosen_attack_turn import chosen_attack_turn_prohibits
+        if chosen_attack_turn_prohibits(self.state, card, active):
+            return f"{card.ref} was not chosen to attack this turn"
         if card.tapped:
             return f"{card.ref} is tapped"
-        if haste.summoning_sickness_prohibits_attack(self, card):
+        if haste.summoning_sickness_prohibits_declaration(self, card):
             return f"{card.ref} is summoning sick"
         if defender.defender_prohibits_attack(data, host=self, card=card):
             return f"{card.ref} has defender and cannot attack"
@@ -4251,6 +4285,7 @@ class CommanderEngine(
         mana: tuple[tuple[str, int], ...],
         source: CardInstance,
         label: str,
+        phyrexian_life: int | None = None,
     ) -> DeclarationCost:
         return DeclarationCost(
             cost_id=cost_id,
@@ -4260,6 +4295,7 @@ class CommanderEngine(
             mana=mana,
             source=source.ref,
             label=label,
+            phyrexian_life=phyrexian_life,
         )
 
     def _declaration_costs(
@@ -4364,6 +4400,7 @@ class CommanderEngine(
                             payer=payer,
                             mana=mana,
                             source=source,
+                            phyrexian_life=template.phyrexian_life,
                             label=(
                                 f"{self.display_name(source.object_id)} "
                                 f"requires {printed_cost} for "
@@ -5008,22 +5045,8 @@ class CommanderEngine(
         *,
         payer: str,
     ) -> tuple[dict[str, int], tuple[DeclarationCost, ...]]:
-        requirements = {
-            key: 0
-            for key in ("GENERIC", "W", "U", "B", "R", "G", "C")
-        }
-        selected: list[DeclarationCost] = []
-        for cost in costs:
-            if cost.option not in selected_options(declaration.get(cost.variable)):
-                continue
-            if cost.payer != payer:
-                raise GameRuleError(
-                    "A declaration cost named a different payer"
-                )
-            selected.append(cost)
-            for key, amount in cost.mana_requirements().items():
-                requirements[key] += amount
-        return requirements, tuple(selected)
+        requirements, selected, _, _ = lock_declaration_payment(costs, declaration, payer=payer)
+        return requirements, selected
 
     def _attack_declaration_components(
         self,
@@ -5137,6 +5160,7 @@ class CommanderEngine(
             self,
             blockers_by_ref,
             error_type=GameRuleError,
+            domains=domains,
         )
 
         restrictions: list[DeclarationRestriction] = []
@@ -5273,9 +5297,7 @@ class CommanderEngine(
                     "planeswalker_defenders": [row for row in planeswalker_defenders if row["id"] in defender_refs],
                     "battle_defenders": [row for row in battle_defenders if row["id"] in defender_refs],
                     "declaration_constraints": problem.projection(),
-                    "declaration_costs": [
-                        cost.to_dict() for cost in costs
-                    ],
+                    "declaration_costs": offered_attack_declaration_costs(self, active, costs),
                     "payment": {
                         "default": "auto",
                         "manual_fields": ["mana", "payment"],
@@ -5533,21 +5555,9 @@ class CommanderEngine(
         tap_declared_attackers(self, (card for card, _details in chosen))
         commit_enlist_costs(self,enlist_plans)
         commit_exert_costs(self,exert_plans,trigger_batch=attack_triggers)
-        requirements, selected_costs = self._selected_declaration_mana(
-            locked_costs,
-            canonical,
-            payer=active,
+        payment_details = pay_attack_declaration_costs(
+            self, payer=active, costs=locked_costs, declaration=canonical, response=response,
         )
-        spent = normalize_mana_bundle(None)
-        activations: list[dict[str, Any]] = []
-        if sum(requirements.values()):
-            mana_payment = self._pay_for_cost(
-                active,
-                requirements,
-                response,
-                spend_context="combat_declaration",
-            )
-            spent, activations = mana_payment.spent, mana_payment.activations
         committed = attack_transitions.commit_engine_attack_declaration(
             self, controller=active, chosen=chosen, bands=bands
         )
@@ -5575,23 +5585,7 @@ class CommanderEngine(
                     self.state.cards[oid].ref: defender
                     for oid, defender in self.state.combat.attackers.items()
                 },
-                "costs": [cost.cost_id for cost in selected_costs],
-                "requirements": {
-                    key: value
-                    for key, value in requirements.items()
-                    if value
-                },
-                "payment": {
-                    key: value for key, value in spent.items() if value
-                },
-                "mana_sources": [
-                    {
-                        "source": activation.get("source_ref")
-                        or activation.get("source"),
-                        "bundle": activation.get("bundle"),
-                    }
-                    for activation in activations
-                ],
+                **payment_details,
             },
             importance=2,
             changed_objects=list(used),
@@ -6267,13 +6261,13 @@ class CommanderEngine(
         ):
             return False
 
-        if protection_verdict_for_ref(
-            self,
-            self._effective_card_data(target),
-            attachment.ref,
-        ) is not ProtectionVerdict.ALLOWED:
-            return False
-        return True
+        from .attachments import current_protection_attachment
+
+        retention = (current_protection_attachment(self.state.cards, attachment, target)
+                     if "equipment" in subtypes else None)
+        return protection_verdict_for_ref(
+            self, self._effective_card_data(target), attachment.ref, retaining_attachment=retention,
+        ) is ProtectionVerdict.ALLOWED
 
     def _has_world_supertype(self, card: CardInstance) -> bool:
         _, _, supertypes = self._type_parts(

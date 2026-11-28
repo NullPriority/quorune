@@ -5,7 +5,10 @@ from __future__ import annotations
 from . import regex_working_set as re
 
 from ..cast_timing import CAST_PERMISSION_ACTIVE_ZONE, ControllerCombatCastWindow, OpponentUpkeepCastWindow, OpponentUpkeepWindow
-from ..continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec, block_declaration_timing_condition
+from ..continuous_conditions import (
+    FixedPublicStateConditionKind, FixedPublicStateConditionSpec, FixedPublicStateFact,
+    block_declaration_timing_condition,
+)
 from ..public_history_query_model import opponent_life_loss_including_departed_query
 from ..rules.source_references import SourceReferenceSpec
 from ..semantic_runtime.self_cast_restrictions import SelfCastRestrictionHandler
@@ -68,6 +71,12 @@ def self_cast_restriction_nodes(*, node_id, line, material_line, span, source_na
         condition = ControllerCombatCastWindow()
         version = 5
     elif (condition := _opponent_life_loss_cast_condition(material, source_name=source_name)) is not None:
+        version = 2
+    elif surface == "cast this spell only during combat before blockers are declared":
+        condition = FixedPublicStateConditionSpec(
+            FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST, amount=1,
+            fact=FixedPublicStateFact.CURRENT_COMBAT_BEFORE_BLOCKERS, schema_version=4,
+        )
         version = 2
     elif block_window is not None:
         condition = block_declaration_timing_condition(declare_blockers_only=block_window)

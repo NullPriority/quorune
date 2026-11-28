@@ -60,6 +60,8 @@ OPENING_HAND_BATTLEFIELD_HANDLER_ID = "permission.action.opening-hand-battlefiel
 OPENING_HAND_BATTLEFIELD_CAPABILITY = "game.opening_hand.battlefield"
 OPENING_HAND_LUCK_HANDLER_ID = "permission.action.opening-hand-luck.v1"
 OPENING_HAND_LUCK_CAPABILITY = "game.opening_hand.nonstarter_luck_entry"
+MULLIGAN_REDRAW_HANDLER_ID = "permission.action.mulligan-redraw.v1"
+MULLIGAN_REDRAW_CAPABILITY = "game.opening_hand.exile_and_redraw"
 
 
 class ActionPermissionKind(StrEnum):
@@ -73,6 +75,7 @@ class ActionPermissionKind(StrEnum):
     OPENING_HAND_BATTLEFIELD = "opening_hand_battlefield"
     OPENING_HAND_LUCK = "opening_hand_luck"
     OPENING_HAND_REVEAL = "opening_hand_reveal"
+    MULLIGAN_REDRAW = "mulligan_redraw"
     LAND_PLAY_FROM_OWN_GRAVEYARD = "land_play_from_own_graveyard"
     ACTIVATE_CONTROLLED_CREATURE_AS_HASTE = (
         "activate_controlled_creature_as_haste"
@@ -274,6 +277,14 @@ class OpeningHandLuckPermissionHandler(OpeningHandBattlefieldPermissionHandler):
     permission: ActionPermissionKind = ActionPermissionKind.OPENING_HAND_LUCK
     rule_references: tuple[str, ...] = ("103.6", "103.6a", "122.1", "609.3")
     capability_dependencies: tuple[str, ...] = (OPENING_HAND_LUCK_CAPABILITY,)
+
+
+@dataclass(frozen=True, slots=True)
+class MulliganRedrawPermissionHandler(OpeningHandBattlefieldPermissionHandler):
+    handler_id: str = MULLIGAN_REDRAW_HANDLER_ID
+    permission: ActionPermissionKind = ActionPermissionKind.MULLIGAN_REDRAW
+    rule_references: tuple[str, ...] = ("103.5", "103.5b", "103.5c", "121.2", "406.3")
+    capability_dependencies: tuple[str, ...] = (MULLIGAN_REDRAW_CAPABILITY,)
 
 
 @dataclass(frozen=True,slots=True)
@@ -647,6 +658,7 @@ def default_action_permission_registry() -> ActionPermissionRegistry:
             *equip_handlers,
             OpeningHandBattlefieldPermissionHandler(),
             OpeningHandLuckPermissionHandler(),
+            MulliganRedrawPermissionHandler(),
             OpeningHandRevealPermissionHandler(),
             StaticActionPermissionHandler(
                 handler_id=LAND_PLAY_FROM_OWN_GRAVEYARD_HANDLER_ID,

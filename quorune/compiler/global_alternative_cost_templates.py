@@ -25,6 +25,9 @@ def turn_limited_global_alternative_cost_handler(text):
     material = " ".join(text.casefold().replace("’", "'").split()).removesuffix(".")
     prefix = "once each turn, you may pay {0} rather than pay the mana cost for "
     scope = _TURN_LIMITED_ALTERNATIVES.get(material.removeprefix(prefix)) if material.startswith(prefix) else None
+    if material == ("once during each of your turns, you may cast an enchantment spell by paying life "
+                    "equal to its mana value rather than paying its mana cost"):
+        scope = TurnLimitedAlternativeScope.OWN_TURN_ENCHANTMENT_LIFE
     if scope is None:
         return None
     origin, predicate = scope.selection()

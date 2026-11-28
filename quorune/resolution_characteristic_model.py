@@ -10,6 +10,7 @@ from typing import Any, Mapping
 from .continuous_effects import ContinuousEffectDuration, ContinuousOperation, Layer
 from .creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
 from .keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS, FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
+from .live_battlefield_quantity_model import LiveBattlefieldQuantitySpec
 from .object_predicate import ObjectQuerySpec
 from .query_effect_amount_model import CastXAmountSpec, DECLARED_AMOUNT_CAPABILITY
 from .replacement.immutable import thaw_value
@@ -52,6 +53,8 @@ NEXT_TURN_TARGET_LAND_ANIMATION_MECHANICS = (
     "tap-and-untap", "cr-611-continuous-effects", "cr-115-targets",
     NEXT_TURN_TARGET_LAND_ANIMATION_MECHANIC, "haste",
 )
+COUNTED_TARGET_LAND_ANIMATION_VERSION = 35
+COUNTED_TARGET_LAND_ANIMATION_CAPABILITY = "continuous.resolution.enchantment_count_land_animation"
 INDEFINITE_TARGET_LAND_ANIMATION_MECHANIC = "indefinite-target-land-animation"
 INDEFINITE_TARGET_LAND_ANIMATION_CAPABILITY = "continuous.resolution.indefinite_target_land_animation"
 INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS = frozenset({
@@ -65,6 +68,7 @@ FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS = frozenset({
     INDEFINITE_TARGET_LAND_ANIMATION_VERSION, FIXED_TARGET_LAND_TYPE_VERSION,
     TARGET_PLAYER_CREATURE_OVERWRITE_VERSION, TARGET_CREATURE_ABILITY_LOSS_VERSION,
     NEXT_TURN_TARGET_LAND_ANIMATION_VERSION,
+    COUNTED_TARGET_LAND_ANIMATION_VERSION,
     *INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS,
 })
 # CR 205.3g-k/q, pinned with the repository's 2026-08-07 rules index.
@@ -370,6 +374,31 @@ class DerivedResolutionCharacteristicsSpec:
     def materialize(self, amount: int) -> FixedResolutionCharacteristicsSpec:
         base = amount + self.offset
         return replace(self.settings, base_power=base, base_toughness=base)
+
+
+@dataclass(frozen=True, slots=True)
+class CountedTargetLandAnimationSpec:
+    """Animate the original controlled land using one current enchantment count."""
+
+    @property
+    def quantity(self) -> LiveBattlefieldQuantitySpec:
+        return LiveBattlefieldQuantitySpec(
+            query=ObjectQuerySpec(zones=("battlefield",), types_all=("enchantment",)),
+            controller_relation="source_controller",
+        )
+
+    def effect(self) -> dict[str, Any]:
+        return {
+            "op": CHARACTERISTIC_OPERATION, "schema_version": COUNTED_TARGET_LAND_ANIMATION_VERSION,
+            "card": "$target.0", "characteristics": {"quantity": self.quantity.to_dict()},
+        }
+
+    def materialize(self, amount: int) -> FixedResolutionCharacteristicsSpec:
+        return FixedResolutionCharacteristicsSpec(
+            card_types=("Creature",), creature_subtypes=("Elemental",), retain_types=True,
+            retain_creature_subtypes=True, keywords=("Trample", "Haste"),
+            base_power=amount, base_toughness=amount,
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -727,7 +756,7 @@ def decode_temporary_creature_type_choice(effect, *, resolved=False):
 
 def fixed_resolution_characteristic_instruction(
     value: Mapping[str, Any], *, resolved: bool = False,
-) -> tuple[FixedResolutionCharacteristicsSpec | IndefiniteSourceAnimationSpec | IndefiniteTargetLandAnimationSpec | IndefiniteEnchantmentFormSpec | DerivedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionCardTypeAdditionSpec | FixedResolutionModifierSpec | FixedResolutionSubtypeSettingSpec | FixedTargetLandTypeSpec | SourceBlockDefenderSpec | TargetPlayerCreatureOverwriteSpec | TargetCreatureAbilityLossSpec, str | ObjectQuerySpec]:
+) -> tuple[FixedResolutionCharacteristicsSpec | IndefiniteSourceAnimationSpec | IndefiniteTargetLandAnimationSpec | IndefiniteEnchantmentFormSpec | DerivedResolutionCharacteristicsSpec | CountedTargetLandAnimationSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionCardTypeAdditionSpec | FixedResolutionModifierSpec | FixedResolutionSubtypeSettingSpec | FixedTargetLandTypeSpec | SourceBlockDefenderSpec | TargetPlayerCreatureOverwriteSpec | TargetCreatureAbilityLossSpec, str | ObjectQuerySpec]:
     expected = {"op","schema_version","characteristics"}
     if not isinstance(value, Mapping):
         raise ValueError("Fixed characteristic instruction fields are malformed")
@@ -741,6 +770,15 @@ def fixed_resolution_characteristic_instruction(
                 or settings != next_turn_target_land_animation_settings()):
             raise ValueError("Next-turn land animation requires the original target and retaining form")
         return settings, card
+    if type(version) is int and version == COUNTED_TARGET_LAND_ANIMATION_VERSION:
+        spec = CountedTargetLandAnimationSpec()
+        template = spec.effect()
+        if set(value) != expected | {"card"} or any(thaw_value(value[key]) != template[key] for key in expected):
+            raise ValueError("Counted animation needs its exact enchantment count and land settings")
+        card = value["card"]
+        if type(card) is not str or not card or (card.startswith("$") if resolved else card != "$target.0"):
+            raise ValueError("Counted animation must use the original targeted land")
+        return spec, card
     if type(version) is int and version == TARGET_CREATURE_ABILITY_LOSS_VERSION:
         if value.get("op") != CHARACTERISTIC_OPERATION or set(value) != expected | {"card"}:
             raise ValueError("Ability loss needs one exact target instruction")

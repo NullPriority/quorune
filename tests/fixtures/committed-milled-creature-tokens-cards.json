@@ -1,1 +1,1157 @@
-{"cards":[{"cmc":12.0,"color_identity":[],"colors":[],"defense":null,"keywords":["Indestructible","Trample","Infect"],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"legal","pioneer":"not_legal","predh":"legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"not_legal","vintage":"legal"},"loyalty":null,"mana_cost":"{12}","name":"Blightsteel Colossus","oracle_id":"e80772e2-8623-4094-81a2-70828b2b151c","oracle_text":"Trample, infect, indestructible\nIf Blightsteel Colossus would be put into a graveyard from anywhere, reveal Blightsteel Colossus and shuffle it into its owner's library instead.","power":"11","produced_mana":[],"released_at":"2020-08-07","toughness":"11","type_line":"Artifact Creature — Phyrexian Golem"},{"cmc":2.0,"color_identity":["B"],"colors":["B"],"defense":null,"keywords":["Mill"],"layout":"normal","legalities":{"alchemy":"legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"legal","pioneer":"legal","predh":"not_legal","premodern":"not_legal","standard":"legal","standardbrawl":"legal","timeless":"legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"{X}{B}{B}","name":"Dread Summons","oracle_id":"642fa01d-025e-44dd-8360-5325e5a28282","oracle_text":"Each player mills X cards. For each creature card put into a graveyard this way, you create a tapped 2/2 black Zombie creature token. (To mill a card, a player puts the top card of their library into their graveyard.)","power":null,"produced_mana":[],"released_at":"2024-11-15","toughness":null,"type_line":"Sorcery"},{"cmc":2.0,"color_identity":["G"],"colors":["G"],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"not_legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"legal","paupercommander":"legal","penny":"legal","pioneer":"not_legal","predh":"legal","premodern":"legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"{1}{G}","name":"Grizzly Bears","oracle_id":"14c8f55d-d177-4c25-a931-ebeb9e6062a0","oracle_text":"","power":"2","produced_mana":[],"released_at":"2007-07-13","toughness":"2","type_line":"Creature — Bear"},{"cmc":1.0,"color_identity":["W"],"colors":["W"],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"not_legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"legal","pioneer":"not_legal","predh":"legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"{W}","name":"Isamaru, Hound of Konda","oracle_id":"cfb756dd-6fe1-430a-8f04-8b10cac62a86","oracle_text":"","power":"2","produced_mana":[],"released_at":"2020-07-17","toughness":"2","type_line":"Legendary Creature — Dog"},{"cmc":4.0,"color_identity":["B"],"colors":["B"],"defense":null,"faces":[],"keywords":[],"layout":"normal","legalities":{"alchemy":"legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"not_legal","pioneer":"legal","predh":"legal","premodern":"not_legal","standard":"legal","standardbrawl":"legal","timeless":"legal","tlr":"not_legal","vintage":"legal"},"loyalty":null,"mana_cost":"{2}{B}{B}","name":"Leyline of the Void","oracle_id":"f4e32fc1-1b8d-441e-8e76-71f19f98e925","oracle_text":"If this card is in your opening hand, you may begin the game with it on the battlefield.\nIf a card would be put into an opponent's graveyard from anywhere, exile it instead.","power":null,"produced_mana":[],"released_at":"2024-09-27","toughness":null,"type_line":"Enchantment"},{"cmc":0.0,"color_identity":["W"],"colors":[],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"legal","paupercommander":"legal","penny":"legal","pioneer":"legal","predh":"legal","premodern":"legal","standard":"legal","standardbrawl":"legal","timeless":"legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"","name":"Plains","oracle_id":"bc71ebf6-2056-41f7-be35-b2e5c34afa99","oracle_text":"({T}: Add {W}.)","power":null,"produced_mana":["W"],"released_at":"2026-11-13","toughness":null,"type_line":"Basic Land — Plains"},{"cmc":2.0,"color_identity":["W"],"colors":["W"],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"not_legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"legal","pioneer":"legal","predh":"not_legal","premodern":"not_legal","standard":"legal","standardbrawl":"legal","timeless":"legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"{1}{W}","name":"Rest in Peace","oracle_id":"087f9ad7-e74f-40e2-8102-1ed2925d0418","oracle_text":"When this enchantment enters, exile all graveyards.\nIf a card or token would be put into a graveyard from anywhere, exile it instead.","power":null,"produced_mana":[],"released_at":"2024-04-19","toughness":null,"type_line":"Enchantment"},{"cmc":0.0,"color_identity":[],"colors":[],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"not_legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"legal","paupercommander":"legal","penny":"not_legal","pioneer":"legal","predh":"legal","premodern":"legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"{0}","name":"Tormod's Crypt","oracle_id":"1573f7f9-672c-421a-b1ac-3d0d8aea59ca","oracle_text":"{T}, Sacrifice this artifact: Exile target player's graveyard.","power":null,"produced_mana":[],"released_at":"2023-01-13","toughness":null,"type_line":"Artifact"}],"fixture_kind":"public_exact-list_card_data","rulings":[{"comment":"If Rest in Peace is destroyed by a spell, Rest in Peace will be exiled and then the spell will be put into its owner's graveyard.","oracle_id":"087f9ad7-e74f-40e2-8102-1ed2925d0418","published_at":"2018-03-16","source":"wotc"},{"comment":"If a card is discarded while Rest in Peace is on the battlefield, abilities that function when a card is discarded (such as madness) still work, even though that card never reaches a graveyard. In addition, spells or abilities that check the characteristics of a discarded card (such as Chandra Ablaze's first ability) can find that card in exile.","oracle_id":"087f9ad7-e74f-40e2-8102-1ed2925d0418","published_at":"2018-03-16","source":"wotc"},{"comment":"While Rest in Peace is on the battlefield, abilities that trigger whenever a creature dies won't trigger because cards and tokens are never put into a player's graveyard.","oracle_id":"087f9ad7-e74f-40e2-8102-1ed2925d0418","published_at":"2018-03-16","source":"wotc"},{"comment":"If a creature card has an ability that replaces going to the graveyard with moving somewhere else \"instead,\" that card won't count toward the number of Zombies you get. Conversely, creature cards with a triggered ability that removes them from the graveyard when they're put there from anywhere (or your library) will count toward that number.","oracle_id":"642fa01d-025e-44dd-8360-5325e5a28282","published_at":"2015-11-04","source":"wotc"},{"comment":"A player who has ten or more poison counters loses the game. This is a state-based action.","oracle_id":"e80772e2-8623-4094-81a2-70828b2b151c","published_at":"2020-08-07","source":"wotc"},{"comment":"Damage from a source with infect is damage in all respects. If the source with infect also has lifelink, damage dealt by that source also causes its controller to gain that much life. Damage from a source with infect can be prevented or redirected. Abilities that trigger on damage being dealt will trigger if a source with infect deals damage, if appropriate.","oracle_id":"e80772e2-8623-4094-81a2-70828b2b151c","published_at":"2020-08-07","source":"wotc"},{"comment":"Damage that a creature with infect deals doesn't result in damage being marked on a creature or a player losing life. Instead, it results in that many -1/-1 counters being put on that creature or that many poison counters being given to that player. Damage dealt to planeswalkers still results in that planeswalker losing that many loyalty counters.","oracle_id":"e80772e2-8623-4094-81a2-70828b2b151c","published_at":"2020-08-07","source":"wotc"},{"comment":"The -1/-1 counters remain on the creature indefinitely. They're not removed if the creature regenerates or the turn ends.","oracle_id":"e80772e2-8623-4094-81a2-70828b2b151c","published_at":"2020-08-07","source":"wotc"},{"comment":"A player's \"opening hand\" is the hand of cards the player has after all players have taken mulligans. If players have any cards in hand that allow actions to be taken with them from a player's opening hand, the starting player takes all such actions first in any order, followed by each other player in turn order. Then the first turn begins.","oracle_id":"f4e32fc1-1b8d-441e-8e76-71f19f98e925","published_at":"2024-09-20","source":"wotc"},{"comment":"If your opponent discards a card while you control Leyline of the Void, abilities that check whether a card is discarded (such as Hollow One, or a madness ability of the discarded card) still work, even though that card never reaches that player's graveyard. In addition, spells or abilities that check the characteristics of the discarded card can find that card in exile.","oracle_id":"f4e32fc1-1b8d-441e-8e76-71f19f98e925","published_at":"2024-09-20","source":"wotc"},{"comment":"Tokens can still die while Leyline of the Void is on the battlefield.","oracle_id":"f4e32fc1-1b8d-441e-8e76-71f19f98e925","published_at":"2024-09-20","source":"wotc"},{"comment":"While Leyline of the Void is on the battlefield, nontoken creatures your opponents control won't die. They'll be exiled instead. Abilities that would trigger when those creatures die won't trigger.","oracle_id":"f4e32fc1-1b8d-441e-8e76-71f19f98e925","published_at":"2024-09-20","source":"wotc"}],"schema_version":1,"source":"Scryfall Oracle/rulings subset for offline tests"}
+{
+  "cards": [
+    {
+      "cmc": 12.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Indestructible",
+        "Trample",
+        "Infect"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{12}",
+      "name": "Blightsteel Colossus",
+      "oracle_id": "e80772e2-8623-4094-81a2-70828b2b151c",
+      "oracle_text": "Trample, infect, indestructible\nIf Blightsteel Colossus would be put into a graveyard from anywhere, reveal Blightsteel Colossus and shuffle it into its owner's library instead.",
+      "power": "11",
+      "produced_mana": [],
+      "released_at": "2020-08-07",
+      "toughness": "11",
+      "type_line": "Artifact Creature — Phyrexian Golem"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Mill"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{X}{B}{B}",
+      "name": "Dread Summons",
+      "oracle_id": "642fa01d-025e-44dd-8360-5325e5a28282",
+      "oracle_text": "Each player mills X cards. For each creature card put into a graveyard this way, you create a tapped 2/2 black Zombie creature token. (To mill a card, a player puts the top card of their library into their graveyard.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Isamaru, Hound of Konda",
+      "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Dog"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}{B}",
+      "name": "Leyline of the Void",
+      "oracle_id": "f4e32fc1-1b8d-441e-8e76-71f19f98e925",
+      "oracle_text": "If this card is in your opening hand, you may begin the game with it on the battlefield.\nIf a card would be put into an opponent's graveyard from anywhere, exile it instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ward"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}{B}",
+      "name": "Nightkin Ambusher",
+      "oracle_id": "2808d652-907d-4071-b386-814507a1549e",
+      "oracle_text": "Ward {2} (Whenever this creature becomes the target of a spell or ability an opponent controls, counter it unless that player pays {2}.)\nWhen this creature enters, target player gets four rad counters.\nThis creature can't be blocked as long as defending player has a rad counter.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2024-03-08",
+      "toughness": "4",
+      "type_line": "Creature — Mutant Warrior"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mariposa Military Base",
+      "oracle_id": "f1e03d99-024a-430b-9342-ffd2268bd103",
+      "oracle_text": "You may have this land enter tapped. If you do, you get two rad counters.\n{T}: Add {C}.\n{5}, {T}: Draw a card. This ability costs {1} less to activate for each rad counter you have.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2024-03-08",
+      "toughness": null,
+      "type_line": "Land"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Rest in Peace",
+      "oracle_id": "087f9ad7-e74f-40e2-8102-1ed2925d0418",
+      "oracle_text": "When this enchantment enters, exile all graveyards.\nIf a card or token would be put into a graveyard from anywhere, exile it instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-04-19",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Solemnity",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "oracle_text": "Players can't get counters.\nCounters can't be put on artifacts, creatures, enchantments, or lands.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-07-14",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{0}",
+      "name": "Tormod's Crypt",
+      "oracle_id": "1573f7f9-672c-421a-b1ac-3d0d8aea59ca",
+      "oracle_text": "{T}, Sacrifice this artifact: Exile target player's graveyard.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-01-13",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B",
+        "G",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}{B}{G}",
+      "name": "Anafenza, the Foremost",
+      "oracle_id": "ebfafabc-5255-4024-be59-7403bdb16ee4",
+      "oracle_text": "Whenever Anafenza attacks, put a +1/+1 counter on another target tapped creature you control.\nIf a nontoken creature an opponent owns would die or a creature card not on the battlefield would be put into an opponent's graveyard, exile that card instead.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2014-09-26",
+      "toughness": "4",
+      "type_line": "Legendary Creature — Human Soldier"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Fervor",
+      "oracle_id": "8e0cea9c-3110-4728-9378-76849e33bb90",
+      "oracle_text": "Creatures you control have haste. (They can attack and {T} as soon as they come under your control.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2012-07-13",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}",
+      "name": "Lightning Bolt",
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}{B}",
+      "name": "Murder",
+      "oracle_id": "938b4e2c-88d9-4637-bc00-e228920c9a78",
+      "oracle_text": "Destroy target creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Mill"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}{B}",
+      "name": "Raul, Trouble Shooter",
+      "oracle_id": "d247a86d-917d-4833-82c4-876943d54e2c",
+      "oracle_text": "Once during each of your turns, you may cast a spell from among cards in your graveyard that were milled this turn.\n{T}: Each player mills a card. (They each put the top card of their library into their graveyard.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2024-03-08",
+      "toughness": "4",
+      "type_line": "Legendary Creature — Zombie Mutant Rogue"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B",
+        "G",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}{G}{U}",
+      "name": "The Wise Mothman",
+      "oracle_id": "7656f93b-336f-49cb-b8fe-c2b5c014258f",
+      "oracle_text": "Flying\nWhenever The Wise Mothman enters or attacks, each player gets a rad counter.\nWhenever one or more nonland cards are milled, put a +1/+1 counter on each of up to X target creatures, where X is the number of nonland cards milled this way.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2026-01-26",
+      "toughness": "3",
+      "type_line": "Legendary Creature — Insect Mutant"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If Rest in Peace is destroyed by a spell, Rest in Peace will be exiled and then the spell will be put into its owner's graveyard.",
+      "oracle_id": "087f9ad7-e74f-40e2-8102-1ed2925d0418",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card is discarded while Rest in Peace is on the battlefield, abilities that function when a card is discarded (such as madness) still work, even though that card never reaches a graveyard. In addition, spells or abilities that check the characteristics of a discarded card (such as Chandra Ablaze's first ability) can find that card in exile.",
+      "oracle_id": "087f9ad7-e74f-40e2-8102-1ed2925d0418",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "While Rest in Peace is on the battlefield, abilities that trigger whenever a creature dies won't trigger because cards and tokens are never put into a player's graveyard.",
+      "oracle_id": "087f9ad7-e74f-40e2-8102-1ed2925d0418",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature card has an ability that replaces going to the graveyard with moving somewhere else \"instead,\" that card won't count toward the number of Zombies you get. Conversely, creature cards with a triggered ability that removes them from the graveyard when they're put there from anywhere (or your library) will count toward that number.",
+      "oracle_id": "642fa01d-025e-44dd-8360-5325e5a28282",
+      "published_at": "2015-11-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "A player who has ten or more poison counters loses the game. This is a state-based action.",
+      "oracle_id": "e80772e2-8623-4094-81a2-70828b2b151c",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage from a source with infect is damage in all respects. If the source with infect also has lifelink, damage dealt by that source also causes its controller to gain that much life. Damage from a source with infect can be prevented or redirected. Abilities that trigger on damage being dealt will trigger if a source with infect deals damage, if appropriate.",
+      "oracle_id": "e80772e2-8623-4094-81a2-70828b2b151c",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage that a creature with infect deals doesn't result in damage being marked on a creature or a player losing life. Instead, it results in that many -1/-1 counters being put on that creature or that many poison counters being given to that player. Damage dealt to planeswalkers still results in that planeswalker losing that many loyalty counters.",
+      "oracle_id": "e80772e2-8623-4094-81a2-70828b2b151c",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "The -1/-1 counters remain on the creature indefinitely. They're not removed if the creature regenerates or the turn ends.",
+      "oracle_id": "e80772e2-8623-4094-81a2-70828b2b151c",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Counters can be put on cards that aren't on the battlefield. Notably, suspended cards will still get time counters.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage from a source with infect has no effect on creatures or players. No -1/-1 counters are put on creatures, and no damage is marked on them. Players don’t get poison counters and they don’t lose life. The damage is still dealt for purposes of effects that care about damage, such as lifelink.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage from a source with wither has no effect on creatures. No -1/-1 counters are put on them, and no damage is marked on them. The damage is still dealt for purposes of effects that care about damage, such as lifelink.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature with tribute is entering the battlefield, the chosen opponent can’t pay tribute even if they want to.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a replacement effect allows a player to modify or replace an event by putting counters on an artifact, creature, enchantment, or land, that player may apply that replacement effect. Counters won’t be put on the object, but if the original event is entirely replaced (such as by applying Soul-Scar Mage’s replacement effect), the original event won’t happen.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an artifact, creature, enchantment, or land would enter the battlefield with counters on it at the same time that Solemnity enters the battlefield, Solemnity doesn’t stop it from getting those counters.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the cost of an ability or an additional cost of a spell requires putting counters on an artifact, creature, enchantment, or land, that cost can’t be paid. If a resolving spell or ability says that a player may put counters on one of those objects, that player can’t choose to do so.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Solemnity doesn’t remove any counters players or permanents already have.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Solemnity stops counters from being put on an artifact, creature, enchantment, or land as it enters the battlefield, as well as stopping counters from being put on them later.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "While resolving a cumulative upkeep trigger of a permanent, you’ll fail to put a counter on that permanent, then you may pay for the age counters already on it. If it has no age counters on it, you may pay {0}.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any effects (such as proliferate) that interact with counters a player gets, has, or loses can interact with rad counters.",
+      "oracle_id": "f1e03d99-024a-430b-9342-ffd2268bd103",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a player has fewer cards remaining in their library than the number of rad counters they have when the triggered ability resolves, they’ll mill as many cards as they can.",
+      "oracle_id": "f1e03d99-024a-430b-9342-ffd2268bd103",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a game using the shared team turns option, such as an Archenemy or Two-Headed Giant game, the inherent triggered ability associated with rad counters triggers once for each player on the active team that has rad counters. Each instance of that ability is controlled by one of those players.",
+      "oracle_id": "f1e03d99-024a-430b-9342-ffd2268bd103",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Keep track of how many rad counters each player has. Potential ways to track this include writing them down on paper or using dice, but any method that is clear and mutually agreeable is fine.",
+      "oracle_id": "f1e03d99-024a-430b-9342-ffd2268bd103",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Rad counters are a kind of counter that a player may have. They’re not associated with any specific permanents.",
+      "oracle_id": "f1e03d99-024a-430b-9342-ffd2268bd103",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Rad counters don’t go away as steps, phases, or turns end. They only go away when an effect instructs a player to remove rad counters from themselves.",
+      "oracle_id": "f1e03d99-024a-430b-9342-ffd2268bd103",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The cards are milled all at once, which means abilities that trigger “whenever one or more nonland cards are milled” will trigger exactly once as long as at least one nonland card was milled.",
+      "oracle_id": "f1e03d99-024a-430b-9342-ffd2268bd103",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "There is an inherent triggered ability associated with having rad counters. This triggered ability has no source and is controlled by the active player. The full text of this ability is “At the beginning of the precombat main phase of a player with rad counters, that player mills cards equal to the number of rad counters they have. For each nonland card milled this way, that player loses 1 life and removes one rad counter from themselves.”",
+      "oracle_id": "f1e03d99-024a-430b-9342-ffd2268bd103",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "A player's \"opening hand\" is the hand of cards the player has after all players have taken mulligans. If players have any cards in hand that allow actions to be taken with them from a player's opening hand, the starting player takes all such actions first in any order, followed by each other player in turn order. Then the first turn begins.",
+      "oracle_id": "f4e32fc1-1b8d-441e-8e76-71f19f98e925",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your opponent discards a card while you control Leyline of the Void, abilities that check whether a card is discarded (such as Hollow One, or a madness ability of the discarded card) still work, even though that card never reaches that player's graveyard. In addition, spells or abilities that check the characteristics of the discarded card can find that card in exile.",
+      "oracle_id": "f4e32fc1-1b8d-441e-8e76-71f19f98e925",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "Tokens can still die while Leyline of the Void is on the battlefield.",
+      "oracle_id": "f4e32fc1-1b8d-441e-8e76-71f19f98e925",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "While Leyline of the Void is on the battlefield, nontoken creatures your opponents control won't die. They'll be exiled instead. Abilities that would trigger when those creatures die won't trigger.",
+      "oracle_id": "f4e32fc1-1b8d-441e-8e76-71f19f98e925",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "There is an inherent triggered ability associated with having rad counters. This triggered ability has no source and is controlled by the active player. The full text of this ability is \"At the beginning of the precombat main phase of a player with rad counters, that player mills cards equal to the number of rad counters they have. For each nonland card milled this way, that player loses 1 life and removes one rad counter from themselves.\"",
+      "oracle_id": "2808d652-907d-4071-b386-814507a1549e",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any effects (such as proliferate) that interact with counters a player gets, has, or loses can interact with rad counters.",
+      "oracle_id": "2808d652-907d-4071-b386-814507a1549e",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a game using the shared team turns option, such as an Archenemy or Two-Headed Giant game, the inherent triggered ability associated with rad counters triggers once for each player on the active team that has rad counters. Each instance of that ability is controlled by one of those players.",
+      "oracle_id": "2808d652-907d-4071-b386-814507a1549e",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Keep track of how many rad counters each player has. Potential ways to track this include writing them down on paper or using dice, but any method that is clear and mutually agreeable is fine.",
+      "oracle_id": "2808d652-907d-4071-b386-814507a1549e",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once Nightkin Ambusher has been blocked, giving the defending player a rad counter won't cause Nightkin Ambusher to become unblocked.",
+      "oracle_id": "2808d652-907d-4071-b386-814507a1549e",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a player has fewer cards remaining in their library than the number of rad counters they have when the triggered ability resolves, they'll mill as many cards as they can.",
+      "oracle_id": "2808d652-907d-4071-b386-814507a1549e",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The cards are milled all at once, which means abilities that trigger \"whenever one or more nonland cards are milled\" will trigger exactly once as long as at least one nonland card was milled.",
+      "oracle_id": "2808d652-907d-4071-b386-814507a1549e",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Rad counters are a kind of counter that a player may have. They're not associated with any specific permanents.",
+      "oracle_id": "2808d652-907d-4071-b386-814507a1549e",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Rad counters don't go away as steps, phases, or turns end. They only go away when an effect instructs a player to remove rad counters from themselves.",
+      "oracle_id": "2808d652-907d-4071-b386-814507a1549e",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any effects (such as proliferate) that interact with counters a player gets, has, or loses can interact with rad counters.",
+      "oracle_id": "7656f93b-336f-49cb-b8fe-c2b5c014258f",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a player has fewer cards remaining in their library than the number of rad counters they have when the triggered ability resolves, they’ll mill as many cards as they can.",
+      "oracle_id": "7656f93b-336f-49cb-b8fe-c2b5c014258f",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If more than one player is instructed to mill at the same time (by the activated ability of Raul, Trouble Shooter, for example), as long as at least one nonland card is milled, The Wise Mothman’s last ability will trigger just once.",
+      "oracle_id": "7656f93b-336f-49cb-b8fe-c2b5c014258f",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a game using the shared team turns option, such as an Archenemy or Two-Headed Giant game, the inherent triggered ability associated with rad counters triggers once for each player on the active team that has rad counters. Each instance of that ability is controlled by one of those players.",
+      "oracle_id": "7656f93b-336f-49cb-b8fe-c2b5c014258f",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Keep track of how many rad counters each player has. Potential ways to track this include writing them down on paper or using dice, but any method that is clear and mutually agreeable is fine.",
+      "oracle_id": "7656f93b-336f-49cb-b8fe-c2b5c014258f",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Rad counters are a kind of counter that a player may have. They’re not associated with any specific permanents.",
+      "oracle_id": "7656f93b-336f-49cb-b8fe-c2b5c014258f",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Rad counters don’t go away as steps, phases, or turns end. They only go away when an effect instructs a player to remove rad counters from themselves.",
+      "oracle_id": "7656f93b-336f-49cb-b8fe-c2b5c014258f",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The cards are milled all at once, which means abilities that trigger “whenever one or more nonland cards are milled” will trigger exactly once as long as at least one nonland card was milled.",
+      "oracle_id": "7656f93b-336f-49cb-b8fe-c2b5c014258f",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "There is an inherent triggered ability associated with having rad counters. This triggered ability has no source and is controlled by the active player. The full text of this ability is “At the beginning of the precombat main phase of a player with rad counters, that player mills cards equal to the number of rad counters they have. For each nonland card milled this way, that player loses 1 life and removes one rad counter from themselves.”",
+      "oracle_id": "7656f93b-336f-49cb-b8fe-c2b5c014258f",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an attacking creature loses haste, perhaps because Fervor leaves the battlefield after attackers have been declared, it won't be removed from combat.",
+      "oracle_id": "8e0cea9c-3110-4728-9378-76849e33bb90",
+      "published_at": "2012-07-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you are instructed to put a card into your graveyard from your library without using the word “mill,” (by the effect of Rowan’s Grim Search from Wilds of Eldraine, for example), Raul’s first ability won’t allow you to cast it.",
+      "oracle_id": "d247a86d-917d-4833-82c4-876943d54e2c",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell from among cards in your graveyard that were milled this turn using another permission, Raul’s effect doesn’t apply. You can cast another spell among cards in your graveyard that were milled this turn using the permission granted by Raul’s first ability.",
+      "oracle_id": "d247a86d-917d-4833-82c4-876943d54e2c",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell from among cards in your graveyard that were milled this turn using the permission granted by Raul’s first ability and then have a new Raul, Trouble Shooter come under your control in the same turn, you may cast another spell from among cards in your graveyard that were milled this turn.",
+      "oracle_id": "d247a86d-917d-4833-82c4-876943d54e2c",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you begin to cast the spell, losing control of Raul won’t affect the spell.",
+      "oracle_id": "d247a86d-917d-4833-82c4-876943d54e2c",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must follow the normal timing permissions and restrictions of the spell you cast from your graveyard.",
+      "oracle_id": "d247a86d-917d-4833-82c4-876943d54e2c",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must pay the costs to cast that spell. If it has an alternative cost, you may cast it for that cost instead.",
+      "oracle_id": "d247a86d-917d-4833-82c4-876943d54e2c",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Anafenza's first ability can target any tapped creature you control. That creature doesn't necessarily have to be attacking.",
+      "oracle_id": "ebfafabc-5255-4024-be59-7403bdb16ee4",
+      "published_at": "2014-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "Anafenza's last ability cares only what the card would be in the zone it's moving from, not what it would be in the graveyard. For example, if a land card you control becomes a creature due to an effect and then dies, the land card will be exiled. But if a creature card with bestow is an Aura when it would be put into the graveyard, it ends up in the graveyard.",
+      "oracle_id": "ebfafabc-5255-4024-be59-7403bdb16ee4",
+      "published_at": "2014-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your opponent discards a creature card while Anafenza is on the battlefield, abilities that function when a card is discarded (such as madness) still work, even though that card never reaches a graveyard. In addition, spells or abilities that check the characteristics of a discarded card (such as Chandra Ablaze's first ability) can find that card in exile.",
+      "oracle_id": "ebfafabc-5255-4024-be59-7403bdb16ee4",
+      "published_at": "2014-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "While Anafenza is on the battlefield, abilities that trigger whenever a nontoken creature your opponent owns dies won't trigger, as that card will never reach that player's graveyard. (Token creatures will still go to the graveyard briefly before ceasing to exist.)",
+      "oracle_id": "ebfafabc-5255-4024-be59-7403bdb16ee4",
+      "published_at": "2014-09-20",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

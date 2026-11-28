@@ -429,6 +429,14 @@ def graveyard_creature_transition_runtime_dependencies(program, subscriptions) -
     from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
     from .grouped_graveyard_departure import COVERAGE, grouped_graveyard_departure_program_dependencies
 
+    from .modal_selection import uses_distinct_turn_graveyard_modes
+
+    if uses_distinct_turn_graveyard_modes(program.target_schema):
+        from .modal_node_capabilities import modal_event_runtime_dependencies
+
+        if subscriptions is not None:
+            raise EventSubscriptionError("Graveyard departure modes require a single event subscription")
+        return modal_event_runtime_dependencies(program)
     if COVERAGE in program.coverage:
         if subscriptions is not None:
             raise EventSubscriptionError("Grouped graveyard departure requires a single subscription")
@@ -513,6 +521,23 @@ def _upkeep_hand_condition_leaf(condition: Mapping[str, Any] | None) -> Mapping[
         raise EventSubscriptionError('The upkeep intervening predicate is malformed')
     UpkeepParticipantHandCondition.from_dict(leaf['condition'])
     return leaf
+
+
+def commander_intervening_runtime_dependencies(program) -> tuple[str, ...]:
+    from ..conditional_recipient_model import conditional_recipient_capabilities
+
+    designation = "state_query.commander.designation"
+    for leaf in _public_state_leaves(program.event_condition):
+        condition = leaf.get("condition")
+        if designation not in conditional_recipient_capabilities(condition):
+            continue
+        if (set(leaf) != {"field", "op", "value", "condition"}
+                or leaf["op"] != "truthy" or leaf["value"] is not True
+                or not {"intervening_condition", FIXED_PUBLIC_STATE_INTERVENING_COVERAGE} <= set(program.coverage)):
+            raise EventSubscriptionError("Commander conditions require the complete intervening predicate")
+        FixedPublicStateConditionSpec.from_dict(condition)
+        return ("trigger.condition.fixed_public_state", designation)
+    return ()
 
 
 def upkeep_hand_runtime_dependencies(program) -> tuple[str, ...]:
@@ -916,6 +941,13 @@ def source_event_intervening_recheck(host, program, *, context, controller, sour
         from .attack_batches import declared_attack_power_recheck
         try:
             return declared_attack_power_recheck(program, context, controller=controller, source_object_id=source_object_id)
+        except (ValueError, TypeError) as exc:
+            raise GameRuleError(str(exc)) from exc
+    from .attacker_mana_payment import DEFENDED_ATTACK_COVERAGE, defended_attack_recheck
+
+    if DEFENDED_ATTACK_COVERAGE in program.coverage:
+        try:
+            return defended_attack_recheck(context, controller)
         except (ValueError, TypeError) as exc:
             raise GameRuleError(str(exc)) from exc
     if ATTACKED_PLAYER_LIFE_COVERAGE in program.coverage:

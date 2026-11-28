@@ -144,6 +144,17 @@
     },
     {
       "method": "GET",
+      "operation_id": "deck_editor_printings_api_v1_me_deck_editor_printings_get",
+      "path": "/api/v1/me/deck-editor/printings",
+      "request_schema": null,
+      "response_statuses": [
+        "200",
+        "422"
+      ],
+      "summary": "Deck Editor Printings"
+    },
+    {
+      "method": "GET",
       "operation_id": "saved_decks_api_v1_me_decks_get",
       "path": "/api/v1/me/decks",
       "request_schema": null,
@@ -952,7 +963,7 @@
       "type": "object"
     }
   ],
-  "source_fingerprint": "7072509d7ad75443aeac2a24699c1937d779522171f85d94bc9456d89fceb275",
+  "source_fingerprint": "ad2b2abb275ecb9a8c60cb132eea9269e1d020c7f0b64c64bd849c3d0cf2c7a3",
   "top_blockers": [],
   "websocket_routes": [
     "/api/v1/games/{game_id}/stream"

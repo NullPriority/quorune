@@ -6,6 +6,7 @@ from .card_program_faces import program_matches_face
 from .card_programs.admission import program_has_complete_card_program_admission
 from .flashback import (
     FixedManaFlashbackSpec,
+    FixedSacrificeFlashbackSpec, SACRIFICE_FLASHBACK_HANDLER_ID,
     FLASHBACK_HANDLER_ID, FLASHBACK_MECHANIC_ID,
     FLASHBACK_RUNTIME_EVENT,
 )
@@ -39,6 +40,10 @@ def compiled_ordinary_zone_cast_permission(
         return True
     if card.owner != seat:
         return False
+    from .rules.owned_graveyard_turn_play import owned_graveyard_turn_play_permission
+
+    if owned_graveyard_turn_play_permission(host, seat, card):
+        return True
     if card.zone in set(card.annotations.get("cast_from") or []):
         return True
     if compiled_self_zone_cast_permission(host, seat, card):
@@ -52,17 +57,17 @@ def compiled_ordinary_zone_cast_permission(
 def compiled_fixed_mana_flashback_spec(
     host: CompiledFlashbackHost,
     card: Any,
-) -> FixedManaFlashbackSpec | None:
+) -> FixedManaFlashbackSpec | FixedSacrificeFlashbackSpec | None:
     """Return one current, complete-card-admitted printed Flashback spec."""
 
-    return _compiled_graveyard_alternative(host, card, keyword=FLASHBACK_MECHANIC_ID, handler_id=FLASHBACK_HANDLER_ID)
+    return _compiled_graveyard_alternative(host, card, keyword=FLASHBACK_MECHANIC_ID, handler_ids=(FLASHBACK_HANDLER_ID, SACRIFICE_FLASHBACK_HANDLER_ID))
 
 
 def compiled_harmonize_spec(host: CompiledFlashbackHost, card: Any) -> HarmonizeSpec | None:
-    return _compiled_graveyard_alternative(host, card, keyword=HARMONIZE_MECHANIC, handler_id=HARMONIZE_HANDLER_ID)
+    return _compiled_graveyard_alternative(host, card, keyword=HARMONIZE_MECHANIC, handler_ids=(HARMONIZE_HANDLER_ID,))
 
 
-def _compiled_graveyard_alternative(host, card, *, keyword, handler_id):
+def _compiled_graveyard_alternative(host, card, *, keyword, handler_ids):
     record = host.card_record(card)
     if (
         record is None
@@ -72,7 +77,7 @@ def _compiled_graveyard_alternative(host, card, *, keyword, handler_id):
     ):
         return None
     registry = default_fixed_mana_flashback_registry()
-    result: list[FixedManaFlashbackSpec | HarmonizeSpec] = []
+    result: list[FixedManaFlashbackSpec | FixedSacrificeFlashbackSpec | HarmonizeSpec] = []
     for program in host.semantics.runtime_handler_programs_for_oracle(
         record.oracle_id,
         active_zone="all",
@@ -85,7 +90,7 @@ def _compiled_graveyard_alternative(host, card, *, keyword, handler_id):
         ):
             continue
         for descriptor in program.handlers:
-            if descriptor.get("handler_id") == handler_id:
+            if descriptor.get("handler_id") in handler_ids:
                 result.extend(registry.lower(descriptor, None))
     return result[0] if len(result) == 1 else None
 

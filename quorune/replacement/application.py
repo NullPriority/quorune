@@ -71,12 +71,15 @@ from .operations import (
 )
 
 
+from ..rad_counter_model import ENTRY_RAD_CHOICE_FIELD, ENTRY_RAD_CHOICE_HANDLER
+
+
 _LIFE_LOSS_DIRECTION = "loss"
 
 
 _SET_FIELDS = {
     "damage": {"amount", "prevented", "prevented_by", "target"},
-    "zone.change": {"destination", "read_ahead_chapter", "tapped", "entry_chosen_card_name", "entry_chosen_color", "entry_chosen_creature_type", "entry_chosen_basic_land_type", "entry_basic_land_type_life_available", "entry_basic_land_type_life_decided", "entry_chosen_faction", "entry_chosen_jeskai_temur_faction", "entry_chosen_opponent", "entry_linked_card_type", "entry_copy", "entry_copy_source", "entry_copy_form", "object_types", 'entry_revealed_hand_card','entry_land_discard','entry_prepared','_counter_permissions',ENTRY_COPY_HISTORY_FIELD,DAY_ENTRY_FIELD,EXILE_LINK_FIELD},
+    "zone.change": {"destination", "read_ahead_chapter", "tapped", "entry_chosen_card_name", "entry_chosen_color", "entry_chosen_creature_type", "entry_chosen_basic_land_type", "entry_basic_land_type_life_available", "entry_basic_land_type_life_decided", "entry_chosen_faction", "entry_chosen_jeskai_temur_faction", "entry_chosen_opponent", "entry_linked_card_type", "entry_copy", "entry_copy_source", "entry_copy_form", "object_types", 'entry_revealed_hand_card','entry_land_discard','entry_prepared','_counter_permissions',ENTRY_COPY_HISTORY_FIELD,DAY_ENTRY_FIELD,EXILE_LINK_FIELD,"zone_replacement_token_trigger",ENTRY_RAD_CHOICE_FIELD},
     "token.create": {"quantity", "created_types", "created_subtypes"},
     "counter.place": {"amount"},
     "counter.add": {"amount", "quantity"},
@@ -89,6 +92,7 @@ _SET_FIELDS = {
     FACE_UP_COPY_EVENT: {FACE_UP_COPY_RESULT},
 }
 _NUMERIC_FIELDS = {
+    "stack.copy.spell": {"count"},
     "damage": {"amount", "prevented"},
     "token.create": {"quantity"},
     "counter.place": {"amount"},
@@ -373,8 +377,10 @@ def _create_affected_object_counter_event(
     )
     if any(child.event_id == event_id for child in children):
         event_id = f"{event_id}:{effect_id}"
-    from .entry_counter_types import BATTLEFIELD_ENTRY_COUNTER_CHILD, BATTLEFIELD_ENTRY_COUNTER_SCOPE
+    from .entry_counter_types import BATTLEFIELD_ENTRY_COUNTER_CHILD, BATTLEFIELD_ENTRY_COUNTER_SCOPE, EXILE_ENTRY_COUNTER_CHILD
 
+    if operation.exile_only and destination != "exile":
+        raise ReplacementEffectError("A marked exile counter requires the proposed exile destination")
     children.append(
         ReplaceableEvent(
             event_id=event_id,
@@ -403,6 +409,7 @@ def _create_affected_object_counter_event(
                 "source": operation.source_ref,
                 "effect_generated": True,
                 "follows_zone_destination": True,
+                **({EXILE_ENTRY_COUNTER_CHILD: True} if operation.exile_only else {}),
                 **({BATTLEFIELD_ENTRY_COUNTER_CHILD: True}
                    if payload.get(BATTLEFIELD_ENTRY_COUNTER_SCOPE) is True and destination == "battlefield" else {}),
                 **({"prospective_subject": True,
@@ -793,6 +800,13 @@ def _validate_set_field(event, payload, operation, effect_id):
             checked_exile_marker(operation.value, effect_id)
         except ValueError as exc:
             raise ReplacementEffectError(str(exc)) from exc
+    if operation.field == "zone_replacement_token_trigger":
+        from ..rules.zone_replacement_token_trigger import validate_replacement_token_application
+
+        try:
+            validate_replacement_token_application(event, payload, operation.value, effect_id)
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ReplacementEffectError(str(exc)) from exc
     if operation.field == "direction" and (
         operation.value != _LIFE_LOSS_DIRECTION or payload.get("direction") != "gain"
         or type(payload.get("amount")) is not int or payload["amount"] <= 0
@@ -806,6 +820,16 @@ def _validate_set_field(event, payload, operation, effect_id):
         or f"{DAY_ENTRY_HANDLER}:{payload.get('object_ref')}:" not in effect_id
     ):
         raise ReplacementEffectError("Initial day requires the original battlefield-entry replacement")
+
+
+def _validate_optional_entry_rad_choice(payload, accepted, effect_id):
+    entrant = payload.get("object_ref")
+    controller = payload.get("destination_controller")
+    if (type(accepted) is not bool or payload.get("destination") != "battlefield"
+            or payload.get("origin") == "battlefield" or payload.get(ENTRY_RAD_CHOICE_FIELD) is not None
+            or not effect_id.startswith(ENTRY_RAD_CHOICE_HANDLER + ":")
+            or not effect_id.endswith(f":{entrant}:{controller}:{int(accepted)}")):
+        raise ReplacementEffectError("The rad choice requires the original entering land and controller")
 
 
 def _apply_operation(
@@ -827,6 +851,8 @@ def _apply_operation(
             try:payload_commander_components(payload)
             except ValueError as exc:raise ReplacementEffectError(str(exc)) from exc
             payload[EPOCH_FIELD]=payload.get(EPOCH_FIELD,0)+1
+        if operation.field == ENTRY_RAD_CHOICE_FIELD:
+            _validate_optional_entry_rad_choice(payload, operation.value, effect_id)
         if operation.field in {"entry_chosen_faction", "entry_chosen_jeskai_temur_faction"}:
             from ..entry_designations import ENTRY_DESIGNATION_HANDLER_ID, EntryDesignationKind, validate_designation
 
@@ -1076,9 +1102,9 @@ def _apply_effect_operations(
                     "Damage redirection can apply only to a damage event"
                 )
             if operation.maximum_damage is not None:
-                from .damage_redirection import same_damage_recipient
+                from .damage_redirection import finite_damage_original_recipient_is_supported, same_damage_recipient
 
-                if payload.get("target_kind") != "permanent" or (
+                if not finite_damage_original_recipient_is_supported(effect, event) or (
                     payload["amount"] > operation.maximum_damage and not same_damage_recipient(event, operation)
                 ):
                     raise ReplacementEffectError("Finite redirection requires its bounded damage branch")

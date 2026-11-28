@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Typed noncopiable entry subtype results committed by the effect journal."""
+"""Typed noncopiable entry characteristics committed by the effect journal."""
 
 from dataclasses import dataclass, replace
 from typing import Mapping
@@ -14,6 +14,7 @@ from ..replacement.immutable import FrozenMap
 
 
 _RESOLUTION_ENTRY_GRANT = "resolution_entry_subtype_grant"
+_RESOLUTION_ENTRY_ENCHANTMENT = "resolution_entry_enchantment_form"
 
 
 @dataclass(frozen=True,slots=True,order=True)
@@ -29,6 +30,53 @@ class EntrySubtypeGrant:
         if type(self.sequence) is not int or self.sequence<0:raise ValueError('Entry subtype sequence must be nonnegative')
         if self.origin is not ContinuousEffectOrigin.REPLACEMENT and self.origin is not ContinuousEffectOrigin.RESOLUTION:
             raise ValueError("Entry subtype grants require a replacement or resolution origin")
+
+
+@dataclass(frozen=True, slots=True)
+class EntryEnchantmentForm:
+    source_ref: str
+
+    def __post_init__(self):
+        if type(self.source_ref) is not str or not self.source_ref or self.source_ref.startswith("$"):
+            raise ValueError("An enchantment entry needs its original resolving source")
+
+
+def with_resolution_entry_enchantment(plan, form: EntryEnchantmentForm):
+    """Attach the resolving type change to the final accepted entry."""
+    if not isinstance(form, EntryEnchantmentForm):
+        raise GameRuleError("A resolving enchantment entry needs a typed form")
+    if plan.destination != "battlefield":
+        return plan
+    event = plan.prepared_replacement.event
+    if _RESOLUTION_ENTRY_ENCHANTMENT in event.payload:
+        raise GameRuleError("The entry already has a resolving enchantment form")
+    payload = FrozenMap({**event.payload, _RESOLUTION_ENTRY_ENCHANTMENT: form.source_ref})
+    prepared = replace(plan.prepared_replacement, event=replace(event, payload=payload))
+    return replace(plan, prepared_replacement=prepared)
+
+
+def entry_enchantment_form(event):
+    if _RESOLUTION_ENTRY_ENCHANTMENT not in event.payload:
+        return None
+    return EntryEnchantmentForm(event.payload[_RESOLUTION_ENTRY_ENCHANTMENT])
+
+
+def commit_entry_enchantment_form(host, card, form):
+    if form is None:
+        return
+    from ..resolution_characteristic_model import IndefiniteEnchantmentFormSpec
+
+    if not isinstance(form, EntryEnchantmentForm) or card.zone != "battlefield":
+        raise ValueError("Enchantment form requires its resulting battlefield incarnation")
+    (layer, sublayer, operations), = IndefiniteEnchantmentFormSpec().layer_operations()
+    effect = ContinuousEffect(
+        effect_id=f"entry-enchantment:{form.source_ref}:{card.logical_object_id}",
+        source_id=form.source_ref, layer=layer, sublayer=sublayer, timestamp=host._next_zone_timestamp(),
+        operations=operations, origin=ContinuousEffectOrigin.RESOLUTION, duration=ContinuousEffectDuration.ZONE_OBJECT,
+        applies=ObjectQuerySpec(zones=("battlefield",)),
+        locked_objects=(ContinuousObjectIdentity(card.object_id, card.logical_object_id),),
+    )
+    commit_continuous_effect(host.state, effect)
 
 
 def with_resolution_entry_subtype(plan, grant: EntrySubtypeGrant):

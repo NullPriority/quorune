@@ -2,6 +2,7 @@
 from collections.abc import Mapping
 from dataclasses import dataclass
 
+from ..replacement.immutable import FrozenMap
 from ..creature_subtypes import canonical_creature_subtype
 from ..object_query import ObjectQuerySpec, object_matches_query
 from ..public_zone_moves import (
@@ -21,6 +22,15 @@ MECHANIC = 'own-graveyard-return-choice'
 CAPABILITY = 'zone.return.own_graveyard_choice'
 BOUNDED_BATTLEFIELD_RETURN_CAPABILITY = 'zone.return.own_graveyard_bounded_battlefield_choice'
 BOUNDED_BATTLEFIELD_RETURN_VERSION = 4
+COMMITTED_GRAVEYARD_RETURN_VERSION = 7
+COMMITTED_GRAVEYARD_RETURN_CAPABILITY = 'resolution.effect.committed_sacrifice_graveyard_return'
+COMMITTED_GRAVEYARD_RETURN_RECIPE = FrozenMap({
+    'op': OPERATION, 'player': '$controller',
+    'selection': {
+        'schema_version': COMMITTED_GRAVEYARD_RETURN_VERSION, 'types_any': ['creature'],
+        'committed_count': {'kind': 'committed_sacrifice_count', 'schema_version': 1},
+    },
+})
 TAPPED_LAND_RETURN_VERSION = 6
 TAPPED_LAND_RETURN_CAPABILITY = 'zone.return.own_graveyard_tapped_land_choice'
 RETURN_PAIR_FIELD = "graveyard_return_pair"
@@ -130,6 +140,9 @@ GREATEST_POWER_CAPABILITY = 'quantity_expression.public_characteristic_aggregate
 QUALIFIED_CHOICE_CAPABILITY = 'zone.return.own_graveyard_subtype_qualified_choice'
 _CREATURE_OR_PLANESWALKER = ('creature', 'planeswalker')
 MANDATORY_CREATURE_OR_PLANESWALKER_VERSION = 5
+DEFENDING_NONLAND_RETURN_VERSION = 6
+DEFENDING_NONLAND_RETURN_CAPABILITY = "zone.return.defending_nonland_graveyard_growth"
+_DEFENDING_FIELDS = frozenset({"graveyard_owner", "defender", "defender_chosen"})
 _RETAINED_MANDATORY_CREATURE_OR_PLANESWALKER_VERSION = 4
 _DISJOINT_RETURN_VERSIONS = frozenset({
     BOUNDED_BATTLEFIELD_RETURN_VERSION,
@@ -137,6 +150,7 @@ _DISJOINT_RETURN_VERSIONS = frozenset({
     MANDATORY_CREATURE_OR_PLANESWALKER_VERSION,
     TAPPED_LAND_RETURN_VERSION,
     DIFFERENT_NAME_SELECTION_VERSION,
+    COMMITTED_GRAVEYARD_RETURN_VERSION,
 })
 _PUBLIC_FIELDS = frozenset({'op', 'player', 'selection'})
 _CHOICE_FIELDS = frozenset({'_choice_actor', '_legal_refs', '_legal_logical_ids', '_stack_label'})
@@ -151,13 +165,20 @@ class GraveyardReturnSelection:
     schema_version: int = 1
     excluded_creature_subtype: str | None = None
     mana_value_max: int | None = None
+    committed_count: int | None = None
 
     def __post_init__(self):
-        supported_versions = {1, 2, 3} | _DISJOINT_RETURN_VERSIONS
+        supported_versions = {1, 2, 3, DEFENDING_NONLAND_RETURN_VERSION} | _DISJOINT_RETURN_VERSIONS
         if type(self.schema_version) is not int or self.schema_version not in supported_versions:
             raise ValueError('Graveyard return requires a supported selection version')
         if type(self.types_any) is not tuple or any(type(value) is not str for value in self.types_any):
             raise ValueError('Graveyard return needs one closed card-type predicate')
+        if self.committed_count is not None and not self.committed_creature_return:
+            raise ValueError('A committed graveyard return requires a positive sacrifice count')
+        if self.defending_nonland:
+            if self.excluded_creature_subtype is not None or self.mana_value_max is not None:
+                raise ValueError("Defending return requires its exact nonland card domain")
+            return
         if self.schema_version in _DISJOINT_RETURN_VERSIONS:
             if not (self.mandatory_hand_return or self.returns_to_battlefield):
                 raise ValueError('Graveyard return requires an exact mandatory hand or bounded battlefield selection')
@@ -175,18 +196,31 @@ class GraveyardReturnSelection:
             raise ValueError('Greatest-power return selects only creature cards')
 
     @property
+    def defending_nonland(self) -> bool:
+        return self.schema_version == DEFENDING_NONLAND_RETURN_VERSION and not self.types_any
+
+    @property
     def greatest_power(self) -> bool:
         return self.schema_version == 2
 
     @property
     def returns_to_battlefield(self) -> bool:
-        return self.bounded_battlefield_return or self.returns_tapped_land or self.different_name_permanents
+        return self.bounded_battlefield_return or self.returns_tapped_land or self.different_name_permanents or self.committed_creature_return
 
     @property
     def different_name_permanents(self) -> bool:
         return (
             self.schema_version == DIFFERENT_NAME_SELECTION_VERSION and self.types_any == PERMANENT_TYPES
             and self.excluded_creature_subtype is None and self.mana_value_max is None
+        )
+
+    @property
+    def committed_creature_return(self) -> bool:
+        return (
+            self.schema_version == COMMITTED_GRAVEYARD_RETURN_VERSION
+            and self.types_any == ('creature',)
+            and self.excluded_creature_subtype is None and self.mana_value_max is None
+            and type(self.committed_count) is int and self.committed_count > 0
         )
 
     @property
@@ -221,7 +255,7 @@ class GraveyardReturnSelection:
 
     @property
     def required(self) -> bool:
-        return self.greatest_power or self.mandatory_hand_return
+        return self.greatest_power or self.mandatory_hand_return or self.defending_nonland or self.committed_creature_return
 
     def to_dict(self):
         value = {'schema_version': self.schema_version, 'types_any': list(self.types_any)}
@@ -229,6 +263,8 @@ class GraveyardReturnSelection:
             value['excluded_creature_subtype'] = self.excluded_creature_subtype
         if self.bounded_battlefield_return:
             value['mana_value_max'] = self.mana_value_max
+        if self.committed_creature_return:
+            value['committed_count'] = self.committed_count
         return value
 
     @classmethod
@@ -242,14 +278,20 @@ class GraveyardReturnSelection:
             if type(value['mana_value_max']) is not int:
                 raise ValueError('Battlefield return requires an explicit integer mana-value maximum')
             fields.add('mana_value_max')
+        if value.get('schema_version') == COMMITTED_GRAVEYARD_RETURN_VERSION and 'committed_count' in value:
+            if type(value['committed_count']) is not int:
+                raise ValueError('A committed graveyard return requires an exact integer sacrifice count')
+            fields.add('committed_count')
         if set(value) != fields or not isinstance(value['types_any'], (list, tuple)):
             raise ValueError('Graveyard return selection fields are closed')
         return cls(tuple(value['types_any']), schema_version=value['schema_version'],
                    excluded_creature_subtype=value.get('excluded_creature_subtype'),
-                   mana_value_max=value.get('mana_value_max'))
+                   mana_value_max=value.get('mana_value_max'), committed_count=value.get('committed_count'))
 
     @property
     def query(self):
+        if self.defending_nonland:
+            return ObjectQuerySpec(zones=("graveyard",), excluded_types=("land",), token=False)
         if self.returns_to_battlefield:
             return ObjectQuerySpec(zones=('graveyard',), types_any=self.types_any,
                                    token=False, mana_value_max=self.mana_value_max)
@@ -293,10 +335,55 @@ def different_name_permanent_return_effect():
 def uses_different_name_graveyard_return(effect):
     selection = effect.get("selection")
     return (effect.get("op") == OPERATION and isinstance(selection, Mapping)
-            and selection.get("schema_version") == DIFFERENT_NAME_SELECTION_VERSION)
+            and selection.get("schema_version") == DIFFERENT_NAME_SELECTION_VERSION
+            and "committed_count" not in selection)
+
+
+def defending_nonland_return_effect():
+    return {"op": OPERATION, "player": "$controller",
+            "selection": GraveyardReturnSelection((), schema_version=DEFENDING_NONLAND_RETURN_VERSION).to_dict(),
+            "graveyard_owner": "$controller", "defender": "$context.defending_player", "defender_chosen": False}
+
+
+def defending_nonland_chooser_is_current(actor, owner, defender, active_seats):
+    if actor not in active_seats or owner not in active_seats:
+        return False
+    if defender in active_seats:
+        return actor == defender
+    return actor != owner or not any(seat != owner for seat in active_seats)
+
+
+def _validate_defending_nonland_choice(effect, *, actor, continuation):
+    from ..replacement.immutable import FrozenMap
+
+    if actor is None:
+        if (FrozenMap(effect) != FrozenMap(defending_nonland_return_effect())
+                or effect.get("defender_chosen") is not False):
+            raise ValueError("Defending return requires its original attack and graveyard roles")
+    else:
+        allowed = _PUBLIC_FIELDS | _DEFENDING_FIELDS | (_CHOICE_FIELDS if continuation else frozenset())
+        if (set(effect) != allowed or effect["player"] != actor
+                or type(effect["graveyard_owner"]) is not str or not effect["graveyard_owner"]
+                or type(effect["defender"]) is not str or not effect["defender"]
+                or type(effect["defender_chosen"]) is not bool
+                or not effect["defender_chosen"] and actor != effect["graveyard_owner"]
+                or continuation and (not effect["defender_chosen"] or effect["_choice_actor"] != actor)):
+            raise ValueError("Defending return chooser or owned graveyard changed")
+    return GraveyardReturnSelection.from_dict(effect["selection"])
+
+
+def committed_graveyard_return_effect(count):
+    selection = GraveyardReturnSelection(
+        ('creature',), schema_version=COMMITTED_GRAVEYARD_RETURN_VERSION, committed_count=count,
+    )
+    return {'op': OPERATION, 'player': '$controller', 'selection': selection.to_dict()}
 
 
 def validate_return_choice(effect, *, actor=None, continuation=False):
+    selection = effect.get("selection") if isinstance(effect, Mapping) else None
+    if (isinstance(selection, Mapping) and selection.get("schema_version") == DEFENDING_NONLAND_RETURN_VERSION
+            and selection.get("types_any") in ([], ()) and effect.get("op") == OPERATION):
+        return _validate_defending_nonland_choice(effect, actor=actor, continuation=continuation)
     fields = _PUBLIC_FIELDS | _CHOICE_FIELDS if continuation else _PUBLIC_FIELDS
     if (not isinstance(effect, Mapping) or set(effect) != fields or effect.get('op') != OPERATION
             or effect.get('player') != (actor if actor is not None else '$controller')):
@@ -306,13 +393,25 @@ def validate_return_choice(effect, *, actor=None, continuation=False):
     return GraveyardReturnSelection.from_dict(effect['selection'])
 
 
-def graveyard_return_candidates(host, actor, effect):
+def graveyard_return_candidates(host, actor, effect, *, stack_item=None):
     selection = validate_return_choice(effect, actor=actor, continuation='_choice_actor' in effect)
+    if selection.committed_creature_return:
+        program = host.semantics.get(stack_item.semantic_key) if stack_item is not None else None
+        if (
+            stack_item is None or stack_item.kind not in {'spell', 'spell_copy'}
+            or stack_item.controller != actor or stack_item.targets
+            or stack_item.context.get('currently_resolving') is not True
+            or program is None or COMMITTED_GRAVEYARD_RETURN_CAPABILITY not in program.capability_dependencies
+            or not host.semantic_program_is_current_trusted(program)
+        ):
+            raise ValueError('Committed graveyard return requires its original resolving sacrifice spell')
+
     rows = None
     if selection.excluded_creature_subtype is not None:
         rows = tuple(row for row in host.public_zone_move_object_rows(actor) if selection.matches(row))
     snapshot = snapshot_public_zone_move_set(
-        host, actor=actor, spec=selection.public_set(), object_rows=rows,
+        host, actor=effect["graveyard_owner"] if selection.defending_nonland else actor,
+        spec=selection.public_set(), object_rows=rows,
     )
     return tuple(value.ref for value in snapshot.objects
         if host.state.cards[value.object_id].is_card_object)
@@ -333,6 +432,12 @@ def graveyard_return_choice_node_capabilities(*, effects, target_schema, mechani
         selection = validate_return_choice(effects[0])
     except (TypeError, ValueError):
         return ()
+    if selection.committed_creature_return:
+        # A materialized count is resolution state, never a standalone Oracle instruction.
+        return ()
+    if selection.defending_nonland:
+        return (CAPABILITY, DEFENDING_NONLAND_RETURN_CAPABILITY,
+                "continuous.resolution.fixed_characteristics_until_end_of_turn")
     if selection.different_name_permanents:
         return DIFFERENT_NAME_RETURN_CAPABILITIES
     if selection.returns_tapped_land:
@@ -378,8 +483,22 @@ def graveyard_return_choice_runtime_dependencies(program):
                     raise ValueError("Paired graveyard return requires its original controller end-step choice")
                 return set(required)
             if value.get('op') == OPERATION:
+                if FrozenMap(value) == COMMITTED_GRAVEYARD_RETURN_RECIPE:
+                    from .any_number_sacrifice import any_number_sacrifice_runtime_dependencies
+
+                    required = any_number_sacrifice_runtime_dependencies(program)
+                    if COMMITTED_GRAVEYARD_RETURN_CAPABILITY not in required:
+                        raise ValueError('Committed graveyard return lost its sacrifice authority')
+                    return {CAPABILITY, COMMITTED_GRAVEYARD_RETURN_CAPABILITY}
                 required = graveyard_return_choice_node_capabilities(
                     effects=(value,), target_schema=None, mechanic_ids=program.coverage)
+                if DEFENDING_NONLAND_RETURN_CAPABILITY in required and (
+                    (program.event, program.active_zone) != ("creature.attacks", "battlefield")
+                    or program.event_condition != {"field": "card", "op": "eq", "value": "$source.ref"}
+                    or program.target_schema is not None or getattr(program, "cost_schema", None) is not None
+                    or program.handlers or tuple(program.effects) != (value,)
+                ):
+                    raise ValueError("Defending return requires its original source attack")
                 if not required or (
                     BOUNDED_BATTLEFIELD_RETURN_CAPABILITY in required and program.target_schema is not None
                 ):
@@ -399,7 +518,10 @@ def graveyard_return_choice_runtime_dependencies(program):
         if isinstance(value, (tuple, list)):
             return {cap for child in value for cap in walk(child)}
         return set()
-    return tuple(sorted(walk((program.effects, program.handlers))))
+    required = walk((program.effects, program.handlers))
+    if DEFENDING_NONLAND_RETURN_CAPABILITY in program.capability_dependencies and DEFENDING_NONLAND_RETURN_CAPABILITY not in required:
+        raise ValueError("Defending return authority requires its original nonland choice")
+    return tuple(sorted(required))
 
 
 def _require_surveil_then_land_return(program):

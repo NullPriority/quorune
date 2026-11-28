@@ -394,3 +394,98 @@ class LegendarySorceryAnnouncedDamageTests(InheritedNativeFixture, TestCase):
         old = self.session(2050405).state.to_dict()
         self.assertEqual(1, old.pop(VERSION_FIELD))
         self.assertEqual(old, GameState.from_dict(old).to_dict())
+
+
+class TurnCreatureCombatMultiplierTests(InheritedNativeFixture, TestCase):
+    BODY = ("All creatures lose trample until end of turn. If a creature would deal combat damage "
+            "to a creature this turn, it deals double that damage to that creature instead.")
+    NAMES = ("Turn combat spell", "Combat trampler", "Combat attacker", "Combat wall", "Combat haste")
+
+    @classmethod
+    def setUpClass(cls):
+        import json
+
+        cls.temporary = TemporaryDirectory()
+        path = Path(cls.temporary.name)
+        contents = json.loads((ROOT / "tests/fixtures/bound-effect-program-cards.json").read_text(encoding="utf-8"))
+        by_name = {card["name"]: card for card in contents["cards"]}
+        additions = [
+            ("Instant", cls.BODY, "{3}{R}", 4, None, None, []),
+            ("Creature — Dinosaur", "Trample", "{4}{G}{G}", 6, "6", "6", ["Trample"]),
+            ("Creature — Bear", "", "{1}{G}", 2, "2", "2", []),
+            ("Creature — Wall", "Defender", "{1}{R}{R}", 3, "0", "8", ["Defender"]),
+            ("Enchantment", "Creatures you control have haste.", "{2}{R}", 3, None, None, []),
+        ]
+        base = by_name["Generic Bound Body"]
+        for i, (name, fields) in enumerate(zip(cls.NAMES, additions, strict=True), 1):
+            kind, text, cost, mana, power, toughness, keywords = fields
+            contents["cards"].append({**base, "id": f"00000000-0000-4000-8000-00000000870{i}",
+                "oracle_id": f"00000000-0000-4000-8000-00000000880{i}", "name": name,
+                "type_line": kind, "oracle_text": text, "mana_cost": cost, "cmc": mana,
+                "power": power, "toughness": toughness, "keywords": keywords, "color_identity": [], "colors": []})
+        fixture = path / "turn-combat.json"
+        fixture.write_text(json.dumps(contents), encoding="utf-8")
+        database = path / "turn-combat.sqlite3"
+        build_fixture_database([fixture], database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Turn combat", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def test_turn_combat_multiplier_requires_both_closed_instructions(self):
+        card = self.db.lookup(self.NAMES[0], fuzzy=False)
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        good = compile_oracle_card(card, **options)
+        self.assertEqual("exact", good.status, good.material_residuals)
+        ability, = good.faces[0].nodes
+        self.assertIsNone(ability.target_schema)
+        self.assertEqual(2, ability.effects[1]["schema_version"])
+        for changed in (card.oracle_text.replace("double", "triple"), card.oracle_text.replace("combat damage", "damage")):
+            self.assertTrue(compile_oracle_card(replace(card, oracle_text=changed), **options).material_residuals)
+        with patch("quorune.compiler.loyalty_damage_templates._TURN_CREATURE_COMBAT") as grammar:
+            grammar.fullmatch.return_value = None
+            self.assertTrue(compile_oracle_card(card, **options).material_residuals)
+
+    def test_turn_combat_multiplier_doubles_creature_damage_and_replays_through_expiry(self):
+        spell_name, trampler_name, attacker_name, wall_name, haste_name = self.NAMES
+        game = self.session(61470220)
+        spell = self.add(game.engine, spell_name, zone="hand")
+        old = self.add(game.engine, trampler_name, ref="turn-rule-old-trampler")
+        later = self.add(game.engine, trampler_name, zone="hand", ref="turn-rule-later-trampler")
+        attacker = self.add(game.engine, attacker_name)
+        wall = self.add(game.engine, wall_name, seat="B")
+        self.add(game.engine, haste_name)
+        hidden = self.add(game.engine, attacker_name, seat="D", zone="hand", ref="turn-rule-other-hand")
+        for card in (old, attacker):
+            card.acquired_control_turn_count = -1
+        self.assert_closed(game, spell)
+        self.prepare(game, mana={"C": 9, "R": 4, "G": 2})
+        self.checkpoint(game)
+        self.cast_for(game, "A", spell)
+        self.assertIsNone(self.resolve(game))
+        effect, = [effect for effect in game.state.continuous_effects
+                   if isinstance(effect, ResolvedTargetCombatDamageMultiplier)]
+        self.assertEqual(2, effect.to_dict()["schema_version"])
+        self.assertNotIn("trample", game.engine._combat_keywords(game.state.cards[old.object_id]))
+        self.assertNotIn(hidden.ref, str(game.packet("pilot:A", full=True)))
+        game = self.replay(game, load=True)
+        self.cast_for(game, "A", later)
+        self.assertIsNone(self.resolve(game))
+        current_later = game.state.cards[later.object_id]
+        self.assertIn("trample", game.engine._combat_keywords(current_later))
+        self.attack(game, [(game.state.cards[old.object_id], "B"), (game.state.cards[attacker.object_id], "C")])
+        self.until(game, lambda game: game.state.pending_decision.kind == "combat.blockers")
+        command = {"action_id": "block", "blocks": {wall.ref: [old.ref]}}
+        before = authoritative_state_hash(game.state), len(game.commands)
+        self.assertFalse(game.act("pilot:D", command).ok)
+        self.assertEqual(before, (authoritative_state_hash(game.state), len(game.commands)))
+        result = game.act("pilot:B", command)
+        self.assertTrue(result.ok, result.summary)
+        self.until(game, lambda game: game.state.step == "end_combat")
+        self.assertEqual("graveyard", game.state.cards[wall.object_id].zone)
+        self.assertEqual([40, 40, 38, 40], [game.state.players[seat].life for seat in "ABCD"])
+        self.until(game, lambda game: game.state.active_player == "B")
+        self.assertFalse(any(isinstance(effect, ResolvedTargetCombatDamageMultiplier) for effect in game.state.continuous_effects))
+        self.assertIn("trample", game.engine._combat_keywords(game.state.cards[old.object_id]))
+        self.replay(game, load=True)

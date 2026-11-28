@@ -439,3 +439,176 @@ class SingleD20DrawTests(InheritedNativeFixture, unittest.TestCase):
         with patch("quorune.semantic_runtime.game_hand_size.commit_continuous_effect", return_value=None):
             with self.assertRaisesRegex(AssertionError, "is not None"):
                 self.test_unmodified_roll_draws_for_locked_controller_and_cleanup_survives_departure()
+
+class ThunderwaveTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        database = Path(cls.temporary.name) / "thunderwave.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures/thunderwave-cards.json"], database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        leader = "Isamaru, Hound of Konda"
+        cls.deck = DeckDefinition("A closed die table", [
+            DeckEntry(leader, 1, "commander"), DeckEntry("Plains", 30),
+        ], [leader])
+
+    def scene_for_roll(self, face, *, shield=False):
+        from quorune.rules.random_selection import roll_fixed_die
+
+        seed = next(seed for seed in range(706_010, 707_000)
+                    if roll_fixed_die(20, seed=seed, instruction_key="S1|0", seat="A") == face)
+        game = self.session(seed)
+        wave = self.add(game.engine, "Thunderwave", zone="hand")
+        own = self.add(game.engine, "Colossal Dreadmaw", ref="DAMAGE-CONTROLLER")
+        other_big = self.add(game.engine, "Colossal Dreadmaw", seat="C", ref="DAMAGE-OPPONENT-BIG")
+        other_small = self.add(game.engine, "Slippery Bogle", seat="B", ref="DAMAGE-HEXPROOF")
+        ring = self.add(game.engine, "Sol Ring", seat="D", ref="NOT-A-CREATURE")
+        private = self.add(game.engine, "Grizzly Bears", seat="D", zone="hand", ref="PRIVATE-UNRELATED-HAND")
+        self.assert_closed(game, wave)
+        if shield:
+            wanderer = self.add(game.engine, "The Wanderer", seat="B")
+            wanderer.counters["loyalty"] = 5
+            self.assert_closed(game, wanderer)
+            other_small.counters["shield"] = 1
+        game.state.config.semantic_policy = "trusted_only"
+        self.prepare(game, mana={"C": 10, "R": 2})
+        self.checkpoint(game)
+        self.cast(game, "A", wave)
+        item, = game.state.stack
+        self.assertEqual(("S1", []), (item.ref, item.targets))
+        self.assertFalse(self.rolls(game))
+        return game, wave, (own, other_big, other_small), ring, private
+
+    def rolls(self, game):
+        return [event for event in game.state.events if event.code == "die.roll"]
+
+    def assert_one_roll(self, game, expected):
+        roll, = self.rolls(game)
+        self.assertEqual(("A", "S1", 20, expected), (
+            roll.actor, roll.details["stack"], roll.details["sides"], roll.details["result"],
+        ))
+
+    def reject(self, game, seat, command):
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + seat, command)
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def test_actual_thunderwave_roll_ranges_and_untargeted_spare_replay(self):
+        from quorune import fixed_damage_set
+
+        for face in (1, 9, 10, 19, 20):
+            with self.subTest(face=face):
+                game, wave, (own, opposing_big, bogle), ring, private = self.scene_for_roll(face)
+                rows = (own, opposing_big, bogle)
+                spared = bogle if face == 10 else None
+                if 10 <= face <= 19:
+                    pending = self.resolve(game)
+                    self.assertEqual(("semantic.choice", ["A"]), (pending.kind, pending.actors))
+                    self.assert_one_roll(game, face)
+                    for viewer in "BCD":
+                        self.assertIsNone(game.packet("pilot:" + viewer, full=True)["decision"])
+                    legal = pending.payload_by_actor["A"]["legal_actions"][0]["choice_schema"]["legal_refs"]
+                    self.assertEqual({card.ref for card in rows}, set(legal))
+                    self.reject(game, "A", {"action_id": "choose", "objects": [ring.ref]})
+                    self.reject(game, "A", {"action_id": "choose", "objects": [own.ref, opposing_big.ref]})
+                    self.reject(game, "B", {"action_id": "choose", "objects": [bogle.ref]})
+                    self.reject(game, "A", {"action_id": "pass"})
+                    game = self.replay(game, load=True)
+                with patch.object(fixed_damage_set, "resolve_damage_batch", wraps=fixed_damage_set.resolve_damage_batch) as batch:
+                    if 10 <= face <= 19:
+                        choice = game.act("pilot:A", {"action_id": "choose", "objects": [spared.ref] if spared else []})
+                        self.assertTrue(choice.ok, choice.summary)
+                    self.assertIsNone(self.resolve(game))
+                batch.assert_called_once()
+                proposals = batch.call_args.args[1]
+                excluded = {own.ref} if face == 20 else {spared.ref} if spared is not None else set()
+                self.assertEqual({card.ref for card in rows} - excluded,
+                                 {proposal.recipient.ref for proposal in proposals})
+                self.assertEqual({(wave.object_id, 6 if face == 20 else 3, False)},
+                                 {(proposal.source.object_id, proposal.amount, proposal.combat) for proposal in proposals})
+                self.assert_one_roll(game, face)
+                self.assertEqual("battlefield", game.state.cards[ring.object_id].zone)
+                self.assertEqual(0 if face == 20 else 3, game.state.cards[own.object_id].marked_damage)
+                self.assertEqual("graveyard" if face == 20 else "battlefield", game.state.cards[opposing_big.object_id].zone)
+                self.assertEqual("battlefield" if spared else "graveyard", game.state.cards[bogle.object_id].zone)
+                for viewer in "ABC":
+                    self.assertNotIn(private.ref, json.dumps(game.packet("pilot:" + viewer, full=True)))
+                self.replay(game, load=True)
+
+    def test_actual_thunderwave_damage_replacement_resume_never_rolls_again(self):
+        for face in (10, 20):
+            with self.subTest(face=face):
+                game, _wave, (own, _other, bogle), _ring, _private = self.scene_for_roll(face, shield=True)
+                pending = self.resolve(game)
+                if face == 10:
+                    self.assertEqual(("semantic.choice", ["A"]), (pending.kind, pending.actors))
+                    self.assert_one_roll(game, face)
+                    game = self.replay(game, load=True)
+                    choice = game.act("pilot:A", {"action_id": "choose", "objects": [own.ref]})
+                    self.assertTrue(choice.ok, choice.summary)
+                    pending = self.resolve(game)
+                self.assertEqual(("replacement.order", ["B"]), (pending.kind, pending.actors))
+                self.assert_one_roll(game, face)
+                game = self.replay(game, load=True)
+                options = game.packet("pilot:B", full=True)["decision"]["ctx"]["options"]
+                chosen = next(row["id"] for row in options if "shield" in row["id"].lower())
+                self.reject(game, "C", {"action_id": "choose", "choices": {"replacement": chosen}})
+                acted = game.act("pilot:B", {"action_id": "choose", "choices": {"replacement": chosen}})
+                self.assertTrue(acted.ok, acted.summary)
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual("battlefield", game.state.cards[bogle.object_id].zone)
+                self.assertEqual(0, game.state.cards[bogle.object_id].counters.get("shield", 0))
+                self.assertEqual(0, game.state.cards[own.object_id].marked_damage)
+                self.assert_one_roll(game, face)
+                self.replay(game, load=True)
+
+    def test_thunderwave_unmatched_adjusted_values_have_no_damage_row(self):
+        from quorune.rules.die_damage_table import (
+            OUTCOME_CONTEXT, CreatureDamageTableRoll, bind_die_damage_table, creature_damage_table_effect,
+        )
+
+        game, _wave, _creatures, _ring, _private = self.scene_for_roll(1)
+        item, = game.state.stack
+        item.context["currently_resolving"] = True
+        for adjusted in (0, 21):
+            with self.subTest(adjusted=adjusted):
+                item.context[OUTCOME_CONTEXT] = CreatureDamageTableRoll(item.ref, 0, adjusted).to_dict()
+                self.assertIsNone(bind_die_damage_table(
+                    game.engine, item, creature_damage_table_effect(), instruction_pointer=0,
+                ))
+        self.assertFalse(self.rolls(game))
+
+    def test_thunderwave_requires_the_full_source_table_and_runtime_authority(self):
+        from quorune.rules.die_damage_table import CAPABILITY, TABLE_FIELD
+        from test_controller_creature_keyword_absence import register_card
+
+        card = self.db.lookup("Thunderwave", fuzzy=False)
+        ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile=PROFILE)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual(card.oracle_text, node.text)
+        self.assertEqual(1, node.effects[0][TABLE_FIELD])
+        self.assertIsNone(node.target_schema)
+        report, registry = register_card(self.db, self.registry, card.name)
+        self.assertTrue(report["strict_capability_ready"], report["blockers"])
+        program, = registry.programs_for_oracle(card.oracle_id)
+        deps = tuple(value for value in program.capability_dependencies if value != CAPABILITY)
+        stripped = replace(program, capability_dependencies=deps,
+                           capability_closure=self.registry.closure(deps, profile=PROFILE).to_dict())
+        result = bind_semantic_program_runtime(stripped, capability_registry=self.registry, profile=PROFILE)
+        self.assertFalse(result["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:" + CAPABILITY, result["blockers"])
+        cases = (
+            card.oracle_text.replace("10—19", "11—19"),
+            card.oracle_text.replace("You may choose a creature", "Choose target creature"),
+            card.oracle_text.replace("deals 6 damage", "deals 5 damage"),
+        )
+        for text in cases:
+            self.assertNotEqual("exact", compile_oracle_card(
+                replace(card, oracle_text=text), capability_registry=self.registry, capability_profile=PROFILE,
+            ).status)
+        with patch("quorune.compiler.die_damage_table.compile_die_damage_table_face", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(card, capability_registry=self.registry,
+                                                            capability_profile=PROFILE).status)

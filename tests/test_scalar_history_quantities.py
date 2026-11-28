@@ -61,6 +61,41 @@ class ScalarHistoryQuantityCompilerTests(unittest.TestCase):
                 ir = compile_oracle_card(record(text, "Sorcery"), capability_registry=registry)
                 self.assertNotEqual("exact", ir.status)
 
+    def test_own_graveyard_death_count_requires_the_scoped_query(self):
+        from unittest.mock import patch
+
+        from quorune.public_history_query_model import (
+            OWN_GRAVEYARD_CREATURE_DEATH_CAPABILITY, PublicHistoryQuerySpec,
+        )
+
+        registry = load_default_capability_registry()
+        wording = ("Flash\nWhen this creature enters, create a 2/2 green Bear creature token for each "
+                   "nontoken creature put into your graveyard from the battlefield this turn.")
+
+        def require_scoped_query():
+            ir = compile_oracle_card(record(wording, "Creature — Elf"), capability_registry=registry)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            trigger, = [node for node in ir.faces[0].nodes if node.effects]
+            self.assertIn(OWN_GRAVEYARD_CREATURE_DEATH_CAPABILITY, trigger.capability_dependencies)
+            amount = ScalarEffectAmountSpec.from_dict(trigger.effects[0]["quantity"])
+            self.assertEqual("graveyard_owner", amount.history_count.relation)
+            return amount.history_count.to_dict()
+
+        raw = require_scoped_query()
+        self.assertEqual(9, raw["schema_version"])
+        for changes in ({"relation": "controller"}, {"relation": "any_player"}, {"token": True},
+                        {"types_all": []}, {"event": "creature_died"}, {"schema_version": 3}):
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                PublicHistoryQuerySpec.from_dict({**raw, **changes})
+        unrestricted = PublicHistoryQuerySpec(
+            "permanent_died", types_all=("creature",), token=False, schema_version=3,
+        )
+        self.assertNotIn(OWN_GRAVEYARD_CREATURE_DEATH_CAPABILITY, unrestricted.capability_dependencies)
+        with patch("quorune.compiler.scalar_effect_amounts.current_own_graveyard_creature_death_query",
+                   return_value=unrestricted):
+            with self.assertRaises(AssertionError):
+                require_scoped_query()
+
 
 class ScalarHistoryQuantityActionTests(InheritedNativeFixture, unittest.TestCase):
     @classmethod
@@ -183,3 +218,106 @@ class ScalarHistoryQuantityActionTests(InheritedNativeFixture, unittest.TestCase
         self.assertEqual("graveyard", session.state.cards[chosen.object_id].zone)
         self.assertEqual(hand - 1 + 2, len(session.state.players["A"].zones["hand"]))
         self.replay(session)
+
+    def test_actual_caller_flashes_and_counts_repeated_owned_arrivals_with_replay(self):
+        from dataclasses import replace
+        from types import SimpleNamespace
+
+        from common import advance_fixture_turn
+        from quorune.public_history_query_model import (
+            current_own_graveyard_creature_death_query, matching_public_history_events,
+        )
+
+        session = self.session(608270042)
+        engine = session.engine
+        previous = self.add(engine, "Grizzly Bears", ref="caller-previous-turn")
+        previous_kill = self.add(engine, "Murder", zone="hand", ref="caller-previous-kill")
+        previous_incarnation = previous.logical_object_id
+        self.prepare(session, mana={"B": 2, "C": 1})
+        self.cast(session, "A", previous_kill, [previous.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertTrue(any(event.kind == "permanent_arrived_graveyard"
+                            and event.object_incarnation == previous_incarnation
+                            for event in session.state.turn_history.events))
+        previous_history = session.state.turn_history
+        advance_fixture_turn(engine)
+        self.assertGreater(session.state.turn_sequence, previous_history.turn_sequence)
+        session.state.turn_history = replace(previous_history, turn_sequence=session.state.turn_sequence, events=[])
+
+        caller = self.add(engine, "Caller of the Claw", zone="hand")
+        kill = self.add(engine, "Murder", zone="hand")
+        raise_bears = self.add(engine, "Raise Dead", zone="hand", ref="caller-first-raise")
+        bounce = self.add(engine, "Unsummon", zone="hand")
+        sweep = self.add(engine, "Day of Judgment", zone="hand")
+        response = self.add(engine, "Raise Dead", zone="hand", ref="caller-flash-window")
+        repeat = self.add(engine, "Grizzly Bears", ref="caller-repeat")
+        second_owned = self.add(engine, "Grizzly Bears", ref="caller-owned-foreign-control")
+        foreign = self.add(engine, "Grizzly Bears", seat="B", ref="caller-foreign-owner")
+        returned = self.add(engine, "Grizzly Bears", ref="caller-bounced")
+        for card in (repeat, second_owned):
+            engine.change_control(card.object_id, "B", reason="Fixture separates owner and controller")
+        engine.change_control(foreign.object_id, "A", reason="Fixture separates owner and controller")
+        token_ref, = engine.create_token("A", name="", copy_of=repeat.ref)
+        token = next(card for card in session.state.cards.values() if card.ref == token_ref)
+        first_incarnation = repeat.logical_object_id
+        owned_incarnation = second_owned.logical_object_id
+        for spell in (caller, kill, raise_bears, bounce, sweep, response):
+            self.assert_closed(session, spell)
+        self.prepare(session, mana={"B": 8, "W": 8, "U": 8, "G": 8, "C": 6})
+        self.checkpoint(session)
+
+        self.cast(session, "A", kill, [repeat.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertIn(repeat.object_id, session.state.players["A"].zones["graveyard"])
+        self.cast(session, "A", raise_bears, [session.state.cards[repeat.object_id].ref])
+        self.assertIsNone(self.resolve(session))
+        self.cast(session, "A", session.state.cards[repeat.object_id])
+        self.assertIsNone(self.resolve(session))
+        second_incarnation = session.state.cards[repeat.object_id].logical_object_id
+        self.assertNotEqual(first_incarnation, second_incarnation)
+
+        self.cast(session, "A", bounce, [returned.ref])
+        self.assertIsNone(self.resolve(session))
+        self.cast(session, "A", sweep)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("hand", session.state.cards[returned.object_id].zone)
+        self.assertIn(foreign.object_id, session.state.players["B"].zones["graveyard"])
+        self.assertTrue(token.object_id not in session.state.cards or session.state.cards[token.object_id].zone != "battlefield")
+
+        history = session.state.turn_history
+        query = current_own_graveyard_creature_death_query()
+        matches = matching_public_history_events(session.state, "A", query)
+        expected = {first_incarnation, second_incarnation, owned_incarnation}
+        self.assertEqual(expected, {event.object_incarnation for event in matches})
+        self.assertEqual(3, len(matches))
+        self.assertIn("B", {event.actor for event in matches})
+        incomplete = replace(history, events=[
+            event for event in history.events
+            if not (event.kind == "permanent_died" and event.object_incarnation == first_incarnation)
+        ])
+        missing_fact = SimpleNamespace(turn_history=incomplete, turn_sequence=session.state.turn_sequence)
+        self.assertIsNone(matching_public_history_events(missing_fact, "A", query))
+        without_arrival = replace(history, events=[
+            event for event in history.events
+            if not (event.kind == "permanent_arrived_graveyard" and event.object_incarnation == first_incarnation)
+        ])
+        no_arrival = SimpleNamespace(turn_history=without_arrival, turn_sequence=session.state.turn_sequence)
+        self.assertEqual(2, len(matching_public_history_events(no_arrival, "A", query)))
+
+        self.cast(session, "A", response, [session.state.cards[repeat.object_id].ref])
+        self.assertEqual(1, len(session.state.stack))
+        self.cast(session, "A", caller)
+        self.assertEqual(2, len(session.state.stack))
+        self.until(session, lambda current: self.trigger_count(current, caller) == 1)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        bears = [card for card in session.state.cards.values()
+                 if card.is_token and card.zone == "battlefield" and card.controller == "A"]
+        self.assertEqual(3, len(bears))
+        for bear in bears:
+            effective = session.engine._effective_card_data(bear)
+            self.assertIn("Bear", effective["type_line"])
+            self.assertEqual(["G"], list(effective["colors"]))
+            self.assertEqual(2, session.engine._numeric_stat(bear.object_id, "power"))
+            self.assertEqual(2, session.engine._numeric_stat(bear.object_id, "toughness"))
+        self.replay(session, load=True)

@@ -1,6 +1,7 @@
 """Copy the real dying creature from its sealed battlefield snapshot."""
 
 from dataclasses import replace
+import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
@@ -153,3 +154,222 @@ class DestroyedCreatureHalfCopiesTests(InheritedNativeFixture, unittest.TestCase
         self.assertEqual({first.object_id, second.object_id}, {card.attached_to for card in copies})
         self.assertEqual({"Pacifism"}, {game.engine.display_name(card.object_id) for card in copies})
         self.replay(game, load=True)
+
+class HofriGhostforgeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        folder = Path(cls.temporary.name)
+        fixtures = ROOT / "tests" / "fixtures"
+        base = json.loads((fixtures / "bound-effect-program-cards.json").read_bytes())
+        support = {"Generic Bound Commander", "Generic Bound Plains"}
+        base["cards"] = [row for row in base["cards"] if row["name"] in support]
+        assert {row["name"] for row in base["cards"]} == support
+        base["rulings"] = []
+        base_path = folder / "support.json"
+        base_path.write_text(json.dumps(base), encoding="utf-8")
+        database = folder / "hofri-ghostforge.sqlite3"
+        build_fixture_database([base_path, fixtures / "hofri-ghostforge-cards.json"], database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        commander = "Generic Bound Commander"
+        cls.deck = DeckDefinition("Tokens linked to a committed exile", [
+            DeckEntry(commander, 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], [commander])
+
+    def spirits(self, game):
+        return tuple(card for card in game.state.cards.values()
+                     if card.zone == "battlefield" and card.is_token
+                     and "spirit" in game.engine._effective_type_parts(card)[1])
+
+    def reject(self, game, seat, action):
+        from quorune.record import authoritative_state_hash
+
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + seat, action)
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def leave(self, game, spell, token):
+        from quorune.rules.linked_death_token_copy import LEAVE_EVENT
+
+        self.cast(game, "B", spell, [token.ref])
+        self.resolve_top(game)
+        departure, = tuple(item for item in game.state.stack if item.source_object_id == token.object_id)
+        self.assertEqual(LEAVE_EVENT, game.engine.semantics.get(departure.semantic_key).event)
+        self.assertIsNone(self.resolve(game))
+
+    def test_actual_hofri_uses_simultaneous_death_lki_with_source_gone_and_returns_to_owner(self):
+        from quorune.rules.linked_death_token_copy import TOKEN_LINK
+
+        game = self.session(707_021_158)
+        source = self.add(game.engine, "Hofri Ghostforge")
+        victim = self.add(game.engine, "Elvish Visionary", seat="B")
+        opponent = self.add(game.engine, "Grizzly Bears", seat="C")
+        other_exile = self.add(game.engine, "Grizzly Bears", seat="D", zone="exile", ref="UNRELATED-EXILE")
+        wrath = self.add(game.engine, "Wrath of God", zone="hand")
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        game.engine.change_control(victim.object_id, "A", reason="Prepare a borrowed nontoken creature")
+        victim.counters["+1/+1"] = 2
+        victim.tapped = True
+        for card in (source, victim, wrath, bounce):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"C": 2, "W": 2})
+        game.state.players["B"].mana_pool["U"] = 1
+        game.state.config.semantic_policy = "trusted_only"
+        self.checkpoint(game)
+        hand_size = len(game.state.players["A"].zones["hand"])
+        self.cast(game, "A", wrath)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(("graveyard", "exile", "graveyard"),
+                         tuple(game.state.cards[card.object_id].zone for card in (source, victim, opponent)))
+        token, = self.spirits(game)
+        self.assertEqual(("A", "A"), (token.owner, token.controller))
+        self.assertEqual((1, 1), tuple(game.engine._numeric_stat(token.object_id, key) for key in ("power", "toughness")))
+        self.assertFalse(token.tapped)
+        self.assertFalse(token.counters)
+        self.assertEqual(hand_size, len(game.state.players["A"].zones["hand"]), "The copied ETB draws")
+        self.assertEqual(victim.object_id, token.annotations[TOKEN_LINK]["cards"][0]["identity"]["object_id"])
+        game = self.replay(game, load=True)
+        self.leave(game, bounce, token)
+        self.assertIn(victim.object_id, game.state.players["B"].zones["graveyard"])
+        self.assertNotIn(victim.object_id, game.state.players["A"].zones["graveyard"])
+        self.assertEqual("exile", game.state.cards[other_exile.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_actual_hofri_doubled_tokens_share_link_but_later_copies_and_reexile_do_not(self):
+        from quorune.rules.linked_death_token_copy import TOKEN_LINK
+
+        game = self.session(707_021_159)
+        source = self.add(game.engine, "Hofri Ghostforge")
+        victim = self.add(game.engine, "Grizzly Bears")
+        season = self.add(game.engine, "Doubling Season")
+        kill = self.add(game.engine, "Murder", zone="hand")
+        clone = self.add(game.engine, "Cackling Counterpart", zone="hand")
+        cremation = self.add(game.engine, "Cremate", seat="B", zone="hand")
+        bounces = tuple(self.add(game.engine, "Unsummon", seat="B", zone="hand", ref=f"RETURN-{i}")
+                        for i in range(3))
+        for card in (source, season, kill, clone, cremation):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"C": 2, "B": 2, "U": 2})
+        game.state.players["B"].mana_pool.update({"U": 3, "B": 1})
+        game.state.config.semantic_policy = "trusted_only"
+        self.checkpoint(game)
+        self.cast_for(game, "A", kill, [victim.ref], reserve={"C": 1, "U": 2})
+        self.assertIsNone(self.resolve(game))
+        first, second = self.spirits(game)
+        self.assertEqual(first.annotations[TOKEN_LINK]["cards"], second.annotations[TOKEN_LINK]["cards"])
+        self.assertEqual(3, game.engine._numeric_stat(first.object_id, "power"))
+        self.assertIn("haste", game.engine._combat_keywords(first))
+        initial_exile = game.state.cards[victim.object_id].logical_object_id
+
+        self.cast(game, "A", clone, [first.ref])
+        self.assertIsNone(self.resolve(game))
+        copies = [card for card in self.spirits(game) if card.object_id not in {first.object_id, second.object_id}]
+        self.assertEqual(2, len(copies))
+        game = self.replay(game, load=True)
+        self.leave(game, bounces[0], copies[0])
+        self.assertEqual(initial_exile, game.state.cards[victim.object_id].logical_object_id)
+        self.assertEqual("exile", game.state.cards[victim.object_id].zone)
+        self.leave(game, bounces[1], first)
+        self.assertEqual("graveyard", game.state.cards[victim.object_id].zone)
+        self.cast(game, "B", cremation, [victim.ref])
+        self.assertIsNone(self.resolve(game))
+        reexiled = game.state.cards[victim.object_id].logical_object_id
+        self.assertNotEqual(initial_exile, reexiled)
+        self.leave(game, bounces[2], second)
+        self.assertEqual(("exile", reexiled),
+                         (game.state.cards[victim.object_id].zone, game.state.cards[victim.object_id].logical_object_id))
+        self.replay(game, load=True)
+
+    def test_actual_hofri_never_copies_unavailable_deaths_or_graveyard_replacements(self):
+        for replacement in (False, True):
+            with self.subTest(replacement=replacement):
+                game = self.session(707_021_160 + replacement)
+                source = self.add(game.engine, "Hofri Ghostforge")
+                victim = self.add(game.engine, "Grizzly Bears")
+                kill = self.add(game.engine, "Murder", zone="hand")
+                cremation = self.add(game.engine, "Cremate", seat="B", zone="hand")
+                if replacement:
+                    self.assert_closed(game, self.add(game.engine, "Rest in Peace", seat="C"))
+                self.assert_closed(game, source)
+                self.prepare(game, mana={"C": 1, "B": 2})
+                game.state.players["B"].mana_pool["B"] = 1
+                game.state.config.semantic_policy = "trusted_only"
+                self.checkpoint(game)
+                self.cast(game, "A", kill, [victim.ref])
+                self.resolve_top(game)
+                if replacement:
+                    self.assertFalse(game.state.stack)
+                else:
+                    self.assertEqual("graveyard", game.state.cards[victim.object_id].zone)
+                    self.assertEqual(1, len(game.state.stack))
+                    self.reject(game, "D", {"action_id": "cast:" + cremation.ref, "targets": [victim.ref], "pay": "auto"})
+                    self.cast(game, "B", cremation, [victim.ref])
+                    self.assertIsNone(self.resolve(game))
+                self.assertEqual("exile", game.state.cards[victim.object_id].zone)
+                self.assertFalse(self.spirits(game))
+                self.replay(game, load=True)
+
+    def test_actual_hofri_copies_battlefield_clone_values_and_links_its_physical_card(self):
+        from quorune.rules.linked_death_token_copy import TOKEN_LINK
+
+        game = self.session(707_021_162)
+        source = self.add(game.engine, "Hofri Ghostforge")
+        original = self.add(game.engine, "Clone", zone="hand")
+        model = self.add(game.engine, "Grizzly Bears", seat="B")
+        kill = self.add(game.engine, "Murder", zone="hand")
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        for card in (source, original, kill, bounce):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"C": 4, "U": 1, "B": 2})
+        game.state.players["B"].mana_pool["U"] = 1
+        game.state.config.semantic_policy = "trusted_only"
+        self.checkpoint(game)
+        self.cast_for(game, "A", original, reserve={"C": 1, "B": 2})
+        self.assertEqual("replacement.order", self.resolve(game).kind)
+        option = next(option["id"] for option in game.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+                      if model.ref in option["id"] and not option["id"].startswith("decline:"))
+        chosen = game.act("pilot:A", {"action_id": "choose", "replacement": option})
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("Grizzly Bears", game.engine.display_name(original.object_id))
+        self.cast(game, "A", kill, [original.ref])
+        self.assertIsNone(self.resolve(game))
+        token, = self.spirits(game)
+        self.assertEqual("Grizzly Bears", game.engine.display_name(token.object_id))
+        identity, = token.annotations[TOKEN_LINK]["cards"]
+        self.assertEqual(original.object_id, identity["identity"]["object_id"])
+        self.assertEqual("Clone", game.state.cards[original.object_id].printed_name)
+        self.leave(game, bounce, token)
+        self.assertEqual("graveyard", game.state.cards[original.object_id].zone)
+        self.assertEqual("battlefield", game.state.cards[model.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_hofri_requires_its_complete_original_producer_and_copiable_child(self):
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.linked_death_token_copy import CAPABILITY, DEATH_EVENT, LEAVE_EVENT
+
+        card = self.db.lookup("Hofri Ghostforge", fuzzy=False)
+        report, semantics = register_card(self.db, self.registry, card.name)
+        self.assertTrue(report["strict_capability_ready"], report["blockers"])
+        programs = {program.event: program for program in semantics.programs_for_oracle(card.oracle_id)}
+        producer = programs[DEATH_EVENT]
+        child = programs[LEAVE_EVENT]
+        self.assertEqual(child.key, producer.effects[0]["return_ability"]["value"]["semantic_key"])
+        self.assertTrue(child.provenance["granted_only"])
+        for program in (producer, child):
+            deps = tuple(value for value in program.capability_dependencies if value != CAPABILITY)
+            closure = self.registry.closure(deps, profile="commander_review").to_dict() if deps else None
+            stripped = replace(program, capability_dependencies=deps, capability_closure=closure)
+            self.assertFalse(bind_semantic_program_runtime(
+                stripped, capability_registry=self.registry, profile="commander_review",
+            )["strict"])
+        for change in ("a token creature", "a nontoken creature"):
+            text = card.oracle_text.replace("another nontoken creature", change)
+            self.assertNotEqual("exact", compile_oracle_card(
+                replace(card, oracle_text=text), capability_registry=self.registry, capability_profile="commander_review",
+            ).status)
+        with patch("quorune.compiler.linked_death_token_copy.linked_death_token_copy_nodes", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(card, capability_registry=self.registry,
+                                                            capability_profile="commander_review").status)

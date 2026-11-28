@@ -369,6 +369,7 @@ def entry_designation_handler(text: str, *, source_name: str):
             or _entry_faction_handler(text)
             or composed_entry_color_designation_handler(text, source_name=source_name)
             or _counted_entry_opponent_handler(text)
+            or _entry_control_opponent_handler(text)
             or _linked_entry_opponent_handler(text)
             or _entry_card_name_handler(text)
             or _counted_creature_type_entry_handler(text)
@@ -430,6 +431,20 @@ def _counted_entry_opponent_handler(text: str):
         COUNTED_ENTRY_OPPONENT_TEMPLATE,
         {"handler_id": COUNTED_ENTRY_OPPONENT_HANDLER_ID, "schema_version": 1, "event": "zone.change"},
         COUNTED_ENTRY_OPPONENT_DEPENDENCIES,
+    )
+
+
+def _entry_control_opponent_handler(text: str):
+    from ..entry_designations import (
+        ENTRY_CONTROL_OPPONENT_CAPABILITY, ENTRY_CONTROL_OPPONENT_HANDLER_ID, ENTRY_CONTROL_OPPONENT_TEMPLATE,
+    )
+
+    if " ".join(text.casefold().split()) != "this artifact enters under the control of an opponent of your choice.":
+        return None
+    return (
+        ENTRY_CONTROL_OPPONENT_TEMPLATE,
+        {"handler_id": ENTRY_CONTROL_OPPONENT_HANDLER_ID, "schema_version": 3, "event": "zone.change"},
+        (ENTRY_CONTROL_OPPONENT_CAPABILITY,),
     )
 
 

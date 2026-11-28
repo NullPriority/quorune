@@ -367,13 +367,22 @@ TARGET_DEATH_RETURN_VERSION = 9
 TARGET_DEATH_RETURN_CAPABILITY = "trigger.delayed.target_death_return_to_hand"
 TARGET_DEATH_RETURN_EVENT = "permanent.graveyard.target_death_return"
 TARGET_DEATH_RETURN_CONDITION = "target_death_return_object_identity"
+TARGET_DEATH_RETURN_GRAVEYARD_OWNER = "target_death_return_graveyard_owner"
+TARGET_DEATH_BATTLEFIELD_VERSION = 13
+TARGET_DEATH_BATTLEFIELD_CAPABILITY = "trigger.delayed.target_death_return_to_battlefield"
 TARGET_DEATH_RETURN_MECHANICS = (DELAYED_OBJECT_MECHANIC, "cr-115-targets")
 TARGET_DEATH_RETURN_DEPENDENCIES = (
     TARGET_DEATH_RETURN_CAPABILITY, DELAYED_OBJECT_CAPABILITY, "state_query.permanent.any_counter",
     "target.revalidate_resolution", "trigger.event.normalized_zone_change", "trigger.placement.apnap",
     "zone.change.destination_replacement",
 )
+TARGET_DEATH_BATTLEFIELD_DEPENDENCIES = (
+    TARGET_DEATH_BATTLEFIELD_CAPABILITY, DELAYED_OBJECT_CAPABILITY,
+    "target.revalidate_resolution", "trigger.event.normalized_zone_change", "trigger.placement.apnap",
+    "zone.change.destination_replacement", "zone.return.fixed_event_battlefield",
+)
 _TARGET_DEATH_RETURN_ACTION = "return_to_owner_hand"
+_TARGET_DEATH_BATTLEFIELD_ACTION = "return_to_owner_battlefield"
 _TARGET_DEATH_RETURN_TIMING = "if_target_dies_this_turn"
 _TARGET_DEATH_RETURN_PRICE_FLAGS = ("tap_source", "untap_source", "discard_source", "sacrifice_source", "exile_source")
 _TARGET_DEATH_RETURN_PRICE_SEQUENCES = ("complex_symbols", "choices", "uncompiled_costs")
@@ -385,33 +394,45 @@ _TARGET_DEATH_RETURN_PRICE_FIELDS = {
 }
 
 
-def target_death_return_target_schema() -> dict[str, Any]:
+def target_death_return_target_schema(*, battlefield=False) -> dict[str, Any]:
     from .object_predicate import PermanentStatePredicateSpec
 
+    schema = {"zones": ["battlefield"], "categories": ["permanent"], "types_any": ["creature"], "count": 1}
+    if not battlefield:
+        schema["state_predicate"] = PermanentStatePredicateSpec(minimum_total_counter_count=1).to_dict()
+    return schema
+
+
+def _target_death_return_variant(battlefield):
+    if battlefield:
+        return {"schema_version": TARGET_DEATH_BATTLEFIELD_VERSION, "action": _TARGET_DEATH_BATTLEFIELD_ACTION}
+    return {"schema_version": TARGET_DEATH_RETURN_VERSION, "action": _TARGET_DEATH_RETURN_ACTION}
+
+
+def target_death_return_effect(*, battlefield=False) -> dict[str, Any]:
     return {
-        "zones": ["battlefield"], "categories": ["permanent"], "types_any": ["creature"], "count": 1,
-        "state_predicate": PermanentStatePredicateSpec(minimum_total_counter_count=1).to_dict(),
+        "op": SCHEDULE_OBJECT_ACTION, **_target_death_return_variant(battlefield),
+        "object": "$target.0", "timing": _TARGET_DEATH_RETURN_TIMING,
     }
 
 
-def target_death_return_effect() -> dict[str, Any]:
+def target_death_return_resolution_effect(arrivals, *, battlefield=False) -> dict[str, Any]:
     return {
-        "op": SCHEDULE_OBJECT_ACTION, "schema_version": TARGET_DEATH_RETURN_VERSION,
-        "object": "$target.0", "action": _TARGET_DEATH_RETURN_ACTION, "timing": _TARGET_DEATH_RETURN_TIMING,
+        "op": RESOLVE_OBJECT_ACTION, **_target_death_return_variant(battlefield),
+        "object": [arrival.to_dict() for arrival in arrivals],
     }
 
 
-def target_death_return_resolution_effect(arrivals) -> dict[str, Any]:
-    return {
-        "op": RESOLVE_OBJECT_ACTION, "schema_version": TARGET_DEATH_RETURN_VERSION,
-        "object": [arrival.to_dict() for arrival in arrivals], "action": _TARGET_DEATH_RETURN_ACTION,
-    }
+def is_target_death_battlefield_return(effect) -> bool:
+    return (effect.get("schema_version") == TARGET_DEATH_BATTLEFIELD_VERSION
+            or effect.get("action") == _TARGET_DEATH_BATTLEFIELD_ACTION)
 
 
 def is_target_death_return_effect(effect) -> bool:
     return (effect.get("op") in (SCHEDULE_OBJECT_ACTION, RESOLVE_OBJECT_ACTION)
             and (effect.get("schema_version") == TARGET_DEATH_RETURN_VERSION
-                 or effect.get("action") == _TARGET_DEATH_RETURN_ACTION))
+                 or effect.get("action") == _TARGET_DEATH_RETURN_ACTION
+                 or is_target_death_battlefield_return(effect)))
 
 
 def target_death_return_arrivals(value):
@@ -428,12 +449,13 @@ def target_death_return_arrivals(value):
 def validate_target_death_return_effect(effect, *, compiled=False) -> None:
     from .continuous_effect_model import ContinuousObjectIdentity
 
-    expected = target_death_return_effect()
-    if type(effect.get("schema_version")) is not int or effect["schema_version"] != TARGET_DEATH_RETURN_VERSION:
+    battlefield = is_target_death_battlefield_return(effect)
+    expected = target_death_return_effect(battlefield=battlefield)
+    if type(effect.get("schema_version")) is not int or effect["schema_version"] != expected["schema_version"]:
         raise ValueError("Death return requires its exact instruction version")
     if compiled:
         if effect != expected:
-            raise ValueError("Death return must select one exact counter-qualified target")
+            raise ValueError("Death return must select one exact battlefield target")
     elif effect.get("op") == SCHEDULE_OBJECT_ACTION:
         if {**effect, "object": "$target.0"} != expected:
             raise ValueError("Death return must schedule the original target for this turn")
@@ -442,7 +464,7 @@ def validate_target_death_return_effect(effect, *, compiled=False) -> None:
         arrivals = target_death_return_arrivals(effect.get("object"))
         instruction = {key: value for key, value in effect.items() if key != "_replacement_selections"}
         instruction["object"] = [arrival.to_dict() for arrival in arrivals]
-        if (instruction != target_death_return_resolution_effect(arrivals)
+        if (instruction != target_death_return_resolution_effect(arrivals, battlefield=battlefield)
                 or not isinstance(effect.get("_replacement_selections", ()), (list, tuple))):
             raise ValueError("Death return must resolve only the original graveyard arrivals")
 
@@ -450,16 +472,17 @@ def validate_target_death_return_effect(effect, *, compiled=False) -> None:
 def target_death_return_node_capabilities(*, effects, target_schema, mechanic_ids):
     from .replacement.immutable import FrozenMap
 
-    if (tuple(effects) != (target_death_return_effect(),)
+    battlefield = bool(effects) and is_target_death_battlefield_return(effects[0])
+    if (tuple(effects) != (target_death_return_effect(battlefield=battlefield),)
             or type(effects[0]["schema_version"]) is not int
             or set(mechanic_ids) != set(TARGET_DEATH_RETURN_MECHANICS)
             or not isinstance(target_schema, Mapping)
-            or FrozenMap(target_schema) != FrozenMap(target_death_return_target_schema())):
+            or FrozenMap(target_schema) != FrozenMap(target_death_return_target_schema(battlefield=battlefield))):
         return ()
-    return TARGET_DEATH_RETURN_DEPENDENCIES
+    return TARGET_DEATH_BATTLEFIELD_DEPENDENCIES if battlefield else TARGET_DEATH_RETURN_DEPENDENCIES
 
 
-def target_death_return_price_is_closed(price) -> bool:
+def target_death_return_price_is_closed(price, *, battlefield=False) -> bool:
     from re import fullmatch
 
     from .util import ORDINARY_FIXED_MANA_PATTERN, mana_cost_to_vector
@@ -467,14 +490,23 @@ def target_death_return_price_is_closed(price) -> bool:
     if not isinstance(price, Mapping) or set(price) != _TARGET_DEATH_RETURN_PRICE_FIELDS:
         return False
     text = price["text"]
-    if type(text) is not str or fullmatch(ORDINARY_FIXED_MANA_PATTERN, text) is None:
+    if type(text) is not str:
         return False
+    if battlefield:
+        if fullmatch(r"sacrifice [^,:;{}]+", text.casefold()) is None:
+            return False
+        expected, _ = mana_cost_to_vector("")
+    else:
+        if fullmatch(ORDINARY_FIXED_MANA_PATTERN, text) is None:
+            return False
+        expected, _ = mana_cost_to_vector(text)
+        if not any(expected.values()):
+            return False
     mana = price["mana"]
-    expected, _ = mana_cost_to_vector(text)
     return (
-        isinstance(mana, Mapping) and any(expected.values()) and dict(mana) == expected
+        isinstance(mana, Mapping) and dict(mana) == expected
         and all(type(amount) is int for amount in mana.values())
-        and all(price[key] is False for key in _TARGET_DEATH_RETURN_PRICE_FLAGS)
+        and all(price[key] is (battlefield and key == "sacrifice_source") for key in _TARGET_DEATH_RETURN_PRICE_FLAGS)
         and all(isinstance(price[key], (list, tuple)) and not price[key] for key in _TARGET_DEATH_RETURN_PRICE_SEQUENCES)
         and all(type(price[key]) is int and price[key] == 0 for key in _TARGET_DEATH_RETURN_PRICE_ZERO)
         and all(price[key] is None for key in _TARGET_DEATH_RETURN_PRICE_NULL)

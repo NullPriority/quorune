@@ -32,6 +32,9 @@ def apply_stat_operation(state,operation,context):
     if op=='set_power':state.power=int(value);return True
     if op=='set_toughness':state.toughness=int(value);return True
     if op=='set_power_toughness':state.power=int(value[0]);state.toughness=int(value[1]);return True
+    if op == "set_power_toughness_to_mana_value":
+        state.power = state.toughness = int(state.mana_value)
+        return True
     if op == "default_creature_stats":
         if any(kind.casefold() == "creature" for kind in state.card_types):
             if state.power is None:

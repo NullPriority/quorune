@@ -15,6 +15,11 @@ _ORDINARY_SAGA_RULES_REMINDER = re.compile(
 _TRANSFORM_REMINDER = re.compile(
     r"\(Transforms from [^)]+\.\)", re.IGNORECASE
 )
+_SIEGE_REMINDER = re.compile(
+    r"\(As a Siege enters, choose an opponent to protect it\. You and others can attack it\. "
+    r"When it['’]s defeated, exile it, then cast it transformed\.\)",
+    re.IGNORECASE,
+)
 _MELD_PARTNER_NAME_WORD = r"(?:[A-Z][\w'’‐-]*|[dl]['’][A-Z][\w'’‐-]*|and|by|de|of|the)"
 _MELD_PARTNER_REMINDER = re.compile(
     rf"\(Melds with [A-Z][\w'’‐-]*(?:,? {_MELD_PARTNER_NAME_WORD})*\.\)"
@@ -137,6 +142,7 @@ def is_nonexecuting_standalone_reminder(
     dryad_arbor: bool = False,
     type_line: str = "",
     legendary_sorcery: bool = False,
+    siege: bool = False,
 ) -> bool:
     """Recognize reminders whose authority is already carried structurally."""
     from ..rules.legendary_sorcery import REMINDER
@@ -155,6 +161,7 @@ def is_nonexecuting_standalone_reminder(
         or _COLORLESS_MANA_REMINDER.fullmatch(stripped)
         or _SNOW_MANA_REMINDER.fullmatch(stripped)
         or (transform and _TRANSFORM_REMINDER.fullmatch(stripped))
+        or (siege and _SIEGE_REMINDER.fullmatch(stripped))
         or (meld and is_passive_meld_partner_reminder(stripped))
         or (dryad_arbor and stripped == _DRYAD_ARBOR_REMINDER)
         or (legendary_sorcery and stripped.casefold() == REMINDER)
@@ -173,6 +180,10 @@ def material_source_lines(
     from ..rules.legendary_sorcery import is_legendary_sorcery
 
     legendary_sorcery = is_legendary_sorcery(type_line)
+    from ..characteristic_evaluation import type_parts
+
+    types, subtypes, _ = type_parts(type_line) if layout == "transform" else ((), (), ())
+    siege = "battle" in types and "siege" in subtypes
     for line, span in source_lines(text):
         material_line = without_parenthetical_reminder(line)
         if (
@@ -180,6 +191,7 @@ def material_source_lines(
             and is_nonexecuting_standalone_reminder(
                 line,
                 transform=layout == "transform",
+                siege=siege,
                 meld=layout == "meld",
                 type_line=type_line,
                 legendary_sorcery=legendary_sorcery,

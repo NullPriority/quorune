@@ -27,8 +27,17 @@ from ..rules.discarded_card_exile import (
 )
 from ..linked_exile_return_model import validate_linked_instruction
 from ..library_search_model import (
-    FixedCountedLibrarySearchTemplate, SubtypeGraveyardSearchSpec, is_counted_library_search, is_subtype_graveyard_search,
+    FixedCountedLibrarySearchTemplate,
+    SubtypeGraveyardSearchSpec,
+    is_counted_library_search,
+    is_subtype_graveyard_search,
 )
+from ..rules.event_outcome_shapes import (
+    cast_reveal_counter_program_dependencies,
+    uses_cast_reveal_counter,
+    validate_cast_reveal_counter,
+)
+from ..semantic_runtime.intents import RevealLibraryCardsIntent
 from ..semantic_runtime import SemanticNodeError, default_semantic_interpreter
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
@@ -76,6 +85,28 @@ def _represented_targeted_player_discard(effect, *, actor, query, allow_targeted
         raise SemanticChoiceError('Targeted discard lacks its closed result owner')
 
 
+def _represented_linked_library_effect(effect) -> bool:
+    from ..linked_library_imprint_model import (
+        uses_linked_artifact_library_instruction, validate_linked_artifact_library_instruction,
+        uses_linked_saga_library_instruction, linked_saga_library_phase,
+    )
+
+    if uses_linked_saga_library_instruction(effect):
+        try:
+            if linked_saga_library_phase(effect) != "enter_permanents":
+                raise ValueError("Only the linked Saga battlefield branch is optional")
+        except (TypeError, ValueError, KeyError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+        return True
+    if uses_linked_artifact_library_instruction(effect):
+        try:
+            validate_linked_artifact_library_instruction(effect)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+        return True
+    return False
+
+
 def _represented_effect(
     effect: Mapping[str, Any],
     *,
@@ -90,15 +121,7 @@ def _represented_effect(
         )
     if operation == OPTIONAL_EFFECT_OPERATION:
         raise SemanticChoiceError("Optional effects cannot nest")
-    from ..linked_library_imprint_model import (
-        uses_linked_artifact_library_instruction, validate_linked_artifact_library_instruction,
-    )
-
-    if uses_linked_artifact_library_instruction(effect):
-        try:
-            validate_linked_artifact_library_instruction(effect)
-        except (TypeError, ValueError, KeyError) as exc:
-            raise SemanticChoiceError(str(exc)) from exc
+    if _represented_linked_library_effect(effect):
         return
     if DEFENDING_HAND_OBSERVATION_VERSION_FIELD in effect:
         defender = effect.get("target")
@@ -150,6 +173,14 @@ def _represented_effect(
         restored={**effect,'actor':'$controller','players':['$controller']}
         if effect.get('actor')!=actor or not isinstance(effect.get('players'),(list,tuple)) or list(effect['players'])!=[actor] or not fixed_affected_player_discard_node_capabilities(effects=(restored,),target_schema=None,mechanic_ids=('fixed-affected-player-discard','cr-402-hand'),allow_controller=True):
             raise SemanticChoiceError("Optional controller discard instruction is malformed")
+        return
+    from ..rules.searched_library_pairs import is_searched_pair_search, validate_searched_pair_search
+
+    if is_searched_pair_search(effect):
+        try:
+            validate_searched_pair_search(effect)
+        except ValueError as exc:
+            raise SemanticChoiceError(str(exc)) from exc
         return
     if operation == "search" and effect.get('schema_version') == 7:
         from ..qualified_library_search_model import QualifiedLibrarySearchSpec
@@ -278,6 +309,12 @@ def _validated_effects(
             return player, (FrozenMap(discarded_card_play_choice(effect, actor=player)),)
         except (KeyError, TypeError, ValueError) as exc:
             raise SemanticChoiceError(str(exc)) from exc
+    if uses_cast_reveal_counter(effect):
+        try:
+            validate_cast_reveal_counter(effect, actor=player)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+        return player, tuple(FrozenMap(value) for value in values)
     if entry_exempt:
         try:
             return player, tuple(FrozenMap(value) for value in validate_entry_exempt_draw_discard(effect, actor=player))
@@ -353,6 +390,44 @@ def _unavailable_defending_hand(effects, query):
             and effects[0]["target"] not in query.active_seats)
 
 
+def require_cast_reveal_choice_source(host, item, actor, effect):
+    if not uses_cast_reveal_counter(effect):
+        return
+    try:
+        stack, mana_value = validate_cast_reveal_counter(effect, actor=actor)
+        if (item is None or item.kind != "triggered_ability" or item.controller != actor
+                or item.context.get("currently_resolving") is not True or item.context.get("event") != "spell.cast"
+                or item.targets or item.context.get("stack") != stack or item.context.get("mana_value") != mana_value
+                or type(item.context.get("mana_value")) is not type(mana_value)):
+            raise ValueError("The reveal choice lost its resolving trigger or original committed cast")
+        program = host.semantics.get(item.semantic_key)
+        if (program is None or not host.semantic_program_is_current_trusted(program)
+                or not cast_reveal_counter_program_dependencies(program)):
+            raise ValueError("The reveal choice lost its exact opponent-cast program")
+    except (TypeError, ValueError, KeyError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+
+
+def _complete_cast_reveal_counter(continuation, actor, choice, query):
+    if actor != continuation.semantic_frame.controller:
+        raise SemanticChoiceError("The resolving controller owns the optional reveal")
+    if choice == "decline":
+        return SemanticChoiceCompletion()
+    stack, mana_value = validate_cast_reveal_counter(continuation.effect, actor=actor)
+    refs = query.library_refs(actor, top_first=True)
+    top = query.object(refs[0], zones=("library",)) if refs else None
+    if top is None or top.owner != actor or not top.physical_card:
+        raise SemanticChoiceError("The resolving player cannot reveal a current library top")
+    label = continuation.note or "Reveal the top card"
+    reveal = RevealLibraryCardsIntent(
+        actor, actor, actor, (top.ref,), label, public=True, announce_public_top=True,
+    )
+    counter = ({"op": "counter_stack_target", "stack": stack},) if (
+        top.mana_value == mana_value and query.stack_object(stack) is not None
+    ) else ()
+    return SemanticChoiceCompletion(intents=(reveal,), prepend_effects=counter)
+
+
 @dataclass(frozen=True, slots=True)
 class OptionalEffectHandler:
     """Offer one choice before resuming ordinary typed effect resolution."""
@@ -418,6 +493,10 @@ class OptionalEffectHandler:
                 request=None, continuation_effect=FrozenMap(effect),
                 auto_continue=AutoContinue("The targeted player cannot lose life"),
             )
+        cast_reveal = uses_cast_reveal_counter(effect)
+        if cast_reveal and not context.query.library_refs(player, top_first=True):
+            return SemanticChoicePreparation(None, FrozenMap(effect),
+                auto_continue=AutoContinue("The optional reveal has an empty library"))
         shared_source = is_source_shared_type_draw_discard(effect)
         if ((shared_source or is_entry_exempt_draw_discard(effect))
                 and not context.query.draw_permission(player).allows_complete_draw(effects[0]["count"])):
@@ -448,7 +527,7 @@ class OptionalEffectHandler:
                 auto_continue=AutoContinue(reason='The optional library search cannot be chosen'))
         return SemanticChoicePreparation(
             request=SemanticChoiceRequest(
-                prompt="Apply the optional effect?",
+                prompt="Reveal the top card of your library?" if cast_reveal else "Apply the optional effect?",
                 choice=ScalarChoice(
                     field_name="choice",
                     legal_values=("apply", "decline"),
@@ -502,6 +581,8 @@ class OptionalEffectHandler:
         choice = response.get("choice")
         if type(choice) is not str or choice not in {"apply", "decline"}:
             raise SemanticChoiceError("Choose apply or decline")
+        if uses_cast_reveal_counter(continuation.effect):
+            return _complete_cast_reveal_counter(continuation, actor, choice, query)
         if choice == "apply" and _unavailable_defending_hand(effects, query):
             raise SemanticChoiceError("The defending player is no longer in the game")
         if choice=='apply' and _prohibited_optional_library_search(effects,actor,query):raise SemanticChoiceError('The optional library search cannot be chosen')

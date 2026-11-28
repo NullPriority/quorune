@@ -4,6 +4,7 @@ from dataclasses import replace
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
+from unittest.mock import patch
 
 from common import ROOT
 from inherited_composition_fixture import InheritedNativeFixture
@@ -15,11 +16,182 @@ from quorune.record import authoritative_state_hash
 from quorune.replacement.immutable import thaw_value
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.rules.owned_commander_battlefield_return import CAPABILITY
+from quorune.rules.commander_return_choice import COMMANDER_BATTLEFIELD_ENTRY_CAPABILITY, COMMANDER_RETURN_FIELD
 from scripts.build_test_database import build_fixture_database
 
 
 CARD = "Sanctum of Eternity"
 COMMANDER = "Grist, the Hunger Tide"
+
+COURSER = "Hellkite Courser"
+PARTNERS = ("Rograkh, Son of Rohgahh", "Tymna the Weaver")
+
+
+class OwnCommanderEntryAndReturnTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        database = Path(cls.temporary.name) / "own-commander-entry.sqlite3"
+        fixtures = ROOT / "tests/fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "all-blocker-requirement-cards.json",
+            fixtures / "commander-pairing-cards.json",
+            fixtures / "activation-paid-creature-subtype-cards.json",
+            fixtures / "own-commander-battlefield-return-cards.json",
+        ], database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Owned partner entry", [
+            *(DeckEntry(name, 1, "commander") for name in PARTNERS),
+            DeckEntry("Generic Bound Plains", 30),
+        ], list(PARTNERS))
+
+    def _owned_commanders(self, game, owner="A"):
+        return {
+            card.printed_name: card for card in game.state.cards.values()
+            if card.owner == owner and card.zone == "command" and card.is_commander
+        }
+
+    def _choose(self, game, *cards, actor="A", valid=True):
+        before = authoritative_state_hash(game.state)
+        command = {"action_id": "choose", "objects": [card.ref for card in cards]}
+        result = game.act("pilot:" + actor, command)
+        self.assertEqual(valid, result.ok, result.summary)
+        if not valid:
+            self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def _offered(self, game):
+        self.assertEqual(["pilot:A"], list(game.pending_principals()))
+        decision = game.packet("pilot:A", full=True)["decision"]
+        self.assertEqual("semantic.choice", decision["kind"])
+        context = decision["ctx"]
+        return {row["id"] for row in context["objects"]}
+
+    def _advance_to_delayed_return(self, game):
+        self.until(game, lambda current: current.state.step == "end_step" and any(
+            item.context.get("delayed_trigger_ref") for item in current.state.stack))
+        return self.replay(game, load=True)
+
+    def test_original_closed_trigger_and_mutation_fail_closed(self):
+        card = self.db.lookup(COURSER, fuzzy=False)
+
+        def compile_card(original):
+            return compile_oracle_card(original, capability_registry=self.registry,
+                                       capability_profile="commander_review")
+
+        ir = compile_card(card)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        trigger, = [node for face in ir.faces for node in face.nodes
+                    if COMMANDER_BATTLEFIELD_ENTRY_CAPABILITY in node.capability_dependencies]
+        self.assertEqual(trigger.text, card.oracle_text[trigger.span.start:trigger.span.end])
+        self.assertEqual("permanent.enter.self", trigger.event)
+        self.assertIsNone(trigger.target_schema)
+        self.assertEqual({"schema_version": 2}, trigger.effects[0][COMMANDER_RETURN_FIELD])
+        for before, after in (("you may put", "put"), ("you own", "an opponent owns"),
+                              ("gains haste", "gains flying"), ("the next end step", "your next end step")):
+            with self.subTest(after=after):
+                changed = replace(card, oracle_text=card.oracle_text.replace(before, after))
+                self.assertNotEqual("exact", compile_card(changed).status)
+        with patch("quorune.compiler.source_self_effect_templates.commander_battlefield_entry_result",
+                   return_value=None):
+            self.assertEqual("partial", compile_card(card).status)
+
+    def test_native_partner_choice_survives_source_departure_and_returns_without_casting(self):
+        game = self.session(90380601)
+        source = self.add(game.engine, COURSER, zone="hand")
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        owned = self._owned_commanders(game)
+        chosen, other = (owned[name] for name in PARTNERS)
+        foreign = self._owned_commanders(game, "B")[PARTNERS[0]]
+        unmarked = self.add(game.engine, PARTNERS[0], zone="command", ref="undesignated-command-card")
+        self.assertFalse(unmarked.is_commander)
+        self.assert_closed(game, source)
+        self.prepare(game, mana={"C": 4, "R": 2})
+        game.state.players["B"].mana_pool["U"] = 1
+        game.state.players["A"].commander_casts[chosen.oracle_id] = 2
+        counts = dict(game.state.players["A"].commander_casts)
+        self.checkpoint(game)
+        self.cast_for(game, "A", source)
+        self.resolve_top(game)
+        self.cast_for(game, "B", bounce, [source.ref])
+        self.resolve_top(game)
+        self.assertEqual("hand", game.state.cards[source.object_id].zone)
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self.assertEqual({chosen.ref, other.ref}, self._offered(game))
+        self._choose(game, foreign, valid=False)
+        self._choose(game, unmarked, valid=False)
+        self._choose(game, chosen, actor="B", valid=False)
+        game = self.replay(game, load=True)
+        self._choose(game, chosen)
+        arrival = game.state.cards[chosen.object_id]
+        self.assertEqual(("battlefield", "A", chosen.commander_designation_id),
+                         (arrival.zone, arrival.controller, arrival.commander_designation_id))
+        self.assertIn("haste", game.engine._combat_keywords(arrival))
+        self.assertEqual(counts, game.state.players["A"].commander_casts)
+        self.assertEqual("command", game.state.cards[other.object_id].zone)
+        arrived = arrival.logical_object_id
+        self.assertNotEqual(chosen.logical_object_id, arrived)
+        self.assertEqual(1, len(game.state.delayed_triggers))
+        game = self._advance_to_delayed_return(game)
+        self.assertIsNone(self.resolve(game))
+        finished = game.state.cards[chosen.object_id]
+        self.assertEqual(("command", "A", chosen.commander_designation_id),
+                         (finished.zone, finished.owner, finished.commander_designation_id))
+        self.assertNotEqual(arrived, finished.logical_object_id)
+        self.assertEqual(counts, game.state.players["A"].commander_casts)
+        self.replay(game, load=True)
+
+    def test_single_choice_is_optional_and_empty_pool_auto_continues(self):
+        for empty in (False, True):
+            with self.subTest(empty=empty):
+                game = self.session(90380610 + empty)
+                source = self.add(game.engine, COURSER, zone="hand")
+                owned = self._owned_commanders(game)
+                for name in (PARTNERS if empty else PARTNERS[1:]):
+                    card = owned[name]
+                    game.engine.move_card(card.object_id, "battlefield", controller="A", reason="Prepared battlefield")
+                self.assert_closed(game, source)
+                self.prepare(game, mana={"C": 4, "R": 2})
+                self.checkpoint(game)
+                self.cast_for(game, "A", source)
+                pending = self.resolve(game)
+                if empty:
+                    self.assertIsNone(pending)
+                else:
+                    self.assertEqual("semantic.choice", pending.kind)
+                    self.assertEqual({owned[PARTNERS[0]].ref}, self._offered(game))
+                    self._choose(game)
+                self.assertFalse(game.state.delayed_triggers)
+                self.assertFalse(game.state.stack)
+                self.replay(game, load=True)
+
+    def test_reentered_commander_does_not_inherit_haste_or_delayed_return(self):
+        game = self.session(90380620)
+        source = self.add(game.engine, COURSER, zone="hand")
+        blink = self.add(game.engine, "Cloudshift", zone="hand")
+        chosen = self._owned_commanders(game)[PARTNERS[0]]
+        self.assert_closed(game, source)
+        self.assert_closed(game, blink)
+        self.prepare(game, mana={"C": 4, "R": 2, "W": 1})
+        self.checkpoint(game)
+        self.cast_for(game, "A", source, reserve={"W": 1})
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self._choose(game, chosen)
+        arrival = game.state.cards[chosen.object_id]
+        self.assertIn("haste", game.engine._combat_keywords(arrival))
+        first_incarnation = arrival.logical_object_id
+        self.cast_for(game, "A", blink, [arrival.ref])
+        self.assertIsNone(self.resolve(game))
+        replacement = game.state.cards[chosen.object_id]
+        self.assertNotEqual(first_incarnation, replacement.logical_object_id)
+        self.assertNotIn("haste", game.engine._combat_keywords(replacement))
+        game = self._advance_to_delayed_return(game)
+        self.assertIsNone(self.resolve(game))
+        finished = game.state.cards[chosen.object_id]
+        self.assertEqual(("battlefield", replacement.logical_object_id),
+                         (finished.zone, finished.logical_object_id))
+        self.replay(game, load=True)
 
 
 class OwnCommanderBattlefieldReturnTests(InheritedNativeFixture, unittest.TestCase):

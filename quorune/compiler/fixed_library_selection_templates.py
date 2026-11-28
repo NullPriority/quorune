@@ -49,7 +49,7 @@ tamiyo tasha teferi teyo tezzeret tibalt tyvar ugin urza venser vivien vraska vr
 will windgrace wrenn xenagos yanggu yanling zariel
 '''.split())
 LIBRARY_SELECTION_SUBTYPES = (CREATURE_SUBTYPES | DIRECT_NONCREATURE_SUBTYPES
-    | _PLANESWALKER_SUBTYPES | {'adventure', 'arcane', 'lesson', 'omen', 'trap', 'siege'})
+    | _PLANESWALKER_SUBTYPES | {'adventure', 'arcane', 'lesson', 'omen', 'saga', 'trap', 'siege'})
 
 _START = re.compile(
     rf"(?P<verb>look at|reveal) the top "
@@ -484,13 +484,39 @@ class PrivateHandBottomExileEffectTemplate:
                 None, (FIXED_LIBRARY_SELECTION_MECHANIC,))
 
 
+class FixedTargetPairLibrarySearchTemplate:
+    def compiled(self):
+        from ..rules.targeted_search_round import MECHANIC, target_pair_search_effect, target_pair_search_schema
+
+        return (
+            "target-pair-private-library-search-v1", (target_pair_search_effect(),),
+            target_pair_search_schema(), (MECHANIC, "cr-115-targets"),
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class RevealedLegendaryTreasureTemplate:
+    def compiled(self):
+        from ..rules.revealed_legendary_graveyard_treasure import revealed_legendary_treasure_effect
+
+        return ("revealed-legendary-graveyard-treasure-v1", (revealed_legendary_treasure_effect(),),
+                None, (FIXED_LIBRARY_SELECTION_MECHANIC,))
+
+
 def fixed_library_selection_effect_template(
     text: str,
 ) -> (FixedLibrarySelectionEffectTemplate | ChosenTypeLibrarySelectionEffectTemplate
       | ChosenTypeTopSelectionEffectTemplate | PrivateTopLandEntryEffectTemplate | PrivateTopLandOrHandEffectTemplate
       | PrivateTopLandOrGoblinEffectTemplate | RevealedTopHandLifeEffectTemplate
-      | PrivateFixedTopTakeOrGraveyardEffectTemplate | PrivateHandBottomExileEffectTemplate | None):
+      | PrivateFixedTopTakeOrGraveyardEffectTemplate | PrivateHandBottomExileEffectTemplate | RevealedLegendaryTreasureTemplate | None):
     """Lower one complete fixed self-library hand/remainder instruction."""
+
+    if " ".join(text.split()).casefold() == (
+        "reveal the top four cards of your library. put any number of legendary cards from among them "
+        "into your hand and the rest into your graveyard. create a treasure token for each card "
+        "put into your graveyard this way."
+    ):
+        return RevealedLegendaryTreasureTemplate()
 
     normalized = " ".join(text.strip().split())
     if normalized.casefold() == (
@@ -550,6 +576,11 @@ def fixed_library_selection_effect_template(
         "if you don't put the card into your hand, you may put it into your graveyard."
     ):
         return ChosenTypeTopSelectionEffectTemplate(may_put_in_graveyard=True)
+    if normalized.casefold() == (
+        "choose two target players. each of them searches their library for a card, "
+        "then shuffles and puts that card on top."
+    ):
+        return FixedTargetPairLibrarySearchTemplate()
     from .targeted_library_exile_templates import targeted_library_exile_template
     exile_search = targeted_library_exile_template(normalized)
     if exile_search is not None:return exile_search

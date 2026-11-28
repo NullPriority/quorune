@@ -53,12 +53,23 @@ def apply_entry_counter_operation(event,payload,children,operation,*,effect_id):
         return
     if isinstance(operation,ApplyEntryCounterReplacement):
         from .application import apply_replacement
-        matching=[i for i,child in enumerate(children) if child.event_id==operation.event_id]
-        if event.kind!='zone.change' or len(matching)!=1:
-            raise ReplacementEffectError('Entry counter replacement subject is unavailable')
-        index=matching[0];choice=replacement_choice(children[index],(operation.effect,))
-        if choice is None:raise ReplacementEffectError('Entry counter replacement is no longer applicable')
-        children[index]=apply_replacement(choice,(operation.effect,),operation.effect.effect_id)
+        event_ids = (operation.event_id, *operation.member_event_ids)
+        matching = [index for index, child in enumerate(children) if child.event_id in event_ids]
+        if event.kind != "zone.change" or len(matching) != len(event_ids):
+            raise ReplacementEffectError("Entry counter replacement subject is unavailable")
+        if operation.member_event_ids and (
+            event.affected_object is None
+            or any(children[index].affected_object != event.affected_object for index in matching)
+        ):
+            raise ReplacementEffectError("Entry counter replacement escaped its original permanent")
+        updates = []
+        for index in matching:
+            choice = replacement_choice(children[index], (operation.effect,))
+            if choice is None:
+                raise ReplacementEffectError("Entry counter replacement is no longer applicable")
+            updates.append((index, apply_replacement(choice, (operation.effect,), operation.effect.effect_id)))
+        for index, changed in updates:
+            children[index] = changed
     elif isinstance(operation,AddAffectedObjectCounter):
         add_entry_counters(event,payload,children,operation,effect_id=effect_id)
     elif isinstance(operation,GrantAffectedObjectSubtype):

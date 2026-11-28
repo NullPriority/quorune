@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
@@ -9,6 +10,8 @@ from common import ROOT
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.oracle_ir import compile_oracle_card
+from quorune.record import authoritative_state_hash
+from quorune.rules.activation.paid_characteristic_price import PAID_ENCHANTMENT_MANA_VALUE_CONTEXT
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.rules.casting.model import CastProposalError
 from quorune.rules.global_alternative_cost_model import TURN_LIMITED_ALTERNATIVE_CAPABILITY
@@ -65,6 +68,111 @@ class TurnLimitedBattlefieldPriceTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.db.close()
         cls.temporary.cleanup()
+
+    def test_demon_native_life_price_uses_only_the_selected_own_turn_allowance(self):
+        game = self.session(761651)
+        engine = game.engine
+        source = self.add(engine, "Demon of Fate's Design")
+        first = self.add(engine, "Fervor", zone="hand", ref="demon-normal-price")
+        second = self.add(engine, "Fervor", zone="hand", ref="demon-life-price")
+        third = self.add(engine, "Fervor", zone="hand", ref="demon-used-price")
+        foreign_zone = self.add(engine, "Fervor", zone="exile", ref="demon-no-zone-grant")
+        flash = self.add(engine, "Dictate of Erebos", zone="hand", ref="demon-flash-other-turn")
+        self.assertTrue(self.binding(game, source)["strict_capability_ready"])
+        self.prepare(game, mana={"C": 2, "R": 1})
+        self.checkpoint(game)
+        self.assertIsNone(self.cast_row(game, foreign_zone))
+        first_price, = self.grant_options(game, first)
+        self.assertEqual(3, first_price["additional_life"])
+        self.cast(game, first, {"C": 2, "R": 1}, option="normal")
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(40, game.state.players["A"].life)
+        later, = self.grant_options(game, second)
+        self.assertEqual(first_price["id"], later["id"])
+        self.cast(game, second, {}, grant=True)
+        self.assertEqual(37, game.state.players["A"].life)
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual([], self.grant_options(game, third))
+        self.advance(game, lambda active: active.state.active_player == "B" and active.state.pending_decision.kind == "priority")
+        self.priority(game, "A")
+        self.assertEqual([], self.grant_options(game, flash))
+        self.replay(game, load=True)
+
+    def test_demon_native_paid_enchantment_uses_the_saved_mana_value_after_exile(self):
+        game = self.session(761652)
+        engine = game.engine
+        source = self.add(engine, "Demon of Fate's Design")
+        enchantment = self.add(engine, "Fervor", ref="demon-sacrifice-enchantment")
+        other = self.add(engine, "Grizzly Bears", ref="demon-cost-not-enchantment")
+        self.add(engine, "Leyline of the Void", seat="B")
+        self.prepare(game, mana={"C": 2, "B": 1})
+        self.checkpoint(game)
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer, = [action for action in actions if action["id"].startswith(f"activate:{source.ref}:")]
+        baseline = authoritative_state_hash(game.state)
+        for invalid in (source, other):
+            rejected = game.act("pilot:A", {"action_id": offer["id"], "pay": "auto", "cost_cards": [invalid.ref]})
+            self.assertFalse(rejected.ok)
+            self.assertEqual(baseline, authoritative_state_hash(game.state))
+        accepted = game.act("pilot:A", {"action_id": offer["id"], "pay": "auto", "cost_cards": [enchantment.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("exile", game.state.cards[enchantment.object_id].zone)
+        ability, = game.state.stack
+        payment = ability.context[PAID_ENCHANTMENT_MANA_VALUE_CONTEXT]
+        self.assertEqual(enchantment.object_id, payment["paid_object_id"])
+        self.assertEqual(3, payment["snapshot"]["mana_value"])
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(9, game.engine._numeric_stat(source.object_id, "power"))
+        self.assertEqual(6, game.engine._numeric_stat(source.object_id, "toughness"))
+        self.replay(game, load=True)
+
+    def test_demon_life_price_preserves_library_permission_and_only_allows_x_zero(self):
+        game = self.session(761653)
+        engine = game.engine
+        source = self.add(engine, "Demon of Fate's Design")
+        self.add(engine, "Future Sight")
+        spell = self.add(engine, "The Meathook Massacre", zone="library", ref="demon-top-meathook")
+        self.assertTrue(self.binding(game, source)["strict_capability_ready"])
+        self.prepare(game)
+        self.checkpoint(game)
+        option, = self.grant_options(game, spell)
+        self.assertEqual(2, option["additional_life"])
+        invalid = {"action_id": "cast:" + spell.ref, "cost_option": option["id"],
+                   "from": "library", "pay": "manual", "payment": {}, "x": 1}
+        self.reject(game, invalid)
+        self.cast(game, spell, {}, option=option["id"], x=0)
+        self.assertEqual(38, game.state.players["A"].life)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("battlefield", game.state.cards[spell.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_demon_compiler_keeps_the_exact_price_and_paid_enchantment_roles(self):
+        record = self.db.lookup("Demon of Fate's Design", fuzzy=False)
+        options = {"capability_registry":self.registry, "capability_profile":PROFILE}
+
+        def require_exact():
+            ir = compile_oracle_card(record, **options)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            activation, = [node for node in ir.faces[0].nodes if node.event == "activate"]
+            self.assertEqual("paid_sacrifice_mana_value", activation.effects[0]["power"]["origin"])
+            self.assertIn(TURN_LIMITED_ALTERNATIVE_CAPABILITY,
+                          {capability for node in ir.faces[0].nodes for capability in node.capability_dependencies})
+
+        require_exact()
+        for original, changed in (
+            ("during each of your turns", "during each opponent's turn"),
+            ("paying life equal", "losing life equal"),
+            ("Sacrifice another enchantment", "Sacrifice another artifact"),
+            ("sacrificed enchantment's mana value", "sacrificed enchantment's toughness"),
+        ):
+            ir = compile_oracle_card(replace(record, oracle_text=record.oracle_text.replace(original, changed)), **options)
+            self.assertNotEqual("exact", ir.status)
+        with patch("quorune.compiler.global_alternative_cost_templates.turn_limited_global_alternative_cost_handler",
+                   return_value=None):
+            with self.assertRaises(AssertionError):
+                require_exact()
 
     def test_complete_originals_bind_their_turn_limited_price(self):
         for index, name in enumerate(ORIGINALS):

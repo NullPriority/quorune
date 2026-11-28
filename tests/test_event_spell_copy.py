@@ -168,30 +168,42 @@ class EventSpellCopyCompilerTests(unittest.TestCase):
             ("you cast", "eq", "copy that spell. You may choose new targets for the copy."),
             ("an opponent casts", "ne", "counter that spell."),
         ):
-            with self.subTest(relation=relation):
-                prefix = f"Whenever {relation} an artifact, instant, or sorcery spell, "
-                binding = fixed_spell_cast_binding_spec(prefix + result)
-                self.assertIsNotNone(binding)
-                self.assertEqual(
-                    {"all": [
+            limit = " This ability triggers only once each turn."
+            for descriptor, types in (
+                ("an artifact, instant, or sorcery", ("artifact", "instant", "sorcery")),
+                ("a creature, artifact, or sorcery", ("artifact", "creature", "sorcery")),
+            ):
+                with self.subTest(relation=relation, descriptor=descriptor):
+                    trigger = f"Whenever {relation} {descriptor} spell, {result}"
+                    binding = fixed_spell_cast_binding_spec(trigger)
+                    self.assertIsNotNone(binding)
+                    expected = {"all": [
                         {"field": "controller", "op": operator, "value": "$source.controller"},
                         {"any": [
                             {"field": "types", "op": "contains_any", "value": [kind]}
-                            for kind in ("artifact", "instant", "sorcery")
+                            for kind in types
                         ]},
-                    ]},
-                    binding.subject.event_condition,
-                )
-                text = prefix + result + " This ability triggers only once each turn."
-                self.assertEqual("exact", compile_oracle_card(query_record(text), capability_registry=registry,
-                    capability_profile="commander_review").status)
-                for unsupported in (
-                    text.replace("artifact, instant, or", "artifact, instant, and"),
-                    text.replace("artifact, instant, or", "artifact, or instant, or"),
-                    text.replace("an artifact, instant, or", "a creature, artifact, or"),
-                ):
-                    self.assertIsNone(fixed_spell_cast_binding_spec(unsupported))
-                    self.assertNotEqual("exact", compile_oracle_card(query_record(unsupported), capability_registry=registry).status)
+                    ]}
+                    self.assertEqual(expected, binding.subject.event_condition)
+                    compiled = compile_oracle_card(query_record(trigger + limit), capability_registry=registry,
+                                                   capability_profile="commander_review")
+                    self.assertEqual("exact", compiled.status, compiled.material_residuals)
+                    node, = compiled.faces[0].nodes
+                    self.assertEqual(expected, node.event_condition)
+            for unsupported in (
+                "an artifact, instant, and sorcery",
+                "an artifact, or instant, or sorcery",
+                "an artifact, artifact, or sorcery",
+                "an artifact, instant, or unrepresented",
+                "an artifact, creature, instant, or sorcery",
+            ):
+                with self.subTest(relation=relation, unsupported=unsupported):
+                    trigger = f"Whenever {relation} {unsupported} spell, {result}{limit}"
+                    self.assertIsNone(fixed_spell_cast_binding_spec(trigger))
+                    compiled = compile_oracle_card(query_record(trigger), capability_registry=registry,
+                                                   capability_profile="commander_review")
+                    self.assertNotEqual("exact", compiled.status)
+                    self.assertTrue(compiled.material_residuals)
 
 
 class EventSpellCopyNativeTests(unittest.TestCase):
@@ -334,6 +346,226 @@ class EventSpellCopyNativeTests(unittest.TestCase):
         changed = replace(record, oracle_text=record.oracle_text.replace("you've cast before it", "any player has cast"))
         ir = compile_oracle_card(changed, capability_registry=self.registry)
         self.assertNotEqual("exact", ir.status)
+
+    def _codie_source(self, session):
+        source = self.add(session.engine, "Codie, Vociferous Codex", ref="codie-source")
+        source.acquired_control_turn_count = -1
+        self.assert_closed(session, source)
+        return source
+
+    def _codie_waiters(self, session):
+        from quorune.rules.next_cast_library_access import NEXT_CAST_LIBRARY_ACCESS
+
+        return [trigger for trigger in session.state.delayed_triggers
+                if trigger.active and NEXT_CAST_LIBRARY_ACCESS in trigger.condition]
+
+    def _codie_offers(self, session, seat="A"):
+        self.priority(session, seat)
+        packet = session.packet("pilot:" + seat, full=True)
+        return {row["id"]: row for row in packet["decision"]["ctx"]["legal"]["actions"]}
+
+    def _activate_codie(self, session, source):
+        offers = self._codie_offers(session)
+        action, = [row for key, row in offers.items() if key.startswith(f"activate:{source.ref}:")]
+        self.assertTrue(action["mana_ability"])
+        response = {"action_id": action["id"], "pay": "manual", "payment": {"C": 4}}
+        result = session.act("pilot:A", response)
+        self.assertTrue(result.ok, result.summary)
+
+    def test_codie_pays_an_x_spell_then_scans_to_the_first_strictly_lesser_sorcery(self):
+        from quorune.rules.next_cast_library_access import NEXT_CAST_LIBRARY_ACCESS
+
+        session = self.session(603638241)
+        source = self._codie_source(session)
+        spell = self.add(session.engine, "Blaze", zone="hand", ref="codie-announced-x")
+        blocked = self.add(session.engine, "Grizzly Bears", zone="hand", ref="codie-blocked-permanent")
+        land = self.add(session.engine, "Plains", zone="hand", ref="codie-legal-land")
+        candidate = self.add(session.engine, "Night's Whisper", zone="library", ref="codie-candidate")
+        split = self.add(session.engine, "Wear // Tear", zone="library", ref="codie-equal-split")
+        equal = self.add(session.engine, "Divination", zone="library", ref="codie-equal-sorcery")
+        permanent = self.add(session.engine, "Grizzly Bears", zone="library", ref="codie-low-permanent")
+        self.prepare(session, mana={"C": 4})
+        self.checkpoint(session)
+
+        options = self._codie_offers(session)
+        self.assertNotIn(f"cast:{blocked.ref}", options)
+        state_before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", {"action_id": f"cast:{blocked.ref}", "pay": "auto"}).ok)
+        self.assertEqual(state_before, authoritative_state_hash(session.state))
+        land_option, = [row for row in options.values() if row["action"] == "play_land" and land.ref in row["id"]]
+        played = session.act("pilot:A", {"action_id": land_option["id"]})
+        self.assertTrue(played.ok, played.summary)
+        self.assertEqual("battlefield", session.state.cards[land.object_id].zone)
+        action = self.action(session, "A", spell)
+        self.assertFalse(session.state.cards[source.object_id].tapped)
+        self.assertEqual([], self._codie_waiters(session))
+        self.assertEqual(0, session.state.players["A"].mana_pool.get("R", 0))
+        before = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:A", {"action_id": action["id"], "x": 2, "targets": ["invalid"], "pay": "auto"})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", {"action_id": action["id"], "x": 2, "targets": ["B"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+        original, delayed = session.state.stack
+        self.assertEqual(("spell", "triggered_ability"), (original.kind, delayed.kind))
+        self.assertEqual((original.ref, "A", 3.0), (
+            delayed.context[NEXT_CAST_LIBRARY_ACCESS]["spell_ref"],
+            delayed.context[NEXT_CAST_LIBRARY_ACCESS]["caster"],
+            delayed.context[NEXT_CAST_LIBRARY_ACCESS]["exclusive_mana_value"],
+        ))
+        self.assertEqual([], self._codie_waiters(session))
+        session = self.replay(session, load=True)
+        self.until(session, lambda game: game.state.cards[candidate.object_id].zone == "exile")
+        self.assertEqual([original.ref], [item.ref for item in session.state.stack])
+        self.assertNotIn(f"cast:{candidate.ref}", self._codie_offers(session))
+        self.assertEqual({split.object_id, equal.object_id, permanent.object_id},
+                         set(session.state.players["A"].zones["library"][:3]))
+        public = json.dumps(session.packet("spectator", full=True))
+        for card in (candidate, split, equal, permanent):
+            self.assertIn(card.ref, public)
+        self.finish(session)
+        option = self._codie_offers(session)[f"cast:{candidate.ref}"]
+        self.assertEqual({"without_mana_cost"}, {row["id"] for row in option["cost_options"]})
+        mana = dict(session.state.players["A"].mana_pool)
+        result = session.act("pilot:A", {
+            "action_id": option["id"], "cost_option": "without_mana_cost", "pay": "manual", "payment": {},
+        })
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(mana, dict(session.state.players["A"].mana_pool))
+        self.finish(session)
+        self.assertEqual("graveyard", session.state.cards[candidate.object_id].zone)
+        self.assertEqual([], self._codie_waiters(session))
+        self.replay(session)
+
+    def test_codie_copied_delayed_ability_keeps_its_sealed_cast_and_original_on_stack(self):
+        from quorune.rules.next_cast_library_access import NEXT_CAST_LIBRARY_ACCESS
+
+        session = self.session(603638270)
+        source = self._codie_source(session)
+        resonator = self.add(session.engine, "Strionic Resonator", ref="codie-resonator")
+        spell = self.add(session.engine, "Blaze", zone="hand", ref="codie-copy-cast")
+        counter = self.add(session.engine, "Counterspell", seat="B", zone="hand", ref="codie-counter")
+        second = self.add(session.engine, "Village Rites", zone="library", ref="codie-copy-second")
+        first = self.add(session.engine, "Lightning Bolt", zone="library", ref="codie-copy-first")
+        self.assert_closed(session, resonator)
+        self.prepare(session, mana={"C": 6})
+        session.state.players["B"].mana_pool["U"] = 2
+        self.checkpoint(session)
+        self._activate_codie(session, source)
+        offer = self.action(session, "A", spell)
+        cast = session.act("pilot:A", {
+            "action_id": offer["id"], "x": 1, "targets": ["B"], "pay": "manual",
+            "payment": {"R": 1, "U": 1},
+        })
+        self.assertTrue(cast.ok, cast.summary)
+        original, = [item for item in session.state.stack if NEXT_CAST_LIBRARY_ACCESS in item.context]
+        action, = [row for key, row in self._codie_offers(session).items()
+                   if key.startswith(f"activate:{resonator.ref}:")]
+        copied = session.act("pilot:A", {
+            "action_id": action["id"], "targets": [original.ref], "pay": "manual", "payment": {"C": 2},
+        })
+        self.assertTrue(copied.ok, copied.summary)
+        self.until(session, lambda game: sum(NEXT_CAST_LIBRARY_ACCESS in item.context for item in game.state.stack) == 2)
+        first_instance, second_instance = [item for item in session.state.stack if NEXT_CAST_LIBRARY_ACCESS in item.context]
+        self.assertEqual(original.ref, first_instance.ref)
+        self.assertNotEqual(original.ref, second_instance.ref)
+        self.assertEqual(first_instance.context[NEXT_CAST_LIBRARY_ACCESS], second_instance.context[NEXT_CAST_LIBRARY_ACCESS])
+        self.assertEqual(2.0, second_instance.context[NEXT_CAST_LIBRARY_ACCESS]["exclusive_mana_value"])
+        session = self.replay(session, load=True)
+        self.cast_for(session, "B", counter, [original.context[NEXT_CAST_LIBRARY_ACCESS]["spell_ref"]])
+        self.until(session, lambda game: game.state.cards[spell.object_id].zone == "graveyard")
+        self.assertIn(original.ref, [item.ref for item in session.state.stack])
+        self.assertIn(second_instance.ref, [item.ref for item in session.state.stack])
+        self.until(session, lambda game: game.state.cards[first.object_id].zone == "exile")
+        self.assertIn(original.ref, [item.ref for item in session.state.stack])
+        self.assertEqual("library", session.state.cards[second.object_id].zone)
+        first_grant = session.state.cards[first.object_id].annotations["temporary_play_permission"]
+        self.assertEqual(second_instance.ref, first_grant["source"])
+        self.finish(session)
+        second_grant = session.state.cards[second.object_id].annotations["temporary_play_permission"]
+        self.assertEqual(original.ref, second_grant["source"])
+        self.replay(session)
+
+    def test_codie_next_cast_survives_spell_copy_and_source_departure_then_returns_no_match(self):
+        session = self.session(603638242)
+        source = self._codie_source(session)
+        copy_source = self.add(session.engine, "Double Vision")
+        setup_spell = self.add(session.engine, "Divination", zone="hand", ref="codie-before-activation")
+        next_spell = self.add(session.engine, "Blaze", zone="hand", ref="codie-after-departure")
+        bounce = self.add(session.engine, "Unsummon", seat="B", zone="hand")
+        self.assert_closed(session, copy_source)
+        library = session.state.players["A"].zones["library"]
+        for object_id in tuple(library[:-6]):
+            session.engine.move_card(object_id, "outside", log=False)
+        self.prepare(session, mana={"C": 6, "U": 1})
+        session.state.players["B"].mana_pool["U"] = 1
+        self.checkpoint(session)
+
+        self.cast_for(session, "A", setup_spell, reserve={"C": 4})
+        pending_refs = [item.ref for item in session.state.stack]
+        self._activate_codie(session, source)
+        self.assertEqual(pending_refs, [item.ref for item in session.state.stack])
+        pool = {color: amount for color, amount in session.state.players["A"].mana_pool.items() if amount}
+        self.assertEqual({color: 1 for color in "WUBRG"}, pool)
+        self.assertEqual(1, len(self._codie_waiters(session)))
+        self.assertFalse(any(row["action"] == "undo_mana" for row in self._codie_offers(session).values()))
+        checkpoint = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", {"a": "undo_mana", "source": source.ref}).ok)
+        self.assertEqual(checkpoint, authoritative_state_hash(session.state))
+        self.assertEqual(1, len(self._codie_waiters(session)))
+        self.until(session, lambda game: any(item.kind == "spell_copy" for item in game.state.stack))
+        self.assertEqual(1, len(self._codie_waiters(session)))
+        self.cast_for(session, "B", bounce, [source.ref])
+        self.until(session, lambda game: game.state.cards[source.object_id].zone == "hand")
+        self.assertEqual(1, len(self._codie_waiters(session)))
+        session = self.replay(session, load=True)
+        self.finish(session)
+        unqualified = set(session.state.players["A"].zones["library"])
+        self.assertEqual(2, len(unqualified))
+        option = self.action(session, "A", next_spell)
+        result = session.act("pilot:A", {"action_id": option["id"], "x": 0, "targets": ["B"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual([], self._codie_waiters(session))
+        self.finish(session)
+        self.assertEqual(unqualified, set(session.state.players["A"].zones["library"]))
+        self.assertEqual([], session.state.players["A"].zones["exile"])
+        self.replay(session)
+
+    def test_codie_free_cast_keeps_the_additional_cost_and_unused_grant_expires(self):
+        for use_grant in (False, True):
+            with self.subTest(use_grant=use_grant):
+                session = self.session(603638243 + use_grant)
+                source = self._codie_source(session)
+                creature = self.add(session.engine, "Grizzly Bears", ref="codie-sacrifice-cost")
+                spell = self.add(session.engine, "Blaze", zone="hand", ref="codie-cost-trigger")
+                candidate = self.add(session.engine, "Village Rites", zone="library", ref="codie-rites")
+                self.prepare(session, mana={"C": 4})
+                self.checkpoint(session)
+                offer = self.action(session, "A", spell)
+                result = session.act("pilot:A", {"action_id": offer["id"], "x": 1, "targets": ["B"], "pay": "auto"})
+                self.assertTrue(result.ok, result.summary)
+                self.until(session, lambda game: game.state.cards[candidate.object_id].zone == "exile")
+                offer = self._codie_offers(session)[f"cast:{candidate.ref}"]
+                self.assertEqual({"without_mana_cost"}, {row["id"] for row in offer["cost_options"]})
+                response = {"action_id": offer["id"], "cost_option": "without_mana_cost", "pay": "manual", "payment": {}}
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:A", response).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                if use_grant:
+                    session = self.replay(session, load=True)
+                    result = session.act("pilot:A", {**response, "sacrifice_cards": [creature.ref]})
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertEqual("graveyard", session.state.cards[creature.object_id].zone)
+                    self.finish(session)
+                else:
+                    self.finish(session)
+                    turn = session.state.turn_sequence
+                    self.until(session, lambda game: game.state.turn_sequence > turn)
+                    self.assertNotIn(f"cast:{candidate.ref}", self._codie_offers(session))
+                    self.assertEqual("exile", session.state.cards[candidate.object_id].zone)
+                self.assertIsNone(session.engine._temporary_play_permission("A", session.state.cards[candidate.object_id]))
+                self.replay(session)
 
     def test_actual_jin_copies_departed_spell_and_counters_only_first_opponent(self):
         session = self.session(603638201)
@@ -1006,6 +1238,72 @@ class EventSpellCopyNativeTests(unittest.TestCase):
             self.assertFalse(rejected["strict_capability_ready"], rejected)
         retained, _ = register_card(self.db, registry, "Reflections of Littjara")
         self.assertTrue(retained["strict_capability_ready"], retained["blockers"])
+
+
+class TurnCreatureCastDrawContractTests(unittest.TestCase):
+    def delayed_snapshot(self):
+        from quorune.turn_creature_cast_draw_model import TURN_CREATURE_CAST_DRAW_FIELD, TURN_CREATURE_CAST_DRAW_LABEL
+
+        return {
+            "trigger_id": "witness-delay", "ref": "DT1", "controller": "A",
+            "label": TURN_CREATURE_CAST_DRAW_LABEL, "source_object_id": None, "event_kind": "spell.cast",
+            "condition": {TURN_CREATURE_CAST_DRAW_FIELD: 1}, "stack_template": {}, "once": False,
+            "created_turn_sequence": 4, "expires_turn_sequence": 4,
+        }
+
+    def test_repeated_draw_snapshot_rejects_crossed_and_open_delayed_shapes(self):
+        from quorune.event_spell_copy_model import NEXT_CAST_COPY_FIELD, NextCastCopySpec
+        from quorune.model import DelayedTrigger
+        from quorune.turn_creature_cast_draw_model import TURN_CREATURE_CAST_DRAW_FIELD, validate_turn_creature_cast_draw_effect
+        from quorune.turn_creature_cast_draw_model import turn_creature_cast_draw_effect
+
+        payload = self.delayed_snapshot()
+        trigger = DelayedTrigger.from_dict(payload)
+        self.assertEqual(trigger, DelayedTrigger.from_dict(trigger.to_dict()))
+        for change in (
+            {"once": True}, {"expires_turn_sequence": 5}, {"event_kind": "spell.copy"},
+            {"stack_template": {"context": {"dynamic_effects": [{"op": "draw", "player": "B"}]}}},
+            {"source_object_id": "unrelated"},
+            {"condition": {TURN_CREATURE_CAST_DRAW_FIELD: True}},
+            {"condition": {TURN_CREATURE_CAST_DRAW_FIELD: 1, NEXT_CAST_COPY_FIELD: NextCastCopySpec("any").to_dict()}},
+        ):
+            with self.assertRaises(ValueError):
+                DelayedTrigger.from_dict({**payload, **change})
+        effect = turn_creature_cast_draw_effect()
+        validate_turn_creature_cast_draw_effect(effect)
+        for change in (
+            {"once": True}, {"controller": "$opponent"}, {TURN_CREATURE_CAST_DRAW_FIELD: True},
+            {NEXT_CAST_COPY_FIELD: NextCastCopySpec("any").to_dict()},
+        ):
+            with self.assertRaises(ValueError):
+                validate_turn_creature_cast_draw_effect({**effect, **change})
+
+    def test_repeated_draw_reads_sealed_cast_or_rejects_stale_and_other_occurrences(self):
+        from dataclasses import replace
+        from types import SimpleNamespace
+        from quorune.delayed_triggers import turn_creature_cast_draw_occurrence_context
+        from quorune.model import DelayedTrigger
+        from quorune.rules.spell_cast_events import SpellCastEvent
+        from quorune.trigger_processing import TriggerProcessingOwner
+
+        trigger = DelayedTrigger.from_dict(self.delayed_snapshot())
+        state = SimpleNamespace(turn_sequence=4, delayed_triggers=[trigger])
+        owner = TriggerProcessingOwner(SimpleNamespace(state=state))
+        cast = SpellCastEvent("creature", "source", "source@1", "A", "hand", "S1", ("creature",),
+                              schema_version=1)
+        context = cast.to_context()
+        self.assertEqual([trigger], owner.matching_delayed_triggers("spell.cast", context))
+        self.assertEqual([trigger], owner.matching_delayed_triggers("spell.cast", context))
+        self.assertEqual([], owner.matching_delayed_triggers("spell.copy", context))
+        self.assertEqual([], owner.matching_delayed_triggers("spell.cast", replace(cast, controller="B").to_context()))
+        self.assertEqual([], owner.matching_delayed_triggers("spell.cast", replace(cast, types=("instant",)).to_context()))
+        self.assertEqual({"dynamic_effects": [{"op": "draw", "player": "A", "count": 1, "private": True}]},
+                         turn_creature_cast_draw_occurrence_context(state, trigger, context))
+        state.turn_sequence += 1
+        with self.assertRaises(ValueError):
+            turn_creature_cast_draw_occurrence_context(state, trigger, context)
+        self.assertEqual([], owner.matching_delayed_triggers("spell.cast", context))
+        self.assertFalse(trigger.active)
 
 
 class DirectCastSpellTokenReferenceTests(unittest.TestCase):
@@ -1714,3 +2012,37 @@ class MagecraftRummageOrdinalTests(InheritedNativeFixture, unittest.TestCase):
                         ("unspent red mana","unspent blue mana")):
             changed=replace(card,oracle_text=card.oracle_text.replace(old,new))
             self.assertNotEqual("exact",compile_oracle_card(changed,capability_registry=self.registry).status)
+
+
+class MagecraftRummageOrdinalTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary=tempfile.TemporaryDirectory()
+        path=Path(cls.temporary.name)/"magecraft-ordinal.sqlite3"
+        fixtures=ROOT/"tests/fixtures"
+        build_fixture_database([fixtures/name for name in (
+            "bound-effect-program-cards.json","event-spell-copy-cards.json",
+            "ability-source-counter-cards.json","earthbend-cards.json",
+        )],path)
+        cls.db=CardDatabase(path)
+        cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition("Magecraft ordinal",[
+            DeckEntry("Isamaru, Hound of Konda",1,"commander"),DeckEntry("Generic Bound Plains",30),
+        ],["Isamaru, Hound of Konda"])
+
+    def _ashling(self,seed):
+        game=self.session(seed)
+        source=self.add(game.engine,"Ashling, Flame Dancer")
+        self.assert_closed(game,source)
+        return game,source
+
+    def _rummage(self,game):
+        self.assertEqual("choice.apnap",self.resolve(game).kind)
+        self.assertEqual(["pilot:A"],game.pending_principals())
+        price=next(game.state.cards[oid] for oid in game.state.players["A"].zones["hand"]
+                   if game.state.cards[oid].printed_name=="Generic Bound Plains")
+        hand=len(game.state.players["A"].zones["hand"])
+        result=game.act("pilot:A",{"action_id":"choose","cards":[price.ref]})
+        self.assertTrue(result.ok,result.summary)
+        self.assertEqual(hand,len(game.state.players["A"].zones["hand"]))
+        self.assertEqual("graveyard",game.state.cards[price.object_id].zone)

@@ -165,6 +165,26 @@ def is_closed_targeted_equipment_attachment_program(program) -> bool:
     return bool(required) and set(required).issubset(program.capability_dependencies)
 
 
+def is_restricted_source_equipment_recipient(spec) -> bool:
+    """Admit the printed controller-relative legendary or subtype-qualified creature role."""
+    from ..compiler.direct_target import DirectPermanentTargetSpec
+
+    legendary_creature = DirectPermanentTargetSpec(
+        types_any=("creature",), supertypes_any=("legendary",), controller_relation="you",
+    )
+    return spec == legendary_creature or (
+        (spec.types_any == ("creature",) or spec.types_all == ("creature",))
+        and bool(spec.subtypes_any or spec.subtypes_none)
+        and spec == DirectPermanentTargetSpec(
+            types_any=spec.types_any,
+            types_all=spec.types_all,
+            subtypes_any=spec.subtypes_any,
+            subtypes_none=spec.subtypes_none,
+            controller_relation="you",
+        )
+    )
+
+
 def fixed_attachment_action_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],
@@ -226,18 +246,7 @@ def fixed_attachment_action_node_capabilities(
         except (TypeError, ValueError):
             return ()
         opponent = DirectPermanentTargetSpec(types_any=("creature",), controller_relation="opponent")
-        restricted_controller = (
-            (spec.types_any == ("creature",) or spec.types_all == ("creature",))
-            and (spec.subtypes_any or spec.subtypes_none)
-            and spec == DirectPermanentTargetSpec(
-                types_any=spec.types_any,
-                types_all=spec.types_all,
-                subtypes_any=spec.subtypes_any,
-                subtypes_none=spec.subtypes_none,
-                controller_relation="you",
-            )
-        )
-        if spec != opponent and not restricted_controller:
+        if spec != opponent and not is_restricted_source_equipment_recipient(spec):
             return ()
         return (
             FIXED_SOURCE_ATTACHMENT_CAPABILITY,

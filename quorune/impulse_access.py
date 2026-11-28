@@ -374,11 +374,14 @@ def grant_temporary_cast_permission(
     card: CardInstance,
     grant: TemporaryCastPermissionGrant,
     reason: str,
+    exclusive_free_cast: bool = False,
 ) -> str:
     """Commit one typed zone-pinned spell-cast permission."""
 
     if not isinstance(grant, TemporaryCastPermissionGrant):
         raise GameRuleError("Cast permission requires a typed grant")
+    if type(exclusive_free_cast) is not bool or (exclusive_free_cast and not grant.without_mana_cost):
+        raise GameRuleError("An exclusive free cast requires a free base price")
     if grant.player not in host.state.players or card.zone == "outside":
         raise GameRuleError("Cast permission requires an in-game player and card")
     permission = {
@@ -389,6 +392,8 @@ def grant_temporary_cast_permission(
         "allow_spell": True,
         "source": grant.source,
     }
+    if exclusive_free_cast:
+        permission["allows_other_spell_costs"] = False
     if grant.duration is ImpulseAccessDuration.UNTIL_USED:
         if grant.not_before_turn_sequence <= host.state.turn_sequence:
             raise GameRuleError(

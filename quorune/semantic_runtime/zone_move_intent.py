@@ -3,7 +3,7 @@ from __future__ import annotations
 """Immutable zone-movement intents and replacement selection values."""
 
 from dataclasses import dataclass
-from typing import Literal, Mapping
+from typing import Literal, Mapping, TYPE_CHECKING
 
 from ..entry_counter_model import EffectEntryCounter
 from ..replacement.immutable import FrozenMap, freeze_value
@@ -15,7 +15,7 @@ from ..fractional_quantity_model import HalfQuantitySpec
 from ..query_effect_amount_model import OpponentHandMillCount
 from ..selected_graveyard_mill_count import SelectedGraveyardMillCount
 from ..rules.milled_creature_tokens import MilledCreatureTokens
-from ..rules.committed_mill_cards import MillAdventuresToHand
+from ..rules.committed_mill_cards import MillAdventuresToHand, MilledManaDamage
 from ..rules.milled_permanent_battlefield import MillOnePermanentToBattlefield
 from ..rules.mill_paid_hand_return import MillPaidHandReturn
 from ..rules.milled_creature_land_to_hand import MillCreatureLandToHand
@@ -25,6 +25,9 @@ from ..rad_counters import RadMillFollowup
 from ..discard_effect_origin import DiscardEffectOrigin
 from ..hand_library_redraw_model import HandLibraryArrivalOrder
 from ..library_order_model import DepartedLibraryArrivalOrder, LibraryArrivalOrder
+
+if TYPE_CHECKING:
+    from ..rules.entry_subtype_grants import EntryEnchantmentForm
 from ..public_zone_moves import PublicBattlefieldController
 
 
@@ -131,6 +134,27 @@ class MoveObjectsSimultaneouslyIntent:
         )
 
 
+@dataclass(frozen=True, slots=True, kw_only=True)
+class LinkedGraveyardManaExileIntent(MoveObjectsSimultaneouslyIntent):
+    """Link only committed graveyard exiles to their sealed entry source."""
+
+    source: ContinuousObjectIdentity
+    pair: str
+    parent_stack_ref: str
+
+    def __post_init__(self) -> None:
+        from ..linked_exile_return_model import validate_linked_ability_binding
+
+        MoveObjectsSimultaneouslyIntent.__post_init__(self)
+        validate_linked_ability_binding(self.pair)
+        if (not isinstance(self.source, ContinuousObjectIdentity)
+                or type(self.parent_stack_ref) is not str or not self.parent_stack_ref
+                or self.expected_zones != ("graveyard",) or self.destination != "exile"
+                or len(self.object_refs) > 3 or self.owned_only or self.controlled_only
+                or self.transition_kind is not ZoneTransitionKind.ORDINARY):
+            raise ValueError("Linked graveyard mana requires the original three-target public exile")
+
+
 @dataclass(frozen=True, slots=True)
 class FrontFaceGraveyardCreatureReturnIntent(MoveObjectsSimultaneouslyIntent):
     """Return the selected owned creature cards using their legal printed fronts."""
@@ -192,6 +216,7 @@ class ZoneMoveIntent:
     manifest_entry: bool = False
     cloak_entry: bool = False
     transformed_entry: bool = False
+    entry_enchantment: EntryEnchantmentForm | None = None
 
     @property
     def library_face_down_entry(self) -> bool:
@@ -215,6 +240,14 @@ class ZoneMoveIntent:
             raise ValueError("Transformed return requires one exact owner-bound graveyard incarnation")
         if not isinstance(self.transition_kind, ZoneTransitionKind):
             raise ValueError("Zone move transition kind must be typed")
+        if self.entry_enchantment is not None:
+            from ..rules.entry_subtype_grants import EntryEnchantmentForm
+
+            if (not isinstance(self.entry_enchantment, EntryEnchantmentForm) or self.expected_zones != ("graveyard",)
+                    or self.destination != "battlefield" or self.expected_zone_change_counter is None
+                    or self.library_face_down_entry or self.effect_entry_counters
+                    or self.transition_kind is not ZoneTransitionKind.ORDINARY):
+                raise ValueError("Enchantment return requires one original graveyard incarnation")
         if self.expected_zone_change_counter is not None and (
             type(self.expected_zone_change_counter) is not int
             or self.expected_zone_change_counter < 0
@@ -349,7 +382,7 @@ class MillCardsIntent:
     replacement_selections: tuple[str | FrozenMap, ...] = ()
     followup: (
         MilledCreatureTokens | RadMillFollowup | MillAdventuresToHand | MillOnePermanentToBattlefield
-        | MillPaidHandReturn | MillCreatureLandToHand | MilledPermanentRecovery | None
+        | MillPaidHandReturn | MillCreatureLandToHand | MilledPermanentRecovery | MilledManaDamage | None
     ) = None
 
     def __post_init__(self) -> None:
@@ -379,6 +412,9 @@ class MillCardsIntent:
         if isinstance(self.followup, RadMillFollowup):
             if players or self.actor != self.player or type(self.count) is not int or self.count <= 0:
                 raise ValueError("Radiation requires resolved single-player Mill on its controller")
+        elif isinstance(self.followup, MilledManaDamage):
+            if players or self.actor != self.player or type(self.count) is not int or self.count <= 0:
+                raise ValueError("Milled mana-value damage requires fixed single-player Mill on its controller")
         elif isinstance(self.followup, (MillAdventuresToHand, MillOnePermanentToBattlefield, MillPaidHandReturn, MillCreatureLandToHand)):
             if (players or self.actor != self.player or type(self.count) is not int
                     or self.count != self.followup.effect()["count"]):

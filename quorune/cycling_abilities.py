@@ -2,9 +2,9 @@ from __future__ import annotations
 
 """Typed Cycling and Typecycling activation descriptors.
 
-The represented grammar is deliberately bounded to fixed generic, colored,
-and colorless mana symbols. Variable, hybrid, Phyrexian, snow, nonmana,
-granted, trigger, modifier, and prohibition variants remain residuals.
+The represented grammar covers ordinary fixed mana and one exact variable
+self-discard price. Other variable, hybrid, Phyrexian, snow, and nonmana
+prices remain outside these descriptors.
 """
 
 from dataclasses import dataclass
@@ -17,6 +17,9 @@ from .util import mana_cost_to_vector
 
 
 CYCLING_HANDLER_ID = "ability.activated.cycling.v1"
+VARIABLE_CYCLING_HANDLER_ID = "ability.activated.cycling.v2"
+VARIABLE_CYCLING_CAPABILITY = "activation.cycling.announced_x"
+VARIABLE_CYCLING_PRICE = "{X}{1}{U}"
 TYPECYCLING_HANDLER_ID = "ability.activated.typecycling.v1"
 CYCLING_MECHANIC_ID = "cycling"
 _ABILITY_ID = re.compile(r"^ab[1-9][0-9]*(?::typecycling-instance:[1-4])?$")
@@ -25,6 +28,7 @@ _ORDINARY_CYCLING = re.compile(
     rf"^Cycling\s+(?P<cost>{_ORDINARY_COST})\.?$",
     re.IGNORECASE,
 )
+_VARIABLE_CYCLING = re.compile(rf"^Cycling\s+(?P<cost>{re.escape(VARIABLE_CYCLING_PRICE)})\.?$", re.IGNORECASE)
 _TYPECYCLING_LABELS: dict[str, tuple[str, dict[str, list[str]]]] = {
     "basic land": (
         "basic land",
@@ -137,13 +141,20 @@ class OrdinaryCyclingAbilitySpec:
     oracle_line: str
     cost_text: str
     mana_cost: FrozenMap
+    announced_x_symbols: int | None = None
 
     def __post_init__(self) -> None:
+        fixed_price = self.cost_text
+        if self.announced_x_symbols is not None:
+            if (type(self.announced_x_symbols) is not int or self.announced_x_symbols != 1
+                    or self.cost_text != VARIABLE_CYCLING_PRICE):
+                raise CyclingAbilityError("Variable Cycling requires its exact ordinary X and fixed mana")
+            fixed_price = self.cost_text.removeprefix("{X}")
         frozen = _validate_fixed_mana_fields(
             ability_id=self.ability_id,
             line_index=self.line_index,
             oracle_line=self.oracle_line,
-            cost_text=self.cost_text,
+            cost_text=fixed_price,
             mana_cost=self.mana_cost,
         )
         object.__setattr__(self, "mana_cost", frozen)
@@ -155,6 +166,7 @@ class OrdinaryCyclingAbilitySpec:
             "oracle_line": self.oracle_line,
             "cost_text": self.cost_text,
             "mana_cost": thaw_value(self.mana_cost),
+            **({"announced_x_symbols": self.announced_x_symbols} if self.announced_x_symbols is not None else {}),
         }
 
     @classmethod
@@ -169,9 +181,11 @@ class OrdinaryCyclingAbilitySpec:
                 "oracle_line",
                 "cost_text",
                 "mana_cost",
-            },
+            } | ({"announced_x_symbols"} if "announced_x_symbols" in value else set()),
             field="ordinary Cycling ability",
         )
+        if "announced_x_symbols" in value and type(value["announced_x_symbols"]) is not int:
+            raise CyclingAbilityError("Variable Cycling requires its integer X symbol count")
         if not all(
             isinstance(value[field], str)
             for field in ("ability_id", "oracle_line", "cost_text")
@@ -188,20 +202,25 @@ class OrdinaryCyclingAbilitySpec:
             oracle_line=value["oracle_line"],
             cost_text=value["cost_text"],
             mana_cost=FrozenMap(mana_cost),
+            announced_x_symbols=value.get("announced_x_symbols"),
         )
 
     def to_activated_ability(self) -> Any:
         from .abilities import ActivatedAbility
 
+        cost_text = self.cost_text
+        if self.announced_x_symbols is not None:
+            cost_text += ", Discard this card"
         return ActivatedAbility(
             ability_id=self.ability_id,
             line_index=self.line_index,
             oracle_line=self.oracle_line,
-            cost_text=self.cost_text,
+            cost_text=cost_text,
             effect_text="Draw a card.",
             zones=("hand",),
             mana=thaw_value(self.mana_cost),
             discard_source=True,
+            announced_x_symbols=self.announced_x_symbols,
         )
 
 
@@ -326,11 +345,13 @@ def compile_ordinary_cycling_ability(
 ) -> OrdinaryCyclingAbilitySpec | None:
     """Compile one closed fixed-mana Cycling line or return ``None``."""
 
-    match = _ORDINARY_CYCLING.fullmatch(material_line.strip())
+    variable = _VARIABLE_CYCLING.fullmatch(material_line.strip())
+    match = variable or _ORDINARY_CYCLING.fullmatch(material_line.strip())
     if match is None:
         return None
     cost_text = match.group("cost").upper()
-    mana_cost, complex_symbols = mana_cost_to_vector(cost_text)
+    fixed_price = cost_text.removeprefix("{X}") if variable else cost_text
+    mana_cost, complex_symbols = mana_cost_to_vector(fixed_price)
     if complex_symbols:
         return None
     return OrdinaryCyclingAbilitySpec(
@@ -339,6 +360,7 @@ def compile_ordinary_cycling_ability(
         oracle_line=oracle_line,
         cost_text=cost_text,
         mana_cost=FrozenMap(mana_cost),
+        announced_x_symbols=1 if variable else None,
     )
 
 
@@ -372,9 +394,10 @@ def compile_typecycling_ability(
 def ordinary_cycling_handler_descriptor(
     spec: OrdinaryCyclingAbilitySpec,
 ) -> dict[str, Any]:
+    variable = spec.announced_x_symbols is not None
     return {
-        "handler_id": CYCLING_HANDLER_ID,
-        "schema_version": 1,
+        "handler_id": VARIABLE_CYCLING_HANDLER_ID if variable else CYCLING_HANDLER_ID,
+        "schema_version": 2 if variable else 1,
         "event": "activate",
         "ability": spec.to_dict(),
     }

@@ -784,7 +784,7 @@ class FixedLibrarySearchRuntimeTests(unittest.TestCase):
         mutant_card = self.add_changeling_to_library(mutated)
         mutant_program = self.search_program(mutated, self.moggcatcher)
         with patch(
-            "quorune.selection.searching.object_matches_query",
+            "quorune.selection.search_predicates.object_matches_query",
             return_value=False,
         ):
             options = mutated.engine._semantic_search_options(

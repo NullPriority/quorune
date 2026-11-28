@@ -352,6 +352,43 @@ def exert_mana_runtime_dependencies(program):
     return (*spec.result.capability_dependencies, *decode_mana_spend_rule(spec.spend_restriction).capability_dependencies)
 
 
+def next_cast_library_mana_runtime_dependencies(program):
+    """Keep the paid mana result and its callable catalog in agreement."""
+    from dataclasses import replace
+
+    from ..abilities import ActivatedAbility
+    from ..compiler.activated_costs import activated_ability_cost
+    from ..replacement.immutable import thaw_value
+    from ..rules.next_cast_library_access import (
+        NEXT_CAST_LIBRARY_ACCESS, NEXT_CAST_LIBRARY_MANA_CAPABILITY, NEXT_CAST_LIBRARY_MANA_RESULT_VERSION,
+    )
+    from .activated_abilities import ACTIVATED_ABILITY_CATALOG_HANDLER_ID
+
+    def denotes_next_cast(value):
+        return isinstance(value, Mapping) and (
+            value.get("schema_version") == NEXT_CAST_LIBRARY_MANA_RESULT_VERSION
+            or value.get("kind") == NEXT_CAST_LIBRARY_ACCESS
+        )
+
+    catalogs = tuple(row["ability"] for row in program.handlers
+                     if row.get("handler_id") == ACTIVATED_ABILITY_CATALOG_HANDLER_ID)
+    results = tuple(row for row in program.handlers if row.get("handler_id") == FIXED_MANA_RESULT_HANDLER_ID)
+    if not (any(denotes_next_cast(row.get("fixed_mana_result")) for row in catalogs)
+            or any(denotes_next_cast(row["ability"].get("result")) for row in results)):
+        return ()
+    if (len(catalogs) != 1 or len(results) != 1 or len(program.handlers) != 2
+            or program.event != "activate" or program.active_zone != "battlefield"
+            or program.target_schema is not None or program.event_condition is not None or program.effects):
+        raise ValueError("Next-cast mana requires its paired fixed result and activation catalog")
+    spec, = fixed_mana_specs_from_descriptors(results)
+    expected = replace(spec.to_activated_ability(), builtin_semantic_key=program.key)
+    if (spec.result is None or spec.result.kind != NEXT_CAST_LIBRARY_ACCESS
+            or ActivatedAbility.from_dict(thaw_value(catalogs[0])) != expected
+            or thaw_value(program.cost_schema) != activated_ability_cost(expected)):
+        raise ValueError("Next-cast mana changed its printed price, mana or delayed result")
+    return (NEXT_CAST_LIBRARY_MANA_CAPABILITY,)
+
+
 def whole_hand_mana_runtime_dependencies(program, catalogs):
     from dataclasses import replace
 

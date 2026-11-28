@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "timestream_navigator_original",
+  "source": "Pinned August Scryfall Oracle",
+  "cards": [
+    {
+      "cmc": 2,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Timestream Navigator",
+      "oracle_id": "d0896996-ee31-402e-b642-4e7cca4929fe",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\n{2}{U}{U}, {T}, Put this creature on the bottom of its owner's library: Take an extra turn after this one. Activate only if you have the city's blessing.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2023-11-17",
+      "toughness": "1",
+      "type_line": "Creature — Human Pirate Wizard"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren't permanents.",
+      "oracle_id": "d0896996-ee31-402e-b642-4e7cca4929fe",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn't a triggered ability and doesn't use the stack. Players can respond to a spell that will give you your tenth permanent, but they can't respond to getting the city's blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can't respond before you get the city's blessing.",
+      "oracle_id": "d0896996-ee31-402e-b642-4e7cca4929fe",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don't get the city's blessing until it resolves. Players may respond to that spell by trying to change whether you get the city's blessing.",
+      "oracle_id": "d0896996-ee31-402e-b642-4e7cca4929fe",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don't control a permanent or resolving spell with ascend, you don't get the city's blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won't have the city's blessing and the spell will affect creatures you control.",
+      "oracle_id": "d0896996-ee31-402e-b642-4e7cca4929fe",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the \"Legend Rule\" or due to being a creature with 0 toughness), you get the city's blessing before it leaves the battlefield.",
+      "oracle_id": "d0896996-ee31-402e-b642-4e7cca4929fe",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city's blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city's blessing isn't a permanent itself and can't be removed by any effect.",
+      "oracle_id": "d0896996-ee31-402e-b642-4e7cca4929fe",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    }
+  ]
+}

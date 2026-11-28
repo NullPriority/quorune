@@ -137,40 +137,7 @@ def complete_mana_activation(
         restriction=restriction,
         snow_source=source_was_snow,
     )
-    selected_mode = next(
-        (
-            mode
-            for mode in host._mana_modes_for_ability(seat, source, ability)
-            if normalize_mana_bundle(mode.bundle) == base_bundle
-        ),
-        None,
-    )
-    # Explicit activation costs were already committed transactionally by the
-    # activation owner. ManaMode side effects are the equivalent cost plan used
-    # only by automatic payment and must not be applied twice here.
-    result_effects = tuple(
-        effect
-        for effect in (
-            selected_mode.side_effects if selected_mode is not None else ()
-        )
-        if effect.get("op") in {"damage_self", "skip_actor_untap", "sacrifice_if_no_counters",
-                                    GAIN_CONTROLLER_LIFE, PLACE_MANA_POINT_COUNTER}
-    )
-    if result_effects:
-        apply_mana_mode_effects(
-            host,
-            seat,
-            result_effects,
-            source=source,
-            payment_id=str(response.get("_mana_payment_id") or "") or None,
-            replacement_selections_by_event=(
-                response.get("_mana_replacement_selections")
-                if isinstance(
-                    response.get("_mana_replacement_selections"), Mapping
-                )
-                else None
-            ),
-        )
+    selected_mode = _commit_mana_activation_results(host, seat, source, ability, response, base_bundle)
     host._log(
         seat,
         "mana.ability",
@@ -247,6 +214,46 @@ def complete_mana_activation(
         clear_mana_undo_stack(host.state.players[seat].stats)
         return
     host.turn_priority.retain_priority_after_action(seat)
+
+
+def _commit_mana_activation_results(host, seat, source, ability, response, base_bundle):
+    from .rules.next_cast_library_access import NEXT_CAST_LIBRARY_ACCESS
+
+    selected_mode = next(
+        (
+            mode
+            for mode in host._mana_modes_for_ability(seat, source, ability)
+            if normalize_mana_bundle(mode.bundle) == base_bundle
+        ),
+        None,
+    )
+    # Explicit activation costs were already committed transactionally by the
+    # activation owner. ManaMode side effects are the equivalent cost plan used
+    # only by automatic payment and must not be applied twice here.
+    result_effects = tuple(
+        effect
+        for effect in (
+            selected_mode.side_effects if selected_mode is not None else ()
+        )
+        if effect.get("op") in {"damage_self", "skip_actor_untap", "sacrifice_if_no_counters",
+                                    GAIN_CONTROLLER_LIFE, PLACE_MANA_POINT_COUNTER, NEXT_CAST_LIBRARY_ACCESS}
+    )
+    if result_effects:
+        apply_mana_mode_effects(
+            host,
+            seat,
+            result_effects,
+            source=source,
+            payment_id=str(response.get("_mana_payment_id") or "") or None,
+            replacement_selections_by_event=(
+                response.get("_mana_replacement_selections")
+                if isinstance(
+                    response.get("_mana_replacement_selections"), Mapping
+                )
+                else None
+            ),
+        )
+    return selected_mode
 
 
 def _mana_plan_modes(

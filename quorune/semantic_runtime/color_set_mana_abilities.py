@@ -12,8 +12,10 @@ from ..color_set_mana_abilities import (
     COMMANDER_TYPE_SCRY_MANA_HANDLER_ID,
     ColorSetActivatedManaAbilitySpec,
     ColorSetManaAbilityError,
+    ColorSetRelation,
 )
 from ..rules.linked_hand_mana_model import MANA_HANDLER, REQUIREMENTS
+from ..rules.linked_graveyard_mana import MANA_HANDLER as GRAVEYARD_MANA_HANDLER, READER_REQUIREMENTS
 from ..mana_spend_rules import COMMANDER_ENTRY_COUNTER_MANA_CAPABILITY, COMMANDER_TYPE_SCRY_CAPABILITY
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import RuntimeComponentRegistry, exact_fields
@@ -63,8 +65,9 @@ class ColorSetActivatedManaAbilityHandler:
             )
         try:
             spec = ColorSetActivatedManaAbilitySpec.from_dict(ability)
-            if (spec.uses_commander_identity != (self.handler_id not in (COLOR_SET_MANA_HANDLER_ID, MANA_HANDLER))
-                    or (spec.linked_exile_pair is not None) != (self.handler_id == MANA_HANDLER)
+            if (spec.uses_commander_identity != (self.handler_id not in (COLOR_SET_MANA_HANDLER_ID, MANA_HANDLER, GRAVEYARD_MANA_HANDLER))
+                    or (spec.relation is ColorSetRelation.LINKED_EXILE) != (self.handler_id == MANA_HANDLER)
+                    or (spec.relation is ColorSetRelation.LINKED_GRAVEYARD_EXILE) != (self.handler_id == GRAVEYARD_MANA_HANDLER)
                     or spec.commander_type_scry != (self.handler_id == COMMANDER_TYPE_SCRY_MANA_HANDLER_ID)
                     or spec.commander_entry_counters != (self.handler_id == COMMANDER_ENTRY_COUNTER_MANA_HANDLER_ID)):
                 raise ColorSetManaAbilityError("Mana output source does not match its registered authority")
@@ -96,6 +99,11 @@ def default_color_set_mana_ability_registry() -> ColorSetManaAbilityRegistry:
                 handler_id=MANA_HANDLER, family="ability.activated.mana.linked-hand-colors",
                 rule_references=("106.1", "605.2", "605.3b", "607.2a", "607.3"),
                 capability_dependencies=REQUIREMENTS,
+            ),
+            ColorSetActivatedManaAbilityHandler(
+                handler_id=GRAVEYARD_MANA_HANDLER, family="ability.activated.mana.linked-graveyard-colors",
+                rule_references=("106.1", "605.2", "605.3b", "607.2a", "607.3", "608.2d"),
+                capability_dependencies=READER_REQUIREMENTS,
             ),
             ColorSetActivatedManaAbilityHandler(
                 handler_id=COMMANDER_IDENTITY_MANA_HANDLER_ID,

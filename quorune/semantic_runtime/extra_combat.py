@@ -40,17 +40,18 @@ class ExtraCombatHandler:
         try:
             untap = decode_extra_combat_effect(effect, resolved=True)
             followup = effect[EXTRA_COMBAT_FOLLOWUP_FIELD]
-            card_ref = followup.get("source_card", followup.get("exclude_source_card"))
-            if card_ref is not None and card_ref != source.card_ref:
+            targeted = untap is ExtraCombatUntap.TARGET_CREATURE
+            card_ref = followup.get("target_card") if targeted else followup.get("source_card", followup.get("exclude_source_card"))
+            if not targeted and card_ref is not None and card_ref != source.card_ref:
                 raise ValueError("Extra combat untap must retain its source reference")
-            main_phase = untap in {ExtraCombatUntap.GRANTED_COMBAT_CREATURES, ExtraCombatUntap.CONTROLLED_CREATURES_MAIN_PAIR}
+            main_phase = targeted or untap in {ExtraCombatUntap.GRANTED_COMBAT_CREATURES, ExtraCombatUntap.CONTROLLED_CREATURES_MAIN_PAIR}
             intent = ScheduleExtraCombatIntent(
                 actor=context.query.require_active_seat(context.actor),
                 source_ref=source.card_ref or source.stack_ref,
                 reason=context.default_reason,
                 untap=untap,
                 permanent_ref=card_ref,
-                logical_object_id=source.logical_object_id if card_ref is not None else None,
+                logical_object_id=source.logical_object_id if card_ref is not None and not targeted else None,
                 grant_stack_ref=source.stack_ref if main_phase else None,
                 grant_source_object_id=source.object_id if main_phase and source.logical_object_id else None,
                 grant_source_logical_id=source.logical_object_id if main_phase and source.object_id else None,
@@ -101,7 +102,39 @@ def _execute_activated_combat_and_main(sink, intent):
         sink.turn_steps.schedule_main_phase_combat(intent.actor, source=intent.source_ref, grant=item.ref, follow_with_main=True)
 
 
+def _execute_targeted_combat_and_main(sink, intent):
+    from ..extra_combat_model import is_closed_main_combat_spell, own_main_phase_for_combat
+    from ..rules.main_phase_combat_model import MainPhaseCombatInstruction
+
+    item = next((row for row in sink.state.stack if row.ref == intent.grant_stack_ref), None)
+    if (item is None or item.kind not in {"spell", "spell_copy"} or item.controller != intent.actor
+            or item.context.get("currently_resolving") is not True
+            or tuple(item.targets) != (intent.permanent_ref,)):
+        raise SemanticNodeError("Targeted additional combat requires its resolving spell and original target")
+    program = sink.semantics.get(item.semantic_key)
+    if (program is None or not sink.semantic_program_is_current_trusted(program)
+            or not is_closed_main_combat_spell(program)):
+        raise SemanticNodeError("Targeted additional combat lost its registered spell authority")
+    card = sink._resolve_object(intent.actor, intent.permanent_ref, zones={"battlefield"})
+    if card.phased_out or "creature" not in sink._type_parts(str(sink._effective_card_data(card).get("type_line") or ""))[0]:
+        raise SemanticNodeError("The original untap target is no longer a current creature")
+    set_permanent_tapped(sink, card.ref, actor=intent.actor, tapped=False, reason=intent.reason,
+                         logical_object_id=card.logical_object_id)
+    if sink.state.main_phase_combat_schedule is None and sink.state.main_phase_extra_combats is not None:
+        if own_main_phase_for_combat(sink.state, sink.state.active_player):
+            sink.turn_steps.schedule_main_phase_combat(intent.actor, source=intent.source_ref, grant=item.ref,
+                                                       follow_with_main=True)
+    else:
+        sink.turn_steps.schedule_fixed_combats_after_main(
+            intent.actor, source=intent.source_ref,
+            instruction=MainPhaseCombatInstruction.COMBAT_THEN_MAIN_IMMEDIATE_UNTAP,
+        )
+
+
 def execute_extra_combat_intent(sink: Any, intent: ScheduleExtraCombatIntent) -> None:
+    if intent.untap is ExtraCombatUntap.TARGET_CREATURE:
+        _execute_targeted_combat_and_main(sink, intent)
+        return
     if intent.untap is ExtraCombatUntap.CONTROLLED_CREATURES_MAIN_PAIR:
         _execute_activated_combat_and_main(sink, intent)
         return

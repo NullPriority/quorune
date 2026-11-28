@@ -4,11 +4,56 @@
   "source": "Pinned Oracle and rulings for exact departed card returns",
   "cards": [
     {
+      "oracle_id": "66d41377-626d-4ae6-ba86-17bf0c8b3362",
+      "name": "Nim Deathmantle",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "Equipped creature gets +2/+2, has intimidate, and is a black Zombie. (A creature with intimidate can't be blocked except by artifact creatures and/or creatures that share a color with it.)\nWhenever a nontoken creature is put into your graveyard from the battlefield, you may pay {4}. If you do, return that card to the battlefield and attach this Equipment to it.\nEquip {4}",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2022-07-08",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Equip"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
       "oracle_id": "15af3bd0-022b-472e-b21e-29b925b7692b",
       "name": "Mortus Strider",
       "mana_cost": "{1}{U}{B}",
       "cmc": 3.0,
-      "type_line": "Creature \u2014 Skeleton",
+      "type_line": "Creature — Skeleton",
       "oracle_text": "When this creature dies, return it to its owner's hand.",
       "power": "1",
       "toughness": "1",
@@ -57,7 +102,7 @@
       "name": "Demonic Vigor",
       "mana_cost": "{B}",
       "cmc": 1.0,
-      "type_line": "Enchantment \u2014 Aura",
+      "type_line": "Enchantment — Aura",
       "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1.\nWhen enchanted creature dies, return that card to its owner's hand.",
       "power": null,
       "toughness": null,
@@ -106,7 +151,7 @@
       "name": "Squee's Embrace",
       "mana_cost": "{R}{W}",
       "cmc": 2.0,
-      "type_line": "Enchantment \u2014 Aura",
+      "type_line": "Enchantment — Aura",
       "oracle_text": "Enchant creature\nEnchanted creature gets +2/+2.\nWhen enchanted creature dies, return that card to its owner's hand.",
       "power": null,
       "toughness": null,
@@ -294,7 +339,7 @@
       "produced_mana": [],
       "released_at": "2006-10-06",
       "toughness": null,
-      "type_line": "Enchantment \u2014 Aura"
+      "type_line": "Enchantment — Aura"
     },
     {
       "cmc": 1.0,
@@ -344,7 +389,7 @@
       "produced_mana": [],
       "released_at": "2003-07-28",
       "toughness": null,
-      "type_line": "Enchantment \u2014 Aura"
+      "type_line": "Enchantment — Aura"
     },
     {
       "cmc": 1.0,
@@ -372,7 +417,7 @@
       "produced_mana": [],
       "released_at": "",
       "toughness": null,
-      "type_line": "Enchantment \u2014 Aura"
+      "type_line": "Enchantment — Aura"
     },
     {
       "cmc": 2.0,
@@ -419,9 +464,105 @@
       "produced_mana": [],
       "released_at": "2011-01-10",
       "toughness": "2",
-      "type_line": "Creature \u2014 Atog"
+      "type_line": "Creature — Atog"
     },
-    {"oracle_id":"d0e1904e-1a37-41f6-8582-b9ea794bb886","name":"Abduction","mana_cost":"{2}{U}{U}","cmc":4.0,"type_line":"Enchantment — Aura","oracle_text":"Enchant creature\nWhen this Aura enters, untap enchanted creature.\nYou control enchanted creature.\nWhen enchanted creature dies, return that card to the battlefield under its owner's control.","power":null,"toughness":null,"loyalty":null,"defense":null,"colors":["U"],"color_identity":["U"],"keywords":["Enchant"],"produced_mana":[],"layout":"normal","released_at":"1999-04-21","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"not_legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"not_legal","pioneer":"not_legal","predh":"legal","premodern":"legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"not_legal","vintage":"legal"},"faces":[]}
+    {
+      "oracle_id": "d0e1904e-1a37-41f6-8582-b9ea794bb886",
+      "name": "Abduction",
+      "mana_cost": "{2}{U}{U}",
+      "cmc": 4.0,
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant creature\nWhen this Aura enters, untap enchanted creature.\nYou control enchanted creature.\nWhen enchanted creature dies, return that card to the battlefield under its owner's control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1999-04-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": []
+    },
+    {
+      "oracle_id": "a7308a1f-ec46-478e-86ea-33b2ebbd995f",
+      "name": "The Cauldron of Eternity",
+      "mana_cost": "{10}{B}{B}",
+      "cmc": null,
+      "type_line": "Legendary Artifact",
+      "oracle_text": "This spell costs {2} less to cast for each creature card in your graveyard.\nWhenever a creature you control dies, put it on the bottom of its owner's library.\n{2}{B}, {T}, Pay 2 life: Return target creature card from your graveyard to the battlefield. Activate only as a sorcery.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2019-10-04",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
   ],
   "rulings": [
     {
@@ -434,7 +575,7 @@
       "oracle_id": "00cb93a8-5d33-4c6a-9e2a-4b3560f76f3f",
       "published_at": "2018-04-27",
       "source": "wotc",
-      "comment": "Demonic Vigor can enchant a token, but its last ability won\u2019t return the token to your hand."
+      "comment": "Demonic Vigor can enchant a token, but its last ability won’t return the token to your hand."
     },
     {
       "oracle_id": "6a125750-2b8c-4f9d-8173-ac8d14c91ddb",

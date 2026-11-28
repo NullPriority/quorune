@@ -208,6 +208,7 @@ class PutTypedCardFromHandHandler:
         "schema_version",
         "followup",
         "attacking_entry",
+        "original_source_owner_hand_entry_version",
         "_choice_actor",
         "_choice_query",
         "_legal_refs",
@@ -237,8 +238,14 @@ class PutTypedCardFromHandHandler:
         actor: str | None = None,
     ) -> tuple[ObjectQuerySpec, ...]:
         from ..rules.hand_entry_followup import VERSIONED_HAND_ENTRY_FIELDS, decode_hand_entry_followup
+        from ..rules.ordered_source_owner_hand_entry import OWNER_HAND_MOVE, original_owner_hand_move_shape
 
         allowed = {"op", "player", "query", "tapped", "prompt", *VERSIONED_HAND_ENTRY_FIELDS}
+        if actor is not None and OWNER_HAND_MOVE in effect:
+            if (VERSIONED_HAND_ENTRY_FIELDS.intersection(effect) or not original_owner_hand_move_shape(
+                    effect[OWNER_HAND_MOVE], effect.get("query"), effect.get("tapped"))):
+                raise SemanticChoiceError("Original source-owner hand entry has an invalid shape")
+            allowed.add(OWNER_HAND_MOVE)
         if (
             set(effect) - allowed
             or set(effect).intersection({"op", "player", "query", "tapped"})
@@ -253,7 +260,7 @@ class PutTypedCardFromHandHandler:
             )
         try:
             decode_hand_entry_followup(effect)
-            queries = decode_hand_entry_queries(effect["query"])
+            queries = decode_hand_entry_queries(effect["query"], resolved=actor is not None)
         except (KeyError, TypeError, ValueError) as exc:
             raise SemanticChoiceError(
                 "Private hand-entry query is malformed"
@@ -269,7 +276,7 @@ class PutTypedCardFromHandHandler:
         options = tuple(
             sorted(
                 (row for row in context.query.objects(zones=("hand",), owner=context.actor)
-                    if hand_entry_matches(row, queries)),
+                    if hand_entry_matches(row, queries, descriptor=effect["query"])),
                 key=lambda row: row.ref,
             )
         )
@@ -329,6 +336,7 @@ class PutTypedCardFromHandHandler:
     ) -> SemanticChoiceCompletion:
         from ..rules.hand_entry_followup import decode_hand_entry_followup
         from ..rules.attacking_card_entry import attacking_entry_choice, decode_hand_attacking_entry
+        from ..rules.ordered_source_owner_hand_entry import OWNER_HAND_MOVE, original_owner_hand_move_shape
 
         try:
             followup = decode_hand_entry_followup(continuation.effect)
@@ -347,9 +355,8 @@ class PutTypedCardFromHandHandler:
             return SemanticChoiceCompletion()
         actor = str(continuation.effect["_choice_actor"])
         try:
-            predicates = decode_hand_entry_queries(
-                continuation.effect["_choice_query"]
-            )
+            descriptor = continuation.effect["_choice_query"]
+            predicates = decode_hand_entry_queries(descriptor, resolved=True)
         except (KeyError, TypeError, ValueError) as exc:
             raise SemanticChoiceError(
                 "Private hand-entry continuation query is malformed"
@@ -367,7 +374,7 @@ class PutTypedCardFromHandHandler:
         if (
             row is None
             or row.owner != actor
-            or not hand_entry_matches(row, predicates)
+            or not hand_entry_matches(row, predicates, descriptor=descriptor)
             or (identities is not None and row.logical_object_id != identities.get(selected))
         ):
             raise SemanticChoiceError(
@@ -384,6 +391,12 @@ class PutTypedCardFromHandHandler:
             'expected_object_identity': row.logical_object_id,
             'hand_entry_query': continuation.effect['_choice_query'],
         }
+        if OWNER_HAND_MOVE in continuation.effect:
+            marker = continuation.effect[OWNER_HAND_MOVE]
+            if followup is not None or attacking or not original_owner_hand_move_shape(
+                    marker, move["hand_entry_query"], tapped):
+                raise SemanticChoiceError("Original source-owner hand continuation has an invalid shape")
+            move[OWNER_HAND_MOVE] = marker
         if followup is not None:
             move.update(schema_version=continuation.effect["schema_version"], followup=followup.to_dict())
         if attacking:

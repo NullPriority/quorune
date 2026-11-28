@@ -17,6 +17,7 @@ from .rules.activation_counter_cost import SourceCounterRemovalCost
 from .object_predicate import ObjectQuerySpec
 from .linked_exile_return_model import validate_linked_ability_binding
 from .rules.linked_hand_mana_model import MANA_HANDLER, OUTPUT, normalized
+from .rules.linked_graveyard_mana import COLOR_RELATION, MANA_HANDLER as GRAVEYARD_MANA_HANDLER, OUTPUT as GRAVEYARD_OUTPUT
 from .replacement.immutable import FrozenMap, thaw_value
 
 
@@ -55,6 +56,7 @@ class ColorSetRelation(str, Enum):
     OWNER = "owner"
     COMMANDER_IDENTITY = "commander_identity"
     LINKED_EXILE = "linked_exile"
+    LINKED_GRAVEYARD_EXILE = COLOR_RELATION
 
 
 def _exact_fields(
@@ -240,7 +242,7 @@ class ColorSetActivatedManaAbilitySpec:
             )
         ):
             raise ColorSetManaAbilityError("Commander entry counters require their exact commander mana ability")
-        if self.relation is not ColorSetRelation.LINKED_EXILE and self.linked_exile_pair is not None:
+        if self.relation not in {ColorSetRelation.LINKED_EXILE, ColorSetRelation.LINKED_GRAVEYARD_EXILE} and self.linked_exile_pair is not None:
             raise ColorSetManaAbilityError("Only linked exile mana has a linked pair")
         self._validate_query()
 
@@ -260,7 +262,7 @@ class ColorSetActivatedManaAbilitySpec:
             ):
                 raise ColorSetManaAbilityError("Commander identity mana requires its exact payment and color choice")
             return
-        if self.relation is ColorSetRelation.LINKED_EXILE:
+        if self.relation in {ColorSetRelation.LINKED_EXILE, ColorSetRelation.LINKED_GRAVEYARD_EXILE}:
             self._validate_linked_exile_output()
             return
         if query is None:
@@ -320,9 +322,10 @@ class ColorSetActivatedManaAbilitySpec:
 
     def _validate_linked_exile_output(self):
         validate_linked_ability_binding(self.linked_exile_pair)
+        output = GRAVEYARD_OUTPUT if self.relation is ColorSetRelation.LINKED_GRAVEYARD_EXILE else OUTPUT
         if (self.query is not None or self.selection is not ColorSetSelection.CHOOSE_ONE
-                or self.cost_text.casefold() != "{t}" or normalized(self.effect_text) != OUTPUT
-                or normalized(self.oracle_line) != "{t}: " + OUTPUT
+                or self.cost_text.casefold() != "{t}" or normalized(self.effect_text) != output
+                or normalized(self.oracle_line) != "{t}: " + output
                 or not self.tap_source or self.sacrifice_source or self.life_payment
                 or any(self.mana_cost.values()) or self.activation_limit is not None
                 or self.source_counter_removal_cost is not None):
@@ -574,6 +577,8 @@ def color_set_mana_handler_descriptor(
         handler = COMMANDER_TYPE_SCRY_MANA_HANDLER_ID
     elif spec.commander_entry_counters:
         handler = COMMANDER_ENTRY_COUNTER_MANA_HANDLER_ID
+    elif spec.relation is ColorSetRelation.LINKED_GRAVEYARD_EXILE:
+        handler = GRAVEYARD_MANA_HANDLER
     elif spec.linked_exile_pair is not None:
         handler = MANA_HANDLER
     return {

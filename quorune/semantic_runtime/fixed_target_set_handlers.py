@@ -213,7 +213,12 @@ class MoveFixedTargetSetHandler:
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
         from ..linked_exile_activation_model import LINKED_ACTIVATION_BINDING, LINKED_ACTIVATION_PAIR
+        from ..rules.linked_graveyard_mana import PAIR_FIELD, SOURCE_FIELD
 
+        if self.operation == "exile_public_graveyard_targets" and (PAIR_FIELD in effect or SOURCE_FIELD in effect):
+            from .linked_exile_graveyard import lower_linked_graveyard_mana_exile
+
+            return lower_linked_graveyard_mana_exile(self, effect, context)
         if self.operation == "exile_public_graveyard_targets" and (
             LINKED_ACTIVATION_BINDING in effect or LINKED_ACTIVATION_PAIR in effect
         ):

@@ -490,6 +490,53 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{X}{U}",
+      "name": "Repeal",
+      "oracle_id": "b1f2b26c-91b2-4f3c-9f48-6429ec3fde48",
+      "oracle_text": "Return target nonland permanent with mana value X to its owner's hand.\nDraw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-02-23",
+      "toughness": null,
+      "type_line": "Instant"
     }
   ],
   "rulings": [
@@ -528,6 +575,24 @@
       "published_at": "2022-02-18",
       "source": "wotc",
       "comment": "Tameshi's first ability triggers only whenever one or more noncreature permanents are returned to hand from the battlefield. Noncreature permanent cards returned to hand from other zones do not cause this ability to trigger."
+    },
+    {
+      "comment": "If a permanent on the battlefield has {X} in its mana cost, X is considered to be 0.",
+      "oracle_id": "b1f2b26c-91b2-4f3c-9f48-6429ec3fde48",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target permanent is an illegal target by the time Repeal tries to resolve, the spell doesn't resolve. You don't draw a card.",
+      "oracle_id": "b1f2b26c-91b2-4f3c-9f48-6429ec3fde48",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a token that isn't a copy of another object is 0. A token that is a copy of another object has the same mana cost as that object.",
+      "oracle_id": "b1f2b26c-91b2-4f3c-9f48-6429ec3fde48",
+      "published_at": "2021-03-19",
+      "source": "wotc"
     }
   ]
 }

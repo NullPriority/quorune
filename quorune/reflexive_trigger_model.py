@@ -26,6 +26,8 @@ REFLEXIVE_PAID_CREATURE_CONTEXT = 'reflexive_paid_creature'
 TOKEN_CREATION_REFLEXIVE_FIELD = 'token_creation_reflexive'
 SOURCE_COUNTER_REFLEXIVE_FIELD = 'source_counter_reflexive'
 THIRD_SOURCE_TRIGGER_FIELD = 'third_source_resolution_reflexive'
+ENTRANT_X_COUNTER_MARKER = 'reflexive_entrant_paid_x_counter'
+DEPARTURE_X_PLAYER_DAMAGE_OPERATION = "offer_departure_x_player_damage"
 
 
 def _values(value):
@@ -40,6 +42,8 @@ def bound_reflexive_has_targets(effects):
     for effect in effects:
         operation = effect.get('op')
         if operation == DEPARTURE_X_PAYMENT_OPERATION:
+            return True
+        if operation == DEPARTURE_X_PLAYER_DAMAGE_OPERATION:
             return True
         if operation == 'create_token':
             child = effect.get(TOKEN_CREATION_REFLEXIVE_FIELD)
@@ -146,6 +150,7 @@ class QueueReflexiveTriggerIntent:
     parent_stack_ref: str
     program: FrozenMap
     paid_creature: ReflexivePaidCreatureSnapshot | None = None
+    paid_mana: int | None = None
 
     def __post_init__(self):
         if any(type(value) is not str or not value for value in (self.controller, self.parent_stack_ref)):
@@ -155,6 +160,10 @@ class QueueReflexiveTriggerIntent:
         if (self.paid_creature is not None and not isinstance(self.paid_creature, ReflexivePaidCreatureSnapshot)
                 or program.uses_paid_creature != (self.paid_creature is not None)):
             raise ValueError('Reflexive consequence and paid creature receipt do not agree')
+        entrant = any(ENTRANT_X_COUNTER_MARKER in effect for effect in program.effects)
+        if (entrant != (self.paid_mana is not None)
+                or entrant and (self.paid_creature is not None or type(self.paid_mana) is not int or self.paid_mana < 0)):
+            raise ValueError('Reflexive entrant consequence requires its paid mana value')
 
 
 @dataclass(frozen=True, slots=True)

@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_cast_name_graveyard_return_card_data",
+  "source": "Pinned Scryfall Oracle and ruling subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "fc17d8dd-887f-405e-a195-777aa3da36f5",
+      "name": "Bloodbond March",
+      "mana_cost": "{2}{B}{G}",
+      "type_line": "Enchantment",
+      "oracle_text": "Whenever a player casts a creature spell, each player returns all cards with the same name as that spell from their graveyard to the battlefield.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G"
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2005-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4
+    }
+  ],
+  "rulings": []
+}

@@ -1,0 +1,403 @@
+/* Table layout and card presentation */
+.game-shell {
+  width: 100%;
+  height: 100dvh;
+  gap: .3rem;
+  padding-block: 0 .25rem;
+  padding-inline: clamp(.25rem, .4vw, .6rem);
+}
+#root:has(> .game-shell) { display: block; }
+.game-shell .table-bottom-dock:not(.spectator) {
+  display: grid;
+  grid-template-columns: minmax(0, var(--hand-share, 66%)) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: .25rem .35rem;
+  align-items: stretch;
+}
+.game-shell .table-bottom-dock:not(.spectator) > * { grid-column: 1 / -1; }
+.game-shell .table-bottom-dock:not(.spectator) > .hand-and-zones {
+  grid-column: 1; grid-row: 1 / span 3;
+  display: block; align-self: start;
+}
+.game-shell .table-bottom-dock:not(.spectator) > .local-zone-dock {
+  grid-column: 2; grid-row: 1;
+  align-self: start;
+}
+.game-shell .table-bottom-dock:not(.spectator) > .decision-panel {
+  grid-column: 2; grid-row: 2;
+  align-self: stretch;
+  flex-direction: column; flex-wrap: nowrap; align-items: stretch; justify-content: start;
+  min-height: 0;
+  max-height: clamp(110px, 23dvh, 220px);
+}
+.game-shell .table-bottom-dock:not(.spectator) > .turn-yield-dock {
+  grid-column: 2; grid-row: 3;
+  align-self: end;
+  flex-wrap: wrap;
+  gap: .25rem .35rem;
+}
+.turn-yield-dock > small { max-width: none; }
+.turn-yield-dock :is(.priority-controls, .loop-controls) > summary,
+.game-shell .turn-yield-dock > .table-control-toggle { min-height: 26px; padding: .24rem .5rem; white-space: nowrap; }
+.game-shell .table-bottom-dock:not(.spectator):has(.hand-panel-collapsed) {
+  grid-template-columns: minmax(0, min(29%, 15rem)) minmax(0, 1fr);
+}
+.game-shell .hand-panel-collapsed { flex-wrap: wrap; gap: .25rem .4rem; padding: .3rem .5rem; }
+.game-shell .decision-panel:has(> .action-tools > .action-row) { gap: .3rem; padding: .32rem .48rem; }
+.game-shell .decision-panel:has(> .action-tools > .action-row) .decision-copy h2 { font-size: .88rem; }
+.game-shell .decision-panel:has(> .action-tools > .action-row) .action-row { gap: .25rem .35rem; }
+.game-shell .decision-panel .action-row > .action-button {
+  min-height: 30px;
+  padding: .27rem .5rem;
+}
+.game-shell .decision-panel > .action-tools { flex: 0 0 auto; justify-content: start; margin-inline-start: 0; }
+.game-shell .decision-panel .action-tools > .action-row { justify-content: start; }
+.game-shell .table-bottom-dock:has(.combat-decision, .card-choice, .trigger-order-decision) {
+  grid-template-columns: minmax(0, min(var(--hand-share, 66%), 40%)) minmax(0, 1fr);
+}
+.game-shell .table-bottom-dock:has(.combat-decision, .card-choice, .trigger-order-decision) > .decision-panel {
+  max-height: 34dvh;
+}
+.game-shell .table-bottom-dock > .hand-and-zones .hand-panel {
+  height: min(var(--hand-panel-height, 190px), var(--hand-viewport-limit));
+  min-height: min(92px, var(--hand-viewport-limit));
+  max-height: var(--hand-viewport-limit);
+  resize: none;
+  --hand-viewport-limit: min(53dvh, max(68px, calc(100dvh - 14rem)), 650px);
+}
+.game-shell .local-zone-dock .zone-piles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.game-shell .local-zone-dock .zone-pile { white-space: normal; }
+.game-shell .decision-panel .action-row { max-height: none; }
+.game-shell .decision-panel .action-button:hover,
+.game-shell .decision-panel .action-button:focus-visible {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.hand-resize-handle {
+  position: absolute;
+  inset: 0 auto auto 50%;
+  translate: -50% 0;
+  z-index: 3;
+  display: grid;
+  place-items: start center;
+  width: min(3.6rem, 23%);
+  height: .85rem;
+  min-height: 0;
+  padding: .14rem 0 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  cursor: ns-resize;
+  touch-action: none;
+  box-shadow: none;
+}
+.hand-resize-handle::after {
+  content: "";
+  width: 65%;
+  height: .19rem;
+  border-radius: 1rem;
+  background: var(--line-strong);
+}
+.hand-resize-handle:is(:hover, :focus-visible)::after { background: var(--table-highlight); }
+/* Fit printed card faces to both track dimensions. When the minimum card
+   width would be crossed, CardPages keeps every card on a selectable page. */
+.game-shell .hand-scroll {
+  --hand-card-width: calc(clamp(104px, 8.6vw, 178px) * var(--hand-card-scale, 1));
+}
+.game-shell .hand-cards {
+  container: hand-track / size;
+  align-items: flex-start;
+  column-gap: .3rem;
+}
+.game-shell .hand-cards > .card-tile {
+  --hand-card-gap: .3rem;
+  --hand-card-footer: 2.34rem;
+  --height-based-width: max(1px, calc((100cqh - var(--hand-card-footer)) * 63 / 88));
+  --preferred-hand-width: min(var(--hand-card-width), var(--height-based-width));
+  --hand-fit-width: calc((100cqw - (var(--hand-card-count, 1) - 1) * var(--hand-card-gap)) / var(--hand-card-count, 1));
+  --hand-width: min(100cqw, max(min(55px, var(--preferred-hand-width)), min(var(--preferred-hand-width), var(--hand-fit-width))));
+  display: flex;
+  flex-direction: column;
+  width: var(--hand-width);
+  height: min(100cqh, calc(var(--hand-width) * 88 / 63 + var(--hand-card-footer)));
+  min-width: 0;
+  isolation: isolate;
+}
+.game-shell .hand-cards > .card-tile > img {
+  order: 0;
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  height: 0;
+  object-fit: contain;
+}
+.game-shell .art-focused .hand-cards > .card-tile > img { object-fit: cover; }
+.game-shell .hand-cards > .card-tile .card-copy,
+.game-shell .hand-cards > .card-tile.has-image .card-copy {
+  position: static;
+  display: block;
+  flex: 0 0 auto;
+  order: 1;
+  min-height: 0;
+  width: 100%;
+  padding: .15rem .24rem .1rem;
+  background: #0a120e;
+}
+.game-shell .hand-cards > .card-tile .card-copy strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.game-shell .hand-cards > .card-tile > .card-cost-overlay {
+  position: static;
+  display: flex;
+  align-items: center;
+  order: 2;
+  flex: 0 0 auto;
+  max-width: none;
+  min-height: 1.06rem;
+  padding: 0 .2rem .16rem;
+  border: 0;
+  border-radius: 0;
+  background: #0a120e;
+  box-shadow: none;
+}
+.game-shell .hand-cards > .card-tile > .card-cost-overlay .ms { font-size: .73rem; }
+@container hand-track (max-height: 102px) {
+  .game-shell .hand-cards > .card-tile {
+    --hand-card-footer: 1.62rem;
+    --hand-width: min(100cqw, max(48px, min(var(--hand-card-width), var(--hand-fit-width))));
+  }
+  .game-shell .hand-cards > .card-tile .card-copy { padding: .06rem .15rem 0; }
+  .game-shell .hand-cards > .card-tile .card-copy strong { font-size: .65rem; }
+  .game-shell .hand-cards > .card-tile > .card-cost-overlay { padding: 0 .12rem .08rem; }
+  .game-shell .hand-cards > .card-tile > .card-cost-overlay .ms { font-size: .66rem; }
+}
+.game-shell .activity-panel { display: block; min-height: 0; }
+.game-shell .activity-panel > header { flex-wrap: wrap; gap: .15rem .4rem; }
+.game-shell .activity-panel ol { max-height: clamp(50px, 18dvh, 190px); overflow: auto; overscroll-behavior: contain; }
+.game-shell .has-active-stack .table-sidebar > .activity-panel { max-height: 18%; flex: 0 1 auto; }
+.game-shell .has-active-stack .table-sidebar .stack-panel:has(.stack-row) {
+  flex: 1 1 13rem;
+  min-height: min(10.5rem, 52%);
+}
+.game-shell .has-active-stack .stack-items { overflow-y: auto; overscroll-behavior: contain; }
+.battlefield-lands { --stagger-fraction: .44; }
+.battlefield-lands > .same-land-mana:not(:first-child) {
+  margin-inline-start: calc(-1 * var(--battlefield-slot-width) * var(--stagger-fraction));
+}
+.battlefield-card-counters {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  translate: -50% -50%;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: .14rem;
+  width: max-content;
+  max-width: 88%;
+  color: #fbf6df;
+  font: 700 .64rem/1.15 system-ui, sans-serif;
+  text-align: center;
+  pointer-events: none;
+}
+.battlefield-card-counters > span {
+  padding: .12rem .25rem;
+  border: 1px solid rgb(244 229 171 / 55%);
+  border-radius: .23rem;
+  background: rgb(15 19 18 / 92%);
+  overflow-wrap: anywhere;
+}
+.battlefield-card-footer { display: flex; flex-wrap: wrap; min-width: 0; justify-content: center; align-items: center; gap: .12rem .18rem; }
+.game-shell .battlefield-card-footer :is(.card-stats, .plus-counters) { position: static; }
+.game-shell .battlefield-card-footer .card-stats { display: flex; flex-wrap: wrap; justify-content: center; }
+.game-shell .battlefield-card-footer :is(.card-stats > *, .plus-counters) { font-size: .64rem; padding: .06rem .15rem; white-space: nowrap; }
+.plus-counters {
+  position: absolute; z-index: 1; inset: .12rem .1rem auto auto;
+  pointer-events: none;
+  padding: .12rem .23rem; border-radius: .2rem;
+  background: #101b14; color: #edf9d9; border: 1px solid #89aa71;
+  font: 750 .7rem/1.1 system-ui, sans-serif;
+}
+.attacker-block-status { color: #ffdb9e; font-weight: 700; }
+.attacker-block-status[data-blocked="true"] { color: #c8edb0; }
+/* The two banks wrap independently, and P/T has its own row outside art. */
+.combat-assignment { grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); align-items: start; }
+.combat-source-bank { padding: 0; overflow: hidden; }
+.combat-source-paged { flex: none; height: clamp(88px, 18dvh, 176px); padding: .16rem; }
+.combat-source-paged > .combat-source { flex: 0 0 auto; width: min(100%, 10.4rem); min-height: 64px; }
+.combat-assignment :is(.combat-lanes, .combat-lane, .combat-source, .combat-destination, .combat-connections, .combat-connections li) { min-width: 0; }
+.combat-assignment :is(.combat-source, .combat-destination) {
+  justify-items: stretch;
+  white-space: normal;
+  text-align: start;
+}
+.combat-source-status { align-self: end; line-height: 1.14; }
+.combat-assignment .combat-lanes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.8rem), 1fr));
+  align-items: start;
+  max-height: clamp(106px, 27dvh, 245px);
+  overflow: auto;
+}
+.combat-assignment .combat-lane { justify-items: stretch; min-width: 0; }
+.combat-assignment .combat-lane .combat-destination { grid-auto-flow: row; grid-template-columns: minmax(0, 1fr); }
+.combat-card-face { display: grid; grid-template-columns: 2.45rem minmax(0, 1fr); align-items: center; gap: .28rem; min-width: 0; }
+.combat-card-art { display: block; min-height: 2rem; overflow: hidden; border-radius: .18rem; background: var(--surface-raised); }
+.combat-card-art img { display: block; width: 100%; height: 2rem; object-fit: cover; }
+.combat-card-details { display: grid; align-content: center; gap: .12rem; min-width: 0; }
+.combat-card-details strong {
+  display: -webkit-box;
+  min-width: 0;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font: 650 .69rem/1.14 system-ui, sans-serif;
+}
+.combat-card-stats {
+  justify-self: start;
+  border: 1px solid #8da68d;
+  border-radius: .2rem;
+  padding: .04rem .21rem;
+  background: var(--surface);
+  color: var(--ink);
+  font: 750 .73rem/1.14 var(--mono);
+}
+.combat-assignment .combat-connections { display: grid; grid-template-columns: minmax(0, 1fr); }
+.combat-assignment .combat-connections button { width: 100%; white-space: normal; overflow-wrap: anywhere; }
+.card-choice-pages.from-library .card-choice-button {
+  width: min(100%, max(7.35rem, calc(var(--picker-card-height) * 63 / 88 + .8rem)));
+  height: calc(var(--picker-card-height) + 3.55rem);
+}
+.card-choice-pages.from-library .card-choice-options {
+  height: max(calc(var(--picker-card-height) + 4rem), min(26dvh, 250px));
+}
+.card-choice-pages .card-choice-button small,
+.card-inspector-panel .printing-label { white-space: normal; overflow-wrap: anywhere; line-height: 1.2; }
+.seat-target-options { display: grid; gap: .3rem; }
+.seat-target-group { display: grid; grid-template-columns: minmax(0, 1fr); gap: .2rem; border-inline-start: 2px solid var(--seat-color, var(--line)); padding-inline-start: .35rem; }
+.seat-target-group .choice-option { min-width: 0; max-width: 100%; width: fit-content; overflow-wrap: anywhere; }
+.seat-target-group .choice-option:has(:checked) { border-color: var(--seat-color, var(--table-highlight)); }
+.game-shell .boards-grid:not(.watching, .one-opponent) {
+  grid-template-columns: var(--opponent-columns, repeat(3, minmax(0, 1fr)));
+}
+.game-shell .boards-grid[data-no-opponents] { grid-template-rows: minmax(0, 1fr); }
+.game-shell .boards-grid[data-no-opponents] > .own-board { grid-row: 1; }
+.board-detach { position: relative; z-index: 5; color: var(--muted); font-size: .75rem; }
+.board-detach summary { cursor: pointer; padding: .15rem .35rem; }
+.board-detach-options {
+  position: absolute; right: 0; top: calc(100% + .25rem);
+  display: grid; gap: .35rem; padding: .6rem; width: max-content;
+  max-width: 70vw; border: 1px solid var(--line);
+  background: var(--surface); border-radius: .4rem; box-shadow: var(--shadow);
+}
+.board-detach-options label { color: var(--seat-color); display: flex; align-items: center; gap: .35rem; }
+.board-detach-options input { width: auto; margin: 0; }
+.game-shell .public-action-draft.x-target-draft {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  align-items: stretch;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.x-target-draft-fields {
+  display: grid;
+  align-content: start;
+  gap: .4rem;
+  min-height: 0;
+  overflow: auto;
+}
+.x-target-draft .x-target-draft-fields .contextual-fields { max-height: none; overflow: visible; }
+.game-shell .x-target-draft > footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: .35rem;
+  flex: 0 0 auto;
+  margin-inline-start: 0;
+}
+.x-target-summary, .x-target-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem .55rem; }
+.x-target-summary { justify-content: space-between; }
+.x-target-summary p { display: flex; flex-wrap: wrap; align-items: baseline; gap: .15rem .45rem; margin: 0; font-size: .8rem; }
+.x-target-summary p span { color: var(--muted); }
+.x-target-actions { justify-content: flex-end; }
+.x-target-summary button, .x-target-actions button { max-width: 100%; overflow-wrap: anywhere; }
+.game-shell .choice-dialog.x-target-dialog {
+  color: var(--ink);
+  width: min(36rem, calc(100% - 1rem));
+  max-height: calc(100dvh - 1rem);
+  margin: auto;
+}
+.x-target-dialog:not([open]) { display: none; }
+.x-target-dialog::backdrop { background: rgb(2 6 4 / 84%); }
+
+.detached-table { padding-block: .4rem; }
+.detached-header { display: flex; align-items: baseline; flex-wrap: wrap; gap: .35rem .8rem; }
+.detached-header > span { color: var(--muted); font-size: .78rem; }
+.detached-seat-links { display: flex; gap: .45rem; margin-inline-start: auto; }
+.detached-boards { display: flex; flex-direction: column; min-width: 0; min-height: 0; gap: .4rem; }
+.detached-boards > .player-board { flex: 1 1 0; }
+.detached-table .table-workspace .stack-panel { flex: 0 1 62%; }
+.detached-table .table-sidebar { overflow: auto; }
+.exile-cast-choice { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; }
+.exile-cast-choice > .card-tile { width: 56px; min-height: 0; }
+.choice-partition .choice-option { min-width: 0; }
+.choice-partition .choice-option > span { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 700px) {
+  .game-shell .table-bottom-dock:not(.spectator) { grid-template-columns: minmax(0, min(var(--hand-share, 66%), 55%)) minmax(0, 1fr); }
+  .game-shell .battlefield-lane {
+    display: grid;
+    grid-template-columns: clamp(58px, 21%, 105px) minmax(0, 1fr);
+  }
+  .board-view-bar > .card-size-slider > span { display: none; }
+  .board-view-bar > .card-size-slider input { width: 3.8rem; }
+  .game-shell:has(.x-target-draft) .battlefield-lanes > :has([data-choice-candidate="true"]) {
+    min-height: 30px;
+  }
+  .game-shell .x-target-draft :is(.x-target-summary, .x-target-actions) > button {
+    min-height: 30px;
+    padding: .28rem .52rem;
+    font-size: .72rem;
+    letter-spacing: .015em;
+  }
+  .game-shell .table-bottom-dock:has(.combat-decision, .card-choice, .trigger-order-decision, .public-action-draft) > .decision-panel {
+    grid-column: 1 / -1; grid-row: 3; max-height: 37dvh;
+  }
+  .game-shell .table-bottom-dock:not(.spectator):has(.combat-decision, .card-choice, .trigger-order-decision, .public-action-draft) > .turn-yield-dock {
+    grid-row: 2;
+  }
+  .game-shell .table-bottom-dock:has(.combat-decision, .card-choice, .trigger-order-decision, .public-action-draft) > .hand-and-zones {
+    grid-row: 1 / span 2;
+  }
+  .game-shell .table-bottom-dock > .hand-and-zones .hand-panel { --hand-viewport-limit: 33dvh; }
+  .game-shell .table-bottom-dock:has(.combat-decision, .card-choice, .trigger-order-decision, .public-action-draft) > .hand-and-zones .hand-panel {
+    --hand-viewport-limit: 17dvh;
+  }
+}
+@media (max-width: 520px) {
+  .game-shell .table-bottom-dock > .hand-and-zones .hand-panel { --hand-viewport-limit: 26dvh; }
+  .game-shell .board-view-bar > .card-size-slider { display: none; }
+  .game-shell .compact-table-size { display: block; }
+  .game-shell .table-bottom-dock:not(.spectator) > .local-zone-dock {
+    grid-column: 1 / -1;
+  }
+  .game-shell .table-bottom-dock:not(.spectator) > .hand-and-zones {
+    grid-row: 2;
+  }
+  .game-shell .table-bottom-dock:not(.spectator) > .turn-yield-dock {
+    grid-column: 1 / -1;
+  }
+  .game-shell .table-bottom-dock:has(.combat-decision, .card-choice, .trigger-order-decision, .public-action-draft) > .hand-and-zones {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .game-shell .table-bottom-dock:not(.spectator):has(.combat-decision, .card-choice, .trigger-order-decision, .public-action-draft) > .turn-yield-dock {
+    grid-row: 4;
+  }
+  .game-shell .hand-panel > header { column-gap: .3rem; }
+  .game-shell .hand-panel h2 { white-space: nowrap; }
+  .game-shell .hand-panel-controls { flex-wrap: wrap; justify-content: flex-end; gap: .1rem .25rem; }
+  .game-shell .hand-panel-controls .zone-count { font-size: .6rem; white-space: nowrap; }
+}
+@media (560px <= width <= 700px) {
+  .game-shell .public-action-draft.x-target-draft {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.9fr);
+    grid-template-rows: minmax(0, 1fr);
+  }
+}

@@ -913,9 +913,10 @@ exact source path and symbol, with sorted card, Oracle-ID, deck, or fixture
 requirements and a nonempty rationale. Undeclared dynamics and stale
 declarations both fail closed. Do not add another fixture list or compact
 database builder. The generated
-`coverage/compact-ci-card-dependencies.json` and `.md` companions record the
-current identities, owners, source provenance, and per-shard closure. The JSON
-report stores each distinct resolution once. The audit readers expand those
+`coverage/compact-ci-card-dependencies.json.gz` and `.md` companions record the
+current identities, owners, source provenance, and per-shard closure. The
+losslessly compressed JSON report stores each distinct resolution once.
+The audit readers expand those
 references to recover all fixture owners and requirement records, and still
 accept earlier inline reports.
 

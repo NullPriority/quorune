@@ -57,6 +57,13 @@ export const CARD_SIZE_ZONES = [
   ["library", "Library choices"],
   ["stack", "Stack"],
 ] as const;
+export const BATTLEFIELD_LANES = [
+  ["creatures", "Creatures"],
+  ["lands", "Lands"],
+  ["support", "Other permanents"],
+] as const;
+export type BattlefieldLane = typeof BATTLEFIELD_LANES[number][0];
+
 export const MIN_CARD_SIZE = 0.6;
 export const MAX_CARD_SIZE = 1.6;
 export const MIN_HAND_PANEL_HEIGHT = 100;
@@ -78,6 +85,7 @@ export type TablePreferences = {
   handAutoCollapse: boolean;
   cardScale: number;
   zoneCardScale: Partial<Record<CardSizeZone, number>>;
+  battlefieldLaneScale: Partial<Record<BattlefieldLane, number>>;
   opponentView: OpponentView;
   rightRailWidth: number;
   rightRailOrder: RightRailPanel[];
@@ -102,9 +110,10 @@ export const DEFAULT_TABLE_PREFERENCES: Readonly<TablePreferences> = {
   handAutoCollapse: true,
   cardScale: 1,
   zoneCardScale: {},
+  battlefieldLaneScale: {},
   opponentView: "all",
   rightRailWidth: 270,
-  rightRailOrder: ["stack", "activity", "card"],
+  rightRailOrder: ["activity", "stack", "card"],
   inspectorCollapsed: false,
   boardDensity: "comfortable",
   compactPhaseRail: false,
@@ -135,13 +144,15 @@ function seatPriorityStops(raw: unknown): TablePreferences["seatPriorityStops"] 
   }));
 }
 
-function zoneSizes(raw: unknown): TablePreferences["zoneCardScale"] {
+function cardSizeSettings<Zone extends string>(
+  raw: unknown, zones: ReadonlyArray<readonly [Zone, string]>,
+): Partial<Record<Zone, number>> {
   if (!raw || typeof raw !== "object") return {};
   const settings = raw as Record<string, unknown>;
-  return Object.fromEntries(CARD_SIZE_ZONES.flatMap(([zone]) =>
+  return Object.fromEntries(zones.flatMap(([zone]) =>
     typeof settings[zone] === "number"
       ? [[zone, boundedNumber(settings[zone], 1, MIN_CARD_SIZE, MAX_CARD_SIZE)]]
-      : []));
+      : [])) as Partial<Record<Zone, number>>;
 }
 
 export function effectiveCardScale(value: TablePreferences, zone: CardSizeZone): number {
@@ -151,6 +162,8 @@ export function effectiveCardScale(value: TablePreferences, zone: CardSizeZone):
 export function tablePreferenceStyle(tablePreferences: TablePreferences): CSSProperties {
   return {
     ...Object.fromEntries(CARD_SIZE_ZONES.map(([zone]) => [`--${zone}-card-scale`, effectiveCardScale(tablePreferences, zone)])),
+    ...Object.fromEntries(BATTLEFIELD_LANES.map(([lane]) =>
+      [`--${lane}-lane-scale`, tablePreferences.battlefieldLaneScale[lane] ?? 1])),
     "--hand-share": `${tablePreferences.handWidth}%`,
     "--hand-panel-height": `${tablePreferences.handPanelHeight}px`,
     "--card-scale": String(tablePreferences.cardScale),
@@ -188,7 +201,8 @@ export function parseTablePreferences(raw: string | null): TablePreferences {
       })),
       handAutoCollapse: typeof value.handAutoCollapse === "boolean" ? value.handAutoCollapse : DEFAULT_TABLE_PREFERENCES.handAutoCollapse,
       cardScale: boundedNumber(value.cardScale, DEFAULT_TABLE_PREFERENCES.cardScale, MIN_CARD_SIZE, MAX_CARD_SIZE),
-      zoneCardScale: zoneSizes(value.zoneCardScale),
+      zoneCardScale: cardSizeSettings(value.zoneCardScale, CARD_SIZE_ZONES),
+      battlefieldLaneScale: cardSizeSettings(value.battlefieldLaneScale, BATTLEFIELD_LANES),
       opponentView: value.opponentView === "A" || value.opponentView === "B" || value.opponentView === "C" || value.opponentView === "D"
         ? value.opponentView : "all",
       rightRailWidth: boundedNumber(value.rightRailWidth, DEFAULT_TABLE_PREFERENCES.rightRailWidth, 260, 520),

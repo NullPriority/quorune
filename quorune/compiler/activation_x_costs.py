@@ -14,7 +14,36 @@ from ..rules.announced_subtype_sacrifice import (
     ANNOUNCED_SUBTYPE_SACRIFICE_KIND, ANNOUNCED_SUBTYPE_STATS_TEXT, announced_subtype_sacrifice_choice,
     announced_subtype_sacrifice_predicate, printed_announced_subtype_price,
 )
+from ..rules.announced_hand_discard import (
+    ANNOUNCED_HAND_DISCARD_KIND, announced_hand_discard_choice, announced_hand_discard_predicate,
+)
 from .declared_effect_amounts import declared_effect_amount_template
+
+_ANNOUNCED_HAND_DISCARD_BODY = (
+    "exile the top x cards of target opponent's library. "
+    "you may play lands and cast spells from among cards exiled this way without paying their mana costs."
+)
+_ANNOUNCED_HAND_DISCARD_PRICE = re.compile(r"(?:\{(?:[1-9]\d*|[WUBRGC])\})+, Discard X cards")
+
+
+def _announced_hand_discard_body(text):
+    return " ".join(text.split()).casefold().replace("’", "'") == _ANNOUNCED_HAND_DISCARD_BODY
+
+
+def _announced_hand_discard_cost(ability):
+    if (not _announced_hand_discard_body(ability.effect_text)
+            or not _ANNOUNCED_HAND_DISCARD_PRICE.fullmatch(" ".join(ability.cost_text.split()))
+            or len(ability.uncompiled_costs) != 1 or ability.choices):
+        return None
+    from ..activation_cost_choice import CostChoice
+    from ..replacement.immutable import FrozenMap
+
+    choice = CostChoice(ANNOUNCED_HAND_DISCARD_KIND, count=0, zone="hand",
+                        predicate=FrozenMap(announced_hand_discard_predicate().to_dict()))
+    try:
+        return replace(ability, choices=(choice,), uncompiled_costs=())
+    except ValueError:
+        return None
 
 
 def _announced_subtype_cost(ability):
@@ -41,6 +70,12 @@ def _announced_subtype_cost(ability):
 def announced_x_activation_cost(ability):
     if subtype_choice := _announced_subtype_cost(ability):
         return subtype_choice
+    if "Sacrifice X artifacts" in ability.cost_text:
+        from .announced_artifact_sacrifice_return import specialize_announced_artifact_sacrifice
+
+        return specialize_announced_artifact_sacrifice(ability)
+    if hand_discard := _announced_hand_discard_cost(ability):
+        return hand_discard
     if "Reveal X " in ability.cost_text:
         from .variable_colored_reveal_price import specialize_variable_colored_reveal_price
 
@@ -80,10 +115,22 @@ def announced_x_activation_cost(ability):
 def announced_x_activation_effect(ability, *, source_name, compile_fixed, text):
     if not ability.chooses_activation_x:
         return None
+    from .announced_artifact_sacrifice_return import announced_artifact_sacrifice_return_template
+
+    if artifact_return := announced_artifact_sacrifice_return_template(ability, text):
+        return artifact_return
     if announced_subtype_sacrifice_choice(ability) is not None:
         from .temporary_target_interactions import temporary_target_interaction_effect_template
         interaction = temporary_target_interaction_effect_template(text)
         return interaction.compiled() if interaction is not None else None
+    if announced_hand_discard_choice(ability) is not None:
+        from ..discover_model import QUALIFIED_SCAN_TARGET
+        from ..fixed_top_exile import ANNOUNCED_OPPONENT_FREE_PLAY_MECHANIC, announced_opponent_free_play_effect
+
+        if _announced_hand_discard_body(text):
+            return ("announced-opponent-top-resolving-free-play-v1", (announced_opponent_free_play_effect(),),
+                    dict(QUALIFIED_SCAN_TARGET), (ANNOUNCED_OPPONENT_FREE_PLAY_MECHANIC, "cr-115-targets"))
+        return None
     if ability.announced_x_minimum:
         from ..rules.announced_ability_copies import announced_ability_copy_body, copy_effect, target_schema
         if announced_ability_copy_body(text):

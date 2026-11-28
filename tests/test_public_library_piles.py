@@ -550,6 +550,114 @@ class PublicLibraryPilesNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertNotIn("cast:" + spell.ref, {action["id"] for action in actions})
         self.reject(game, "A", {"action_id": "cast:" + spell.ref, "targets": ["B"], "pay": "auto"})
 
+    def _karn_activate(self, game, card, ability):
+        action_id = f"activate:{card.ref}:{ability}"
+        offered = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertIn(action_id, {row["id"] for row in offered})
+        result = game.act("pilot:A", {"action_id": action_id, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertFalse(game.state.stack[-1].targets)
+
+    def test_karn_scion_of_urza_public_opponent_and_a_different_source_can_return_the_marked_card(self):
+        game, karn, cards, hidden, _ = self.scene(20721901, count=2, neighbor=True,
+                                                  spell_name="Karn, Scion of Urza")
+        next_karn = self.add(game.engine, "Karn, Scion of Urza", zone="hand", ref="another-karn")
+        bounce = self.add(game.engine, "Boomerang", zone="hand")
+        foreign = self.add(game.engine, "Generic Bound Body", seat="B", zone="exile", ref="foreign-silver-card")
+        foreign.counters["silver"] = 1
+        unmarked = self.add(game.engine, "Generic Bound Body", zone="exile", ref="owned-unmarked-card")
+        self.assert_closed(game, karn)
+        self.assert_closed(game, bounce)
+        self.prepare(game, mana={"C": 8, "U": 2})
+        self.checkpoint(game)
+        self.cast(game, "A", karn)
+        self.assertIsNone(self.resolve(game))
+        self._karn_activate(game, karn, "ab1")
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self.assertEqual(["A"], game.state.pending_decision.actors)
+        self.reject(game, "B", {"action_id": "choose", "opponent": "C"})
+        self.submit(game, "A", opponent="C")
+        self.assertEqual(["C"], game.state.pending_decision.actors)
+        packet = game.packet("pilot:C", full=True)
+        self.assertEqual({card.ref for card in cards}, {row["id"] for row in packet["decision"]["ctx"]["objects"]})
+        self.assertNotIn(hidden.ref, json.dumps(packet))
+        game = self.replay(game, load=True)
+        self.reject(game, "B", {"action_id": "choose", "objects": [cards[1].ref]})
+        self.reject(game, "C", {"action_id": "choose", "objects": [hidden.ref]})
+        self.submit(game, "C", objects=[cards[1].ref])
+        marked = game.state.cards[cards[0].object_id]
+        self.assertEqual(("exile", 1), (marked.zone, marked.counters.get("silver")))
+        self.assertEqual("hand", game.state.cards[cards[1].object_id].zone)
+        self.assertEqual("library", game.state.cards[hidden.object_id].zone)
+
+        self.cast(game, "A", bounce, [karn.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("hand", game.state.cards[karn.object_id].zone)
+        self.cast(game, "A", next_karn)
+        self.assertIsNone(self.resolve(game))
+        self._karn_activate(game, next_karn, "ab2")
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self.assertEqual(["A"], game.state.pending_decision.actors)
+        self.assertEqual([marked.ref], [row["id"] for row in
+            game.packet("pilot:A", full=True)["decision"]["ctx"]["objects"]])
+        game = self.replay(game, load=True)
+        self.reject(game, "A", {"action_id": "choose", "objects": [foreign.ref]})
+        self.reject(game, "A", {"action_id": "choose", "objects": [unmarked.ref]})
+        self.submit(game, "A", objects=[marked.ref])
+        returned = game.state.cards[marked.object_id]
+        self.assertEqual("hand", returned.zone)
+        self.assertEqual(0, returned.counters.get("silver", 0))
+        self.replay(game, load=True)
+
+    def test_karn_scion_of_urza_short_libraries_use_no_fabricated_opponent_or_exile_choice(self):
+        for count in (0, 1):
+            with self.subTest(count=count):
+                game, karn, cards, _, _ = self.scene(20721941 + count, count=count, seats="AB",
+                                                     spell_name="Karn, Scion of Urza")
+                self.assert_closed(game, karn)
+                self.prepare(game, mana={"C": 4})
+                self.checkpoint(game)
+                self.cast(game, "A", karn)
+                self.assertIsNone(self.resolve(game))
+                self._karn_activate(game, karn, "ab1")
+                self.assertIsNone(self.resolve(game))
+                self.assertFalse(game.state.stack)
+                self.assertEqual(6, game.state.cards[karn.object_id].counters["loyalty"])
+                self.assertTrue(all(game.state.cards[card.object_id].zone == "hand" for card in cards))
+                self.assertFalse(any(card.zone == "exile" and card.counters.get("silver", 0)
+                                     for card in game.state.cards.values()))
+                self.replay(game, load=True)
+
+    def test_karn_scion_of_urza_loyalty_scope_and_exile_counter_are_closed(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.replacement import AffectedObject, ReplaceableEvent
+        from quorune.replacement.entry_counter_types import EXILE_ENTRY_COUNTER_CHILD, retain_committed_zone_counters
+        from quorune.rules.silver_exile_loyalty import silver_loyalty_runtime_dependencies
+        from test_controller_creature_keyword_absence import register_card
+
+        card = self.db.lookup("Karn, Scion of Urza", fuzzy=False)
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        self.assertEqual("exact", compile_oracle_card(card, **options).status)
+        report, semantics = register_card(self.db, self.registry, card.name)
+        self.assertTrue(report["strict_capability_ready"], report["blockers"])
+        programs = [program for program in semantics.programs_for_oracle(card.oracle_id)
+                    if program.cost_schema and program.cost_schema.get("loyalty_delta") in (1, -1)]
+        self.assertEqual(2, len(programs))
+        for program in programs:
+            self.assertTrue(silver_loyalty_runtime_dependencies(program))
+            with self.assertRaises(ValueError):
+                silver_loyalty_runtime_dependencies(replace(program, active_zone="graveyard"))
+        with patch("quorune.compiler.activation_paid_sacrifice_results.silver_loyalty_activation_result", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(card, **options).status)
+        subject = AffectedObject("card", "A", None)
+        counter = ReplaceableEvent(event_id="silver", kind="counter.place", affected_player=None,
+                                   affected_object=subject, payload={EXILE_ENTRY_COUNTER_CHILD: True})
+        outgoing = ReplaceableEvent(event_id="move", kind="zone.change", affected_player=None,
+                                    affected_object=subject, payload={"destination": "exile"}, children=(counter,))
+        self.assertEqual((counter,), retain_committed_zone_counters(outgoing).children)
+        self.assertEqual((), retain_committed_zone_counters(replace(outgoing, payload={"destination": "hand"})).children)
+
     def test_four_player_cast_reveal_divide_select_and_owner_order_replay(self):
         game, spell, cards, hidden, private = self.scene(4043001, neighbor=True)
         self.announce(game, spell, cards, active="B")

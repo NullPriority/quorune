@@ -140,3 +140,16 @@ def graveyard_return_choice_template(text):
     return FixedEffectClauseSequenceTemplate(component_template_ids=(first[0], returned[0]),
         _effects=(*first[1], *returned[1]), _target_schema=None,
         mechanic_ids=(FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC, *first[3], *returned[3])).compiled()
+
+
+
+def defending_nonland_return_template(binding, body):
+    if ((binding.event.value, binding.variant, binding.active_zone) != ("creature.attacks", "source_attacks", "battlefield")
+            or body != binding.body or " ".join(body.casefold().split()) != (
+                "defending player chooses a nonland card in your graveyard. return that card to your hand. "
+                "this creature gets +x/+0 until end of turn, where x is the mana value of that card."
+            )):
+        return None
+    from ..rules.graveyard_return_choices import defending_nonland_return_effect
+
+    return "defending-nonland-graveyard-growth-v1", (defending_nonland_return_effect(),), None, (MECHANIC,)

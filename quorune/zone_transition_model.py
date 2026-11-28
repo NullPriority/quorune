@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import copy
 from dataclasses import dataclass
-from typing import Any, Mapping, Protocol, Sequence
+from typing import TYPE_CHECKING, Any, Mapping, Protocol, Sequence
 from .conditional_exile_model import ConditionalExileBinding
 from .errors import GameRuleError
 from .self_graveyard_exile_model import SELF_GRAVEYARD_SHUFFLE_RESULT
@@ -14,6 +14,9 @@ from .life_state import PreparedLifePayment
 from .semantic_runtime import PreparedZoneChange
 from .zone_trigger_processing import DepartureTriggerSnapshot
 from .zone_trigger_events import ZoneTransitionKind
+
+if TYPE_CHECKING:
+    from .beheld_exile_state import PaidBeheldExile
 
 
 EXILE_ZONE = "exile"
@@ -161,6 +164,7 @@ class ZoneDepartureSnapshot:
     counters: Mapping[str, int] | None = None
     conditional_returns: tuple[ConditionalExileBinding, ...] = ()
     putting_player: str | None = None
+    paid_beheld_exile: PaidBeheldExile | None = None
 
     @classmethod
     def from_event_sources(
@@ -174,11 +178,12 @@ class ZoneDepartureSnapshot:
         multikicker_paid: Mapping[str, Any] | None = None,
         declared_cast_costs: Mapping[str, Any] | None = None,
         putting_player: str | None = None,
+        copy_snapshot: Mapping[str, Any] | None = None,
     ) -> ZoneDepartureSnapshot:
         """Adapt the historical engine facade's event facts at their typed boundary."""
         return cls(
             origin=origin, controller=controller, logical_object_id=logical_object_id,
-            characteristics=characteristics, counters=counters,
+            characteristics=characteristics, counters=counters, copy_snapshot=copy_snapshot,
             attachments=tuple(attachments), attached_to=attached_to, cast_option=cast_option, paid_entry_copy=paid_entry_copy,
             multikicker_paid=multikicker_paid,
             declared_cast_costs=declared_cast_costs, putting_player=putting_player,
@@ -245,6 +250,12 @@ def capture_simultaneous_departure(
     from .conditional_exile_model import source_conditional_bindings
     from .death_history_names import capture_departure_rules_names
     from .creature_power_damage import with_occurrence_power_departure
+    from .rules.event_subscriptions import event_has_capability_subscriber
+    from .rules.linked_death_token_copy import CAPABILITY as LINKED_DEATH_TOKEN_COPY_CAPABILITY
+    from .token_creation_identity import token_copy_snapshot
+
+    retain_copiable = (card.zone == "battlefield" and not card.is_token
+                       and event_has_capability_subscriber(host, "creature.dies", LINKED_DEATH_TOKEN_COPY_CAPABILITY))
     return (
         card,
         ZoneDepartureSnapshot(
@@ -268,6 +279,7 @@ def capture_simultaneous_departure(
             ),
             trigger_sources=source_snapshot,
             putting_player=putting_player,
+            copy_snapshot=token_copy_snapshot(host, card) if retain_copiable else None,
         ),
     )
 
@@ -327,11 +339,11 @@ def prepare_move_entry_characteristics(host, card, enter_face, library_face_down
 def prepare_move_entry_life_payment(host, replacement):
     if not replacement.entry_life_payment:
         return None
-    if replacement.destination != "battlefield" or replacement.destination_controller is None:
+    if replacement.destination != "battlefield" or replacement.resolved_destination_controller is None:
         raise GameRuleError("Entry life payments require a battlefield controller")
     from .life_state import LifeStateError, prepare_life_payment
 
     try:
-        return prepare_life_payment(host, replacement.destination_controller, replacement.entry_life_payment)
+        return prepare_life_payment(host, replacement.resolved_destination_controller, replacement.entry_life_payment)
     except LifeStateError as exc:
         raise GameRuleError(str(exc)) from exc

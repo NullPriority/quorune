@@ -1,4 +1,4 @@
-import { type DragEvent, useEffect, useMemo, useState } from "react";
+import { type CSSProperties, type DragEvent, useEffect, useMemo, useState } from "react";
 import { asList, asRecord, cardName, CardTile } from "./CardSurface";
 import { CardPages } from "./CardPages";
 import { type TableZone, ZonePiles } from "./TableZones";
@@ -7,7 +7,7 @@ import type { JsonValue, LegalAction } from "./generated/protocol";
 import type { ProjectedView } from "./protocol";
 import type { TableObjectSelection } from "./PublicActionDraft";
 
-type BattlefieldLane = "creatures" | "support" | "lands";
+import type { BattlefieldLane } from "./tablePreferences";
 type BattlefieldStack = { key: string; cards: JsonValue[] };
 
 export function attachedBattlefieldCards(players: Record<string, JsonValue>) {
@@ -188,20 +188,23 @@ export function PlayerBoard({
       {stack.cards.length > 1 && <button type="button" className="battlefield-stack-count"
         aria-label={`Show all ${stack.cards.length} ${cardName(card)} cards`}
         onClick={() => setExpandedGroup(stack.key)}>×{stack.cards.length.toLocaleString()}</button>}
-      {attachedCards.length > 0 && <div className="permanent-attachments" aria-label={`Attached to ${cardName(card)}`}>
-        {attachedCards.map((attachment) => {
-          const attachedRef = String(asRecord(attachment).id);
-          const available = !selection && !arranging ? actionsByRef.get(attachedRef) ?? [] : [];
-          const manaOnly = available.length > 0 && available.every((action) =>
-            action.mana_ability === true || action.action === "undo_mana");
-          return <CardTile key={attachedRef} value={attachment} view={view} compact showPrintedCost={false}
-            attachment={cardName(card)} highlight={highlighted.has(attachedRef)} selected={selectedCardRef === attachedRef}
-            actions={available} manualMana={manaOnly} onIntent={onCardIntent} onOpenInspector={onOpenInspector}
-            onInspect={onInspectCard} inspectOnActivate
-            choice={selection?.refs.includes(attachedRef) ? {
-              selected: selection.selected.includes(attachedRef), select: () => selection.select(attachedRef),
-            } : undefined} />;
-        })}
+      {attachedCards.length > 0 && <div className="attachment-rail">
+        <span className="attachment-connector" aria-hidden="true" />
+        <div className="permanent-attachments" role="group" aria-label={`Attached to ${cardName(card)}`}>
+          {attachedCards.map((attachment) => {
+            const attachedRef = String(asRecord(attachment).id);
+            const available = !selection && !arranging ? actionsByRef.get(attachedRef) ?? [] : [];
+            const manaOnly = available.length > 0 && available.every((action) =>
+              action.mana_ability === true || action.action === "undo_mana");
+            return <CardTile key={attachedRef} value={attachment} view={view} compact showPrintedCost={false}
+              attachment={cardName(card)} highlight={highlighted.has(attachedRef)} selected={selectedCardRef === attachedRef}
+              actions={available} manualMana={manaOnly} onIntent={onCardIntent} onOpenInspector={onOpenInspector}
+              onInspect={onInspectCard} inspectOnActivate
+              choice={selection?.refs.includes(attachedRef) ? {
+                selected: selection.selected.includes(attachedRef), select: () => selection.select(attachedRef),
+              } : undefined} />;
+          })}
+        </div>
       </div>}
       {arranging && !selection
         ? <div className="layout-moves">
@@ -222,19 +225,23 @@ export function PlayerBoard({
     const stacks = stackGroups[group];
     const expanded = stacks.get(expandedGroup);
     const items = expanded ? expanded.cards.map((card) => ({ key: String(asRecord(card).id), cards: [card] })) : [...stacks.values()];
-    const overlaps = group === "lands" && !arranging && !expanded
+    const hasAttachmentRails = cards.some((card) => attachments.byTarget.has(String(asRecord(card).id ?? "")));
+    const overlaps = group === "lands" && !arranging && !expanded && !hasAttachmentRails
       ? items.map(({ cards: [card] }, index) => {
         const previous = items[index - 1]?.cards[0];
         const mana = landMana.get(card);
         return previous && mana && mana === landMana.get(previous) ? "1" : "0";
       }).join("") : undefined;
+    const rows = Math.min(3, Math.ceil(Math.max(1, items.length) / 5));
+    const laneWeight = group === "creatures" ? 2.25 + rows * 0.4
+      : group === "lands" ? 0.9 + rows * 0.12 : 1 + rows * 0.19;
     return cards.length > 0 && <CardPages
       items={items} label={label} heading={expanded
         ? <button type="button" className="link-button" onClick={() => setExpandedGroup("")}>Back to {label.toLowerCase()}</button>
         : <span className="battlefield-lane-label">{label}</span>}
       className={`battlefield-lane lane-${group}`} layout={group === "lands" ? "row" : "grid"}
-      style={{ flexGrow: Math.min(4, items.length) }} overlaps={overlaps}
-      trackClassName={`battlefield-row battlefield-${group}`}
+      style={{ "--battlefield-default-lane-weight": laneWeight } as CSSProperties} overlaps={overlaps}
+      trackClassName={`battlefield-row battlefield-${group}${hasAttachmentRails ? " has-attachment-rails" : ""}`}
       render={(stack, index) => {
         const representative = actionsByRef.size > 0 && !selection
           ? stack.cards.find((card) => actionsByRef.has(String(asRecord(card).id))) : undefined;
@@ -311,10 +318,8 @@ export function PlayerBoard({
       >
         {battlefield.length ? <div className="battlefield-lanes">
           {!mine && lands}
-          {(groups.creatures.length > 0 || groups.support.length > 0) && <div className="battlefield-permanents">
-            {lane("creatures", "Creatures")}
-            {lane("support", "Other permanents")}
-          </div>}
+          {lane("creatures", "Creatures")}
+          {lane("support", "Other permanents")}
           {mine && lands}
         </div> : <em>{mine && dropEnabled ? "Drop a playable card here" : "Empty battlefield"}</em>}
       </div>

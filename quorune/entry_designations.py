@@ -27,6 +27,9 @@ ENTRY_OPPONENT_FIELD = "entry_chosen_opponent"
 LINKED_ENTRY_OPPONENT_FIELD = "linked_entry_opponent"
 LINKED_ENTRY_OPPONENT_TEMPLATE = "linked-entry-opponent-v1"
 ENTRY_PLAYER_HANDLER_ID = "replacement.zone.linked-entry-player.v2"
+ENTRY_CONTROL_OPPONENT_HANDLER_ID = "replacement.zone.entry-control-opponent.v3"
+ENTRY_CONTROL_OPPONENT_TEMPLATE = "entry-control-opponent-v1"
+ENTRY_CONTROL_OPPONENT_CAPABILITY = "zone.entry.opponent_controller_choice"
 LINKED_ENTRY_PLAYER_TEMPLATE = "linked-entry-player-v2"
 LINKED_PLAYER_PROTECTION_HANDLER_ID = "continuous.characteristics.linked-player-protection.v1"
 LINKED_PLAYER_PROTECTION_TEMPLATE = "linked-entry-player-protection-v1"
@@ -249,14 +252,14 @@ def linked_player_damage_descriptor() -> dict:
 
 @dataclass(frozen=True, slots=True)
 class EntryOpponentChoice:
-    """The historical field stores a version-one opponent or a version-two player."""
+    """One player designation or prospective opponent-controller choice."""
     seat: str
     component_id: str
     schema_version: int = 1
 
     def __post_init__(self) -> None:
         if (
-            type(self.schema_version) is not int or self.schema_version not in (1, 2)
+            type(self.schema_version) is not int or self.schema_version not in (1, 2, 3)
             or type(self.seat) is not str or not self.seat or self.seat != self.seat.strip()
             or type(self.component_id) is not str or not self.component_id
             or not self.component_id.endswith(":0")
@@ -266,6 +269,10 @@ class EntryOpponentChoice:
     @property
     def any_player(self) -> bool:
         return self.schema_version == 2
+
+    @property
+    def changes_entry_controller(self) -> bool:
+        return self.schema_version == 3
 
     @property
     def entry_program_key(self) -> str:
@@ -282,7 +289,9 @@ class EntryOpponentChoice:
 
 
 def entry_opponent_effect_id(object_ref: str, choice: EntryOpponentChoice) -> str:
-    handler = ENTRY_PLAYER_HANDLER_ID if choice.any_player else ENTRY_OPPONENT_HANDLER_ID
+    handler = {
+        1: ENTRY_OPPONENT_HANDLER_ID, 2: ENTRY_PLAYER_HANDLER_ID, 3: ENTRY_CONTROL_OPPONENT_HANDLER_ID,
+    }[choice.schema_version]
     return f"{handler}:{object_ref}:{choice.component_id}:{choice.seat}"
 
 

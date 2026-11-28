@@ -76,6 +76,28 @@ function currentStats(card: Record<string, JsonValue>, definition: Record<string
   return power != null && toughness != null ? `${power}/${toughness}` : "";
 }
 
+export function CombatCardFace({ value, view, statsId }: {
+  value: JsonValue;
+  view: ProjectedView;
+  statsId: string;
+}) {
+  const card = asRecord(value);
+  const definition = typeof card.cid === "string" && card.n !== "?" ? view.definitions[card.cid] : undefined;
+  const stats = currentStats(card, definition);
+  const image = cardImageUrl(value, "art_crop");
+  const [failedImage, setFailedImage] = useState<string>();
+  const name = cardName(value);
+  return <span className="combat-card-face">
+    <span className="combat-card-art" aria-hidden="true">{image && image !== failedImage && <img src={image} alt="" loading="lazy"
+      onError={() => setFailedImage(image)} />}</span>
+    <span className="combat-card-details">
+      <strong title={name}>{name}</strong>
+      {stats && <span id={statsId} className="combat-card-stats" data-testid="combat-card-stats"
+        aria-label={"Current power and toughness " + stats}>{stats}</span>}
+    </span>
+  </span>;
+}
+
 export function CardTile({
   value,
   view,
@@ -129,10 +151,12 @@ export function CardTile({
 }) {
   const card = asRecord(value);
   const targetRefs = asList(card.targets);
-  const damageDetail = asList(card.damage_shares).map((share, slot) => {
+  const counterShares = asList(card.counter_shares);
+  const shares = counterShares.length ? counterShares : asList(card.damage_shares);
+  const allocationDetail = shares.map((share, slot) => {
     const ref = targetRefs[slot];
     const label = typeof ref === "string" ? targetLabel?.(ref) ?? "Target" : "Unavailable target";
-    return `${share} to ${label}`;
+    return `${share}${counterShares.length ? " +1/+1" : ""} to ${label}`;
   }).join(" · ");
   const cid = typeof card.cid === "string" && card.n !== "?" ? card.cid : "";
   const definition = cid ? view.definitions[cid] : undefined;
@@ -166,6 +190,7 @@ export function CardTile({
   const otherCounters = Object.entries(counters).filter(([key]) => key !== "loyalty" && key !== "+1/+1");
   const plusCounters = Number(counters["+1/+1"] ?? 0);
   const counterDescription = useId();
+  const otherCounterDescription = useId();
   const damage = Number(card.dmg ?? 0);
   const canDrag = interactive && !choice && actions.some((action) => ["play_land", "cast"].includes(action.action));
   const actionKinds = new Set(actions.map((action) => action.action));
@@ -182,6 +207,13 @@ export function CardTile({
         : actionKinds.has("activate")
           ? "Activate"
         : "Play";
+  const plusBadge = plusCounters > 0 && <span id={counterDescription} className="plus-counters" data-testid="plus-counters"
+    aria-label={plusCounters + " +1/+1 counters"}>{plusCounters} × +1/+1</span>;
+  const statsBadge = (stats || loyalty !== undefined || damage > 0) && <div className="card-stats">
+    {stats && <strong data-testid="card-current-stats" aria-label={"Current power and toughness " + stats}>{stats}</strong>}
+    {loyalty !== undefined && <strong id={loyaltyDescription} data-testid="card-current-loyalty">{loyalty} loyalty</strong>}
+    {damage > 0 && <span data-testid="card-marked-damage" aria-label={damage + " damage marked"}>{damage} dmg</span>}
+  </div>;
   function activate() {
     onInspect?.(value);
     setPreviewAnchor(null);
@@ -209,7 +241,8 @@ export function CardTile({
         ? [actions.map((action) => spokenMana(action.label ? actionTitle(action) : `${actionHint} ${cardName(value)}`)).join(" or "), origin].filter(Boolean).join(" · ")
         : interactive || inspectable ? `Inspect ${cardName(value)}` : undefined}
       aria-describedby={[
-        offerCost || commandZone && showPrintedCost ? costDescription : "", plusCounters > 0 ? counterDescription : "", loyalty === undefined ? "" : loyaltyDescription,
+        visibleCost || commandZone && showPrintedCost ? costDescription : "", plusCounters > 0 ? counterDescription : "", loyalty === undefined ? "" : loyaltyDescription,
+        battlefield && otherCounters.length > 0 ? otherCounterDescription : "",
         attachment ? attachmentDescription : "", card.tap && table ? tappedDescription : "",
       ].filter(Boolean).join(" ") || undefined}
       aria-pressed={choice?.selected}
@@ -264,8 +297,11 @@ export function CardTile({
         window.setTimeout(() => onDragCard?.(null), 0);
       }}
     >
-      {battlefield ? <div className="battlefield-card-art" aria-hidden="true">
-        <div className="battlefield-printed-face">{printedImage}</div>
+      {battlefield ? <div className="battlefield-card-art">
+        <div className="battlefield-printed-face" aria-hidden="true">{printedImage}</div>
+        {otherCounters.length > 0 && <span id={otherCounterDescription} className="battlefield-card-counters">
+          {otherCounters.map(([name, amount]) => <span key={name}>{String(amount)} {name}</span>)}
+        </span>}
       </div> : printedImage}
       <div className="card-copy">
         <strong>{cardName(value)}</strong>
@@ -273,24 +309,20 @@ export function CardTile({
         {attachment && <small id={attachmentDescription} className="attachment-label" title={`Attached to ${attachment}`}>
           <span className="attachment-prefix">Attached to </span>{attachment}
         </small>}
-        {damageDetail && <span>{damageDetail}</span>}
+        {allocationDetail && <span>{allocationDetail}</span>}
         {!compact && (card.t ?? definition?.t) && <span>{String(card.t ?? definition?.t)}</span>}
-        {otherCounters.length > 0 && <span>{otherCounters.map(([key, amount]) => `${key} ${amount}`).join(" · ")}</span>}
+        {!battlefield && otherCounters.length > 0 && <span>{otherCounters.map(([key, amount]) => `${key} ${amount}`).join(" · ")}</span>}
         {Boolean(card.prepared) && <span>PREPARED</span>}
       </div>
-      {plusCounters > 0 && <span id={counterDescription} className="plus-counters" data-testid="plus-counters"
-        aria-label={`${plusCounters} +1/+1 counters`}>{plusCounters} × +1/+1</span>}
-      {(stats || loyalty !== undefined || damage > 0) && <div className="card-stats">
-        {stats && <strong data-testid="card-current-stats" aria-label={`Current power and toughness ${stats}`}>{stats}</strong>}
-        {loyalty !== undefined && <strong id={loyaltyDescription} data-testid="card-current-loyalty">{loyalty} loyalty</strong>}
-        {damage > 0 && <span data-testid="card-marked-damage" aria-label={`${damage} damage marked`}>{damage} dmg</span>}
-      </div>}
+      {battlefield ? (plusBadge || statsBadge) && <div className="battlefield-card-footer">
+        {plusBadge}{statsBadge}
+      </div> : <>{plusBadge}{statsBadge}</>}
       {card.tap && table && <span hidden id={tappedDescription}>Tapped</span>}
       {origin ? <span className="card-origin" title={origin}>{origin}</span> : actionHint && !battlefield && <span className="card-action-hint">{actionHint}</span>}
-      {(offerCost || commandZone && showPrintedCost) && <span id={costDescription} hidden>
+      {(visibleCost || commandZone && showPrintedCost) && <span id={costDescription} hidden>
         {commandZone ? <>Base cost {spokenMana(printedCost)}
           {commanderTax > 0 && ` · Commander tax ${commanderTax}`}
-        </> : spokenMana(offerCost)}
+        </> : spokenMana(visibleCost)}
       </span>}
       {visibleCost && <span className="card-cost-overlay"
         data-testid={offerCost ? "card-offer-cost" : undefined} aria-hidden="true">

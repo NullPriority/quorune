@@ -114,3 +114,27 @@ def target_name_library_search_options(host, player, effect):
                 continue
         options.append({"id": card.ref, "name": card.printed_name})
     return options
+
+
+
+def move_subtype_search_results(host, owner, context, selected_cards, replacement_selections):
+    """Keep selected nonpermanents private and move the remaining results as one batch."""
+    from ..entry_counters import capture_prospective_entry_characteristics
+    from ..external_entry_state_model import PERMANENT_CARD_TYPES
+
+    entering = []
+    for card in selected_cards:
+        _, type_line = capture_prospective_entry_characteristics(host, card=card, enter_face=None)
+        if host._type_parts(type_line)[0] & PERMANENT_CARD_TYPES:
+            entering.append(card)
+    controllers = {card.object_id: context.seat for card in entering}
+    moved = owner.move_cards_simultaneously(
+        tuple((card.object_id, "battlefield") for card in entering),
+        destination_controllers=controllers,
+        putting_players=controllers,
+        reason=f"{context.item.label} search",
+        log=False,
+        replacement_selections=replacement_selections,
+    )
+    resulting = {card.object_id: card for card in moved}
+    return [resulting.get(card.object_id, card) for card in selected_cards]

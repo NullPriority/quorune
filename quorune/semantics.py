@@ -212,16 +212,20 @@ VALID_EFFECT_OPERATIONS = {
 }
 
 
-def _is_supported_effect_operation(operation: str) -> bool:
+def _is_supported_effect_operation(operation: str, *, program: SemanticProgram) -> bool:
     if operation in VALID_EFFECT_OPERATIONS:
         return True
     from .semantic_runtime import default_semantic_handler_registry
     from .semantic_choices.defaults import default_semantic_choice_registry
 
-    return bool(
+    if (
         default_semantic_handler_registry().describe(operation)
         or operation in default_semantic_choice_registry().operations
-    )
+    ):
+        return True
+    from .rules.linked_death_token_copy import supports_linked_death_token_copy_operation
+
+    return supports_linked_death_token_copy_operation(program, operation)
 
 
 def _validate_program_event_subscriptions(
@@ -388,7 +392,7 @@ class SemanticProgram:
                     )
         for effect in effects_to_validate:
             operation = str(effect.get("op") or "")
-            if not _is_supported_effect_operation(operation):
+            if not _is_supported_effect_operation(operation, program=self):
                 raise ValueError(
                     f"Unsupported semantic effect operation {operation!r}"
                 )
